@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "backend", "backend\backend.csproj", "{F1179E31-EC07-477F-9729-1512E7F09656}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9C133E19-F40A-4D59-8696-73529BEBBF24}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6F60255E-7B10-4364-A08F-95920C6959C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "backendtest", "backendtest\backendtest.csproj", "{51730AA8-7904-4039-A832-F8824B79F52E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F1179E31-EC07-477F-9729-1512E7F09656}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1179E31-EC07-477F-9729-1512E7F09656}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1179E31-EC07-477F-9729-1512E7F09656}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1179E31-EC07-477F-9729-1512E7F09656}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51730AA8-7904-4039-A832-F8824B79F52E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51730AA8-7904-4039-A832-F8824B79F52E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51730AA8-7904-4039-A832-F8824B79F52E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51730AA8-7904-4039-A832-F8824B79F52E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F1179E31-EC07-477F-9729-1512E7F09656} = {9C133E19-F40A-4D59-8696-73529BEBBF24}
+		{51730AA8-7904-4039-A832-F8824B79F52E} = {6F60255E-7B10-4364-A08F-95920C6959C3}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F7A793CA-99B2-4CA1-B290-54F85EEDD57F}
+	EndGlobalSection
+EndGlobal

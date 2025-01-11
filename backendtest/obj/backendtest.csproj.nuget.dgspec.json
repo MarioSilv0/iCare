@@ -29,8 +29,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\BackEnd\\backend.csproj": {
-                "projectPath": "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\BackEnd\\backend.csproj"
+              "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\backend\\backend.csproj": {
+                "projectPath": "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\backend\\backend.csproj"
               }
             }
           }
@@ -87,14 +87,14 @@
         }
       }
     },
-    "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\BackEnd\\backend.csproj": {
+    "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\backend\\backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\BackEnd\\backend.csproj",
+        "projectUniqueName": "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\backend\\backend.csproj",
         "projectName": "backend",
-        "projectPath": "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\BackEnd\\backend.csproj",
+        "projectPath": "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\backend\\backend.csproj",
         "packagesPath": "C:\\Users\\mario\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\BackEnd\\obj\\",
+        "outputPath": "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\mario\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -128,6 +128,38 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.8, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.AspNetCore.Identity.UI": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[8.0.7, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
