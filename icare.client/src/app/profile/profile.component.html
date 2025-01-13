@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css">
+  <title>Profile</title>
+</head>
+<body>
+  <section id="userData">
+    <img id="profileImage" src="" alt="Profile Picture" />
+    <div>
+      <label for="userName">Name</label>
+      <input type="text" id="userName" name="userName" value="user" />
+      <label for="userEmail">Email</label>
+      <input type="email" id="userEmail" name="userEmail" value="user@email.com" />
+      <label for="userBirthdate">Birthdate</label>
+      <input type="date" id="userBirthdate" name="userBirthdate" value="2018-07-22" />
+    </div>
+    <div id="extraData">
+      <img src="" alt="Cogwheel Icon" />
+      <div>
+        <label for="userNotificacions">Notifications</label>
+        <input type="checkbox" id="userNotificacions" name="userNotificacions" />
+      </div>
+      <div>
+        <input type="button" value="Change Password" />
+        <input type="button" value="Save" />
+      </div>
+    </div>
+  </section>
+  <section id="userCharacteristics">
+    <label for="userHeight">Height</label>
+    <input type="text" id="userHeight" name="userHeight" value="User's Height" />
+    <label for="userWeight">Weight</label>
+    <input type="text" id="userWeight" name="userWeight" value="User's Weight" />
+  </section>
+  <section>
+    <p>Preferences</p>
+    <ul>
+      <li>
+        <label for="vegetarian">Vegetarian</label>
+        <input type="checkbox" id="vegetarian" name="vegetarian" value="vegetarian" />
+      </li>
+      <li>
+        <label for="vegan">Vegan</label>
+        <input type="checkbox" id="vegan" name="vegan" value="vegan" />
+      </li>
+      <li>
+        <label for="carnivore">Carnivore</label>
+        <input type="checkbox" id="carnivore" name="carnivore" value="carnivore" />
+      </li>
+      <li>
+        <label for="keto">Keto</label>
+        <input type="checkbox" id="keto" name="keto" value="keto" />
+      </li>
+    </ul>
+  </section>
+  <section>
+    <p>Restrictions</p>
+    <ul>
+      <li>
+        <label for="lactose">Lactose Intolerance</label>
+        <input type="checkbox" id="lactose" name="lactose" value="lactose" />
+      </li>
+      <li>
+        <label for="gluten">Gluten Intolerance</label>
+        <input type="checkbox" id="gluten" name="gluten" value="gluten" />
+      </li>
+    </ul>
+  </section>
+</body>
+</html>
