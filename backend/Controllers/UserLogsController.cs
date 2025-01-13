@@ -23,7 +23,7 @@ namespace backend.Controllers
         // GET: UserLogs
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.UserLog.Include(u => u.User);
+            var applicationDbContext = _context.UserLogs.Include(u => u.User);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -35,7 +35,7 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            var userLog = await _context.UserLog
+            var userLog = await _context.UserLogs
                 .Include(u => u.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (userLog == null)
@@ -66,7 +66,7 @@ namespace backend.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", userLog.UserId);
+            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id");
             return View(userLog);
         }
 
@@ -78,12 +78,12 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            var userLog = await _context.UserLog.FindAsync(id);
+            var userLog = await _context.UserLogs.FindAsync(id);
             if (userLog == null)
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", userLog.UserId);
+            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id");
             return View(userLog);
         }
 
@@ -119,7 +119,7 @@ namespace backend.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", userLog.UserId);
+            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id");
             return View(userLog);
         }
 
@@ -131,7 +131,7 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            var userLog = await _context.UserLog
+            var userLog = await _context.UserLogs
                 .Include(u => u.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (userLog == null)
@@ -147,10 +147,10 @@ namespace backend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var userLog = await _context.UserLog.FindAsync(id);
+            var userLog = await _context.UserLogs.FindAsync(id);
             if (userLog != null)
             {
-                _context.UserLog.Remove(userLog);
+                _context.UserLogs.Remove(userLog);
             }
 
             await _context.SaveChangesAsync();
@@ -159,7 +159,7 @@ namespace backend.Controllers
 
         private bool UserLogExists(int id)
         {
-            return _context.UserLog.Any(e => e.Id == id);
+            return _context.UserLogs.Any(e => e.Id == id);
         }
     }
 }
