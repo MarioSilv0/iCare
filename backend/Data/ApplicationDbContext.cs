@@ -4,6 +4,7 @@ using backend.Models;
 
 namespace backend.Data
 {
+    //Mário
     public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -11,7 +12,7 @@ namespace backend.Data
         {
         }
         public DbSet<backend.Models.User> User { get; set; } = default!;
-        public DbSet<backend.Models.UserLog> UserLog { get; set; } = default!;
+        public DbSet<backend.Models.UserLog> UserLogs { get; set; } = default!;
 
     }
 }
