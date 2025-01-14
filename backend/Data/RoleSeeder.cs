@@ -6,7 +6,7 @@ namespace backend.Data
     {
         public static async Task SeedRoles(RoleManager<IdentityRole> roleManager)
         {
-            string[] roleNames = { "User", "Admin" };
+            string[] roleNames = ["User", "Admin"];
             foreach (var roleName in roleNames)
             {
                 if (!await roleManager.RoleExistsAsync(roleName))
