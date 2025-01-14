@@ -15,7 +15,7 @@ namespace backend.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task LogAsync(string userId, string message)
+        public async Task LogAsync(string? userId, string message)
         {
             var ipAddress = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString() ?? "Unknown IP";
             var log = new UserLog
