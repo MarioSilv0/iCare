@@ -1,0 +1,24 @@
+.container {
+  max-width: 500px;
+  margin: auto;
+}
+
+h2 {
+  color: #007bff;
+  font-weight: bold;
+}
+.is-invalid {
+  border-color: #dc3545 !important;
+}
+
+.is-valid {
+  border-color: #28a745 !important;
+}
+
+.text-success {
+  color: #28a745 !important;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+}

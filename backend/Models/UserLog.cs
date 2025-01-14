@@ -7,16 +7,15 @@ namespace backend.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "O utilizador é obrigatório.")]
         [Display(Name = "Utilizador")]
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
 
         [Display(Name = "Mensagem")]
         public required string Message { get; set; }
 
         [DataType(DataType.DateTime)]
         [Display(Name = "Data e Hora")]
-        public DateTime TimeStamp { get; set; }
+        public required DateTime TimeStamp { get; set; }
 
         [Display(Name = "Endereço de IP")]
         public string? IpAddress { get; set; }

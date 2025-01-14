@@ -12,6 +12,11 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
+  isAuthenticated(): Observable<boolean> {
+    return this.http.get<boolean>(`${this.baseUrl}/isAuthenticated`, { withCredentials: true, }
+    );
+  }
+
   login(credentials: { email: string; password: string }): Observable<any> {
     return this.http.post(`${this.baseUrl}/login`, credentials, {
       withCredentials: true,
@@ -24,9 +29,9 @@ export class AuthService {
     });
   }
 
-  isAuthenticated(): Observable<boolean> {
-    return this.http.get<boolean>(`${this.baseUrl}/isAuthenticated`, {
-      withCredentials: true,
-    });
+  register(data: { email: string; password: string }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/register`, data);
   }
+
+
 }
