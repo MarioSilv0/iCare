@@ -1,0 +1,28 @@
+﻿@model IEnumerable<backend.Models.User>
+
+<h2>Gestão de Utilizadores</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Email</th>
+        <th>Nome</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>@user.Email</td>
+            <td>@user.Name</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-primary">Editar</a>
+                <form asp-action="Delete" asp-route-id="@user.Id" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">Apagar</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
