@@ -18,7 +18,7 @@ namespace backend.Data
                     Name = "User",
                     EmailConfirmed = true
                 };
-                await userManager.CreateAsync(user, "User@123");
+                await userManager.CreateAsync(user, "ValidPassword123!");
                 await userManager.AddToRoleAsync(user, "User");
             }
             if (await userManager.FindByEmailAsync("mario@gmail.com") == null)

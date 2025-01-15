@@ -29,10 +29,6 @@ export class RegisterComponent {
   validatePassword(password: string) {
     this.passwordErrors = []; // Clear errors on every input
 
-    // Requisitos de segurança da senha
-    if (password.length < 8) {
-      ;
-    }else
     if (!/[a-z]/.test(password)) {
       this.passwordErrors.push('lower'); // Password requires at least one lowercase letter
     }else
@@ -46,7 +42,7 @@ export class RegisterComponent {
       this.passwordErrors.push('nonAlphanumeric'); // Password requires at least one non-alphanumeric character
     }
   }
-  passwordIsStrong(): boolean {
+  passwordIsValide(): boolean {
     return this.passwordErrors.length === 0 && this.password.length >= 8;
   }
 
