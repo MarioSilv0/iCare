@@ -1,1 +1,96 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --bg-bege: #fff8e4;
+  --bg-bege-contrast: #f2e4c1;
+  --bg-vermelho: #ed7b7b;
+  --bg-vermelho-contrast: #f44336;
+  --bg-verde: #8eb155;
+  --bg-verde-contrast: #00ff5e;
+  --bg-azul: #3b82f6;
+  --bg-cinzento: #6b7280;
+  --bg-branco: #ffffff;
+  --bg-preto: #000000;
+
+  --bg-font: "Geist Mono", serif;
+
+  --bg-radius: 10px;
+  --bg-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px,
+    rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  font-family: var(--bg-font);
+}
+
+body {
+  width: 100vw;
+  min-height: 100vh;
+}
+
+.bg-bege {
+  background: var(--bg-bege) !important;
+}
+
+.bg-bege-contrast {
+  background: var(--bg-bege-contrast) !important;
+}
+
+.bg-vermelho {
+  background: var(--bg-vermelho) !important;
+}
+
+.bg-vermelho-contrast {
+  background: var(--bg-vermelho-contrast) !important;
+}
+
+.bg-verde {
+  background: var(--bg-verde) !important;
+}
+
+.bg-verde-contrast {
+  background: var(--bg-verde-contrast) !important;
+}
+
+.bg-azul {
+  background: var(--bg-azul) !important;
+}
+
+.bg-cinzento {
+  background: var(--bg-cinzento) !important;
+}
+
+.bg-branco {
+  background: var(--bg-branco) !important;
+}
+
+.bg-preto {
+  background: var(--bg-preto) !important;
+}
+
+input::placeholder {
+  color: var(--bg-cinzento) !important;
+}
+
+input[type="button"],
+input[type="submit"],
+button {
+  color: var(--bg-branco) !important;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  color: var(--bg-preto) !important;
+}
+
+.radius {
+  border-radius: var(--bg-radius) !important;
+}
+
+.shadow {
+  box-shadow: var(--bg-shadow) !important;
+}

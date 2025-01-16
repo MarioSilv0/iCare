@@ -1,18 +1,24 @@
-<header>
-  <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+<header class="bg-bege">
+  <nav
+    class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3"
+  >
     <div class="container">
       <a class="navbar-brand" [routerLink]="['/home']">iCare</a>
-      <button class="navbar-toggler"
-              type="button"
-              data-toggle="collapse"
-              data-target=".navbar-collapse"
-              aria-label="Toggle navigation"
-              [attr.aria-expanded]="isExpanded"
-              (click)="toggle()">
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target=".navbar-collapse"
+        aria-label="Toggle navigation"
+        [attr.aria-expanded]="isExpanded"
+        (click)="toggle()"
+      >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end"
-           [ngClass]="{ show: isExpanded }">
+      <div
+        class="navbar-collapse collapse d-sm-inline-flex justify-content-end"
+        [ngClass]="{ show: isExpanded }"
+      >
         <ul class="navbar-nav flex-grow">
           <li class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" [routerLink]="['/about']">About</a>
@@ -20,7 +26,11 @@
           <li *ngIf="isLoggedIn" class="nav-item">
             <a class="nav-link text-dark" (click)="logout()">Logout</a>
           </li>
-          <li *ngIf="!isLoggedIn" class="nav-item" [routerLinkActive]="['link-active']">
+          <li
+            *ngIf="!isLoggedIn"
+            class="nav-item"
+            [routerLinkActive]="['link-active']"
+          >
             <a class="nav-link text-dark" [routerLink]="['/login']">Login</a>
           </li>
         </ul>
@@ -28,4 +38,3 @@
     </div>
   </nav>
 </header>
-
