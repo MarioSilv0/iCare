@@ -1,42 +1,52 @@
 <div class="container mt-5">
   <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow">
-        <div class="card-body">
+    <div class="col-md-6 w-100">
+      <div class="card border-0 shadow radius">
+        <div class="card-body bg-bege-contrast radius">
           <h2 class="text-center mb-4">Login</h2>
-
+          <!-- foto de site -->
           <form (ngSubmit)="onLogin()">
             <div class="mb-3">
-              <label for="email" class="form-label">Email:</label>
-              <input type="email"
-                     id="email"
-                     [(ngModel)]="email"
-                     name="email"
-                     class="form-control"
-                     placeholder="Enter your email"
-                     required />
+              <label for="email" class="w-100 text-start form-label">
+                Email:
+              </label>
+              <input
+                type="email"
+                id="email"
+                [(ngModel)]="email"
+                name="email"
+                class="form-control bg-bege"
+                placeholder="Enter your email"
+                required
+              />
             </div>
-
             <div class="mb-3">
-              <label for="password" class="form-label">Password:</label>
-              <input type="password"
-                     id="password"
-                     [(ngModel)]="password"
-                     name="password"
-                     class="form-control"
-                     placeholder="Enter your password"
-                     required />
+              <label for="password" class="w-100 form-label text-start">
+                Password:
+              </label>
+              <input
+                type="password"
+                id="password"
+                [(ngModel)]="password"
+                name="password"
+                class="form-control bg-bege"
+                placeholder="Enter your password"
+                required
+              />
             </div>
-
-            <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+            <div *ngIf="errorMessage" class="alert bg-vermelho" role="alert">
               {{ errorMessage }}
             </div>
-
-            <button type="submit" class="btn btn-primary w-100">Login</button>
+            <div class="container d-flex flex-row gap-4">
+              <button type="submit" class="btn bg-verde w-100">Login</button>
+              <button type="reset" class="btn bg-vermelho w-100">Reset</button>
+            </div>
           </form>
-
           <div class="text-center mt-3">
-            <small>Don't have an account? <a routerLink="/register">Register here</a></small>
+            <small
+              >Don't have an account?
+              <a routerLink="/register">Register here</a></small
+            >
           </div>
         </div>
       </div>

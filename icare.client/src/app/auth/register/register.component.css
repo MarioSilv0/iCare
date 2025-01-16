@@ -1,24 +1,12 @@
-.container {
-  max-width: 500px;
-  margin: auto;
-}
-
-h2 {
-  color: #007bff;
-  font-weight: bold;
-}
 .is-invalid {
-  border-color: #dc3545 !important;
+  border-color: var(--bg-vermelho) !important;
 }
-
 .is-valid {
-  border-color: #28a745 !important;
+  border-color: var(--bg-verde-contrast) !important;
 }
-
 .text-success {
-  color: #28a745 !important;
+  color: var(--bg-verde) !important;
 }
-
 .text-danger {
-  color: #dc3545 !important;
+  color: var(--bg-vermelho-contrast) !important;
 }
