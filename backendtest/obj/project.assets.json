@@ -14665,19 +14665,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\mario\\.nuget\\packages\\": {}
+    "C:\\Users\\jpmin\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\backendtest\\backendtest.csproj",
+      "projectUniqueName": "D:\\Dev\\iCare\\backendtest\\backendtest.csproj",
       "projectName": "backendtest",
-      "projectPath": "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\backendtest\\backendtest.csproj",
-      "packagesPath": "C:\\Users\\mario\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\backendtest\\obj\\",
+      "projectPath": "D:\\Dev\\iCare\\backendtest\\backendtest.csproj",
+      "packagesPath": "C:\\Users\\jpmin\\.nuget\\packages\\",
+      "outputPath": "D:\\Dev\\iCare\\backendtest\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\mario\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\jpmin\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -14692,8 +14692,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\backend\\backend.csproj": {
-              "projectPath": "C:\\Users\\mario\\Desktop\\PV-24-25\\iCare\\backend\\backend.csproj"
+            "D:\\Dev\\iCare\\backend\\backend.csproj": {
+              "projectPath": "D:\\Dev\\iCare\\backend\\backend.csproj"
             }
           }
         }
@@ -14754,7 +14754,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.401/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
