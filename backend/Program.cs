@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+ 
 
 // Base de dados
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
