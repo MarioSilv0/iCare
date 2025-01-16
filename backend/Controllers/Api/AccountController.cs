@@ -48,7 +48,7 @@ namespace backend.Controllers.Api
             }
 
             await _userLogService.LogAsync(null, $"Failed login attempt for email: {model.Email}");
-            return Unauthorized("Invalid login attempt.");
+            return Unauthorized("Invalid login credentials.");
         }
 
         [HttpPost("logout")]

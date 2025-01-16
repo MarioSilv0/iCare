@@ -29,23 +29,21 @@
         <!-- Password -->
         <div class="mb-3">
           <label for="password" class="form-label">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            class="form-control"
-            [ngClass]="{
-              'is-invalid': !passwordIsStrong() && passwordInput.touched,
-              'is-valid': passwordIsStrong() && passwordInput.touched
+          <input type="password"
+                 id="password"
+                 name="password"
+                 class="form-control"
+                 [ngClass]="{
+              'is-invalid': !passwordIsValide() && passwordInput.touched,
+              'is-valid': passwordIsValide() && passwordInput.touched
             }"
-            [(ngModel)]="password"
-            required
-            minlength="8"
-            #passwordInput="ngModel"
-            (input)="validatePassword(password)"
-          />
+                 [(ngModel)]="password"
+                 required
+                 minlength="8"
+                 #passwordInput="ngModel"
+                 (input)="validatePassword(password)" />
           <!-- Mensagem de erro -->
-          <div *ngIf="!passwordIsStrong() && passwordInput.touched" class="text-danger">
+          <div *ngIf="!passwordIsValide() && passwordInput.touched" class="text-danger">
             <small *ngIf="passwordInput.errors?.['required']">Password is required.</small>
             <small *ngIf="passwordInput.errors?.['minlength']">Password must be at least 8 characters long.</small>
             <small *ngIf="passwordErrors.includes('lower')">Password must contain at least one lowercase letter ('a'-'z').</small>
@@ -54,8 +52,8 @@
             <small *ngIf="passwordErrors.includes('nonAlphanumeric')">Password must contain at least one non-alphanumeric character.</small>
           </div>
           <!-- Mensagem de sucesso -->
-          <div *ngIf="passwordIsStrong()" class="text-success">
-            <small>Password is strong!</small>
+          <div *ngIf="passwordIsValide()" class="text-success">
+            <small>Password is Valide!</small>
           </div>
         </div>
 
@@ -94,6 +92,11 @@
             Register
           </button>
         </div>
+        <div class="text-center">
+          <small>
+            Already have an account?
+            <a routerLink="/login" class="text-primary">Login here</a>.
+          </small>
       </form>
     </div>
   </div>

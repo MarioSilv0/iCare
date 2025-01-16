@@ -29,6 +29,7 @@ export class LoginComponent {
     this.authService.login(credentials).subscribe({
       next: () => {
         console.log('Login successful');
+        this.errorMessage = null;
         this.router.navigate(['/home']);
       },
       error: (err) => {
