@@ -29,21 +29,19 @@
         <!-- Password -->
         <div class="mb-3">
           <label for="password" class="form-label">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            class="form-control"
-            [ngClass]="{
+          <input type="password"
+                 id="password"
+                 name="password"
+                 class="form-control"
+                 [ngClass]="{
               'is-invalid': !passwordIsValide() && passwordInput.touched,
               'is-valid': passwordIsValide() && passwordInput.touched
             }"
-            [(ngModel)]="password"
-            required
-            minlength="8"
-            #passwordInput="ngModel"
-            (input)="validatePassword(password)"
-          />
+                 [(ngModel)]="password"
+                 required
+                 minlength="8"
+                 #passwordInput="ngModel"
+                 (input)="validatePassword(password)" />
           <!-- Mensagem de erro -->
           <div *ngIf="!passwordIsValide() && passwordInput.touched" class="text-danger">
             <small *ngIf="passwordInput.errors?.['required']">Password is required.</small>
@@ -94,6 +92,11 @@
             Register
           </button>
         </div>
+        <div class="text-center">
+          <small>
+            Already have an account?
+            <a routerLink="/login" class="text-primary">Login here</a>.
+          </small>
       </form>
     </div>
   </div>
