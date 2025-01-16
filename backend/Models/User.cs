@@ -7,6 +7,7 @@ namespace backend.Models
     //Mário
     public class User : IdentityUser
     {
+
         [Display(Name = "Nome")]
         public required string Name { get; set; }
 
