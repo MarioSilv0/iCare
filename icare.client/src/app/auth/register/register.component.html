@@ -1,103 +1,171 @@
 <div class="container mt-5">
   <div class="row justify-content-center">
-    <div class="col-md-6">
-      <h2 class="text-center mb-4">Register</h2>
-      <form (ngSubmit)="onRegister()" #registerForm="ngForm">
-        <!-- Email -->
-        <div class="mb-3">
-          <label for="email" class="form-label">Email</label>
-          <input type="email"
-                 id="email"
-                 name="email"
-                 class="form-control"
-                 [ngClass]="{'is-invalid': emailInput.invalid && emailInput.touched, 'is-valid': emailInput.valid && emailInput.touched}"
-                 [(ngModel)]="email"
-                 required
-                 pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-                 #emailInput="ngModel" />
-          <!-- Mensagem de erro -->
-          <div *ngIf="emailInput.invalid && emailInput.touched" class="text-danger">
-            <small *ngIf="emailInput.errors?.['required']">Email is required.</small>
-            <small *ngIf="emailInput.errors?.['pattern']">Please enter a valid email address.</small>
-          </div>
-          <!-- Mensagem de sucesso -->
-          <div *ngIf="emailInput.valid && emailInput.touched" class="text-success">
-            <small>Email looks good!</small>
+    <div class="col-md-6 w-100">
+      <div class="card border-0 shadow radius">
+        <div class="card-body bg-bege-contrast radius">
+          <h2 class="text-center mb-4">Register</h2>
+          <form (ngSubmit)="onRegister()" #registerForm="ngForm">
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="w-100 text-start form-label"
+                >Email:</label
+              >
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="form-control bg-bege"
+                [ngClass]="{
+                  'is-invalid': emailInput.invalid && emailInput.touched,
+                  'is-valid': emailInput.valid && emailInput.touched
+                }"
+                [(ngModel)]="email"
+                placeholder="Enter your email"
+                required
+                pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                #emailInput="ngModel"
+              />
+              <!-- Mensagem de erro -->
+              <div
+                *ngIf="emailInput.invalid && emailInput.touched"
+                class="text-danger"
+              >
+                <small *ngIf="emailInput.errors?.['required']"
+                  >Email is required.</small
+                >
+                <small *ngIf="emailInput.errors?.['pattern']"
+                  >Please enter a valid email address.</small
+                >
+              </div>
+              <!-- Mensagem de sucesso -->
+              <div
+                *ngIf="emailInput.valid && emailInput.touched"
+                class="text-success"
+              >
+                <small>Email looks good!</small>
+              </div>
+            </div>
+            <!-- Password -->
+            <div class="mb-3">
+              <label for="password" class="w-100 text-start form-label"
+                >Password:</label
+              >
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-control bg-bege"
+                [ngClass]="{
+                  'is-invalid': !passwordIsValide() && passwordInput.touched,
+                  'is-valid': passwordIsValide() && passwordInput.touched
+                }"
+                [(ngModel)]="password"
+                required
+                placeholder="Enter your password"
+                minlength="8"
+                #passwordInput="ngModel"
+                (input)="validatePassword(password)"
+              />
+              <!-- Mensagem de erro -->
+              <div
+                *ngIf="!passwordIsValide() && passwordInput.touched"
+                class="text-danger d-flex flex-column"
+              >
+                <small *ngIf="passwordInput.errors?.['required']">
+                  Password is required.
+                </small>
+                <small *ngIf="passwordInput.errors?.['minlength']">
+                  Password must be at least 8 characters long.
+                </small>
+                <small *ngIf="passwordErrors.includes('lower')">
+                  Password must contain at least one lowercase letter('a'-'z').
+                </small>
+                <small *ngIf="passwordErrors.includes('upper')">
+                  Password must contain at least one uppercase letter('A'-'Z').
+                </small>
+                <small *ngIf="passwordErrors.includes('digit')">
+                  Password must contain at least one digit ('0'-'9').
+                </small>
+                <small *ngIf="passwordErrors.includes('nonAlphanumeric')">
+                  Password must contain at least one non-alphanumeric character.
+                </small>
+              </div>
+              <!-- Mensagem de sucesso -->
+              <div *ngIf="passwordIsValide()" class="text-success">
+                <small>Password is Valide!</small>
+              </div>
+            </div>
+            <!-- Confirm Password -->
+            <div class="mb-3">
+              <label for="confirmPassword" class="w-100 text-start form-label"
+                >Confirm Password:
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                class="form-control bg-bege"
+                [ngClass]="{
+                  'is-invalid':
+                    confirmPasswordInput.invalid &&
+                    confirmPasswordInput.touched,
+                  'is-valid':
+                    confirmPasswordInput.valid && confirmPasswordInput.touched
+                }"
+                placeholder="Confirm your password"
+                [(ngModel)]="confirmPassword"
+                required
+                #confirmPasswordInput="ngModel"
+              />
+              <!-- Mensagem de erro -->
+              <div
+                *ngIf="
+                  confirmPasswordInput.invalid && confirmPasswordInput.touched
+                "
+                class="text-danger"
+              >
+                <small *ngIf="confirmPasswordInput.errors?.['required']">
+                  Confirm password is required.
+                </small>
+                <small
+                  *ngIf="
+                    confirmPasswordInput.touched && password !== confirmPassword
+                  "
+                >
+                  Passwords do not match.
+                </small>
+              </div>
+              <!-- Mensagem de sucesso -->
+              <div
+                *ngIf="
+                  password &&
+                  confirmPassword &&
+                  password === confirmPassword &&
+                  confirmPasswordInput.touched
+                "
+                class="text-success"
+              >
+                <small> Passwords match! </small>
+              </div>
+            </div>
+            <!-- Error Message -->
+            <div *ngIf="errorMessage" class="alert alert-danger">
+              {{ errorMessage }}
+            </div>
+            <!-- Submit Button -->
+            <div class="container d-flex flex-row gap-4">
+              <button type="submit" class="btn bg-verde w-100">Register</button>
+              <button type="reset" class="btn bg-vermelho w-100">Reset</button>
+            </div>
+          </form>
+          <div class="text-center mt-3">
+            <small>
+              Already have an account?
+              <a routerLink="/login" class="text-primary">Login here</a>.
+            </small>
           </div>
         </div>
-
-        <!-- Password -->
-        <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
-          <input type="password"
-                 id="password"
-                 name="password"
-                 class="form-control"
-                 [ngClass]="{
-              'is-invalid': !passwordIsValide() && passwordInput.touched,
-              'is-valid': passwordIsValide() && passwordInput.touched
-            }"
-                 [(ngModel)]="password"
-                 required
-                 minlength="8"
-                 #passwordInput="ngModel"
-                 (input)="validatePassword(password)" />
-          <!-- Mensagem de erro -->
-          <div *ngIf="!passwordIsValide() && passwordInput.touched" class="text-danger">
-            <small *ngIf="passwordInput.errors?.['required']">Password is required.</small>
-            <small *ngIf="passwordInput.errors?.['minlength']">Password must be at least 8 characters long.</small>
-            <small *ngIf="passwordErrors.includes('lower')">Password must contain at least one lowercase letter ('a'-'z').</small>
-            <small *ngIf="passwordErrors.includes('upper')">Password must contain at least one uppercase letter ('A'-'Z').</small>
-            <small *ngIf="passwordErrors.includes('digit')">Password must contain at least one digit ('0'-'9').</small>
-            <small *ngIf="passwordErrors.includes('nonAlphanumeric')">Password must contain at least one non-alphanumeric character.</small>
-          </div>
-          <!-- Mensagem de sucesso -->
-          <div *ngIf="passwordIsValide()" class="text-success">
-            <small>Password is Valide!</small>
-          </div>
-        </div>
-
-
-        <!-- Confirm Password -->
-        <div class="mb-3">
-          <label for="confirmPassword" class="form-label">Confirm Password</label>
-          <input type="password"
-                 id="confirmPassword"
-                 name="confirmPassword"
-                 class="form-control"
-                 [ngClass]="{'is-invalid': confirmPasswordInput.invalid && confirmPasswordInput.touched, 'is-valid': confirmPasswordInput.valid && confirmPasswordInput.touched}"
-                 [(ngModel)]="confirmPassword"
-                 required
-                 #confirmPasswordInput="ngModel" />
-          <!-- Mensagem de erro -->
-          <div *ngIf="confirmPasswordInput.invalid && confirmPasswordInput.touched" class="text-danger">
-            <small *ngIf="confirmPasswordInput.errors?.['required']">Confirm password is required.</small>
-            <small *ngIf="confirmPasswordInput.touched && password !== confirmPassword">Passwords do not match.</small>
-          </div>
-          <!-- Mensagem de sucesso -->
-          <div *ngIf="password === confirmPassword && confirmPasswordInput.touched" class="text-success">
-            <small>Passwords match!</small>
-          </div>
-        </div>
-
-
-        <!-- Error Message -->
-        <div *ngIf="errorMessage" class="alert alert-danger">
-          {{ errorMessage }}
-        </div>
-
-        <!-- Submit Button -->
-        <div class="d-grid">
-          <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">
-            Register
-          </button>
-        </div>
-        <div class="text-center">
-          <small>
-            Already have an account?
-            <a routerLink="/login" class="text-primary">Login here</a>.
-          </small>
-      </form>
+      </div>
     </div>
   </div>
 </div>
