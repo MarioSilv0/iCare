@@ -31,6 +31,9 @@ namespace backend.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Birthdate = table.Column<DateOnly>(type: "date", nullable: false),
+                    Height = table.Column<float>(type: "real", nullable: false),
+                    Weight = table.Column<float>(type: "real", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
