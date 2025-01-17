@@ -1,0 +1,12 @@
+.is-invalid {
+  border-color: var(--bg-vermelho) !important;
+}
+.is-valid {
+  border-color: var(--bg-verde-contrast) !important;
+}
+.text-success {
+  color: var(--bg-verde) !important;
+}
+.text-danger {
+  color: var(--bg-vermelho-contrast) !important;
+}

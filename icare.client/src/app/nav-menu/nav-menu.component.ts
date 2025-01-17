@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-nav-menu',
   templateUrl: './nav-menu.component.html',
-  styleUrl: './nav-menu.component.css'
+  styleUrls: ['./nav-menu.component.css'],
 })
 export class NavMenuComponent {
   isExpanded = false;
@@ -14,5 +16,23 @@ export class NavMenuComponent {
 
   toggle() {
     this.isExpanded = !this.isExpanded;
+  }
+
+  isLoggedIn = false;
+
+  constructor(private authService: AuthService, private router: Router) {
+    this.authService.isAuthenticated().subscribe((status) => {
+      this.isLoggedIn = status.valueOf();
+    });
+  }
+
+  logout() {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.isLoggedIn = false;
+        this.router.navigate(['/login']);
+      },
+      error: (err) => console.error('Logout failed', err),
+    });
   }
 }

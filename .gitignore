@@ -9,6 +9,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+*./backendtest
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -361,3 +362,13 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+backendtest/bin/Debug/net8.0/CoverletSourceRootsMapping_backendtest
+backendtest/obj/backendtest.csproj.nuget.dgspec.json
+backendtest/obj/backendtest.csproj.nuget.g.props
+backendtest/obj/Debug/net8.0/backendtest.AssemblyInfo.cs
+backendtest/obj/Debug/net8.0/backendtest.AssemblyInfoInputs.cache
+backendtest/obj/Debug/net8.0/backendtest.assets.cache
+backendtest/obj/Debug/net8.0/backendtest.csproj.AssemblyReference.cache
+backendtest/obj/Debug/net8.0/backendtest.GeneratedMSBuildEditorConfig.editorconfig
+backendtest/obj/project.assets.json
+backendtest/obj/project.nuget.cache

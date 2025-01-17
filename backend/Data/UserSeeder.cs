@@ -3,7 +3,7 @@ using backend.Models;
 
 namespace backend.Data
 {
-    // Nível 3
+    //Mário
     public class UserSeeder
     {
         public static async Task SeedUsersAsync(UserManager<User> userManager)
@@ -18,7 +18,19 @@ namespace backend.Data
                     Name = "User",
                     EmailConfirmed = true
                 };
-                await userManager.CreateAsync(user, "User@123");
+                await userManager.CreateAsync(user, "ValidPassword123!");
+                await userManager.AddToRoleAsync(user, "User");
+            }
+            if (await userManager.FindByEmailAsync("mario@gmail.com") == null)
+            {
+                var user = new User
+                {
+                    UserName = "mario@gmail.com",
+                    Email = "mario@gmail.com",
+                    Name = "mario",
+                    EmailConfirmed = true
+                };
+                await userManager.CreateAsync(user, "28112002Mads.");
                 await userManager.AddToRoleAsync(user, "User");
             }
 

@@ -1,24 +1,29 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-
-interface WeatherForecast {
-  date: string;
-  temperatureC: number;
-  temperatureF: number;
-  summary: string;
-}
+import { Component } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
 
-  constructor(private http: HttpClient) {}
+  //Mário
+export class AppComponent {
+  showNavMenu: boolean = true;
 
-  ngOnInit() {
-    
+  constructor(private router: Router) {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      const currentRoute = this.router.url;
+      if (currentRoute.includes('login') || currentRoute.includes('register')) {
+        this.showNavMenu = false;
+      } else {
+        this.showNavMenu = true;
+      }
+    });
   }
 
+  title = 'icare.client';
 }

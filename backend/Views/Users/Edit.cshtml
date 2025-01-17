@@ -1,8 +1,21 @@
 ﻿@model backend.Models.User
-{
-    "name": "@Model.Name",
-    "email": "@Model.Email",
-    "birthdate": "@Model.Birthdate",
-    "height": @Model.Height,
-    "weight": @Model.Weight
-}
+
+<h2>Editar Utilizador</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Guardar" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>

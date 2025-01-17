@@ -23,7 +23,7 @@ namespace backend.Controllers
         // GET: UserLogs
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.UserLog.Include(u => u.User);
+            var applicationDbContext = _context.UserLogs.Include(u => u.User);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -35,7 +35,7 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            var userLog = await _context.UserLog
+            var userLog = await _context.UserLogs
                 .Include(u => u.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (userLog == null)
@@ -43,83 +43,6 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            return View(userLog);
-        }
-
-        // GET: UserLogs/Create
-        public IActionResult Create()
-        {
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id");
-            return View();
-        }
-
-        // POST: UserLogs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,Message,TimeStamp")] UserLog userLog)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(userLog);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", userLog.UserId);
-            return View(userLog);
-        }
-
-        // GET: UserLogs/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var userLog = await _context.UserLog.FindAsync(id);
-            if (userLog == null)
-            {
-                return NotFound();
-            }
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", userLog.UserId);
-            return View(userLog);
-        }
-
-        // POST: UserLogs/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,Message,TimeStamp")] UserLog userLog)
-        {
-            if (id != userLog.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(userLog);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserLogExists(userLog.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Id", userLog.UserId);
             return View(userLog);
         }
 
@@ -131,7 +54,7 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            var userLog = await _context.UserLog
+            var userLog = await _context.UserLogs
                 .Include(u => u.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (userLog == null)
@@ -147,10 +70,10 @@ namespace backend.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var userLog = await _context.UserLog.FindAsync(id);
+            var userLog = await _context.UserLogs.FindAsync(id);
             if (userLog != null)
             {
-                _context.UserLog.Remove(userLog);
+                _context.UserLogs.Remove(userLog);
             }
 
             await _context.SaveChangesAsync();
@@ -159,7 +82,7 @@ namespace backend.Controllers
 
         private bool UserLogExists(int id)
         {
-            return _context.UserLog.Any(e => e.Id == id);
+            return _context.UserLogs.Any(e => e.Id == id);
         }
     }
 }
