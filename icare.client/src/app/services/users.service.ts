@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class UsersService {
 
-  private url: string = 'https://localhost:7266/';
+  private url: string = 'https://localhost:7266/PublicUser/Edit/';
 
   constructor(private http: HttpClient) { }
 
@@ -15,14 +15,12 @@ export class UsersService {
     return this.http.get<User>(this.url + id);
   }
 
-  updateUser(user: User): Observable<User> {
-    console.log('UpdateUser111 called with:', user, user.id);
-    return this.http.put<User>(this.url + user.id, user);
+  updateUser(id: string, user: User): Observable<User> {
+    return this.http.put<User>(this.url + id, { ...user, id });
   }
 }
 
 export interface User {
-  id: string;
   name: string;
   email: string;
   birthdate: Date;

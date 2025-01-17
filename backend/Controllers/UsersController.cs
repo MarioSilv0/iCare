@@ -6,6 +6,7 @@ using backend.Models;
 
 namespace backend.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private readonly UserManager<User> _userManager;
@@ -23,35 +24,11 @@ namespace backend.Controllers
         }
 
         // GET: Users/Edit/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PublicUser>> Edit(string id)
+        public async Task<IActionResult> Edit(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-
-            if (user == null)
+            if (id == null)
             {
                 return NotFound();
-            }
-
-            var publicUser = new PublicUser
-            {
-                Name = user.Name,
-                Email = user.Email,
-                Birthdate = user.Birthdate,
-                Height = user.Height,
-                Weight = user.Weight
-            };
-
-            return publicUser;
-        }
-
-        // PUT: Users/Edit/5
-        [HttpPut]
-        public async Task<IActionResult> Edit(string id, User model)
-        {
-            if (!ModelState.IsValid || id != model.Id)
-            {
-                return BadRequest();
             }
 
             var user = await _userManager.FindByIdAsync(id);
@@ -60,15 +37,7 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            user.Email = model.Email;
-            user.Name = model.Name;
-            user.Birthdate = model.Birthdate;
-            user.Height = model.Height;
-            user.Weight = model.Weight;
-
-            await _userManager.UpdateAsync(user);
-
-            return NoContent();
+            return View(user);
         }
 
         // POST: Users/Edit/5

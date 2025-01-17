@@ -17,11 +17,7 @@ namespace backend.Models
 
         [Display(Name = "Weight")]
         public float Weight { get; set; }
-
-        //[Display(Name = "Preferences")]
         //public ICollection<Preferences>? Preferences { get; set; }
-
-        //[Display(Name = "Restrictions")]
         //public ICollection<Restrictions>? Restrictions { get; set; }
 
         public ICollection<UserLog>? Logs { get; set; }

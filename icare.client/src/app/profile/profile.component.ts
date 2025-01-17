@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UsersService, User } from '../services/users.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -9,11 +10,13 @@ import { UsersService, User } from '../services/users.service';
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
-  public user: User = { id: '4362f355-de07-4815-900a-8458338f2ab5', name: 'A', email: 'A@example.com', birthdate: new Date(), height: 0, weight: 0 };
-  constructor(private service: UsersService) { }
+  private id: string = '4362f355-de07-4815-900a-8458338f2ab5';
+
+  public user: User = { name: 'A', email: 'A@example.com', birthdate: new Date(), height: 0, weight: 0 };
+  constructor(private router: Router, private service: UsersService) { }
 
   ngOnInit() {
-    this.getUser(this.user.id);
+    this.getUser(this.id);
   }
 
   getUser(id: string) {
@@ -28,6 +31,13 @@ export class ProfileComponent implements OnInit {
   }
 
   updateUser() {
-    this.service.updateUser(this.user);
+    this.service.updateUser(this.id, this.user).subscribe(
+      () => {
+        this.router.navigate(['/']);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   }
 }

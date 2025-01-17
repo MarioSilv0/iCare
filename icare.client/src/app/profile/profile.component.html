@@ -27,15 +27,15 @@
         </div>
         <div>
           <input type="button" value="Change Password" />
-          <button type="submit" class="btn btn-success">Save</button>
+          <input type="submit" value="Save" class="submit-btn" />
         </div>
       </div>
     </section>
     <section id="userCharacteristics">
       <label for="userHeight">Height</label>
-      <input type="text" id="userHeight" name="userHeight" [(ngModel)]="user.height" />
+      <input type="number" id="userHeight" name="userHeight" [(ngModel)]="user.height" />
       <label for="userWeight">Weight</label>
-      <input type="text" id="userWeight" name="userWeight" [(ngModel)]="user.weight" />
+      <input type="number" id="userWeight" name="userWeight" [(ngModel)]="user.weight" />
     </section>
     <section>
       <p>Preferences</p>
