@@ -6,6 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AboutComponent } from './about/about.component';
+import { ProfileComponent } from './profile/profile.component';
 import { HomeComponent } from './home/home.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { LoginComponent } from './auth/login/login.component';
@@ -15,6 +16,7 @@ import { RegisterComponent } from './auth/register/register.component';
   declarations: [
     AppComponent,
     AboutComponent,
+    ProfileComponent,
     HomeComponent,
     NavMenuComponent,
     LoginComponent,
