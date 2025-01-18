@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UsersService, User } from '../services/users.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -10,24 +11,30 @@ import { Router } from '@angular/router';
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
-  private id: string = '4362f355-de07-4815-900a-8458338f2ab5';
-
   public user: User = { name: 'A', email: 'A@example.com', birthdate: new Date(), height: 0, weight: 0 };
-  constructor(private router: Router, private service: UsersService) { }
+  public todayDate: string;
 
-  ngOnInit() {
-    this.getUser(this.id);
+  constructor(private router: Router, private service: UsersService, private authService: AuthService) {
+    this.todayDate = new Date().toISOString().split('T')[0];
   }
 
-  getUser(id: string) {
-    this.service.getUser(id).subscribe(
-      (result) => {
-        this.user = result;
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
+  ngOnInit() {
+    this.getUser();
+  }
+
+  getUser() {
+    if (this.authService.isAuthenticated()) {
+      const id = this.authService.currentUser().user._id;
+
+      this.service.getUser(id).subscribe(
+        (result) => {
+          this.user = result;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    } else this.router.navigate(['/login']);
   }
 
   updateUser() {

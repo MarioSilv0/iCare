@@ -40,7 +40,7 @@ namespace backend.Controllers
         [HttpPut]
         public async Task<ActionResult<PublicUser>> Edit(string id, [FromBody] PublicUser model)
         {
-            if (model == null && id != model.Id)
+            if (model == null || id != model.Id)
             {
                 return BadRequest();
             }
@@ -54,8 +54,8 @@ namespace backend.Controllers
             user.Name = string.IsNullOrEmpty(model.Name) ? user.Name : model.Name;
             user.Email = string.IsNullOrEmpty(model.Email) ? user.Email : model.Email;
             user.Birthdate = model.Birthdate;
-            user.Height = model.Height <= 0 ? user.Height : model.Height;
-            user.Weight = model.Weight <= 0 ? user.Weight : model.Weight;
+            user.Height = model.Height <= 0 || model.Height > 3 ? user.Height : model.Height;
+            user.Weight = model.Weight <= 0 || model.Weight > 700 ? user.Weight : model.Weight;
 
             await _userManager.UpdateAsync(user);
 
