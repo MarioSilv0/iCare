@@ -10,29 +10,25 @@
               <label for="email" class="w-100 text-start form-label">
                 Email:
               </label>
-              <input
-                type="email"
-                id="email"
-                [(ngModel)]="email"
-                name="email"
-                class="form-control bg-bege"
-                placeholder="Enter your email"
-                required
-              />
+              <input type="email"
+                     id="email"
+                     [(ngModel)]="email"
+                     name="email"
+                     class="form-control bg-bege"
+                     placeholder="Enter your email"
+                     required />
             </div>
             <div class="mb-3">
               <label for="password" class="w-100 form-label text-start">
                 Password:
               </label>
-              <input
-                type="password"
-                id="password"
-                [(ngModel)]="password"
-                name="password"
-                class="form-control bg-bege"
-                placeholder="Enter your password"
-                required
-              />
+              <input type="password"
+                     id="password"
+                     [(ngModel)]="password"
+                     name="password"
+                     class="form-control bg-bege"
+                     placeholder="Enter your password"
+                     required />
             </div>
             <div *ngIf="errorMessage" class="alert bg-vermelho" role="alert">
               {{ errorMessage }}
@@ -47,7 +43,10 @@
               Don't have an account?
               <a routerLink="/register">Register here</a>
             </small>
-            <a routerLink="/recover-password">teste</a>
+            <div>
+              <a routerLink="/recover-password">teste recover</a>
+              <a routerLink="/reset-password">teste reset</a>
+            </div>
           </div>
         </div>
       </div>

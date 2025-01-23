@@ -12,6 +12,7 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { RecoverPasswordComponent } from './auth/recover-password/recover-password.component';
+import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { RecoverPasswordComponent } from './auth/recover-password/recover-passwo
     LoginComponent,
     RegisterComponent,
     RecoverPasswordComponent,
+    ResetPasswordComponent,
   ],
   imports: [
     BrowserModule, HttpClientModule,

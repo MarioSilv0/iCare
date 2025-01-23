@@ -38,8 +38,18 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/register`, data);
   }
 
+  resetPassword(data: {
+    currentPassword: string;
+    newPassword: string;
+    repeatPassword: string;
+  }): Observable<any> {
+    // todo: implement backend
+    return this.http.post(`${this.baseUrl}/reset-password`, data);
+  }
+  
   recover(email: string): Observable<any> {
     //? verificar que tipo de metodo é
+    // todo: implement backend
     return this.http.post(`${this.baseUrl}/recover-password`, email);
   }
 }
