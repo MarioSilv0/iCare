@@ -11,6 +11,7 @@ import { HomeComponent } from './home/home.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
+import { RecoverPasswordComponent } from './auth/recover-password/recover-password.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 
 @NgModule({
@@ -22,6 +23,7 @@ import { ResetPasswordComponent } from './auth/reset-password/reset-password.com
     NavMenuComponent,
     LoginComponent,
     RegisterComponent,
+    RecoverPasswordComponent,
     ResetPasswordComponent,
   ],
   imports: [

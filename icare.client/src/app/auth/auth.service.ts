@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
+
+//Mário
 export class AuthService {
   private baseUrl = '../api/account';
 
@@ -43,5 +45,11 @@ export class AuthService {
   }): Observable<any> {
     // todo: implement backend
     return this.http.post(`${this.baseUrl}/reset-password`, data);
+  }
+  
+  recover(email: string): Observable<any> {
+    //? verificar que tipo de metodo é
+    // todo: implement backend
+    return this.http.post(`${this.baseUrl}/recover-password`, email);
   }
 }
