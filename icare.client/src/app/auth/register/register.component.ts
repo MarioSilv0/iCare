@@ -5,10 +5,8 @@ import { AuthService } from '../auth.service';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  styleUrls: ['./register.component.css'],
 })
-
-  //Mário
 export class RegisterComponent {
   email: string = '';
   password: string = '';
@@ -16,7 +14,7 @@ export class RegisterComponent {
   errorMessage: string | null = null;
   passwordErrors: string[] = [];
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.authService.isAuthenticated().subscribe((isAuthenticated) => {
@@ -31,21 +29,17 @@ export class RegisterComponent {
 
     if (!/[a-z]/.test(password)) {
       this.passwordErrors.push('lower'); // Password requires at least one lowercase letter
-    }else
-    if (!/[A-Z]/.test(password)) {
+    } else if (!/[A-Z]/.test(password)) {
       this.passwordErrors.push('upper'); // Password requires at least one uppercase letter
-    } else
-    if (!/[0-9]/.test(password)) {
+    } else if (!/[0-9]/.test(password)) {
       this.passwordErrors.push('digit'); // Password requires at least one digit
-    } else
-    if (!/[^\w\s]/.test(password)) {
+    } else if (!/[^\w\s]/.test(password)) {
       this.passwordErrors.push('nonAlphanumeric'); // Password requires at least one non-alphanumeric character
     }
   }
   passwordIsValide(): boolean {
     return this.passwordErrors.length === 0 && this.password.length >= 8;
   }
-
 
   onRegister(): void {
     if (this.password !== this.confirmPassword) {
