@@ -5,6 +5,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-backend-c80f095b-a17b-41c2-a4f0-c8eb241a6330</UserSecretsId>
+	  <SpaRoot>..\icare.client</SpaRoot>
+	  <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
+	  <SpaProxyServerUrl>https://localhost:4200</SpaProxyServerUrl>
   </PropertyGroup>
 
   <ItemGroup>

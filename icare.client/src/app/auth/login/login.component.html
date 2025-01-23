@@ -22,13 +22,18 @@
               <label for="password" class="w-100 form-label text-start">
                 Password:
               </label>
-              <input type="password"
-                     id="password"
-                     [(ngModel)]="password"
-                     name="password"
-                     class="form-control bg-bege"
-                     placeholder="Enter your password"
-                     required />
+                <input [type]="showPassword ? 'text' : 'password'"
+                       id="password"
+                       [(ngModel)]="password"
+                       name="password"
+                       class="form-control bg-bege"
+                       placeholder="Enter your password"
+                       required />
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        (click)="togglePasswordVisibility()">
+                  {{ showPassword ? 'Hide' : 'Show' }}
+                </button>
             </div>
             <div *ngIf="errorMessage" class="alert bg-vermelho" role="alert">
               {{ errorMessage }}
