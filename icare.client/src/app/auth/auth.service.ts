@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, delay } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +10,8 @@ import { Observable } from 'rxjs';
 export class AuthService {
   private baseUrl = '../api/account';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
 
   isAuthenticated(): Observable<boolean> {
     return this.http.get<boolean>(`${this.baseUrl}/isAuthenticated`, { withCredentials: true, }

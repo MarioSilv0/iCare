@@ -7,87 +7,69 @@
           <form (ngSubmit)="onRegister()" #registerForm="ngForm">
             <!-- Email -->
             <div class="mb-3">
-              <label for="email" class="w-100 text-start form-label"
-                >Email:</label
-              >
-              <input
-                type="email"
-                id="email"
-                name="email"
-                class="form-control bg-bege"
-                [ngClass]="{
+              <label for="email" class="w-100 text-start form-label">Email:</label>
+              <input type="email"
+                     id="email"
+                     name="email"
+                     class="form-control bg-bege"
+                     [ngClass]="{
                   'is-invalid': emailInput.invalid && emailInput.touched,
                   'is-valid': emailInput.valid && emailInput.touched
                 }"
-                [(ngModel)]="email"
-                placeholder="Enter your email"
-                required
-                pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-                #emailInput="ngModel"
-              />
+                     [(ngModel)]="email"
+                     placeholder="Enter your email"
+                     required
+                     pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                     #emailInput="ngModel" />
               <!-- Mensagem de erro -->
-              <div
-                *ngIf="emailInput.invalid && emailInput.touched"
-                class="text-danger"
-              >
-                <small *ngIf="emailInput.errors?.['required']"
-                  >Email is required.</small
-                >
-                <small *ngIf="emailInput.errors?.['pattern']"
-                  >Please enter a valid email address.</small
-                >
+              <div *ngIf="emailInput.invalid && emailInput.touched"
+                   class="text-danger">
+                <small *ngIf="emailInput.errors?.['required']">Email is required.</small>
+                <small *ngIf="emailInput.errors?.['pattern']">Please enter a valid email address.</small>
               </div>
               <!-- Mensagem de sucesso -->
-              <div
-                *ngIf="emailInput.valid && emailInput.touched"
-                class="text-success"
-              >
+              <div *ngIf="emailInput.valid && emailInput.touched"
+                   class="text-success">
                 <small>Email looks good!</small>
               </div>
             </div>
             <!-- Password -->
             <div class="mb-3">
-              <label for="password" class="w-100 text-start form-label"
-                >Password:</label
-              >
-              <input
-                type="password"
-                id="password"
-                name="password"
-                class="form-control bg-bege"
-                [ngClass]="{
+              <label for="password" class="w-100 text-start form-label">Password:</label>
+              <input [type]="showPassword ? 'text' : 'password'"
+                     id="password"
+                     name="password"
+                     class="form-control bg-bege"
+                     [ngClass]="{
                   'is-invalid': !passwordIsValide() && passwordInput.touched,
                   'is-valid': passwordIsValide() && passwordInput.touched
                 }"
-                [(ngModel)]="password"
-                required
-                placeholder="Enter your password"
-                minlength="8"
-                #passwordInput="ngModel"
-                (input)="validatePassword(password)"
-              />
+                     [(ngModel)]="password"
+                     required
+                     placeholder="Enter your password"
+                     minlength="8"
+                     #passwordInput="ngModel"
+                     (input)="validatePassword(password)" />
               <!-- Mensagem de erro -->
-              <div
-                *ngIf="!passwordIsValide() && passwordInput.touched"
-                class="text-danger d-flex flex-column"
-              >
+              <div *ngIf="!passwordIsValide() && passwordInput.touched"
+                   class="text-danger d-flex flex-column">
                 <small *ngIf="passwordInput.errors?.['required']">
                   Password is required.
                 </small>
                 <small *ngIf="passwordInput.errors?.['minlength']">
-                  Password must be at least 8 characters long.
+                  Password with 8 characters long.
                 </small>
                 <small *ngIf="passwordErrors.includes('lower')">
-                  Password must contain at least one lowercase letter('a'-'z').
+                  Enter one lowercase letter('a'-'z').
                 </small>
                 <small *ngIf="passwordErrors.includes('upper')">
-                  Password must contain at least one uppercase letter('A'-'Z').
+                  Enter one uppercase letter('A'-'Z').
                 </small>
                 <small *ngIf="passwordErrors.includes('digit')">
-                  Password must contain at least one digit ('0'-'9').
+                  Enter one digit ('0'-'9').
                 </small>
                 <small *ngIf="passwordErrors.includes('nonAlphanumeric')">
-                  Password must contain at least one non-alphanumeric character.
+                  Enter one non-alphanumeric character.
                 </small>
               </div>
               <!-- Mensagem de sucesso -->
@@ -97,57 +79,54 @@
             </div>
             <!-- Confirm Password -->
             <div class="mb-3">
-              <label for="confirmPassword" class="w-100 text-start form-label"
-                >Confirm Password:
+              <label for="confirmPassword" class="w-100 text-start form-label">
+                Confirm Password:
               </label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                class="form-control bg-bege"
-                [ngClass]="{
+              <input [type]="showPassword ? 'text' : 'password'"
+                     id="confirmPassword"
+                     name="confirmPassword"
+                     class="form-control bg-bege"
+                     [ngClass]="{
                   'is-invalid':
                     confirmPasswordInput.invalid &&
                     confirmPasswordInput.touched,
                   'is-valid':
                     confirmPasswordInput.valid && confirmPasswordInput.touched
                 }"
-                placeholder="Confirm your password"
-                [(ngModel)]="confirmPassword"
-                required
-                #confirmPasswordInput="ngModel"
-              />
+                     placeholder="Confirm your password"
+                     [(ngModel)]="confirmPassword"
+                     required
+                     #confirmPasswordInput="ngModel" />
               <!-- Mensagem de erro -->
-              <div
-                *ngIf="
+              <div *ngIf="
                   confirmPasswordInput.invalid && confirmPasswordInput.touched
                 "
-                class="text-danger"
-              >
+                   class="text-danger">
                 <small *ngIf="confirmPasswordInput.errors?.['required']">
                   Confirm password is required.
                 </small>
-                <small
-                  *ngIf="
+                <small *ngIf="
                     confirmPasswordInput.touched && password !== confirmPassword
-                  "
-                >
+                  ">
                   Passwords do not match.
                 </small>
               </div>
               <!-- Mensagem de sucesso -->
-              <div
-                *ngIf="
+              <div *ngIf="
                   password &&
                   confirmPassword &&
                   password === confirmPassword &&
                   confirmPasswordInput.touched
                 "
-                class="text-success"
-              >
+                   class="text-success">
                 <small> Passwords match! </small>
               </div>
             </div>
+            <button type="button"
+                    class="btn btn-outline-secondary"
+                    (click)="togglePasswordVisibility()">
+              {{ showPassword ? 'Hide' : 'Show' }}
+            </button>
             <!-- Error Message -->
             <div *ngIf="errorMessage" class="alert alert-danger">
               {{ errorMessage }}

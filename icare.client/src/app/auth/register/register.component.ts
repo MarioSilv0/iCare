@@ -15,6 +15,11 @@ export class RegisterComponent {
   confirmPassword: string = '';
   errorMessage: string | null = null;
   passwordErrors: string[] = [];
+  showPassword: boolean = false;
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
 
   constructor(private authService: AuthService, private router: Router) { }
 

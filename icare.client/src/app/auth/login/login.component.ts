@@ -13,13 +13,18 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
   errorMessage: string | null = null;
+  showPassword: boolean = false;
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
 
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
     this.authService.isAuthenticated().subscribe((isAuthenticated) => {
       if (isAuthenticated) {
-        this.router.navigate(['/home']);
+        this.router.createUrlTree(['/home']);
       }
     });
   }
