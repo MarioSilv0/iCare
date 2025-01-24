@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
-import { inject } from '@angular/core';
 
 @Component({
   selector: 'app-nav-menu',
@@ -15,8 +14,10 @@ export class NavMenuComponent {
 
   authService = inject(AuthService);
   router = inject(Router);
-  isLoggedIn = this.authService.isAuthenticated().subscribe((isAuthenticated: boolean) => isAuthenticated) || false;
-
+  isLoggedIn =
+    this.authService
+      .isAuthenticated()
+      .subscribe((isAuthenticated: boolean) => isAuthenticated) || false;
 
   collapse() {
     this.isExpanded = false;

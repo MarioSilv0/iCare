@@ -17,9 +17,10 @@
 *,
 *::before,
 *::after {
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   font-family: var(--bg-font);
+  box-sizing: border-box !important;
 }
 body {
   width: 100vw;
@@ -73,4 +74,8 @@ input[type="password"] {
 }
 .shadow {
   box-shadow: var(--bg-shadow) !important;
+}
+
+.py {
+  padding-bottom: 1rem;
 }
