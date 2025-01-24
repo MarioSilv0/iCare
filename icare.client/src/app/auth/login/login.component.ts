@@ -22,23 +22,19 @@ export class LoginComponent {
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
-    this.authService.isAuthenticated().subscribe((isAuthenticated) => {
-      if (isAuthenticated) {
-        this.router.createUrlTree(['/home']);
-      }
-    });
+    if (this.authService.isLogged()) {
+      this.router.navigate(['/home']);
+    }
   }
 
   onLogin(): void {
     const credentials = { email: this.email, password: this.password };
     this.authService.login(credentials).subscribe({
       next: () => {
-        console.log('Login successful');
         this.errorMessage = null;
         this.router.navigate(['/home']);
       },
-      error: (err) => {
-        console.error(err);
+      error: () => {
         this.errorMessage = 'Invalid login credentials';
       },
     });

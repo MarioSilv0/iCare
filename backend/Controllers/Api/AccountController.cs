@@ -5,27 +5,26 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using backend.Services;
 using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 namespace backend.Controllers.Api
 {
-    //Mário
+    //Mário with 'PeopleAngular(identity)'
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly IConfiguration _configuration;
         private readonly UserLogService _userLogService;
 
-        public AccountController(SignInManager<User> signInManager, UserLogService userLogService)
+        public AccountController(UserManager<User> signInManager, UserLogService userLogService, IConfiguration configuration)
         {
-            _signInManager = signInManager;
+            _userManager = signInManager;
+            _configuration = configuration;
             _userLogService = userLogService;
-        }
-
-        [HttpGet("isAuthenticated")]
-        public IActionResult IsAuthenticated()
-        {
-            return Ok(User.Identity.IsAuthenticated);
         }
 
         [HttpPost("login")]
@@ -33,36 +32,51 @@ namespace backend.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                await _userLogService.LogAsync(null, $"Invalid data: {model.Email}");
+                await _userLogService.LogAsync(null, $"Invalid data: {model.Email}, {model.Password}");
                 return BadRequest(new { message = "Invalid data.", errors = ModelState });
             }
 
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, true, false);
-
-            if (result.Succeeded)
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
             {
-                var user = await _signInManager.UserManager.FindByEmailAsync(model.Email);
-                await _userLogService.LogAsync(user?.Id, "User logged in successfully.");
-
-                return Ok(new { message = "Login successful" });
+                await _userLogService.LogAsync(null, $"Failed login attempt for email: {model.Email}");
+                return BadRequest("Invalid login credentials.");
+            }
+            var passwordValid = await _userManager.CheckPasswordAsync(user, model.Password);
+            if (!passwordValid)
+            {
+                await _userLogService.LogAsync(null, $"Failed login attempt for email: {model.Email}");
+                return BadRequest("Invalid login credentials.");
             }
 
-            await _userLogService.LogAsync(null, $"Failed login attempt for email: {model.Email}");
-            return Unauthorized("Invalid login credentials.");
-        }
+            // Gerar os claims do utilizador
+            var claims = new List<Claim>
+            {
+                new Claim("Name", user.Name),
+                new Claim("Email", user.Email),
+                new Claim("UserId", user.Id)
+            };
 
-        [HttpPost("logout")]
-        [Authorize]
-        public async Task<IActionResult> Logout()
-        {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            // Gerar o token JWT
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            if (userId == null)
-                return Unauthorized("User ID not found.");
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddDays(1), // Definir o tempo de expiração
+                signingCredentials: creds);
 
-            await _userLogService.LogAsync(userId, "User logged out.");
-            await _signInManager.SignOutAsync();
-            return Ok();
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            // Retornar o token ao cliente
+            return Ok(new
+            {
+                token = tokenString,
+                expiration = token.ValidTo,
+                message = "Login successful"
+            });
         }
 
         [HttpPost("register")]
@@ -70,11 +84,11 @@ namespace backend.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                await _userLogService.LogAsync(null, $"Invalid data: {model.Email}");
+                await _userLogService.LogAsync(null, $"Invalid data: {model.Email}, {model.Password}");
                 return BadRequest(new { message = "Invalid data.", errors = ModelState });
             }
 
-            var existingUser = await _signInManager.UserManager.FindByEmailAsync(model.Email);
+            var existingUser = await _userManager.FindByEmailAsync(model.Email);
             if (existingUser != null)
             {
                 await _userLogService.LogAsync(null, $"This email is already registered: {model.Email}");
@@ -88,7 +102,7 @@ namespace backend.Controllers.Api
                 Name = model.Email.Split('@')[1]
             };
 
-            var result = await _signInManager.UserManager.CreateAsync(user, model.Password);
+            var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
@@ -104,26 +118,15 @@ namespace backend.Controllers.Api
 
     public class LoginModel
     {
-        [Required]
-        [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
-        [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Display(Name = "Remember me?")]
-        public bool RememberMe { get; set; }
     }
     public class RegisterModel
     {
-        [Required]
-        [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
-        [MinLength(8, ErrorMessage = "Password must be at least 8 characters.")]
-        [DataType(DataType.Password)]
         public string Password { get; set; }
     }
 

@@ -10,15 +10,15 @@ namespace backendtest
     public class UserLogServiceTests
     {
         private readonly UserLogService _userLogService;
-        private readonly ApplicationDbContext _context;
+        private readonly ICareServerContext _context;
 
         public UserLogServiceTests()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            var options = new DbContextOptionsBuilder<ICareServerContext>()
                 .UseInMemoryDatabase("TestDb")
                 .Options;
 
-            _context = new ApplicationDbContext(options);
+            _context = new ICareServerContext(options);
 
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
             mockHttpContextAccessor.Setup(h => h.HttpContext)

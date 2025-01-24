@@ -6,6 +6,7 @@ namespace backend.Models
 {
     public class User : IdentityUser
     {
+        [PersonalData]
         [Required(ErrorMessage = "Name is mandatory.")]
         [Display(Name = "Name")]
         public required string Name { get; set; }

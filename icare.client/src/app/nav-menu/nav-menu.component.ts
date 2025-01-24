@@ -10,14 +10,15 @@ import { AuthService } from '../auth/auth.service';
 
 //Mário
 export class NavMenuComponent {
-  isExpanded = false;
-
-  authService = inject(AuthService);
-  router = inject(Router);
-  isLoggedIn =
-    this.authService
-      .isAuthenticated()
-      .subscribe((isAuthenticated: boolean) => isAuthenticated) || false;
+  public isExpanded = false;
+  public isLoggedIn: boolean = false;
+  constructor(private authService: AuthService, private router: Router) { }
+  
+  ngOnInit() {
+    this.authService.onStateChanged().subscribe((state: boolean) => {
+      this.isLoggedIn = state;
+    });
+  }
 
   collapse() {
     this.isExpanded = false;
@@ -28,11 +29,9 @@ export class NavMenuComponent {
   }
 
   logout() {
-    this.authService.logout().subscribe({
-      next: () => {
-        this.router.navigate(['/login']);
-      },
-      error: (err) => console.error('Logout failed', err),
-    });
+    if (this.isLoggedIn) {
+      this.authService.logout();
+      this.router.navigateByUrl('login');
+    }
   }
 }
