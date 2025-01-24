@@ -13,9 +13,9 @@ namespace backend.Controllers
     //Mário
     public class UserLogsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICareServerContext _context;
 
-        public UserLogsController(ApplicationDbContext context)
+        public UserLogsController(ICareServerContext context)
         {
             _context = context;
         }

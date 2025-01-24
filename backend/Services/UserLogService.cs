@@ -6,10 +6,10 @@ namespace backend.Services
     //Mário
     public class UserLogService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICareServerContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserLogService(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
+        public UserLogService(ICareServerContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;

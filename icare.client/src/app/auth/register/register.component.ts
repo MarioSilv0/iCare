@@ -22,11 +22,9 @@ export class RegisterComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    this.authService.isAuthenticated().subscribe((isAuthenticated) => {
-      if (isAuthenticated) {
+      if (this.authService.isLogged()) {
         this.router.navigate(['/home']);
       }
-    });
   }
 
   validatePassword(password: string) {
@@ -55,12 +53,9 @@ export class RegisterComponent {
     const registrationData = { email: this.email, password: this.password };
     this.authService.register(registrationData).subscribe({
       next: (response) => {
-        console.log(response);
-        console.log('Registration successful');
         this.router.navigate(['/home']);
       },
       error: (err) => {
-        console.error(err);
         this.errorMessage = err.error.message;
       },
     });

@@ -5,9 +5,9 @@ using backend.Models;
 namespace backend.Data
 {
     //Mário
-    public class ApplicationDbContext : IdentityDbContext<User>
+    public class ICareServerContext : IdentityDbContext<User>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public ICareServerContext(DbContextOptions<ICareServerContext> options)
             : base(options)
         {
         }

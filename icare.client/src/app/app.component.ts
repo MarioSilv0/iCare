@@ -17,7 +17,7 @@ export class AppComponent {
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
       const currentRoute = this.router.url;
-      if (currentRoute.includes('login') || currentRoute.includes('register')) {
+      if (currentRoute.includes('login') || currentRoute.includes('register') || currentRoute.includes('password')) {
         this.showNavMenu = false;
       } else {
         this.showNavMenu = true;
