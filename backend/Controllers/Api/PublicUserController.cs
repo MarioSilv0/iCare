@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
-namespace backend.Controllers
+namespace backend.Controllers.Api
 {
-    public class PublicUserController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class PublicUserController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
 
@@ -15,7 +17,7 @@ namespace backend.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet]
+        [HttpGet("Edit/{id}")]
         public async Task<ActionResult<PublicUser>> Edit(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -27,6 +29,7 @@ namespace backend.Controllers
 
             var publicUser = new PublicUser
             {
+                Picture = user.Picture,
                 Name = user.Name,
                 Email = user.Email,
                 Birthdate = user.Birthdate,
@@ -37,7 +40,7 @@ namespace backend.Controllers
             return publicUser;
         }
 
-        [HttpPut]
+        [HttpPut("Edit/{id}")]
         public async Task<ActionResult<PublicUser>> Edit(string id, [FromBody] PublicUser model)
         {
             if (model == null || id != model.Id)
@@ -51,6 +54,7 @@ namespace backend.Controllers
                 return NotFound();
             }
 
+            user.Picture = string.IsNullOrEmpty(model.Picture)? user.Picture : model.Picture;
             user.Name = string.IsNullOrEmpty(model.Name) ? user.Name : model.Name;
             user.Email = string.IsNullOrEmpty(model.Email) ? user.Email : model.Email;
             user.Birthdate = model.Birthdate;

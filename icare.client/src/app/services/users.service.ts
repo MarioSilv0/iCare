@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class UsersService {
 
-  private url: string = 'https://localhost:7266/PublicUser/Edit/';
+  private url: string = 'https://localhost:7266/api/PublicUser/Edit/';
 
   constructor(private http: HttpClient) { }
 
@@ -21,6 +21,7 @@ export class UsersService {
 }
 
 export interface User {
+  picture: string;
   name: string;
   email: string;
   birthdate: Date;

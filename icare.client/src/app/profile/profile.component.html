@@ -10,7 +10,11 @@
 
   <form *ngIf="user" (ngSubmit)="updateUser()">
     <section id="userData">
-      <img id="profileImage" src="" alt="Profile Picture" />
+      <label class="hoverable" for="fileInput">
+        <img id="profileImage" [src]="user.picture ? user.picture : 'https://www.w3schools.com/howto/img_avatar.png'" />
+      </label>
+      <br />
+      <input id="fileInput" type='file' (change)="onSelectFile($event)">
       <div>
         <label for="userName">Name</label>
         <input type="text" id="userName" name="userName" [(ngModel)]="user.name" />
@@ -20,7 +24,7 @@
         <input type="date" id="userBirthdate" name="userBirthdate" [(ngModel)]="user.birthdate" min="1910-01-01" [max]="todayDate" required />
       </div>
       <div id="extraData">
-        <img src="" alt="Cogwheel Icon" />
+        <img src="/assets/images/cog.png" alt="Cogwheel Icon" />
         <div>
           <label for="userNotificacions">Notifications</label>
           <input type="checkbox" id="userNotificacions" name="userNotificacions" />

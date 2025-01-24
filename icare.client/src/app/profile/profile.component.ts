@@ -11,7 +11,9 @@ import { AuthService } from '../auth/auth.service';
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
-  public user: User = { name: 'A', email: 'A@example.com', birthdate: new Date(), height: 0, weight: 0 };
+  private id: string = '8e4bf929-e234-4019-afdb-5c170b428891';
+
+  public user: User = { picture: '', name: 'A', email: 'A@example.com', birthdate: new Date(), height: 0, weight: 0 };
   public todayDate: string;
 
   constructor(private router: Router, private service: UsersService, private authService: AuthService) {
@@ -24,9 +26,9 @@ export class ProfileComponent implements OnInit {
 
   getUser() {
     if (this.authService.isAuthenticated()) {
-      const id = this.authService.currentUser().user._id;
+      // const id = this.authService.currentUser().user._id;
 
-      this.service.getUser(id).subscribe(
+      this.service.getUser(this.id).subscribe(
         (result) => {
           this.user = result;
         },
@@ -46,5 +48,23 @@ export class ProfileComponent implements OnInit {
         console.error(error);
       }
     );
+  }
+
+  onSelectFile(event: Event | null): void {
+    if (!event) return;
+
+    const input = event.target as HTMLInputElement;
+
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      if (!file.type.startsWith('image/')) return;
+
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      reader.onload = () => {
+        if (typeof reader.result === 'string') this.user.picture = reader.result;
+      }
+    }
   }
 }
