@@ -12,8 +12,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250124185857_AddPictureColumn")]
-    partial class AddPictureColumn
+    [Migration("20250125104728_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,6 +158,60 @@ namespace backend.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("backend.Models.Preferences.Preference", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Preferences");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Vegetarian"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Vegan"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Carnivore"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Keto"
+                        });
+                });
+
+            modelBuilder.Entity("backend.Models.Preferences.UserPreference", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("PreferenceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "PreferenceId");
+
+                    b.HasIndex("PreferenceId");
+
+                    b.ToTable("UserPreferences");
+                });
+
             modelBuilder.Entity("backend.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -211,7 +265,6 @@ namespace backend.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Picture")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
@@ -319,6 +372,25 @@ namespace backend.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("backend.Models.Preferences.UserPreference", b =>
+                {
+                    b.HasOne("backend.Models.Preferences.Preference", "Preference")
+                        .WithMany("UserPreferences")
+                        .HasForeignKey("PreferenceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.User", "User")
+                        .WithMany("UserPreferences")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Preference");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("backend.Models.UserLog", b =>
                 {
                     b.HasOne("backend.Models.User", "User")
@@ -328,9 +400,16 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("backend.Models.Preferences.Preference", b =>
+                {
+                    b.Navigation("UserPreferences");
+                });
+
             modelBuilder.Entity("backend.Models.User", b =>
                 {
                     b.Navigation("Logs");
+
+                    b.Navigation("UserPreferences");
                 });
 #pragma warning restore 612, 618
         }

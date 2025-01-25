@@ -8,7 +8,7 @@ namespace backend.Models
     public class User : IdentityUser
     {
         [Display(Name = "Picture")]
-        public string Picture { get; set; }
+        public string? Picture { get; set; }
 
         [Required(ErrorMessage = "Name is mandatory.")]
         [Display(Name = "Name")]
