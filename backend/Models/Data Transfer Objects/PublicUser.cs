@@ -1,6 +1,7 @@
 ﻿using backend.Models.Preferences;
 using backend.Models.Restrictions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Any;
 
 namespace backend.Models
 {
@@ -17,30 +18,27 @@ namespace backend.Models
         public List<SelectionObject> Preferences { get; set; } = new();
         public List<SelectionObject> Restrictions { get; set; } = new();
 
-        public static async Task<PublicUser> CreatePublicUser(User user, PublicUser? model, Task<List<Preference>> listPreferences, Task<List<Restriction>> listRestrictions)
+        public PublicUser() { }
+        public PublicUser(User user, PublicUser? model, List<Preference> listPreferences, List<Restriction> listRestrictions)
         {
-            List<SelectionObject> preferences = (model != null) ? model.Preferences : await GetListAsync(listPreferences, p => p.Id, p => p.Name, id => user.UserPreferences.Any(up => up.PreferenceId == id));
-            List<SelectionObject> restrictions = (model != null) ? model.Restrictions : await GetListAsync(listRestrictions, r => r.Id, r => r.Name, id => user.UserRestrictions.Any(up => up.RestrictionId == id));
+            List<SelectionObject> preferences = (model != null) ? model.Preferences : GetSelectionList(listPreferences, e => e.Id, e => e.Name, id => user.UserPreferences.Any(up => up.PreferenceId == id));
+            List<SelectionObject> restrictions = (model != null) ? model.Restrictions : GetSelectionList(listRestrictions, e => e.Id, e => e.Name, id => user.UserRestrictions.Any(up => up.RestrictionId == id));
 
-            return new PublicUser
-            {
-                Picture = user.Picture,
-                Name = user.Name,
-                Email = user.Email,
-                Birthdate = user.Birthdate,
-                Notifications = user.Notifications,
-                Height = user.Height,
-                Weight = user.Weight,
-                Preferences = preferences,
-                Restrictions = restrictions,
-            };
+            Picture = user.Picture;
+            Name = user.Name;
+            Email = user.Email;
+            Birthdate = user.Birthdate;
+            Notifications = user.Notifications;
+            Height = user.Height;
+            Weight = user.Weight;
+            Preferences = preferences;
+            Restrictions = restrictions;
+            
         }
 
-        private static async Task<List<SelectionObject>> GetListAsync<T>(Task<List<T>> task, Func<T, int> idSelector, Func<T, string> nameSelector, Func<int, bool> isSelectedLogic)
+        private static List<SelectionObject> GetSelectionList<T>(List<T> list, Func<T, int> idSelector, Func<T, string> nameSelector, Func<int, bool> isSelectedLogic)
         {
-            var result = await task;
-
-            return result.Select(e => new SelectionObject
+            return list.Select(e => new SelectionObject
             {
                 Id = idSelector(e),
                 Name = nameSelector(e),

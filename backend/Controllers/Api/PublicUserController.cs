@@ -1,5 +1,6 @@
 ﻿using backend.Data;
 using backend.Models;
+using backend.Models.Extensions;
 using backend.Models.Preferences;
 using backend.Models.Restrictions;
 using Microsoft.AspNetCore.Mvc;
@@ -12,63 +13,66 @@ namespace backend.Controllers.Api
     public class PublicUserController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<PublicUserController> _logger;
 
-        public PublicUserController(ApplicationDbContext context)
+        public PublicUserController(ApplicationDbContext context, ILogger<PublicUserController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<PublicUser>> Edit(string id)
         {
-            var user = await _context.Users.Include(u => u.UserPreferences)
-                                           .ThenInclude(up => up.Preference)
-                                           .Include(u => u.UserRestrictions)
-                                           .ThenInclude(ur => ur.Restriction)
-                                           .FirstOrDefaultAsync(u => u.Id == id);
+            try
+            {
+                var user = await _context.Users.Include(u => u.UserPreferences)
+                                               .ThenInclude(up => up.Preference)
+                                               .Include(u => u.UserRestrictions)
+                                               .ThenInclude(ur => ur.Restriction)
+                                               .FirstOrDefaultAsync(u => u.Id == id);
 
-            if (user == null) return NotFound();
+                if (user == null) return NotFound();
 
-            return await PublicUser.CreatePublicUser(user, null, _context.Preferences.ToListAsync(), _context.Restrictions.ToListAsync());
+                var preferences = await _context.Preferences.ToListAsync();
+                var restrictions = await _context.Restrictions.ToListAsync();
+
+                return Ok(new PublicUser(user, null, preferences, restrictions));
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error retrieving user with ID {Id}", id);
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<PublicUser>> Edit(string id, [FromBody] PublicUser model)
         {
-            if (model == null || id != model.Id) return BadRequest();
+            if (model == null || id != model.Id) return BadRequest("Invalid data provided.");
 
-            var user = await _context.Users.Include(u => u.UserPreferences)
-                                           .Include(u => u.UserRestrictions)
-                                           .FirstOrDefaultAsync(u => u.Id == id);
+            try {
+                var user = await _context.Users.Include(u => u.UserPreferences)
+                                               .Include(u => u.UserRestrictions)
+                                               .FirstOrDefaultAsync(u => u.Id == id);
 
-            if (user == null) return NotFound();
+                if (user == null) return NotFound();
 
-            user.Picture = string.IsNullOrEmpty(model.Picture) ? user.Picture : model.Picture;
-            user.Name = string.IsNullOrEmpty(model.Name) ? user.Name : model.Name;
-            user.Email = string.IsNullOrEmpty(model.Email) ? user.Email : model.Email;
-            user.Birthdate = model.Birthdate;
-            user.Notifications = model.Notifications;
-            user.Height = model.Height <= 0 || model.Height > 3 ? user.Height : model.Height;
-            user.Weight = model.Weight <= 0 || model.Weight > 700 ? user.Weight : model.Weight;
+                user.UpdateFromModel(model);
 
-            UpdateCollection(user.UserPreferences, model.Preferences, e => new UserPreference { UserId = user.Id, PreferenceId = e.Id });
-            UpdateCollection(user.UserRestrictions, model.Restrictions, e => new UserRestriction { UserId = user.Id, RestrictionId = e.Id });
+                user.UserPreferences.UpdateCollection(model.Preferences, e => new UserPreference { UserId = user.Id, PreferenceId = e.Id });
+                user.UserRestrictions.UpdateCollection(model.Restrictions, e => new UserRestriction { UserId = user.Id, RestrictionId = e.Id });
 
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync();
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
 
-            return await PublicUser.CreatePublicUser(user, model, _context.Preferences.ToListAsync(), _context.Restrictions.ToListAsync());
-        }
-
-        private void UpdateCollection<T>(ICollection<T> collection, List<SelectionObject> list, Func<SelectionObject, T> createElement) 
-        {
-            collection.Clear();
-            foreach(SelectionObject e in list)
+                return new PublicUser(user, model, [], []);
+            }
+            catch (Exception ex)
             {
-                if (!e.IsSelected) continue;
-
-                collection.Add(createElement(e));
-            }    
+                _logger.LogError(ex, "Error updating user with ID {Id}", id);
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
         }
     }
 }
