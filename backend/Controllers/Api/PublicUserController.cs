@@ -43,6 +43,7 @@ namespace backend.Controllers.Api
                 Name = user.Name,
                 Email = user.Email,
                 Birthdate = user.Birthdate,
+                Notifications = user.Notifications,
                 Height = user.Height,
                 Weight = user.Weight,
                 Preferences = preferences.Select(p => new SelectionObject
@@ -83,6 +84,7 @@ namespace backend.Controllers.Api
             user.Name = string.IsNullOrEmpty(model.Name) ? user.Name : model.Name;
             user.Email = string.IsNullOrEmpty(model.Email) ? user.Email : model.Email;
             user.Birthdate = model.Birthdate;
+            user.Notifications = model.Notifications;
             user.Height = model.Height <= 0 || model.Height > 3 ? user.Height : model.Height;
             user.Weight = model.Weight <= 0 || model.Weight > 700 ? user.Weight : model.Weight;
 

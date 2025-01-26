@@ -27,7 +27,7 @@
         <img src="/assets/images/cog.png" alt="Cogwheel Icon" />
         <div>
           <label for="userNotificacions">Notifications</label>
-          <input type="checkbox" id="userNotificacions" name="userNotificacions" />
+          <input type="checkbox" id="userNotificacions" name="userNotificacions" [(ngModel)]="user.notifications" />
         </div>
         <div>
           <input type="button" value="Change Password" />

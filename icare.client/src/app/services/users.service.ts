@@ -36,6 +36,7 @@ export interface User {
   name: string;
   email: string;
   birthdate: Date;
+  notifications: Boolean;
   height: number;
   weight: number;
   preferences: Preference[];

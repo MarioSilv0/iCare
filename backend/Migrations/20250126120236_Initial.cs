@@ -35,6 +35,7 @@ namespace backend.Migrations
                     Picture = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Birthdate = table.Column<DateOnly>(type: "date", nullable: false),
+                    Notifications = table.Column<bool>(type: "bit", nullable: false),
                     Height = table.Column<float>(type: "real", nullable: false),
                     Weight = table.Column<float>(type: "real", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),

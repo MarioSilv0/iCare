@@ -17,6 +17,9 @@ namespace backend.Models
         [Display(Name = "Birthdate")]
         public DateOnly Birthdate { get; set; }
 
+        [Display(Name = "Notifications")]
+        public Boolean Notifications { get; set; }
+
         [Display(Name = "Height")]
         public float Height { get; set; }
 

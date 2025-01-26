@@ -9,6 +9,7 @@ namespace backend.Models
         public string? Name { get; set; }
         public string? Email { get; set; }
         public DateOnly Birthdate { get; set; }
+        public Boolean Notifications { get; set; }
         public float Height { get; set; }
         public float Weight { get; set; }
         public List<SelectionObject> Preferences { get; set; } = new();

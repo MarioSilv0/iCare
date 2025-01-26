@@ -107,7 +107,6 @@ label.hoverable {
   padding: 10px 15px;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
 }
 
 #userData input[type="button"] {
@@ -128,6 +127,15 @@ label.hoverable {
 #userData input[type="submit"]:active {
   background-color: #3e8e41;
   transform: scale(0.95);
+}
+
+#userName:hover,
+#userEmail:hover {
+  cursor: text;
+}
+
+#userBirthdate:hover {
+  cursor: pointer;
 }
 
 input[type="text"],
