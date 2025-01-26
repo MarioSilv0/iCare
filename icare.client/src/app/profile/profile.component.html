@@ -44,34 +44,18 @@
     <section>
       <p>Preferences</p>
       <ul>
-        <li>
-          <label for="vegetarian">Vegetarian</label>
-          <input type="checkbox" id="vegetarian" name="vegetarian" value="vegetarian" />
-        </li>
-        <li>
-          <label for="vegan">Vegan</label>
-          <input type="checkbox" id="vegan" name="vegan" value="vegan" />
-        </li>
-        <li>
-          <label for="carnivore">Carnivore</label>
-          <input type="checkbox" id="carnivore" name="carnivore" value="carnivore" />
-        </li>
-        <li>
-          <label for="keto">Keto</label>
-          <input type="checkbox" id="keto" name="keto" value="keto" />
+        <li *ngFor="let p of user.preferences">
+          <label [for]="p.name">{{ p.name }}</label>
+          <input type="checkbox" [id]="p.name" [name]="p.name" [(ngModel)]="p.isSelected" />
         </li>
       </ul>
     </section>
     <section>
       <p>Restrictions</p>
       <ul>
-        <li>
-          <label for="lactose">Lactose Intolerance</label>
-          <input type="checkbox" id="lactose" name="lactose" value="lactose" />
-        </li>
-        <li>
-          <label for="gluten">Gluten Intolerance</label>
-          <input type="checkbox" id="gluten" name="gluten" value="gluten" />
+        <li *ngFor="let r of user.restrictions">
+          <label [for]="r.name">{{ r.name }}</label>
+          <input type="checkbox" [id]="r.name" [name]="r.name" [(ngModel)]="r.isSelected" />
         </li>
       </ul>
     </section>

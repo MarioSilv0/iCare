@@ -1,6 +1,6 @@
 ﻿using backend.Models.Preferences;
+using backend.Models.Restrictions;
 using Microsoft.AspNetCore.Identity;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace backend.Models
@@ -26,7 +26,8 @@ namespace backend.Models
         [Display(Name = "Preferences")]
         public ICollection<UserPreference> UserPreferences { get; set; }
 
-        //public ICollection<Restrictions>? Restrictions { get; set; }
+        [Display(Name = "Restrictions")]
+        public ICollection<UserRestriction> UserRestrictions { get; set; }
 
         public ICollection<UserLog>? Logs { get; set; }
     }

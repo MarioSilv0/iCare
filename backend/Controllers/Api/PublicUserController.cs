@@ -1,7 +1,11 @@
-﻿using backend.Models;
+﻿using backend.Data;
+using backend.Models;
+using backend.Models.Preferences;
+using backend.Models.Restrictions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace backend.Controllers.Api
@@ -10,23 +14,29 @@ namespace backend.Controllers.Api
     [ApiController]
     public class PublicUserController : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
+        private readonly ApplicationDbContext _context;
 
-        public PublicUserController(UserManager<User> userManager)
+        public PublicUserController(ApplicationDbContext context)
         {
-            _userManager = userManager;
+            _context = context;
         }
 
-        [HttpGet("Edit/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<PublicUser>> Edit(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _context.Users.Include(u => u.UserPreferences)
+                                           .ThenInclude(up => up.Preference)
+                                           .Include(u => u.UserRestrictions) 
+                                           .ThenInclude(ur => ur.Restriction)
+                                           .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null)
             {
                 return NotFound();
             }
 
+            var preferences = await _context.Preferences.ToListAsync();
+            var restrictions = await _context.Restrictions.ToListAsync();
             var publicUser = new PublicUser
             {
                 Picture = user.Picture,
@@ -34,13 +44,25 @@ namespace backend.Controllers.Api
                 Email = user.Email,
                 Birthdate = user.Birthdate,
                 Height = user.Height,
-                Weight = user.Weight
+                Weight = user.Weight,
+                Preferences = preferences.Select(p => new SelectionObject
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    IsSelected = user.UserPreferences.Any(up => up.PreferenceId == p.Id),
+                }).ToList(),
+                Restrictions = restrictions.Select(r => new SelectionObject
+                {
+                    Id = r.Id,
+                    Name = r.Name,
+                    IsSelected = user.UserRestrictions.Any(ur => ur.RestrictionId == r.Id),
+                }).ToList(),
             };
 
             return publicUser;
         }
 
-        [HttpPut("Edit/{id}")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<PublicUser>> Edit(string id, [FromBody] PublicUser model)
         {
             if (model == null || id != model.Id)
@@ -48,7 +70,10 @@ namespace backend.Controllers.Api
                 return BadRequest();
             }
 
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _context.Users.Include(u => u.UserPreferences)
+                                           .Include(u => u.UserRestrictions)
+                                           .FirstOrDefaultAsync(u => u.Id == id);
+
             if (user == null)
             {
                 return NotFound();
@@ -61,7 +86,32 @@ namespace backend.Controllers.Api
             user.Height = model.Height <= 0 || model.Height > 3 ? user.Height : model.Height;
             user.Weight = model.Weight <= 0 || model.Weight > 700 ? user.Weight : model.Weight;
 
-            await _userManager.UpdateAsync(user);
+            user.UserPreferences.Clear();
+            foreach(SelectionObject p in model.Preferences)
+            {
+                if (!p.IsSelected) continue;
+
+                user.UserPreferences.Add(new UserPreference
+                {
+                    UserId = user.Id,
+                    PreferenceId = p.Id
+                });
+            }
+
+            user.UserRestrictions.Clear();
+            foreach (SelectionObject r in model.Restrictions)
+            {
+                if (!r.IsSelected) continue;
+
+                user.UserRestrictions.Add(new UserRestriction
+                {
+                    UserId = user.Id,
+                    RestrictionId = r.Id
+                });
+            }
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
 
             PublicUser pu = new PublicUser
             {
@@ -69,7 +119,8 @@ namespace backend.Controllers.Api
                 Email = user.Email,
                 Birthdate = user.Birthdate,
                 Height = user.Height,
-                Weight = user.Weight
+                Weight = user.Weight,
+                Preferences = model.Preferences
             };
 
             return pu;

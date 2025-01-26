@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class UsersService {
 
-  private url: string = 'https://localhost:7266/api/PublicUser/Edit/';
+  private url: string = 'https://localhost:7266/api/PublicUser/';
 
   constructor(private http: HttpClient) { }
 
@@ -19,6 +19,17 @@ export class UsersService {
     return this.http.put<User>(this.url + id, { ...user, id });
   }
 }
+interface Preference {
+  id: number;
+  name: string;
+  isSelected: boolean;
+}
+
+interface Restrictions {
+  id: number;
+  name: string;
+  isSelected: boolean;
+}
 
 export interface User {
   picture: string;
@@ -27,4 +38,6 @@ export interface User {
   birthdate: Date;
   height: number;
   weight: number;
+  preferences: Preference[];
+  restrictions: Restrictions[];
 }

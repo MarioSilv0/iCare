@@ -11,9 +11,10 @@ import { AuthService } from '../auth/auth.service';
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
-  private id: string = 'e7bb97a1-466d-4ae2-b7b2-e401b11f0d52';
+  private id: string = 'c1e31370-78d4-4f64-a402-b776bb330eee';
 
-  public user: User = { picture: '', name: 'A', email: 'A@example.com', birthdate: new Date(), height: 0, weight: 0 };
+  public user: User = {
+    picture: '', name: 'A', email: 'A@example.com', birthdate: new Date(), height: 0, weight: 0, preferences: [], restrictions: [] };
   public todayDate: string;
 
   constructor(private router: Router, private service: UsersService, private authService: AuthService) {

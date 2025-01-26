@@ -12,7 +12,7 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250125104728_Initial")]
+    [Migration("20250126105702_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -212,6 +212,50 @@ namespace backend.Migrations
                     b.ToTable("UserPreferences");
                 });
 
+            modelBuilder.Entity("backend.Models.Restrictions.Restriction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Restrictions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Lactose Intolerance"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Gluten Intolerance"
+                        });
+                });
+
+            modelBuilder.Entity("backend.Models.Restrictions.UserRestriction", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("RestrictionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "RestrictionId");
+
+                    b.HasIndex("RestrictionId");
+
+                    b.ToTable("UserRestrictions");
+                });
+
             modelBuilder.Entity("backend.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -391,6 +435,25 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("backend.Models.Restrictions.UserRestriction", b =>
+                {
+                    b.HasOne("backend.Models.Restrictions.Restriction", "Restriction")
+                        .WithMany("UserRestrictions")
+                        .HasForeignKey("RestrictionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.User", "User")
+                        .WithMany("UserRestrictions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restriction");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("backend.Models.UserLog", b =>
                 {
                     b.HasOne("backend.Models.User", "User")
@@ -405,11 +468,18 @@ namespace backend.Migrations
                     b.Navigation("UserPreferences");
                 });
 
+            modelBuilder.Entity("backend.Models.Restrictions.Restriction", b =>
+                {
+                    b.Navigation("UserRestrictions");
+                });
+
             modelBuilder.Entity("backend.Models.User", b =>
                 {
                     b.Navigation("Logs");
 
                     b.Navigation("UserPreferences");
+
+                    b.Navigation("UserRestrictions");
                 });
 #pragma warning restore 612, 618
         }
