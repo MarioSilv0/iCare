@@ -1,7 +1,15 @@
-﻿namespace backend.Models.Restrictions
+﻿/// <summary>
+/// This file defines the <c>UserRestriction</c> class, which models the association
+/// between a user and a restriction in the system.
+/// </summary>
+/// <author>Luís Martins - 202100239</author>
+/// <author>João Morais  - 202001541</author>
+/// <date>Last Modified: 2025-01-27</date>
+
+namespace backend.Models.Restrictions
 {
     /// <summary>
-    /// Represents the relationship between a user and a restriction.
+    /// Class <c>UserRestriction</c> represents the association between a user and a restriction.
     /// </summary>
     public class UserRestriction
     {
@@ -11,17 +19,17 @@
         public string UserId { get; set; }
 
         /// <value>
-        /// Property <c>User</c> provides navigation to the associated user entity.
+        /// Property <c>User</c> represents the user associated with the restriction.
         /// </value>
         public User User { get; set; }
 
         /// <value>
-        /// Property <c>RestrictionId</c> represents the unique identifier of the restriction associated with the user.
+        /// Property <c>RestrictionId</c> represents the unique identifier of the restriction.
         /// </value>
         public int RestrictionId { get; set; }
 
         /// <value>
-        /// Property <c>Restriction</c> provides navigation to the associated restriction entity.
+        /// Property <c>Restriction</c> represents the restriction associated with the user.
         /// </value>
         public Restriction Restriction { get; set; }
     }

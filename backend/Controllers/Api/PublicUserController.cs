@@ -6,8 +6,21 @@ using backend.Models.Restrictions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+/// <summary>
+/// This file defines the <c>PublicUserController</c> class, which provides
+/// API endpoints for managing public user profiles, including retrieving and
+/// updating user data.
+/// </summary>
+/// <author>Luís Martins - 202100239</author>
+/// <author>João Morais  - 202001541</author>
+/// <date>Last Modified: 2025-01-27</date>
+
 namespace backend.Controllers.Api
 {
+    /// <summary>
+    /// Controller <c>PublicUserController</c> provides endpoints for interacting with
+    /// public user profiles, including retrieving and updating user data.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class PublicUserController : ControllerBase
@@ -15,12 +28,24 @@ namespace backend.Controllers.Api
         private readonly ApplicationDbContext _context;
         private readonly ILogger<PublicUserController> _logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <c>PublicUserController</c> class.
+        /// </summary>
+        /// <param name="context">The database context for interacting with the database.</param>
+        /// <param name="logger">The logger for recording application activity.</param>
         public PublicUserController(ApplicationDbContext context, ILogger<PublicUserController> logger)
         {
             _context = context;
             _logger = logger;
         }
 
+        /// <summary>
+        /// Retrieves the public profile of a user based on their ID.
+        /// </summary>
+        /// <param name="id">The unique identifier of the user.</param>
+        /// <returns>
+        /// An <c>ActionResult</c> containing the <c>PublicUser</c> object or an error response.
+        /// </returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<PublicUser>> Edit(string id)
         {
@@ -46,6 +71,14 @@ namespace backend.Controllers.Api
             }
         }
 
+        /// <summary>
+        /// Updates the public profile of a user based on their ID.
+        /// </summary>
+        /// <param name="id">The unique identifier of the user to update.</param>
+        /// <param name="model">The <c>PublicUser</c> model containing the updated data.</param>
+        /// <returns>
+        /// An <c>ActionResult</c> containing the updated <c>PublicUser</c> object or an error response.
+        /// </returns>
         [HttpPut("{id}")]
         public async Task<ActionResult<PublicUser>> Edit(string id, [FromBody] PublicUser model)
         {
