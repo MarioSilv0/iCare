@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UsersService, User } from '../services/users.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -10,24 +11,33 @@ import { Router } from '@angular/router';
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
-  private id: string = '4362f355-de07-4815-900a-8458338f2ab5';
+  private id: string = '4ca36193-ffc6-4664-8708-90b0df03ef59';
 
-  public user: User = { name: 'A', email: 'A@example.com', birthdate: new Date(), height: 0, weight: 0 };
-  constructor(private router: Router, private service: UsersService) { }
+  public user: User = {
+    picture: '', name: 'A', email: 'A@example.com', birthdate: new Date(), notifications: true, height: 0, weight: 0, preferences: [], restrictions: [] };
+  public todayDate: string;
 
-  ngOnInit() {
-    this.getUser(this.id);
+  constructor(private router: Router, private service: UsersService, private authService: AuthService) {
+    this.todayDate = new Date().toISOString().split('T')[0];
   }
 
-  getUser(id: string) {
-    this.service.getUser(id).subscribe(
-      (result) => {
-        this.user = result;
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
+  ngOnInit() {
+    this.getUser();
+  }
+
+  getUser() {
+    if (this.authService.isAuthenticated()) {
+      // const id = this.authService.currentUser().user._id;
+
+      this.service.getUser(this.id).subscribe(
+        (result) => {
+          this.user = result;
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    } else this.router.navigate(['/login']);
   }
 
   updateUser() {
@@ -39,5 +49,23 @@ export class ProfileComponent implements OnInit {
         console.error(error);
       }
     );
+  }
+
+  onSelectFile(event: Event | null): void {
+    if (!event) return;
+
+    const input = event.target as HTMLInputElement;
+
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      if (!file.type.startsWith('image/')) return;
+
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      reader.onload = () => {
+        if (typeof reader.result === 'string') this.user.picture = reader.result;
+      }
+    }
   }
 }

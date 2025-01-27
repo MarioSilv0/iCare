@@ -10,20 +10,24 @@
 
   <form *ngIf="user" (ngSubmit)="updateUser()">
     <section id="userData">
-      <img id="profileImage" src="" alt="Profile Picture" />
+      <label class="hoverable" for="fileInput">
+        <img id="profileImage" [src]="user.picture ? user.picture : 'https://www.w3schools.com/howto/img_avatar.png'" />
+      </label>
+      <br />
+      <input id="fileInput" type='file' (change)="onSelectFile($event)">
       <div>
         <label for="userName">Name</label>
         <input type="text" id="userName" name="userName" [(ngModel)]="user.name" />
         <label for="userEmail">Email</label>
-        <input type="email" id="userEmail" name="userEmail" [(ngModel)]="user.email" />
+        <input type="email" id="userEmail" name="userEmail" [(ngModel)]="user.email" required />
         <label for="userBirthdate">Birthdate</label>
-        <input type="date" id="userBirthdate" name="userBirthdate" [(ngModel)]="user.birthdate" />
+        <input type="date" id="userBirthdate" name="userBirthdate" [(ngModel)]="user.birthdate" min="1910-01-01" [max]="todayDate" required />
       </div>
       <div id="extraData">
-        <img src="" alt="Cogwheel Icon" />
+        <img src="/assets/images/cog.png" alt="Cogwheel Icon" />
         <div>
           <label for="userNotificacions">Notifications</label>
-          <input type="checkbox" id="userNotificacions" name="userNotificacions" />
+          <input type="checkbox" id="userNotificacions" name="userNotificacions" [(ngModel)]="user.notifications" />
         </div>
         <div>
           <input type="button" value="Change Password" />
@@ -32,42 +36,26 @@
       </div>
     </section>
     <section id="userCharacteristics">
-      <label for="userHeight">Height</label>
-      <input type="number" id="userHeight" name="userHeight" [(ngModel)]="user.height" />
-      <label for="userWeight">Weight</label>
-      <input type="number" id="userWeight" name="userWeight" [(ngModel)]="user.weight" />
+      <label for="userHeight">Height (m)</label>
+      <input type="number" id="userHeight" name="userHeight" [(ngModel)]="user.height" min=0 max=3 required />
+      <label for="userWeight">Weight (kg)</label>
+      <input type="number" id="userWeight" name="userWeight" [(ngModel)]="user.weight" min=0 max=700 required />
     </section>
     <section>
       <p>Preferences</p>
       <ul>
-        <li>
-          <label for="vegetarian">Vegetarian</label>
-          <input type="checkbox" id="vegetarian" name="vegetarian" value="vegetarian" />
-        </li>
-        <li>
-          <label for="vegan">Vegan</label>
-          <input type="checkbox" id="vegan" name="vegan" value="vegan" />
-        </li>
-        <li>
-          <label for="carnivore">Carnivore</label>
-          <input type="checkbox" id="carnivore" name="carnivore" value="carnivore" />
-        </li>
-        <li>
-          <label for="keto">Keto</label>
-          <input type="checkbox" id="keto" name="keto" value="keto" />
+        <li *ngFor="let p of user.preferences">
+          <label [for]="p.name">{{ p.name }}</label>
+          <input type="checkbox" [id]="p.name" [name]="p.name" [(ngModel)]="p.isSelected" />
         </li>
       </ul>
     </section>
     <section>
       <p>Restrictions</p>
       <ul>
-        <li>
-          <label for="lactose">Lactose Intolerance</label>
-          <input type="checkbox" id="lactose" name="lactose" value="lactose" />
-        </li>
-        <li>
-          <label for="gluten">Gluten Intolerance</label>
-          <input type="checkbox" id="gluten" name="gluten" value="gluten" />
+        <li *ngFor="let r of user.restrictions">
+          <label [for]="r.name">{{ r.name }}</label>
+          <input type="checkbox" [id]="r.name" [name]="r.name" [(ngModel)]="r.isSelected" />
         </li>
       </ul>
     </section>
