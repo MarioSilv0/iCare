@@ -28,6 +28,7 @@ namespace backend.Controllers.Api
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             if (!ModelState.IsValid)
@@ -80,6 +81,7 @@ namespace backend.Controllers.Api
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] LoginModel model)
         {
             if (!ModelState.IsValid)
