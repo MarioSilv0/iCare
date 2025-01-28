@@ -26,7 +26,7 @@ export class ProfileComponent implements OnInit {
   }
 
   getUser() {
-    if (this.authService.isAuthenticated()) {
+    if (this.authService.isLogged()) {
       // const id = this.authService.currentUser().user._id;
 
       this.service.getUser(this.id).subscribe(

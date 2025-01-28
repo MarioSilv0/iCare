@@ -20,12 +20,12 @@ namespace backend.Models.Preferences
         /// <value>
         /// Property <c>Name</c> represents the name of the preference.
         /// </value>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <value>
         /// Property <c>UserPreferences</c> represents the collection of user-preference associations
         /// that reference this preference.
         /// </value>
-        public ICollection<UserPreference> UserPreferences { get; set; }
+        public ICollection<UserPreference>? UserPreferences { get; set; }
     }
 }

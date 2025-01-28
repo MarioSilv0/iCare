@@ -20,12 +20,12 @@ namespace backend.Models.Restrictions
         /// <value>
         /// Property <c>Name</c> represents the name of the restriction.
         /// </value>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <value>
         /// Property <c>UserRestrictions</c> represents the collection of user-restriction associations
         /// that reference this restriction.
         /// </value>
-        public ICollection<UserRestriction> UserRestrictions { get; set; }
+        public ICollection<UserRestriction>? UserRestrictions { get; set; }
     }
 }
