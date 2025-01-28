@@ -3,18 +3,16 @@ using Microsoft.EntityFrameworkCore;
 using backend.Models;
 using backend.Models.Preferences;
 using backend.Models.Restrictions;
+using Microsoft.AspNetCore.Identity;
 
 namespace backend.Data
 {
-    //Mário
+    //Mário e Luis
     public class ICareServerContext : IdentityDbContext<User>
-    {
-        public ICareServerContext(DbContextOptions<ICareServerContext> options)
-            : base(options)
-        {
-        }
-        public DbSet<backend.Models.User> User { get; set; } = default!;
-        public DbSet<backend.Models.UserLog> UserLogs { get; set; } = default!;
+{
+        public ICareServerContext(DbContextOptions<ICareServerContext> options) : base(options) {}
+
+        public DbSet<UserLog> UserLogs { get; set; } = default!;
         public DbSet<Preference> Preferences { get; set; }
         public DbSet<UserPreference> UserPreferences { get; set; }
         public DbSet<Restriction> Restrictions { get; set; }
@@ -22,7 +20,8 @@ namespace backend.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder); 
+
 
             modelBuilder.Entity<UserPreference>()
                 .HasKey(up => new { up.UserId, up.PreferenceId }); // Composite key
@@ -54,8 +53,8 @@ namespace backend.Data
                 new Preference { Id = 4, Name = "Keto" }
             );
             modelBuilder.Entity<Restriction>().HasData(
-                new Preference { Id = 1, Name = "Lactose Intolerance" },
-                new Preference { Id = 2, Name = "Gluten Intolerance" }
+                new Restriction { Id = 1, Name = "Lactose Intolerance" },
+                new Restriction { Id = 2, Name = "Gluten Intolerance" }
             );
         }
 

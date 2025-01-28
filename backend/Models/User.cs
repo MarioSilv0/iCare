@@ -7,19 +7,19 @@ namespace backend.Models
 {
     public class User : IdentityUser
     {
-        [Display(Name = "Picture")]
-        public string? Picture { get; set; }
-
-        [PersonalData]
         [Required(ErrorMessage = "Name is mandatory.")]
         [Display(Name = "Name")]
-        public required string Name { get; set; }
+        [PersonalData]
+        public string Name { get; set; }
+
+        [Display(Name = "Picture")]
+        public string? Picture { get; set; }
 
         [Display(Name = "Birthdate")]
         public DateOnly Birthdate { get; set; }
 
         [Display(Name = "Notifications")]
-        public Boolean Notifications { get; set; }
+        public bool Notifications { get; set; }
 
         [Display(Name = "Height")]
         public float Height { get; set; }
@@ -28,10 +28,10 @@ namespace backend.Models
         public float Weight { get; set; }
 
         [Display(Name = "Preferences")]
-        public ICollection<UserPreference> UserPreferences { get; set; }
+        public ICollection<UserPreference>? UserPreferences { get; set; }
 
         [Display(Name = "Restrictions")]
-        public ICollection<UserRestriction> UserRestrictions { get; set; }
+        public ICollection<UserRestriction>? UserRestrictions { get; set; }
 
         public ICollection<UserLog>? Logs { get; set; }
 

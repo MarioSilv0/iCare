@@ -80,7 +80,7 @@ namespace backend.Controllers.Api
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        public async Task<IActionResult> Register([FromBody] LoginModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -118,16 +118,10 @@ namespace backend.Controllers.Api
 
     public class LoginModel
     {
-        public string Email { get; set; }
+        public required string Email { get; set; }
 
-        public string Password { get; set; }
+        public required string Password { get; set; }
 
-    }
-    public class RegisterModel
-    {
-        public string Email { get; set; }
-
-        public string Password { get; set; }
     }
 
 }

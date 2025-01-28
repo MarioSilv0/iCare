@@ -11,14 +11,9 @@ using backend.Data;
 
 namespace backend.Migrations
 {
-<<<<<<<< HEAD:backend/Data/Migrations/20250117102442_Initial.Designer.cs
     [DbContext(typeof(ICareServerContext))]
-    [Migration("20250117102442_Initial")]
-========
-    [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250126120236_Initial")]
->>>>>>>> luis:backend/Data/Migrations/20250126120236_Initial.Designer.cs
-    partial class Initial
+    [Migration("20250128042153_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -172,7 +167,6 @@ namespace backend.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -226,7 +220,6 @@ namespace backend.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

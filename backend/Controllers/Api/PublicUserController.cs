@@ -25,7 +25,7 @@ namespace backend.Controllers.Api
     [ApiController]
     public class PublicUserController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICareServerContext _context;
         private readonly ILogger<PublicUserController> _logger;
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace backend.Controllers.Api
         /// </summary>
         /// <param name="context">The database context for interacting with the database.</param>
         /// <param name="logger">The logger for recording application activity.</param>
-        public PublicUserController(ApplicationDbContext context, ILogger<PublicUserController> logger)
+        public PublicUserController(ICareServerContext context, ILogger<PublicUserController> logger)
         {
             _context = context;
             _logger = logger;
