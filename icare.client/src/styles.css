@@ -14,6 +14,7 @@
   --bg-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px,
     rgba(0, 0, 0, 0.23) 0px 6px 6px;
 }
+
 *,
 *::before,
 *::after {
@@ -22,56 +23,72 @@
   font-family: var(--bg-font);
   box-sizing: border-box !important;
 }
+
 body {
-  width: 100vw;
-  min-height: 100vh;
+  width: 100vw !important;
+  min-height: 100vh !important;
 }
+
 .bg-bege {
   background: var(--bg-bege) !important;
 }
+
 .bg-bege-contrast {
   background: var(--bg-bege-contrast) !important;
 }
+
 .bg-vermelho {
   background: var(--bg-vermelho) !important;
 }
+
 .bg-vermelho-contrast {
   background: var(--bg-vermelho-contrast) !important;
 }
+
 .bg-verde {
   background: var(--bg-verde) !important;
 }
+
 .bg-verde-contrast {
   background: var(--bg-verde-contrast) !important;
 }
+
 .bg-azul {
   background: var(--bg-azul) !important;
 }
+
 .bg-cinzento {
   background: var(--bg-cinzento) !important;
 }
+
 .bg-branco {
   background: var(--bg-branco) !important;
 }
+
 .bg-preto {
   background: var(--bg-preto) !important;
 }
+
 input::placeholder {
   color: var(--bg-cinzento) !important;
 }
+
 input[type="button"],
 input[type="submit"],
 button {
   color: var(--bg-branco) !important;
 }
+
 input[type="text"],
 input[type="email"],
 input[type="password"] {
   color: var(--bg-preto) !important;
 }
+
 .radius {
   border-radius: var(--bg-radius) !important;
 }
+
 .shadow {
   box-shadow: var(--bg-shadow) !important;
 }
