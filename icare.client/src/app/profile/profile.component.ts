@@ -11,7 +11,7 @@ import { AuthService } from '../auth/auth.service';
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
-  private id: string = '4ca36193-ffc6-4664-8708-90b0df03ef59';
+  private id: string = 'ffb7c334-3448-4a5c-a09a-33376f3fdc8d';
 
   public user: User = {
     picture: '', name: 'A', email: 'A@example.com', birthdate: new Date(), notifications: true, height: 0, weight: 0, preferences: [], restrictions: [] };
