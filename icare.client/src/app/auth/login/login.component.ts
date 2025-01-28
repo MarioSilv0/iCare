@@ -8,18 +8,18 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./login.component.css'],
 })
 
-  //Mário
+//Mário
 export class LoginComponent {
   email: string = '';
   password: string = '';
-  errorMessage: string | null = null;
+  errorMessage: string | null = '';
   showPassword: boolean = false;
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     if (this.authService.isLogged()) {
