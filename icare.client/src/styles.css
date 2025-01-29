@@ -96,3 +96,24 @@ input[type="password"] {
 .py {
   padding-bottom: 1rem;
 }
+
+#btn-signout {
+  background-color: var(--bg-branco);
+  color: var(--bg-preto);
+  position: relative;
+}
+
+#btn-signout::after {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  bottom: 0;
+  right: 0;
+  transition: 100ms ease-in-out;
+}
+
+#btn-signout:hover::after {
+  width: 100px;
+  background-color: var(--bg-preto);
+}
