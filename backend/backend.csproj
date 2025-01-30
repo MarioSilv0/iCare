@@ -5,23 +5,34 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 	  <UserSecretsId>aspnet-backend-c80f095b-a17b-41c2-a4f0-c8eb241a6330</UserSecretsId>
+	  <SpaRoot>..\icare.client</SpaRoot>
+	  <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
+	  <SpaProxyServerUrl>https://localhost:4200</SpaProxyServerUrl>
   </PropertyGroup>
 
   <ItemGroup>
+	<PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
 	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
 	<PackageReference Include="microsoft.aspnetcore.components.quickgrid.entityframeworkadapter" Version="8.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.11" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.11">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.3.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.3.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
 	<PackageReference Include="Swashbuckle.AspNetCore" Version="7.1.0" />
 	<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.16" />
+	<PackageReference Include="microsoft.aspnetcore.spaproxy" Version="8.0.1" />
   </ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\icare.client\icare.client.esproj">
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+		</ProjectReference>
+	</ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 
@@ -10,18 +10,37 @@ import { AuthService } from '../auth.service';
 
   //Mário
 export class LoginComponent {
-  email: string = '';
-  password: string = '';
+  email = '';
+  password = '';
   errorMessage: string | null = null;
-  showPassword: boolean = false;
+  showPassword = false;
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router, private ngZone: NgZone) { }
 
   ngOnInit(): void {
+    google.accounts.id.initialize({
+      client_id: '452109114218-ld8o3eiqgar6jg6h42r6q3fvqsevfiv4.apps.googleusercontent.com',
+      scope: 'email profile openid',
+      callback: this.onGoogleLogin.bind(this),
+      context:"signin",
+      ux_mode: "popup",
+      auto_select:"true",
+      itp_support:"true",
+    });
+    google.accounts.id.renderButton(
+      document.getElementById('google-signin'),
+      {
+        type: "icon",
+        shape:"circle",
+        theme:"filled_blue",
+        text:"signin_with",
+        size:"large",
+      }
+    );
     if (this.authService.isLogged()) {
       this.router.navigate(['/home']);
     }
@@ -34,9 +53,25 @@ export class LoginComponent {
         this.errorMessage = null;
         this.router.navigate(['/home']);
       },
-      error: () => {
+      error: (err) => {
         this.errorMessage = 'Invalid login credentials';
+        console.error('login credentials:', err);
       },
     });
   }
+
+  onGoogleLogin(response: any): void {
+    console.log('Token de ID recebido:', response.credential);
+    this.authService.googleLogin(response.credential).subscribe({
+      next: () => {
+        this.ngZone.run(() => {
+          this.router.navigate(['/home']);
+        });
+      },
+      error: (err) => {
+        console.error('Erro ao processar login via Google:', err);
+      }
+    });
+  }
+
 }

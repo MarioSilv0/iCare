@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "backend", "backend\backend.csproj", "{F1179E31-EC07-477F-9729-1512E7F09656}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3B08EED3-96A9-4F11-9934-EA5026C69D13} = {3B08EED3-96A9-4F11-9934-EA5026C69D13}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9C133E19-F40A-4D59-8696-73529BEBBF24}"
 EndProject
@@ -12,9 +15,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "backendtest", "backendtest\backendtest.csproj", "{51730AA8-7904-4039-A832-F8824B79F52E}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "icare.client", "icare.client\icare.client.esproj", "{3B08EED3-96A9-4F11-9934-EA5026C69D13}"
-	ProjectSection(ProjectDependencies) = postProject
-		{F1179E31-EC07-477F-9729-1512E7F09656} = {F1179E31-EC07-477F-9729-1512E7F09656}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

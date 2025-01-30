@@ -9,7 +9,7 @@ namespace backend.Data
         public static async Task SeedUsersAsync(UserManager<User> userManager)
         {
             // estudante
-            if (await userManager.FindByEmailAsync("User@example.com") == null)
+            if (await userManager.FindByEmailAsync("user@example.com") == null)
             {
                 var user = new User
                 {
@@ -18,7 +18,7 @@ namespace backend.Data
                     Name = "User",
                     EmailConfirmed = true
                 };
-                await userManager.CreateAsync(user, "ValidPassword123!");
+                await userManager.CreateAsync(user, "UserPass123!");
                 await userManager.AddToRoleAsync(user, "User");
             }
             if (await userManager.FindByEmailAsync("mario@gmail.com") == null)
@@ -32,6 +32,7 @@ namespace backend.Data
                 };
                 await userManager.CreateAsync(user, "28112002Mads.");
                 await userManager.AddToRoleAsync(user, "User");
+                await userManager.AddToRoleAsync(user, "Admin");
             }
 
             // administrador
@@ -44,7 +45,8 @@ namespace backend.Data
                     Name = "Admin",
                     EmailConfirmed = true
                 };
-                await userManager.CreateAsync(admin, "Admin@123");
+                await userManager.CreateAsync(admin, "AdminPass123!");
+                await userManager.AddToRoleAsync(admin, "User");
                 await userManager.AddToRoleAsync(admin, "Admin");
             }
         }

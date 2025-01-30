@@ -23,7 +23,7 @@ export class RegisterComponent {
 
   ngOnInit(): void {
       if (this.authService.isLogged()) {
-        this.router.navigate(['/home']);
+        this.router.navigate(['/login']);
       }
   }
 
@@ -53,7 +53,7 @@ export class RegisterComponent {
     const registrationData = { email: this.email, password: this.password };
     this.authService.register(registrationData).subscribe({
       next: (response) => {
-        this.router.navigate(['/home']);
+        this.router.navigate(['/login']);
       },
       error: (err) => {
         this.errorMessage = err.error.message;
