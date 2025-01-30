@@ -1,0 +1,23 @@
+<header
+  class="nav d-flex flex-row align-items-center justify-content-between bg-white"
+  style="height: 80px"
+>
+  <div class="d-flex m-0 ps-5">
+    <!-- logo -->
+    <a
+      [routerLink]="['/home']"
+      class="navbar-brand text-start fw-bold text-decoration-none m-0 fs-5"
+    >
+      iCare
+    </a>
+  </div>
+  <div class="d-flex m-0 pe-5">
+    <button
+      id="btn-signout"
+      class="navbar-brand text-end border-0 text-dark p-2 rounded fs-6"
+      (click)="logout()"
+    >
+      Sign Out
+    </button>
+  </div>
+</header>

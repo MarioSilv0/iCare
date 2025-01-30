@@ -8,7 +8,7 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./login.component.css'],
 })
 
-  //Mário
+//Mário
 export class LoginComponent {
   email = '';
   password = '';

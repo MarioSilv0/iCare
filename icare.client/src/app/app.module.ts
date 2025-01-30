@@ -14,6 +14,7 @@ import { RegisterComponent } from './auth/register/register.component';
 import { RecoverPasswordComponent } from './auth/recover-password/recover-password.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { AdminComponent } from './admin/admin.component';
+import { HeaderComponent } from './header/header.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { AdminComponent } from './admin/admin.component';
     RecoverPasswordComponent,
     ResetPasswordComponent,
     AdminComponent,
+    HeaderComponent,
   ],
   imports: [
     BrowserModule, HttpClientModule,

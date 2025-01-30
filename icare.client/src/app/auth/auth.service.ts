@@ -10,9 +10,10 @@ import { BehaviorSubject, Observable, map } from 'rxjs';
 export class AuthService {
   private baseUrl = '../api/account';
 
-  private _authStateChanged: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.hasToken());
+  private _authStateChanged: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(this.hasToken());
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   public onStateChanged() {
     return this._authStateChanged.asObservable();
@@ -72,6 +73,7 @@ export class AuthService {
   public logout(): void {
     this.clearToken();
     this._authStateChanged.next(false);
+    window.location.href = '/login';
   }
 
   public register(data: { email: string; password: string }): Observable<any> {
@@ -86,11 +88,10 @@ export class AuthService {
     // todo: implement backend
     return this.http.post(`${this.baseUrl}/reset-password`, data);
   }
-  
+
   public recover(email: string): Observable<any> {
     //? verificar que tipo de metodo é
     // todo: implement backend
     return this.http.post(`${this.baseUrl}/recover-password`, email);
   }
-
 }
