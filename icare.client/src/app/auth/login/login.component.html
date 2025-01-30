@@ -8,7 +8,7 @@
           <form (ngSubmit)="onLogin()">
             <div class="mb-3">
               <label for="email" class="w-100 text-start form-label">
-                Email:
+                Email: user&#64;example.com
               </label>
               <input
                 type="email"
@@ -22,7 +22,7 @@
             </div>
             <div class="mb-3">
               <label for="password" class="w-100 form-label text-start">
-                Password:
+                Password: UserPass123!
               </label>
               <div class="position-relative">
                 <input
@@ -63,6 +63,7 @@
             <div *ngIf="errorMessage" class="alert bg-vermelho" role="alert">
               {{ errorMessage }}
             </div>
+            <div id="google-signin"></div>
             <div class="container d-flex flex-row gap-4">
               <button type="submit" class="btn bg-verde w-100">Login</button>
               <button type="reset" class="btn bg-vermelho w-100">Reset</button>

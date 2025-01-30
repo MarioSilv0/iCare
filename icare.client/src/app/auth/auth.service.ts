@@ -25,40 +25,55 @@ export class AuthService {
   }
 
   // Armazena o token no localStorage
-  private saveToken(token: string): void {
+  private saveToken(token: string, roles: string ): void {
     localStorage.setItem('authToken', token);
+    localStorage.setItem('roles', roles);
   }
 
   // Remove o token do localStorage
   private clearToken(): void {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('roles');
   }
 
-  public login(credentials: {
-    email: string;
-    password: string;
-  }): Observable<any> {
-    const res = this.http
-      .post<{ token: string }>(`${this.baseUrl}/login`, credentials)
-      .pipe(
-        map((response) => {
-          if (response && response.token) {
-            this.saveToken(response.token);
-            this._authStateChanged.next(true);
-          }
-        })
-      );
-    return res;
+  // Verifica se está Logged
+  public isLogged(): boolean {
+    return this.hasToken();
+  }
+
+  // Retorna as roles
+  public getUserRoles(): string[] | null{
+    const roles = localStorage.getItem('roles');
+    return roles ? roles.split(",") : null;
+  }
+
+  public userHasRole(role: string): boolean {
+    const roles = this.getUserRoles();
+    return roles?.includes(role) ?? false;
+  }  
+
+  public login(credentials: { email: string; password: string }): Observable<any> {
+    return this.http.post<{ token: string, roles:string }>(`${this.baseUrl}/login`, credentials).pipe(map((response) => {
+      if (response && response.token) {
+        this.saveToken(response.token, response.roles);
+        this._authStateChanged.next(true);
+      }
+    }));
+  }
+
+  public googleLogin(idToken: string): Observable<any> {
+    return this.http.post<{ token: string, roles: string }>(`${this.baseUrl}/google-login`, { IdToken: idToken }).pipe(map((response) => {
+        if (response && response.token) {
+          this.saveToken(response.token, response.roles);
+          this._authStateChanged.next(true);
+        }
+      }));
   }
 
   public logout(): void {
     this.clearToken();
     this._authStateChanged.next(false);
     window.location.href = '/login';
-  }
-
-  public isLogged(): boolean {
-    return this.hasToken();
   }
 
   public register(data: { email: string; password: string }): Observable<any> {
