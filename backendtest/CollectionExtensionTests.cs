@@ -1,19 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using backend.Models;
+﻿using backend.Models;
 using backend.Models.Extensions;
 using backend.Models.Preferences;
-using Moq;
+
+/// <summary>
+/// This file contains unit tests for the <c>CollectionExtensions</c> class.
+/// These tests verify the functionality of the <c>UpdateCollection</c> extension method for the <c>ICollection</c> interface.
+/// Specifically, it tests how the method handles various parameter scenarios, including invalid inputs and successful collection updates.
+/// </summary>
+/// <author>Luís Martins - 202100239</author>
+/// <author>João Morais  - 202001541</author>
+/// <date>Last Modified: 2025-01-30</date>
+
 
 namespace backendtest
 {
+    /// <summary>
+    /// Test class for the <c>CollectionExtensions</c> class.
+    /// This class includes tests for the <c>UpdateCollection</c> method, covering edge cases and validation of parameters.
+    /// </summary>
     public class CollectionExtensionTests
     {
         [Fact]
-        public void UpdateCollection_WhenParametersAreInvalid_ThrowsArgumentNullException() 
+        public async Task UpdateCollection_WhenParametersAreInvalid_ThrowsArgumentNullException() 
         {
             ICollection<UserPreference>? preferences = null;
             List<SelectionObject>? selectionObjects = [ new() { Id = 1, IsSelected = true } ];
@@ -31,7 +39,7 @@ namespace backendtest
         }
 
         [Fact]
-        public void UpdateCollection_WhenParametersAreValid_UpdatesCollectionCorrectly()
+        public async Task UpdateCollection_WhenParametersAreValid_UpdatesCollectionCorrectly()
         {
             ICollection<UserPreference> preferences = [];
             List<SelectionObject> selectionObjects = [new() { Id = 1, IsSelected = true }, new() { Id = 2, IsSelected = false }, new() { Id = 3, IsSelected = true }];

@@ -1,18 +1,27 @@
 ﻿using backend.Models;
 using backend.Models.Preferences;
 using backend.Models.Restrictions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+/// <summary>
+/// This file contains unit tests for the <c>PublicUser</c> class, which is responsible for representing a user's public profile with preferences and restrictions.
+/// The tests verify the initialization of <c>PublicUser</c> objects, including both default and populated scenarios with or without models for user data.
+/// The tests ensure that the <c>PublicUser</c> class correctly maps user properties, preferences, and restrictions and that it behaves as expected when populated with different data sources.
+/// </summary>
+/// <author>Luís Martins - 202100239</author>
+/// <author>João Morais - 202001541</author>
+/// <date>Last Modified: 2025-01-30</date>
 
 namespace backendtest
 {
+    /// <summary>
+    /// Test class for the <c>PublicUser</c> class.
+    /// This class contains tests that validate the behavior of <c>PublicUser</c> when instantiated with default values or populated with user data and preference/restriction models.
+    /// It checks if the <c>PublicUser</c> object initializes correctly and if the mappings between user preferences and restrictions are correct.
+    /// </summary>
     public class PublicUserTests
     {
         [Fact]
-        public void PublicUser_DefaultConstructor_InitializesWithDefaults()
+        public async Task PublicUser_DefaultConstructor_InitializesWithDefaults()
         {
             var publicUser = new PublicUser();
 
@@ -31,7 +40,7 @@ namespace backendtest
         }
 
         [Fact]
-        public void PublicUser_PopulatesWithoutModel()
+        public async Task PublicUser_PopulatesWithoutModel()
         {
             User user = new()
             {
@@ -81,7 +90,7 @@ namespace backendtest
             Assert.True(publicUser.Restrictions[1].IsSelected);
         }
 
-        public void PublicUser_PopulatesWitModel()
+        public async Task PublicUser_PopulatesWitModel()
         {
             User user = new()
             {
