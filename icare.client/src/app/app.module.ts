@@ -15,6 +15,7 @@ import { RecoverPasswordComponent } from './auth/recover-password/recover-passwo
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { AdminComponent } from './admin/admin.component';
 import { HeaderComponent } from './header/header.component';
+import { ChangePasswordComponent } from './auth/change-password/change-password.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { HeaderComponent } from './header/header.component';
     ResetPasswordComponent,
     AdminComponent,
     HeaderComponent,
+    ChangePasswordComponent,
   ],
   imports: [
     BrowserModule, HttpClientModule,
@@ -37,7 +39,6 @@ import { HeaderComponent } from './header/header.component';
   providers: [],
   bootstrap: [
     AppComponent,
-    NavMenuComponent,
   ]
 })
 export class AppModule { }

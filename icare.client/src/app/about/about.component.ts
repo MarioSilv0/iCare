@@ -7,10 +7,4 @@ import { Component } from '@angular/core';
   styleUrl: './about.component.css'
 })
 export class AboutComponent {
-  isAdmin: boolean = false;
-  constructor(private authService: AuthService) { }
-
-  ngOnInit() {
-    this.isAdmin = this.authService.userHasRole('Admin'); // Checa se o usuário é admin
-  }
 }

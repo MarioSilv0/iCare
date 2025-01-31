@@ -9,6 +9,7 @@ import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { AdminComponent } from './admin/admin.component';
+import { ChangePasswordComponent } from './auth/change-password/change-password.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -19,7 +20,8 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard], },
   { path: 'recover-password', component: RecoverPasswordComponent },
-  { path: 'reset-password', component: ResetPasswordComponent }
+  { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'change-password', component: ChangePasswordComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

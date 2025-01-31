@@ -127,6 +127,13 @@ namespace backend.Controllers.Api
             return BadRequest(new { message = "Registration failed.", errors = result.Errors });
         }
 
+        public class LoginModel
+        {
+            public required string Email { get; set; }
+
+            public required string Password { get; set; }
+
+        }
 
         [HttpPost("google-login")]
         [AllowAnonymous]
@@ -200,19 +207,79 @@ namespace backend.Controllers.Api
             }
         }
 
-        public class LoginModel
-        {
-            public required string Email { get; set; }
-
-            public required string Password { get; set; }
-
-        }
         public class GoogleLoginRequest
         {
             public string IdToken { get; set; }
         }
 
+        [HttpPost("recover-password")]
+        public async Task<IActionResult> RecoverPassword([FromBody] ForgotPasswordDto model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+                return BadRequest(new { message = "Email não encontrado." });
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var resetLink = $"{model.ClientUrl}/reset-password?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(user.Email)}";
+
+            // Enviar email (ajustar com seu serviço de envio de email)
+        //    await _emailService.SendEmailAsync(user.Email, "Redefinir Senha", $"Clique no link para redefinir sua senha: <a href='{resetLink}'>Redefinir Senha</a>");
+
+            return Ok(new { message = "Instruções enviadas para o email." });
+        }
+        public class ForgotPasswordDto
+        {
+            public string Email { get; set; }
+            public string ClientUrl { get; set; } // URL do frontend onde o usuário redefine a senha
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+                return BadRequest(new { message = "Utilizador não encontrado." });
+
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+            if (!result.Succeeded)
+                return BadRequest(new { message = "Erro ao redefinir a senha.", errors = result.Errors });
+
+            return Ok(new { message = "Senha redefinida com sucesso." });
+        }
+        public class ResetPasswordDto
+        {
+            public string Email { get; set; }
+            public string Token { get; set; }
+            public string NewPassword { get; set; }
+        }
+
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto model)
+        {
+
+            return BadRequest(new { message = "ChangePassword" });
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized(new { message = "Utilizador não encontrado." });
+
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (!result.Succeeded)
+                return BadRequest(new { message = "Erro ao alterar senha.", errors = result.Errors });
+
+            return Ok(new { message = "Senha alterada com sucesso!" });
+        }
+        public class ChangePasswordDto
+        {
+            public string CurrentPassword { get; set; }
+            public string NewPassword { get; set; }
+        }
+
+
+
+
     }
-
-
 }

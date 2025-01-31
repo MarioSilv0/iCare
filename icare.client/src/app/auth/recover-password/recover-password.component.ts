@@ -17,7 +17,7 @@ export class RecoverPasswordComponent {
 
   onRecover() {
     this.errorMessage = '';
-    this.authService.recover(this.email).subscribe({
+    this.authService.recoverPassword(this.email).subscribe({
       next: () => {
         console.log('Recover successful');
         this.router.navigate(['/login']);
