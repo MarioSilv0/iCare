@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using backend.Data;
 using NuGet.Configuration;
 using System.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace backend.Controllers.Api
 {
@@ -23,14 +24,16 @@ namespace backend.Controllers.Api
     public class AccountController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly UserLogService _userLogService;
 
-        public AccountController(UserManager<User> userManager, UserLogService userLogService, IConfiguration configuration)
+        public AccountController(UserManager<User> userManager, UserLogService userLogService, IConfiguration configuration, SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _configuration = configuration;
             _userLogService = userLogService;
+            _signInManager = signInManager;
         }
 
         [HttpPost("login")]
@@ -253,23 +256,36 @@ namespace backend.Controllers.Api
             public string NewPassword { get; set; }
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto model)
         {
+            var userClaims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
+            Console.WriteLine("Claims do Token: ");
+            userClaims.ForEach(c => Console.WriteLine($"{c.Type}: {c.Value}"));
 
-            return BadRequest(new { message = "ChangePassword" });
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var userId = User.FindFirst("UserId")?.Value;
 
-            var user = await _userManager.GetUserAsync(User);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "Token inválido ou usuário não autenticado." });
+
+            var user = await _userManager.FindByIdAsync(userId);
+
             if (user == null)
                 return Unauthorized(new { message = "Utilizador não encontrado." });
 
+
+            var isPasswordCorrect = await _userManager.CheckPasswordAsync(user, model.CurrentPassword);
+            if (!isPasswordCorrect)
+                return BadRequest(new { message = "Senha atual incorreta." });
+
+
             var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            Console.WriteLine(result);
             if (!result.Succeeded)
                 return BadRequest(new { message = "Erro ao alterar senha.", errors = result.Errors });
 
+            await _signInManager.RefreshSignInAsync(user);
             return Ok(new { message = "Senha alterada com sucesso!" });
         }
         public class ChangePasswordDto

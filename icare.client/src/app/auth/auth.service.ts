@@ -89,9 +89,12 @@ export class AuthService {
   }
 
   public changePassword(data: { currentPassword: string, newPassword: string }) {
+    const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}`});
-    return this.http.post(`${this.baseUrl}/change-password`, data, { headers });
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    });
+    return this.http.post(`${this.baseUrl}/change-password`, data, { headers/*, responseType: 'text'*/ },);
   }
 
 

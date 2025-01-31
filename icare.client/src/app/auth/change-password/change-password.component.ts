@@ -30,7 +30,6 @@ export class ChangePasswordComponent {
       currentPassword: this.currentPassword,
       newPassword: this.newPassword,
     };
-    console.log("onChange");
     this.authService.changePassword(credentials).subscribe({
       next: () => {
         this.router.navigate(['/home']);
