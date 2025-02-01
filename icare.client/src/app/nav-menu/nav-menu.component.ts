@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 
@@ -12,8 +12,60 @@ import { AuthService } from '../auth/auth.service';
 export class NavMenuComponent {
   public isExpanded = false;
   public isLoggedIn: boolean = false;
-  constructor(private authService: AuthService, private router: Router) { }
-  
+  public commonPath: string = '../../assets/svgs/';
+  public extension: string = '.svg';
+  public links = [
+    {
+      icon: `${this.commonPath}home${this.extension}`,
+      text: 'Página Principal',
+      path: '/',
+    },
+    {
+      icon: `${this.commonPath}user${this.extension}`,
+      text: 'Perfil',
+      path: '',
+    },
+    {
+      icon: `${this.commonPath}receitas${this.extension}`,
+      text: 'Receitas',
+      path: '',
+    },
+    {
+      icon: `${this.commonPath}metas${this.extension}`,
+      text: 'Meta Alimentar',
+      path: '',
+    },
+    {
+      icon: `${this.commonPath}inventory${this.extension}`,
+      text: 'Inventário',
+      path: '',
+    },
+    {
+      icon: `${this.commonPath}metrics${this.extension}`,
+      text: 'Progresso',
+      path: '',
+    },
+    {
+      icon: `${this.commonPath}settings${this.extension}`,
+      text: 'Configurações',
+      path: '',
+    },
+  ];
+  public commandLinks = [
+    {
+      icon: `${this.commonPath}help${this.extension}`,
+      text: 'Ajuda',
+      path: '',
+    },
+    {
+      icon: `${this.commonPath}exit${this.extension}`,
+      text: 'Terminar Sessão',
+      path: '',
+    },
+  ];
+
+  constructor(private authService: AuthService, private router: Router) {}
+
   ngOnInit() {
     this.authService.onStateChanged().subscribe((state: boolean) => {
       this.isLoggedIn = state;
