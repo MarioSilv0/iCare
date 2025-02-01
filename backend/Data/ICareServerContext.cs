@@ -13,10 +13,10 @@ namespace backend.Data
         public ICareServerContext(DbContextOptions<ICareServerContext> options) : base(options) {}
 
         public DbSet<UserLog> UserLogs { get; set; } = default!;
-        public DbSet<Preference> Preferences { get; set; }
-        public DbSet<UserPreference> UserPreferences { get; set; }
-        public DbSet<Restriction> Restrictions { get; set; }
-        public DbSet<UserRestriction> UserRestrictions { get; set; }
+        public DbSet<Preference> Preferences { get; set; } = default!;
+        public DbSet<UserPreference> UserPreferences { get; set; } = default!;
+        public DbSet<Restriction> Restrictions { get; set; } = default!;
+        public DbSet<UserRestriction> UserRestrictions { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

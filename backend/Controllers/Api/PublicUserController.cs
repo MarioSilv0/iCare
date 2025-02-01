@@ -49,6 +49,8 @@ namespace backend.Controllers.Api
         [HttpGet("{id}")]
         public async Task<ActionResult<PublicUser>> Edit(string id)
         {
+            if (string.IsNullOrEmpty(id)) return BadRequest();
+
             try
             {
                 var user = await _context.Users.Include(u => u.UserPreferences)
