@@ -1,20 +1,19 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
+import { AboutComponent } from './about/about.component';
+import { AdminComponent } from './admin/admin.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AboutComponent } from './about/about.component';
-import { ProfileComponent } from './profile/profile.component';
+import { LoginComponent } from './auth/login/login.component';
+import { RecoverPasswordComponent } from './auth/recover-password/recover-password.component';
+import { RegisterComponent } from './auth/register/register.component';
+import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
+import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { LoginComponent } from './auth/login/login.component';
-import { RegisterComponent } from './auth/register/register.component';
-import { RecoverPasswordComponent } from './auth/recover-password/recover-password.component';
-import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
-import { AdminComponent } from './admin/admin.component';
-import { HeaderComponent } from './header/header.component';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -31,13 +30,13 @@ import { HeaderComponent } from './header/header.component';
     HeaderComponent,
   ],
   imports: [
-    BrowserModule, HttpClientModule,
-    AppRoutingModule, FormsModule, ReactiveFormsModule 
+    BrowserModule,
+    HttpClientModule,
+    AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   providers: [],
-  bootstrap: [
-    AppComponent,
-    NavMenuComponent,
-  ]
+  bootstrap: [AppComponent, NavMenuComponent],
 })
-export class AppModule { }
+export class AppModule {}
