@@ -22,29 +22,38 @@ export class LoginComponent {
   constructor(private authService: AuthService, private router: Router, private ngZone: NgZone) { }
 
   ngOnInit(): void {
-    google.accounts.id.initialize({
-      client_id: '452109114218-ld8o3eiqgar6jg6h42r6q3fvqsevfiv4.apps.googleusercontent.com',
-      scope: 'email profile openid',
-      callback: this.onGoogleLogin.bind(this),
-      context:"signin",
-      ux_mode: "popup",
-      auto_select:"true",
-      itp_support:"true",
-    });
-    google.accounts.id.renderButton(
-      document.getElementById('google-signin'),
-      {
-        type: "icon",
-        shape:"circle",
-        theme:"filled_blue",
-        text:"signin_with",
-        size:"large",
+    const checkGoogle = setInterval(() => {
+      if (typeof google !== 'undefined' && google.accounts) {
+        clearInterval(checkGoogle);
+
+        google.accounts.id.initialize({
+          client_id: '452109114218-ld8o3eiqgar6jg6h42r6q3fvqsevfiv4.apps.googleusercontent.com',
+          scope: 'email profile openid',
+          callback: this.onGoogleLogin.bind(this),
+          context: "signin",
+          ux_mode: "popup",
+          auto_select: "true",
+          itp_support: "true",
+        });
+
+        google.accounts.id.renderButton(
+          document.getElementById('google-signin'),
+          {
+            type: "icon",
+            shape: "circle",
+            theme: "filled_blue",
+            text: "signin_with",
+            size: "large",
+          }
+        );
       }
-    );
+    }, 500);
+
     if (this.authService.isLogged()) {
       this.router.navigate(['/home']);
     }
   }
+
 
   onLogin(): void {
     const credentials = { email: this.email, password: this.password };
