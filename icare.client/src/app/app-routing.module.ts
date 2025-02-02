@@ -3,15 +3,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { AboutComponent } from './about/about.component';
 import { AdminComponent } from './admin/admin.component';
 import { AuthGuard } from './auth/auth.guard';
+import { ChangePasswordComponent } from './auth/change-password/change-password.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RecoverPasswordComponent } from './auth/recover-password/recover-password.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
-import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
-import { AdminComponent } from './admin/admin.component';
-import { ChangePasswordComponent } from './auth/change-password/change-password.component';
+
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
