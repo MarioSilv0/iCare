@@ -32,14 +32,18 @@ builder.Services
         options.Password.RequireLowercase = true;
         options.Password.RequireNonAlphanumeric = true;
         options.User.RequireUniqueEmail = true;
+        options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultProvider;
     })
     .AddEntityFrameworkStores<ICareServerContext>()
+    .AddDefaultTokenProviders()
     .AddDefaultUI();
 
 // Configuração de autenticação e JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -74,6 +78,21 @@ builder.Services.AddCors(options =>
               .AllowCredentials();
     });
 });
+
+// Evitar redirecionamentos automáticos
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.CompletedTask;
+    };
+}); 
+
+// Email Sender
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<EmailSenderService>();
+
 
 var app = builder.Build();
 

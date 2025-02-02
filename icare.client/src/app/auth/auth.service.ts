@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 
@@ -80,18 +80,23 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/register`, data);
   }
 
-  public resetPassword(data: {
-    currentPassword: string;
-    newPassword: string;
-    repeatPassword: string;
-  }): Observable<any> {
-    // todo: implement backend
+  public recoverPassword(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/recover-password`, { email, clientUrl: window.location.origin });
+  }
+
+  public resetPassword(data: { email: string, token: string, newPassword: string }) {
     return this.http.post(`${this.baseUrl}/reset-password`, data);
   }
 
-  public recover(email: string): Observable<any> {
-    //? verificar que tipo de metodo é
-    // todo: implement backend
-    return this.http.post(`${this.baseUrl}/recover-password`, email);
+  public changePassword(data: { currentPassword: string, newPassword: string }) {
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    });
+    return this.http.post(`${this.baseUrl}/change-password`, data, { headers/*, responseType: 'text'*/ },);
   }
+
+
+
 }

@@ -1,16 +1,15 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-reset-password',
-  templateUrl: './reset-password.component.html',
-  styleUrl: './reset-password.component.css',
+  selector: 'app-change-password',
+  templateUrl: './change-password.component.html',
+  styleUrl: './change-password.component.css'
 })
-export class ResetPasswordComponent {
-  email: string = '';
-  token: string = '';
-  newPassword: string = '';
+export class ChangePasswordComponent {
+  currentPassword = '';
+  newPassword = '';
   repeatPassword = '';
   errorMessage: string | undefined;
   passwordErrors: string[] = [];
@@ -19,31 +18,26 @@ export class ResetPasswordComponent {
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
-  constructor(private authService: AuthService, private router: Router) {}
 
-  ngOnInit(): void {
-    const urlParams = new URLSearchParams(window.location.search);
-    this.email = urlParams.get('email') || '';
-    this.token = urlParams.get('token') || '';
-  }
+  constructor(private authService: AuthService, private router: Router) { }
 
-  onReset(): void {
-    if (this.newPassword !== this.repeatPassword) {
-      this.errorMessage = 'New Passwords do not match';
+  onChange(): void {
+    if (!this.newPassword || this.newPassword !== this.repeatPassword) {
+      this.errorMessage = 'Invalid New Passwords';
       return;
     }
     const credentials = {
-      email: this.email,
-      token: this.token,
+      currentPassword: this.currentPassword,
       newPassword: this.newPassword,
     };
-    this.authService.resetPassword(credentials).subscribe({
+    this.authService.changePassword(credentials).subscribe({
       next: () => {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/home']);
       },
       error: (err) => {
-        console.log(err)
+        console.log(err);
         this.errorMessage = err.error.message;
+;
       },
     });
   }

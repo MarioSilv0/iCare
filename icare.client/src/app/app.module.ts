@@ -11,6 +11,7 @@ import { RecoverPasswordComponent } from './auth/recover-password/recover-passwo
 import { RegisterComponent } from './auth/register/register.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { HeaderComponent } from './header/header.component';
+import { ChangePasswordComponent } from './auth/change-password/change-password.component';
 import { HomeComponent } from './home/home.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { ProfileComponent } from './profile/profile.component';
@@ -28,6 +29,7 @@ import { ProfileComponent } from './profile/profile.component';
     ResetPasswordComponent,
     AdminComponent,
     HeaderComponent,
+    ChangePasswordComponent,
   ],
   imports: [
     BrowserModule,
@@ -37,6 +39,9 @@ import { ProfileComponent } from './profile/profile.component';
     ReactiveFormsModule,
   ],
   providers: [],
-  bootstrap: [AppComponent, NavMenuComponent],
+  bootstrap: [
+    AppComponent,
+    NavMenuComponent,
+  ]
 })
 export class AppModule {}

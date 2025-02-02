@@ -17,13 +17,13 @@ export class RecoverPasswordComponent {
 
   onRecover() {
     this.errorMessage = '';
-    this.authService.recover(this.email).subscribe({
+    this.authService.recoverPassword(this.email).subscribe({
       next: () => {
         console.log('Recover successful');
         this.router.navigate(['/login']);
       },
       error: (err: any) => {
-        console.error({ err });
+        console.error(err);
         if (!this.email) this.errorMessage = 'Email cant be empty.';
         else this.errorMessage = 'Invalid Email.';
       },
