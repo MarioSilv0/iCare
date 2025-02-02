@@ -98,7 +98,7 @@ input[type="password"] {
 }
 
 #btn-signout {
-  background-color: var(--bg-branco);
+  background: none;
   color: var(--bg-preto);
   position: relative;
 }
@@ -114,6 +114,14 @@ input[type="password"] {
 }
 
 #btn-signout:hover::after {
-  width: 100px;
+  width: 100%;
   background-color: var(--bg-preto);
+}
+
+#header {
+  border-bottom: 4px solid var(--bg-bege);
+}
+
+#navbar {
+  border-right: 4px solid var(--bg-bege);
 }

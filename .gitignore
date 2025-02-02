@@ -372,3 +372,7 @@ backendtest/obj/Debug/net8.0/backendtest.csproj.AssemblyReference.cache
 backendtest/obj/Debug/net8.0/backendtest.GeneratedMSBuildEditorConfig.editorconfig
 backendtest/obj/project.assets.json
 backendtest/obj/project.nuget.cache
+/backend/Migrations
+/backend/Migrations
+/backend/Migrations
+backend/Migrations/20250128042153_initial.cs

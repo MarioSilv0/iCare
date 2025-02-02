@@ -10,7 +10,7 @@ import { filter } from 'rxjs';
 
 //Mário
 export class AppComponent {
-  showNavMenu: boolean = true;
+  showNavMenu = true;
   showHeader = true;
   constructor(private router: Router) {
     this.router.events

@@ -2,6 +2,7 @@
 using backend.Models.Restrictions;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 
 namespace backend.Models
 {
@@ -37,13 +38,43 @@ namespace backend.Models
 
         public void UpdateFromModel(PublicUser model)
         {
-            Picture = string.IsNullOrEmpty(model.Picture) ? Picture : model.Picture;
-            Name = string.IsNullOrEmpty(model.Name) ? Name : model.Name;
-            Email = string.IsNullOrEmpty(model.Email) ? Email : model.Email;
-            Birthdate = model.Birthdate;
+            if(Picture != model.Picture && !string.IsNullOrWhiteSpace(model.Picture))
+                Picture = model.Picture;
+
+            if(Name != model.Name && !string.IsNullOrWhiteSpace(model.Name))
+                Name = model.Name;
+
+            if(Email != model.Email && !string.IsNullOrWhiteSpace(model.Email))
+                Email = model.Email;
+
+            if (Birthdate != model.Birthdate)
+            {
+                int age = this.CaculateAge(model.Birthdate);
+                if (age > 0 && age <= 120)
+                    Birthdate = model.Birthdate;
+            }
+
             Notifications = model.Notifications;
-            Height = model.Height <= 0 || model.Height > 3 ? Height : model.Height;
-            Weight = model.Weight <= 0 || model.Weight > 700 ? Weight : model.Weight;
+
+            float roundedHeight = (float) Math.Round(model.Height, 1);
+            if (Height != roundedHeight && roundedHeight > 0 && roundedHeight < 3)
+                Height = roundedHeight;
+
+            float roundedWeight = (float) Math.Round(model.Weight, 1);
+            if (Weight != roundedWeight && roundedWeight > 0 && roundedWeight < 700)
+                Weight = roundedWeight;
+        }
+
+        private int CaculateAge(DateOnly birthdate)
+        {
+            int age = DateTime.Today.Year - birthdate.Year;
+
+            // Adjust if birthday hasn't occurred yet
+            DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+            if (birthdate > today.AddYears(-age))
+                age -= 1;
+
+            return age;
         }
     }
 }
