@@ -42,9 +42,8 @@ export class AuthService {
   }
 
   // Retorna as roles
-  public getUserRoles(): string[] | null{
-    const roles = localStorage.getItem('roles');
-    return roles ? roles.split(",") : null;
+  public getUserRoles(): string | null{
+    return localStorage.getItem('roles');
   }
 
   public userHasRole(role: string): boolean {

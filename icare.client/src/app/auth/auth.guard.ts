@@ -2,7 +2,6 @@ import { ActivatedRouteSnapshot, CanActivateFn } from '@angular/router';
 import { AuthService } from './auth.service';
 import { Injectable } from "@angular/core";
 import { CanActivate, Router } from "@angular/router";
-import { Observable, map } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 
@@ -16,16 +15,12 @@ export class AuthGuard implements CanActivate {
       this.router.navigate(['/login']);
       return false;
     }
-    const expectedRoles = route.data['roles'];
-    if (expectedRoles){
-      const userRoles = this.authService.getUserRoles();
-      if (!userRoles || !expectedRoles.includes(userRoles)) {
-        this.router.navigate(['/home']);
-        return false;
-      }
+    const expectedRoles: string = route.data['roles'];
+    if (!this.authService.userHasRole(expectedRoles)) {
+      this.router.navigate(['/home']);
+      return false;
     }
-
+    
     return true;
   }
-
 }
