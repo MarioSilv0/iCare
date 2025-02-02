@@ -23,7 +23,7 @@ export class RecoverPasswordComponent {
         this.router.navigate(['/login']);
       },
       error: (err: any) => {
-        console.error({ err });
+        console.error(err);
         if (!this.email) this.errorMessage = 'Email cant be empty.';
         else this.errorMessage = 'Invalid Email.';
       },

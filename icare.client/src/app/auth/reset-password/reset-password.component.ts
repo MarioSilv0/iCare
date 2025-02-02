@@ -21,7 +21,11 @@ export class ResetPasswordComponent {
   }
   constructor(private authService: AuthService, private router: Router) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const urlParams = new URLSearchParams(window.location.search);
+    this.email = urlParams.get('email') || '';
+    this.token = urlParams.get('token') || '';
+  }
 
   onReset(): void {
     if (this.newPassword !== this.repeatPassword) {
@@ -38,6 +42,7 @@ export class ResetPasswordComponent {
         this.router.navigate(['/login']);
       },
       error: (err) => {
+        console.log(err)
         this.errorMessage = err.error.message;
       },
     });

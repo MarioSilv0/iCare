@@ -32,8 +32,10 @@ builder.Services
         options.Password.RequireLowercase = true;
         options.Password.RequireNonAlphanumeric = true;
         options.User.RequireUniqueEmail = true;
+        options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultProvider;
     })
     .AddEntityFrameworkStores<ICareServerContext>()
+    .AddDefaultTokenProviders()
     .AddDefaultUI();
 
 // Configuração de autenticação e JWT
@@ -85,7 +87,12 @@ builder.Services.ConfigureApplicationCookie(options =>
         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
         return Task.CompletedTask;
     };
-});
+}); 
+
+// Email Sender
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<EmailSenderService>();
+
 
 var app = builder.Build();
 

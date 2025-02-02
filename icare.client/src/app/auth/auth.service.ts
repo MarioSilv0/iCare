@@ -85,7 +85,7 @@ export class AuthService {
   }
 
   public resetPassword(data: { email: string, token: string, newPassword: string }) {
-    return this.http.post(`${this.baseUrl}/reset-password`, { data });
+    return this.http.post(`${this.baseUrl}/reset-password`, data);
   }
 
   public changePassword(data: { currentPassword: string, newPassword: string }) {

@@ -1,20 +1,16 @@
 ﻿using backend.Models;
+using backend.Services;
+using Google.Apis.Auth;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-using backend.Services;
-using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Microsoft.SqlServer.Server;
-using Google.Apis.Auth;
-using Microsoft.EntityFrameworkCore;
-using backend.Data;
-using NuGet.Configuration;
 using System.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Web;
 
 namespace backend.Controllers.Api
 {
@@ -27,13 +23,15 @@ namespace backend.Controllers.Api
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly UserLogService _userLogService;
+        private readonly EmailSenderService _emailService;
 
-        public AccountController(UserManager<User> userManager, UserLogService userLogService, IConfiguration configuration, SignInManager<User> signInManager)
+        public AccountController(UserManager<User> userManager, UserLogService userLogService, IConfiguration configuration, SignInManager<User> signInManager, EmailSenderService emailService)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
             _configuration = configuration;
             _userLogService = userLogService;
-            _signInManager = signInManager;
+            _emailService = emailService;
         }
 
         [HttpPost("login")]
@@ -116,6 +114,8 @@ namespace backend.Controllers.Api
                 UserName = model.Email.Split('@')[1],
                 Name = model.Email.Split('@')[1]
             };
+            Console.WriteLine("User:", user);
+
             await _userManager.AddToRoleAsync(user, "User");
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -212,33 +212,49 @@ namespace backend.Controllers.Api
 
         public class GoogleLoginRequest
         {
-            public string IdToken { get; set; }
+            public required string IdToken { get; set; }
         }
 
         [HttpPost("recover-password")]
-        public async Task<IActionResult> RecoverPassword([FromBody] ForgotPasswordDto model)
+        public async Task<IActionResult> RecoverPassword([FromBody] ForgotPasswordModel model)
         {
+            Console.WriteLine("RecoverPassword", model);
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
                 return BadRequest(new { message = "Email não encontrado." });
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var resetLink = $"{model.ClientUrl}/reset-password?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(user.Email)}";
+            var resetLink = $"{model.ClientUrl}/reset-password?email={model.Email}&token={Uri.EscapeDataString(token)}";
 
-            // Enviar email (ajustar com seu serviço de envio de email)
-        //    await _emailService.SendEmailAsync(user.Email, "Redefinir Senha", $"Clique no link para redefinir sua senha: <a href='{resetLink}'>Redefinir Senha</a>");
+            // Enviar email com o link de redefinição de senha
+            var subject = "Redefinição de Senha";
+            var body = $@"
+                        <p>Olá {user.Name},</p>
+                        <p>Recebemos um pedido para redefinir sua senha. Se foi você, clique no link abaixo:</p>
+                        <p><a href='{resetLink}'>Redefinir Senha</a></p>
+                        <p>Se você não solicitou isso, ignore este e-mail.</p>
+                        <p>Obrigado!</p>";
 
-            return Ok(new { message = "Instruções enviadas para o email." });
+            if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(subject) || string.IsNullOrEmpty(body))
+                return BadRequest("Invalid email request.");
+
+            await _emailService.SendEmailAsync(user.Email, subject, body);
+
+            return Ok(new { message = "Instruções para redefinição de senha enviadas para o e-mail." });
         }
-        public class ForgotPasswordDto
+
+        public class ForgotPasswordModel
         {
-            public string Email { get; set; }
-            public string ClientUrl { get; set; } // URL do frontend onde o usuário redefine a senha
+            public required string Email { get; set; }
+            public required string ClientUrl { get; set; }
         }
 
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);  
+
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
                 return BadRequest(new { message = "Utilizador não encontrado." });
@@ -249,16 +265,16 @@ namespace backend.Controllers.Api
 
             return Ok(new { message = "Senha redefinida com sucesso." });
         }
-        public class ResetPasswordDto
+        public class ResetPasswordModel
         {
-            public string Email { get; set; }
-            public string Token { get; set; }
-            public string NewPassword { get; set; }
+            public required string Email { get; set; }
+            public required string Token { get; set; }
+            public required string NewPassword { get; set; }
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("change-password")]
-        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto model)
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
         {
             var userClaims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
             Console.WriteLine("Claims do Token: ");
@@ -288,13 +304,27 @@ namespace backend.Controllers.Api
             await _signInManager.RefreshSignInAsync(user);
             return Ok(new { message = "Senha alterada com sucesso!" });
         }
-        public class ChangePasswordDto
+        public class ChangePasswordModel
         {
-            public string CurrentPassword { get; set; }
-            public string NewPassword { get; set; }
+            public required string CurrentPassword { get; set; }
+            public required string NewPassword { get; set; }
         }
 
+        [HttpPost("send-email")]
+        public async Task<IActionResult> SendEmail([FromBody] EmailModel model)
+        {
+            if (string.IsNullOrEmpty(model.To) || string.IsNullOrEmpty(model.Subject) || string.IsNullOrEmpty(model.Body))
+                return BadRequest("Invalid email request.");
 
+            await _emailService.SendEmailAsync(model.To, model.Subject, model.Body);
+            return Ok("Email sent successfully.");
+        }
+        public class EmailModel
+        {
+            public required string To { get; set; }
+            public required string Subject { get; set; }
+            public required string Body { get; set; }
+        }
 
 
     }

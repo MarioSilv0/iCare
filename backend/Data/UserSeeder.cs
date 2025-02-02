@@ -21,16 +21,16 @@ namespace backend.Data
                 await userManager.CreateAsync(user, "UserPass123!");
                 await userManager.AddToRoleAsync(user, "User");
             }
-            if (await userManager.FindByEmailAsync("mario@gmail.com") == null)
+            if (await userManager.FindByEmailAsync("mariodelgadinho28@gmail.com") == null)
             {
                 var user = new User
                 {
-                    UserName = "mario@gmail.com",
-                    Email = "mario@gmail.com",
+                    UserName = "mariodelgadinho28",
+                    Email = "mariodelgadinho28@gmail.com",
                     Name = "mario",
                     EmailConfirmed = true
                 };
-                await userManager.CreateAsync(user, "28112002Mads.");
+                await userManager.CreateAsync(user, "Mario2811.");
                 await userManager.AddToRoleAsync(user, "User");
                 await userManager.AddToRoleAsync(user, "Admin");
             }
