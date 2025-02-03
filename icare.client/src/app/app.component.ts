@@ -10,8 +10,8 @@ import { filter } from 'rxjs';
 
 //Mário
 export class AppComponent {
-  showNavMenu = true;
   showHeader = true;
+  showNavMenu = true;
   constructor(private router: Router) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
@@ -22,11 +22,11 @@ export class AppComponent {
           currentRoute.includes('register') ||
           currentRoute.includes('password')
         ) {
-          this.showNavMenu = false;
           this.showHeader = false;
+          this.showNavMenu = false;
         } else {
-          this.showNavMenu = true;
           this.showHeader = true;
+          this.showNavMenu = true;
         }
       });
   }
