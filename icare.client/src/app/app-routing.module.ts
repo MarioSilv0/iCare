@@ -11,7 +11,6 @@ import { ResetPasswordComponent } from './auth/reset-password/reset-password.com
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 
-
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
@@ -27,7 +26,11 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'recover-password', component: RecoverPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'change-password', component: ChangePasswordComponent, canActivate: [AuthGuard] }
+  {
+    path: 'change-password',
+    component: ChangePasswordComponent,
+    canActivate: [AuthGuard],
+  },
 ];
 
 @NgModule({
