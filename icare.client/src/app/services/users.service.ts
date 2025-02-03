@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -11,8 +11,10 @@ export class UsersService {
 
   constructor(private http: HttpClient) { }
 
-  getUser(id: string): Observable<User> {
-    return this.http.get<User>(this.url + id);
+  getUser(token: string): Observable<User> {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.get<User>(this.url, { headers });
   }
 
   updateUser(id: string, user: User): Observable<User> {

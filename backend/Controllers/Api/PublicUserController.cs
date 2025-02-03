@@ -3,8 +3,13 @@ using backend.Models;
 using backend.Models.Extensions;
 using backend.Models.Preferences;
 using backend.Models.Restrictions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 /// <summary>
 /// This file defines the <c>PublicUserController</c> class, which provides
@@ -23,9 +28,11 @@ namespace backend.Controllers.Api
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PublicUserController : ControllerBase
     {
         private readonly ICareServerContext _context;
+        private readonly IConfiguration _configuration;
         private readonly ILogger<PublicUserController> _logger;
 
         /// <summary>
@@ -33,26 +40,27 @@ namespace backend.Controllers.Api
         /// </summary>
         /// <param name="context">The database context for interacting with the database.</param>
         /// <param name="logger">The logger for recording application activity.</param>
-        public PublicUserController(ICareServerContext context, ILogger<PublicUserController> logger)
+        public PublicUserController(ICareServerContext context, ILogger<PublicUserController> logger, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
             _logger = logger;
         }
 
         /// <summary>
-        /// Retrieves the public profile of a user based on their ID.
+        /// Retrieves the public profile of a user based on their token.
         /// </summary>
-        /// <param name="id">The unique identifier of the user.</param>
         /// <returns>
         /// An <c>ActionResult</c> containing the <c>PublicUser</c> object or an error response.
         /// </returns>
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PublicUser>> Edit(string id)
+        [HttpGet("")]
+        public async Task<ActionResult<PublicUser>> Edit()
         {
-            if (string.IsNullOrEmpty(id)) return BadRequest();
-
             try
             {
+                var id = User.FindFirst("UserId")?.Value;
+                if (id == null) return Unauthorized("User ID not found in token.");
+
                 var user = await _context.Users.Include(u => u.UserPreferences)
                                                .ThenInclude(up => up.Preference)
                                                .Include(u => u.UserRestrictions)
@@ -68,7 +76,7 @@ namespace backend.Controllers.Api
             }
             catch (Exception ex) 
             {
-                _logger.LogError(ex, "Error retrieving user with ID {Id}", id);
+                _logger.LogError(ex, "Error retrieving user");
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }

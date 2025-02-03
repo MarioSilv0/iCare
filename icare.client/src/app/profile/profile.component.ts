@@ -11,7 +11,7 @@ import { AuthService } from '../auth/auth.service';
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
-  private id: string = 'ffb7c334-3448-4a5c-a09a-33376f3fdc8d';
+  private token: string | null = '';
 
   public user: User = {
     picture: '', name: 'A', email: 'A@example.com', birthdate: new Date(), notifications: true, height: 0, weight: 0, preferences: [], restrictions: [] };
@@ -27,9 +27,10 @@ export class ProfileComponent implements OnInit {
 
   getUser() {
     if (this.authService.isLogged()) {
-      // const id = this.authService.currentUser().user._id;
+      this.token = localStorage.getItem('authToken'); 
+      if (this.token === null) return;
 
-      this.service.getUser(this.id).subscribe(
+      this.service.getUser(this.token).subscribe(
         (result) => {
           this.user = result;
         },
@@ -41,7 +42,8 @@ export class ProfileComponent implements OnInit {
   }
 
   updateUser() {
-    this.service.updateUser(this.id, this.user).subscribe(
+    if (this.token === null) return;
+    this.service.updateUser(this.token, this.user).subscribe(
       () => {
         this.router.navigate(['/']);
       },
