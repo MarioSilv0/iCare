@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { PasswordValidatorService } from '../password-validator.service';
 
 @Component({
   selector: 'app-register',
@@ -11,15 +12,16 @@ export class RegisterComponent {
   email: string = '';
   password: string = '';
   confirmPassword: string = '';
-  errorMessage: string | null = null;
-  passwordErrors: string[] = [];
+  errorMessage: string = '';
+  passwordErrorMessage: string = '';
+  isPasswordValid: boolean = false;
   showPassword: boolean = false;
 
-  togglePasswordVisibility(): void {
-    this.showPassword = !this.showPassword;
-  }
-
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private passwordValidator: PasswordValidatorService
+  ) { }
 
   ngOnInit(): void {
       if (this.authService.isLogged()) {
@@ -27,35 +29,37 @@ export class RegisterComponent {
       }
   }
 
-  validatePassword(password: string) {
-    this.passwordErrors = []; // Clear errors on every input
-
-    if (!/[a-z]/.test(password)) {
-      this.passwordErrors.push('lower'); // Password requires at least one lowercase letter
-    } else if (!/[A-Z]/.test(password)) {
-      this.passwordErrors.push('upper'); // Password requires at least one uppercase letter
-    } else if (!/[0-9]/.test(password)) {
-      this.passwordErrors.push('digit'); // Password requires at least one digit
-    } else if (!/[^\w\s]/.test(password)) {
-      this.passwordErrors.push('nonAlphanumeric'); // Password requires at least one non-alphanumeric character
-    }
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
-  passwordIsValide(): boolean {
-    return this.passwordErrors.length === 0 && this.password.length >= 8;
+
+  validatePassword(): void {
+    const validation = this.passwordValidator.validate(this.password);
+    this.isPasswordValid = validation.valid;
+    this.passwordErrorMessage = validation.message || '';
   }
 
   onRegister(): void {
-    if (this.password !== this.confirmPassword) {
+    if (!this.password || this.password !== this.confirmPassword) {
       this.errorMessage = 'Passwords do not match';
       return;
     }
+    this.validatePassword();
+    if (!this.isPasswordValid) {
+      this.errorMessage = 'Password is too weak';
+      return;
+    }
 
-    const registrationData = { email: this.email, password: this.password };
-    this.authService.register(registrationData).subscribe({
-      next: (response) => {
+    const credentials = {
+      email: this.email,
+      password: this.password
+    };
+    this.authService.register(credentials).subscribe({
+      next: () => {
         this.router.navigate(['/login']);
       },
       error: (err) => {
+        console.error(err);
         this.errorMessage = err.error.message;
       },
     });
