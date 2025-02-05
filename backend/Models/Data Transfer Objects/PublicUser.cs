@@ -18,11 +18,6 @@ namespace backend.Models
     public class PublicUser
     {
         /// <value>
-        /// Property <c>Id</c> represents the unique identifier of the user.
-        /// </value>
-        public string Id { get; set; }
-
-        /// <value>
         /// Property <c>Picture</c> represents the user's profile picture URL.
         /// </value>
         public string? Picture { get; set; }
@@ -87,7 +82,6 @@ namespace backend.Models
             List<SelectionObject> preferences = (model != null) ? model.Preferences : GetSelectionList(listPreferences, e => e.Id, e => e.Name, id => user.UserPreferences.Any(up => up.PreferenceId == id));
             List<SelectionObject> restrictions = (model != null) ? model.Restrictions : GetSelectionList(listRestrictions, e => e.Id, e => e.Name, id => user.UserRestrictions.Any(up => up.RestrictionId == id));
 
-            Id = user.Id;
             Picture = user.Picture;
             Name = user.Name;
             Email = user.Email;

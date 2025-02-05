@@ -3,6 +3,7 @@ using backend.Models;
 using backend.Models.Extensions;
 using backend.Models.Preferences;
 using backend.Models.Restrictions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +29,7 @@ namespace backend.Controllers.Api
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PublicUserController : ControllerBase
     {
         private readonly ICareServerContext _context;
@@ -89,12 +90,15 @@ namespace backend.Controllers.Api
         /// <returns>
         /// An <c>ActionResult</c> containing the updated <c>PublicUser</c> object or an error response.
         /// </returns>
-        [HttpPut("{id}")]
-        public async Task<ActionResult<PublicUser>> Edit(string id, [FromBody] PublicUser model)
+        [HttpPut("")]
+        public async Task<ActionResult<PublicUser>> Edit([FromBody] PublicUser model)
         {
-            if (model == null || id != model.Id) return BadRequest("Invalid data provided.");
+            if (model == null) return BadRequest("Invalid data provided.");
 
             try {
+                var id = User.FindFirst("UserId")?.Value;
+                if (id == null) return Unauthorized("User ID not found in token.");
+
                 var user = await _context.Users.Include(u => u.UserPreferences)
                                                .Include(u => u.UserRestrictions)
                                                .FirstOrDefaultAsync(u => u.Id == id);
@@ -113,7 +117,7 @@ namespace backend.Controllers.Api
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating user with ID {Id}", id);
+                _logger.LogError(ex, "Error updating user");
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
