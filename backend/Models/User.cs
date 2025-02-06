@@ -8,25 +8,24 @@ namespace backend.Models
 {
     public class User : IdentityUser
     {
-        [Required(ErrorMessage = "Name is mandatory.")]
         [Display(Name = "Name")]
         [PersonalData]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Display(Name = "Picture")]
         public string? Picture { get; set; }
 
         [Display(Name = "Birthdate")]
-        public DateOnly Birthdate { get; set; }
+        public DateOnly Birthdate { get; set; } = new DateOnly();
 
         [Display(Name = "Notifications")]
-        public bool Notifications { get; set; }
+        public bool Notifications { get; set; } = false;
 
         [Display(Name = "Height")]
-        public float Height { get; set; }
+        public float Height { get; set; } = 0;
 
         [Display(Name = "Weight")]
-        public float Weight { get; set; }
+        public float Weight { get; set; } = 0f;
 
         [Display(Name = "Preferences")]
         public ICollection<UserPreference>? UserPreferences { get; set; }

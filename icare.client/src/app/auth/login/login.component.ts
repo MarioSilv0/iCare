@@ -39,11 +39,12 @@ export class LoginComponent {
         google.accounts.id.renderButton(
           document.getElementById('google-signin'),
           {
-            type: "icon",
-            shape: "circle",
+            type: "standard",
+            shape: "pill",
             theme: "filled_blue",
-            text: "signin_with",
+            text: "continue_with",
             size: "large",
+            logo_alignment:"center"
           }
         );
       }

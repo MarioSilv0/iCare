@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable, map } from 'rxjs';
   providedIn: 'root',
 })
 
-//Mário with 'PeopleAngular(identity)'
+/// <author>Mário Silva - 202000500</author>
 export class AuthService {
   private baseUrl = '../api/account';
 
@@ -75,8 +75,8 @@ export class AuthService {
     window.location.href = '/login';
   }
 
-  public register(data: { email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.baseUrl}/register`, data);
+  public register(email: string, password: string ): Observable<any> {
+    return this.http.post(`${this.baseUrl}/register`, { email, password, clientUrl: window.location.origin });
   }
 
   public recoverPassword(email: string): Observable<any> {
@@ -93,7 +93,11 @@ export class AuthService {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     });
-    return this.http.post(`${this.baseUrl}/change-password`, data, { headers/*, responseType: 'text'*/ },);
+    return this.http.post(`${this.baseUrl}/change-password`, data, { headers });
+  }
+
+  public confirmEmail(email: string, token: string): Observable<any> {
+    return this.http.get(`/api/account/confirm-email?email=${email}&token=${token}`);
   }
 
 
