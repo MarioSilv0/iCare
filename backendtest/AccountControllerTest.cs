@@ -4,12 +4,20 @@ using backend.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
-using static backend.Controllers.Api.AccountController;
 using Microsoft.AspNetCore.Http;
 using backend.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
+using System.Threading.Tasks;
+using Xunit;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace backendtest
 {
@@ -18,56 +26,84 @@ namespace backendtest
         private readonly Mock<UserManager<User>> _mockUserManager;
         private readonly Mock<SignInManager<User>> _mockSignInManager;
         private readonly Mock<IConfiguration> _mockConfiguration;
-        private readonly Mock<ICareServerContext> _mockCareServerContext; // Mock for ICareServerContext
-        private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor; // Mock for IHttpContextAccessor
-        private readonly Mock<UserLogService> _mockUserLogService; // Mock for UserLogService
-        private readonly Mock<EmailSenderService> _mockEmailService; // Assuming EmailSenderService implements IEmailSenderService
+        private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor;
         private readonly AccountController _controller;
+        private readonly ICareServerContext _careServerContext;
 
         public AccountControllerTests()
         {
+            // Cria um banco de dados in-memory (usando um nome único para isolar os testes)
             var options = new DbContextOptionsBuilder<ICareServerContext>()
-                .UseInMemoryDatabase("TestDb")
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
+            _careServerContext = new ICareServerContext(options);
 
-            // Setup UserManager mock
+            // Configura o UserManager com um mock
             var userStore = new Mock<IUserStore<User>>();
             _mockUserManager = new Mock<UserManager<User>>(
                 userStore.Object,
                 null, null, null, null, null, null, null, null);
 
-            // Setup SignInManager mock
+            // Configura o SignInManager com um mock
             var contextAccessor = new Mock<IHttpContextAccessor>();
             var claimsFactory = new Mock<IUserClaimsPrincipalFactory<User>>();
-            _mockSignInManager = new Mock<SignInManager<User>>(_mockUserManager.Object,
-                contextAccessor.Object, claimsFactory.Object, null, null, null, null);
+            _mockSignInManager = new Mock<SignInManager<User>>(
+                _mockUserManager.Object,
+                contextAccessor.Object,
+                claimsFactory.Object,
+                null, null, null, null);
 
+            // Configura o IConfiguration (para JWT e outras dependências, se necessário)
             _mockConfiguration = new Mock<IConfiguration>();
-            _mockCareServerContext = new Mock<ICareServerContext>(options); // Mock for ICareServerContext
-            _mockHttpContextAccessor = new Mock<IHttpContextAccessor>(); // Mock for IHttpContextAccessor
-            _mockHttpContextAccessor.Setup(h => h.HttpContext).Returns(new DefaultHttpContext());
-            _mockUserLogService = new Mock<UserLogService>(_mockCareServerContext.Object, _mockHttpContextAccessor.Object); // Mocking UserLogService
-            _mockEmailService = new Mock<EmailSenderService>(); // Mocking EmailSenderService
-
-            // Setup Configuration mock for JWT
-            _mockConfiguration.Setup(x => x["Jwt:Key"]).Returns("your-test-secret-key-that-is-long-enough-for-testing");
+            _mockConfiguration.Setup(x => x["Jwt:Key"])
+                .Returns("your-test-secret-key-that-is-long-enough-for-testing");
             _mockConfiguration.Setup(x => x["Jwt:Issuer"]).Returns("test-issuer");
             _mockConfiguration.Setup(x => x["Jwt:Audience"]).Returns("test-audience");
 
+            // Configura o IHttpContextAccessor
+            _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+            _mockHttpContextAccessor.Setup(h => h.HttpContext)
+                .Returns(new DefaultHttpContext());
+
+            // Instancia os serviços reais (UserLogService e EmailSenderService)
+            var userLogService = new UserLogService(_careServerContext, _mockHttpContextAccessor.Object);
+
+            // Configura o EmailSettings e encapsula-o em IOptions<EmailSettings>
+            var emailSettings = new EmailSettings
+            {
+                SmtpServer = "smtp.gmail.com",
+                Port = 587,
+                SenderEmail = "marioextr@gmail.com",
+                SenderPassword = "iqxn etsa qgxp efsk",
+                EnableSsl = true
+            };
+            var emailSenderService = new EmailSenderService(Options.Create(emailSettings));
+
+            // Instancia o controller, injetando as dependências
             _controller = new AccountController(
                 _mockUserManager.Object,
-                _mockUserLogService.Object,
+                userLogService,
                 _mockConfiguration.Object,
                 _mockSignInManager.Object,
-                _mockEmailService.Object
+                emailSenderService
             );
+        }
+        
+        /// <summary>
+        /// Obtém o valor de uma propriedade de um objeto via reflection.
+        /// Retorna null caso a propriedade não exista.
+        /// </summary>
+        private static string GetPropertyValue(object obj, string propertyName)
+        {
+            var prop = obj.GetType().GetProperty(propertyName);
+            return prop?.GetValue(obj, null)?.ToString();
         }
 
         [Fact]
         public async Task Login_WithValidCredentials_ReturnsOkResult()
         {
             // Arrange
-            var loginModel = new LoginModel
+            var loginModel = new AccountController.LoginModel
             {
                 Email = "test@example.com",
                 Password = "Password123!"
@@ -77,7 +113,7 @@ namespace backendtest
             {
                 Id = "testUserId",
                 Email = loginModel.Email,
-                Name = "Test User"
+                Name = "TestUser"
             };
 
             _mockUserManager.Setup(x => x.FindByEmailAsync(loginModel.Email))
@@ -92,16 +128,43 @@ namespace backendtest
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var value = okResult.Value as dynamic;
-            Assert.NotNull(value.token);
-            Assert.Equal("Login successful", value.message);
+            var resultValue = okResult.Value;
+
+            // Acessa a propriedade "token" via reflection
+            var token = GetPropertyValue(resultValue, "token");
+            Assert.False(string.IsNullOrEmpty(token));
+
+            // Acessa a propriedade "message" via reflection
+            var message = GetPropertyValue(resultValue, "message");
+            Assert.Equal("Login successful", message);
         }
+
+        [Fact]
+        public async Task Login_WithInvalidModelState_ReturnsBadRequest()
+        {
+            // Arrange
+            _controller.ModelState.AddModelError("Email", "Required");
+            var loginModel = new AccountController.LoginModel
+            {
+                Email = "",
+                Password = "Password123!"
+            };
+
+            // Act
+            var result = await _controller.Login(loginModel);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var message = GetPropertyValue(badRequestResult.Value, "message");
+            Assert.Equal("Invalid data.", message);
+        }
+
 
         [Fact]
         public async Task Login_WithInvalidCredentials_ReturnsBadRequest()
         {
             // Arrange
-            var loginModel = new LoginModel
+            var loginModel = new AccountController.LoginModel
             {
                 Email = "test@example.com",
                 Password = "WrongPassword"
@@ -121,18 +184,19 @@ namespace backendtest
         public async Task Register_WithValidModel_ReturnsOkResult()
         {
             // Arrange
-            var registerModel = new RegisterModel
+            var registerModel = new AccountController.RegisterModel
             {
-                Email = "newuser@example.com",
+                Email = "mario@gmail.com",
                 Password = "Password123!",
                 ClientUrl = "http://localhost:3000"
             };
 
             _mockUserManager.Setup(x => x.FindByEmailAsync(registerModel.Email))
                 .ReturnsAsync((User)null);
-            _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<User>(), registerModel.Password))
-                .ReturnsAsync(IdentityResult.Success);
+            // O controller chama AddToRoleAsync ANTES de CreateAsync
             _mockUserManager.Setup(x => x.AddToRoleAsync(It.IsAny<User>(), "User"))
+                .ReturnsAsync(IdentityResult.Success);
+            _mockUserManager.Setup(x => x.CreateAsync(It.IsAny<User>(), registerModel.Password))
                 .ReturnsAsync(IdentityResult.Success);
             _mockUserManager.Setup(x => x.GenerateEmailConfirmationTokenAsync(It.IsAny<User>()))
                 .ReturnsAsync("confirmation-token");
@@ -142,14 +206,15 @@ namespace backendtest
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Contains("Account created successfully", (okResult.Value as dynamic).message);
+            var message = GetPropertyValue(okResult.Value, "message");
+            Assert.Contains("Account created successfully", message);
         }
 
         [Fact]
         public async Task Register_WithExistingEmail_ReturnsConflict()
         {
             // Arrange
-            var registerModel = new RegisterModel
+            var registerModel = new AccountController.RegisterModel
             {
                 Email = "existing@example.com",
                 Password = "Password123!",
@@ -171,18 +236,17 @@ namespace backendtest
         {
             // Arrange
             var userId = "testUserId";
-            var changePasswordModel = new ChangePasswordModel
+            var changePasswordModel = new AccountController.ChangePasswordModel
             {
                 CurrentPassword = "CurrentPassword123!",
                 NewPassword = "NewPassword123!"
             };
 
-            var user = new User { Id = userId, Email = "test@example.com" };
+            var user = new User { Id = userId, Email = "test@example.com", Name = "TestUser" };
 
             var claims = new List<Claim> { new Claim("UserId", userId) };
             var identity = new ClaimsIdentity(claims);
             var claimsPrincipal = new ClaimsPrincipal(identity);
-
             _controller.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext { User = claimsPrincipal }
@@ -192,25 +256,28 @@ namespace backendtest
                 .ReturnsAsync(user);
             _mockUserManager.Setup(x => x.CheckPasswordAsync(user, changePasswordModel.CurrentPassword))
                 .ReturnsAsync(true);
-            _mockUserManager.Setup(x => x.ChangePasswordAsync(user, 
-                changePasswordModel.CurrentPassword, changePasswordModel.NewPassword))
+            _mockUserManager.Setup(x => x.ChangePasswordAsync(user, changePasswordModel.CurrentPassword, changePasswordModel.NewPassword))
                 .ReturnsAsync(IdentityResult.Success);
+            _mockSignInManager.Setup(x => x.RefreshSignInAsync(user))
+                .Returns(Task.CompletedTask);
 
             // Act
             var result = await _controller.ChangePassword(changePasswordModel);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Contains("Senha alterada com sucesso", (okResult.Value as dynamic).message);
+            var message = GetPropertyValue(okResult.Value, "message");
+            Assert.Contains("Senha alterada com sucesso", message);
         }
+
 
         [Fact]
         public async Task RecoverPassword_WithValidEmail_ReturnsOkResult()
         {
             // Arrange
-            var model = new ForgotPasswordModel
+            var model = new AccountController.ForgotPasswordModel
             {
-                Email = "test@example.com",
+                Email = "mario@gmail.com",
                 ClientUrl = "http://localhost:3000"
             };
 
@@ -218,7 +285,7 @@ namespace backendtest
             {
                 Id = "testUserId",
                 Email = model.Email,
-                Name = "Test User"
+                Name = "TestUser"
             };
 
             _mockUserManager.Setup(x => x.FindByEmailAsync(model.Email))
@@ -231,42 +298,22 @@ namespace backendtest
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Contains("Instruções para redefinição de senha", (okResult.Value as dynamic).message);
-        }
-
-        [Fact]
-        public async Task ConfirmEmail_WithValidToken_ReturnsOkResult()
-        {
-            // Arrange
-            var email = "test@example.com";
-            var token = "valid-token";
-            var user = new User { Email = email };
-
-            _mockUserManager.Setup(x => x.FindByEmailAsync(email))
-                .ReturnsAsync(user);
-            _mockUserManager.Setup(x => x.ConfirmEmailAsync(user, token))
-                .ReturnsAsync(IdentityResult.Success);
-
-            // Act
-            var result = await _controller.ConfirmEmail(email, token);
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Contains("Email confirmed successfully", (okResult.Value as dynamic).message);
+            var message = GetPropertyValue(okResult.Value, "message");
+            Assert.Contains("Instruções para redefinição de senha", message);
         }
 
         [Fact]
         public async Task ResetPassword_WithValidModel_ReturnsOkResult()
         {
             // Arrange
-            var model = new ResetPasswordModel
+            var model = new AccountController.ResetPasswordModel
             {
                 Email = "test@example.com",
                 Token = "valid-token",
                 NewPassword = "NewPassword123!"
             };
 
-            var user = new User { Email = model.Email };
+            var user = new User { Id = "testUserId", Email = model.Email, Name = "TestUser" };
 
             _mockUserManager.Setup(x => x.FindByEmailAsync(model.Email))
                 .ReturnsAsync(user);
@@ -278,39 +325,50 @@ namespace backendtest
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.Contains("Senha redefinida com sucesso", (okResult.Value as dynamic).message);
+            var message = GetPropertyValue(okResult.Value, "message");
+            Assert.Contains("Senha redefinida com sucesso", message);
         }
 
         [Fact]
-        public async Task GoogleLogin_WithValidToken_ReturnsOkResult()
+        public async Task ConfirmEmail_WithValidToken_ReturnsOkResult()
         {
             // Arrange
-            var request = new GoogleLoginRequest
-            {
-                IdToken = "valid-google-token"
-            };
+            var email = "test@example.com";
+            var token = "valid-token";
+            var user = new User { Id = "testUserId", Email = email, Name = "TestUser" };
 
-            var user = new User
-            {
-                Id = "testUserId",
-                Email = "test@gmail.com",
-                Name = "Test User"
-            };
-
-            _mockUserManager.Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+            _mockUserManager.Setup(x => x.FindByEmailAsync(email))
                 .ReturnsAsync(user);
-            _mockUserManager.Setup(x => x.GetRolesAsync(user))
-                .ReturnsAsync(new List<string> { "User" });
+            _mockUserManager.Setup(x => x.ConfirmEmailAsync(user, token))
+                .ReturnsAsync(IdentityResult.Success);
 
-            // Note: This test assumes the Google token validation will succeed
-            // In a real test, you might want to mock the GoogleJsonWebSignature.ValidateAsync method
+            // Act
+            var result = await _controller.ConfirmEmail(email, token);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var message = GetPropertyValue(okResult.Value, "message");
+            Assert.Contains("Email confirmado com sucesso", message);
+        }
+
+        [Fact]
+        public async Task GoogleLogin_WithInvalidToken_ReturnsBadRequest()
+        {
+            // Arrange
+            var request = new AccountController.GoogleLoginRequest
+            {
+                IdToken = "invalid-google-token"
+            };
 
             // Act
             var result = await _controller.GoogleLogin(request);
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.NotNull((okResult.Value as dynamic).token);
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            // Neste caso, a propriedade retornada é "Message" com M maiúsculo
+            var message = GetPropertyValue(badRequestResult.Value, "Message");
+            Assert.Equal("Token do Google inválido", message);
         }
+
     }
 }

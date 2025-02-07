@@ -433,7 +433,7 @@ namespace backend.Controllers.Api
             if (result.Succeeded)
             {
                 await _userLogService.LogAsync(user.Id, $"Email confirmed for {user.Email}");
-                return Ok(new { message = "Email confirmed successfully!" });
+                return Ok(new { message = "Email confirmado com sucesso!" });
             }
 
             await _userLogService.LogAsync(user.Id, $"Error confirming email for {user.Email}");

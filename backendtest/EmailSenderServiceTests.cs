@@ -18,7 +18,7 @@ namespace backendtest
 
         public EmailSenderServiceTest()
         {
-            var options = new DbContextOptionsBuilder<ICareServerContext>()
+            var settings = new DbContextOptionsBuilder<ICareServerContext>()
                 .UseInMemoryDatabase("TestDb")
                 .Options;
         }

@@ -57,10 +57,7 @@ describe('RegisterComponent', () => {
     component.confirmPassword = 'StrongPass1!';
     component.onRegister();
 
-    expect(mockAuthService.register).toHaveBeenCalledWith({
-      email: 'test@example.com',
-      password: 'StrongPass1!',
-    });
+    expect(mockAuthService.register).toHaveBeenCalledWith('test@example.com','StrongPass1!');
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/login']);
   });
 

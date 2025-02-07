@@ -50,11 +50,7 @@ export class RegisterComponent {
       return;
     }
 
-    const credentials = {
-      email: this.email,
-      password: this.password
-    };
-    this.authService.register(credentials).subscribe({
+    this.authService.register(this.email, this.password).subscribe({
       next: () => {
         this.router.navigate(['/login']);
         alert("Please check your email to confirm your registration.");
