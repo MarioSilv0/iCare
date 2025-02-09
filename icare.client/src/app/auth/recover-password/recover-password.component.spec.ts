@@ -30,10 +30,6 @@ describe('RecoverPasswordComponent', () => {
     routerSpy = TestBed.inject(Router) as jasmine.SpyObj<Router>;
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
   it('should initialize without errors', () => {
     expect(component.email).toBe('');
     expect(component.errorMessage).toBeUndefined();

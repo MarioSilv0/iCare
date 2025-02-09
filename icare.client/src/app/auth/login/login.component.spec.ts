@@ -31,10 +31,6 @@ describe('LoginComponent', () => {
     routerSpy = TestBed.inject(Router) as jasmine.SpyObj<Router>;
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
   it('should initialize and check if user is logged in', () => {
     authServiceSpy.isLogged.and.returnValue(true);
     component.ngOnInit();

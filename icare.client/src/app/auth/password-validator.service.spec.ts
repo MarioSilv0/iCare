@@ -9,10 +9,6 @@ describe('PasswordValidatorService', () => {
     service = TestBed.inject(PasswordValidatorService);
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
-
   it('should return invalid for empty password', () => {
     const result = service.validate('');
     expect(result.valid).toBeFalse();

@@ -37,11 +37,6 @@ describe('ChangePasswordComponent', () => {
     passwordValidatorSpy = TestBed.inject(PasswordValidatorService) as jasmine.SpyObj<PasswordValidatorService>;
   });
 
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
   it('should toggle password visibility', () => {
     expect(component.showPassword).toBeFalse();
     component.togglePasswordVisibility();

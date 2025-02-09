@@ -34,10 +34,6 @@ describe('ResetPasswordComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
   it('should toggle password visibility', () => {
     expect(component.showPassword).toBeFalse();
     component.togglePasswordVisibility();

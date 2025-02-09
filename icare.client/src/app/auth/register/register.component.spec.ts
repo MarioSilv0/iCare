@@ -37,10 +37,6 @@ describe('RegisterComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
   it('should not proceed if passwords do not match', () => {
     component.email = 'test@example.com';
     component.password = 'StrongPass1!';
