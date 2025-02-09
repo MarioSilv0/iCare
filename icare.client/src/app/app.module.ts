@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { AuthInterceptor } from 'angular-auth-oidc-client';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AboutComponent } from './about/about.component';
 import { AdminComponent } from './admin/admin.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -40,7 +40,7 @@ import { ProfileComponent } from './profile/profile.component';
     ReactiveFormsModule,
   ],
   providers: [
-    //{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [AppComponent, NavMenuComponent],
 })
