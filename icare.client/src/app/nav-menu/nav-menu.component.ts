@@ -23,7 +23,7 @@ export class NavMenuComponent {
     {
       icon: `${this.commonPath}user${this.extension}`,
       text: 'Perfil',
-      path: '',
+      path: '/profile',
     },
     {
       icon: `${this.commonPath}receitas${this.extension}`,

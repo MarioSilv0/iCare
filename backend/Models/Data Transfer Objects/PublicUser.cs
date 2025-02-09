@@ -1,14 +1,13 @@
-﻿/// <summary>
+﻿using backend.Models.Preferences;
+using backend.Models.Restrictions;
+
+/// <summary>
 /// This file defines the <c>PublicUser</c> class, which represents a user's publicly
 /// accessible profile, including preferences and restrictions.
 /// </summary>
 /// <author>Luís Martins - 202100239</author>
 /// <author>João Morais  - 202001541</author>
 /// <date>Last Modified: 2025-01-27</date>
-
-using backend.Models.Preferences;
-using backend.Models.Restrictions;
-
 namespace backend.Models
 {
     /// <summary>
@@ -17,11 +16,6 @@ namespace backend.Models
     /// </summary>
     public class PublicUser
     {
-        /// <value>
-        /// Property <c>Id</c> represents the unique identifier of the user.
-        /// </value>
-        public string Id { get; set; }
-
         /// <value>
         /// Property <c>Picture</c> represents the user's profile picture URL.
         /// </value>
@@ -87,7 +81,6 @@ namespace backend.Models
             List<SelectionObject> preferences = (model != null) ? model.Preferences : GetSelectionList(listPreferences, e => e.Id, e => e.Name, id => user.UserPreferences.Any(up => up.PreferenceId == id));
             List<SelectionObject> restrictions = (model != null) ? model.Restrictions : GetSelectionList(listRestrictions, e => e.Id, e => e.Name, id => user.UserRestrictions.Any(up => up.RestrictionId == id));
 
-            Id = user.Id;
             Picture = user.Picture;
             Name = user.Name;
             Email = user.Email;
