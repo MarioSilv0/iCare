@@ -7,7 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
 
-//Mário with 'PeopleAngular(identity) and Luis'
+/// <author>Mário Silva - 202000500</author>
+/// <author>Luís Martins - 202100239</author>
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -10,11 +10,20 @@ using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Web;
 
 namespace backend.Controllers.Api
 {
-    //Mário with 'PeopleAngular(identity)'
+    /// <author>Mário Silva - 202000500</author>
+    /// <summary>
+    /// Controller responsible for managing user accounts and authentication.
+    /// Handles user registration, login, password management, and email operations.
+    /// </summary>
+    /// <remarks>
+    /// This controller provides endpoints for:
+    /// - User registration and email confirmation
+    /// - User authentication (including Google OAuth)
+    /// - Password management (change, reset, recovery)
+    /// </remarks>
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -25,6 +34,14 @@ namespace backend.Controllers.Api
         private readonly UserLogService _userLogService;
         private readonly EmailSenderService _emailService;
 
+        /// <summary>
+        /// Initializes a new instance of the AccountController.
+        /// </summary>
+        /// <param name="userManager">The ASP.NET Core Identity user manager.</param>
+        /// <param name="userLogService">Service for logging user activities.</param>
+        /// <param name="configuration">Application configuration instance.</param>
+        /// <param name="signInManager">The ASP.NET Core Identity sign-in manager.</param>
+        /// <param name="emailService">Service for sending emails.</param>
         public AccountController(UserManager<User> userManager, UserLogService userLogService, IConfiguration configuration, SignInManager<User> signInManager, EmailSenderService emailService)
         {
             _userManager = userManager;
@@ -34,6 +51,22 @@ namespace backend.Controllers.Api
             _emailService = emailService;
         }
 
+        /// <summary>
+        /// Authenticates a user and generates a JWT token.
+        /// </summary>
+        /// <param name="model">The login credentials containing email and password.</param>
+        /// <returns>
+        /// Returns an IActionResult containing:
+        /// - 200 OK with JWT token if authentication is successful
+        /// - 400 Bad Request if credentials are invalid
+        /// </returns>
+        /// <remarks>
+        /// The generated JWT token contains user claims including:
+        /// - Name
+        /// - Email
+        /// - User ID
+        /// - Roles
+        /// </remarks>
         [HttpPost("login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
@@ -91,9 +124,24 @@ namespace backend.Controllers.Api
             });
         }
 
+        /// <summary>
+        /// Registers a new user in the system.
+        /// </summary>
+        /// <param name="model">Registration details including email, password, and client URL.</param>
+        /// <returns>
+        /// Returns an IActionResult containing:
+        /// - 200 OK if registration is successful
+        /// - 400 Bad Request if registration data is invalid
+        /// - 409 Conflict if email is already registered
+        /// </returns>
+        /// <remarks>
+        /// After successful registration:
+        /// - User is assigned the "User" role
+        /// - Confirmation email is sent to user's email address
+        /// </remarks>
         [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody] LoginModel model)
+        public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -122,22 +170,44 @@ namespace backend.Controllers.Api
 
             if (result.Succeeded)
             {
+                // Generate email confirmation token
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var confirmationLink = $"{model.ClientUrl}/confirm-email?email={model.Email}&token={Uri.EscapeDataString(token)}";
+
+                // Send confirmation email
+                var subject = "Please confirm your email address";
+                var body = $@"
+                    <p>Olá {user.Name},</p>
+                    <p>Por favor, confirme seu endereço de e-mail clicando no link abaixo:</p>
+                    <p><a href='{confirmationLink}'>Confirmar E-mail</a></p>
+                    <p>Se você não solicitou isso, ignore este e-mail.</p>
+                    <p>Obrigado!</p>";
+
+                await _emailService.SendEmailAsync(user.Email, subject, body);
+
                 await _userLogService.LogAsync(user.Id, $"Account created successfully. Please confirm your email: {model.Email}");
                 return Ok(new { message = "Account created successfully. Please confirm your email." });
             }
+
 
             await _userLogService.LogAsync(null, $"Registration failed: {model.Email}");
             return BadRequest(new { message = "Registration failed.", errors = result.Errors });
         }
 
-        public class LoginModel
-        {
-            public required string Email { get; set; }
-
-            public required string Password { get; set; }
-
-        }
-
+        /// <summary>
+        /// Handles Google OAuth authentication.
+        /// </summary>
+        /// <param name="request">Contains the Google ID token.</param>
+        /// <returns>
+        /// Returns an IActionResult containing:
+        /// - 200 OK with JWT token if authentication is successful
+        /// - 400 Bad Request if Google token is invalid
+        /// </returns>
+        /// <remarks>
+        /// - Creates new user account if email doesn't exist
+        /// - Automatically confirms email for Google users
+        /// - Assigns "User" role to new accounts
+        /// </remarks>
         [HttpPost("google-login")]
         [AllowAnonymous]
         public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequest request)
@@ -166,7 +236,11 @@ namespace backend.Controllers.Api
                     };
 
                     var result = await _userManager.CreateAsync(user);
-                    if (!result.Succeeded) return BadRequest(result.Errors);
+                    if (!result.Succeeded)
+                    {
+                        await _userLogService.LogAsync(null, $"Google login failed for {payload.Email}");
+                        return BadRequest(result.Errors);
+                    }
 
                     await _userManager.AddToRoleAsync(user, "User");
                 }
@@ -195,8 +269,8 @@ namespace backend.Controllers.Api
                     signingCredentials: creds);
 
                 var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+                await _userLogService.LogAsync(user.Id, $"Google login successful for {user.Email}");
 
-                // Retornar o token ao cliente
                 return Ok(new
                 {
                     token = tokenString,
@@ -206,22 +280,33 @@ namespace backend.Controllers.Api
             }
             catch (InvalidJwtException ex)
             {
+                await _userLogService.LogAsync(null, $"Google login failed: {ex.Message}");
                 return BadRequest(new { Message = "Token do Google inválido", Error = ex.Message });
             }
         }
 
-        public class GoogleLoginRequest
-        {
-            public required string IdToken { get; set; }
-        }
-
+        /// <summary>
+        /// Initiates the password recovery process.
+        /// </summary>
+        /// <param name="model">Contains email and client URL for password reset.</param>
+        /// <returns>
+        /// Returns an IActionResult containing:
+        /// - 200 OK if recovery email is sent successfully
+        /// - 400 Bad Request if email is not found
+        /// </returns>
+        /// <remarks>
+        /// Sends an email with a password reset link to the user's email address.
+        /// </remarks>
         [HttpPost("recover-password")]
         public async Task<IActionResult> RecoverPassword([FromBody] ForgotPasswordModel model)
         {
             Console.WriteLine("RecoverPassword", model);
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
+            {
+                await _userLogService.LogAsync(null, $"Recover password attempt for non-existent email: {model.Email}");
                 return BadRequest(new { message = "Email não encontrado." });
+            }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var resetLink = $"{model.ClientUrl}/reset-password?email={model.Email}&token={Uri.EscapeDataString(token)}";
@@ -239,39 +324,54 @@ namespace backend.Controllers.Api
                 return BadRequest("Invalid email request.");
 
             await _emailService.SendEmailAsync(user.Email, subject, body);
+            await _userLogService.LogAsync(user.Id, $"Password recovery email sent to {user.Email}");
 
             return Ok(new { message = "Instruções para redefinição de senha enviadas para o e-mail." });
         }
 
-        public class ForgotPasswordModel
-        {
-            public required string Email { get; set; }
-            public required string ClientUrl { get; set; }
-        }
-
+        /// <summary>
+        /// Resets user's password using a reset token.
+        /// </summary>
+        /// <param name="model">Contains email, reset token, and new password.</param>
+        /// <returns>
+        /// Returns an IActionResult containing:
+        /// - 200 OK if password is reset successfully
+        /// - 400 Bad Request if token is invalid or user not found
+        /// </returns>
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);  
-
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
+            {
+                await _userLogService.LogAsync(null, $"Reset password attempt for non-existent email: {model.Email}");
                 return BadRequest(new { message = "Utilizador não encontrado." });
+            }
 
             var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
             if (!result.Succeeded)
+            {
+                await _userLogService.LogAsync(user.Id, $"Password reset failed for {user.Email}");
                 return BadRequest(new { message = "Erro ao redefinir a senha.", errors = result.Errors });
+            }
 
+            await _userLogService.LogAsync(user.Id, $"Password reset successful for {user.Email}");
             return Ok(new { message = "Senha redefinida com sucesso." });
         }
-        public class ResetPasswordModel
-        {
-            public required string Email { get; set; }
-            public required string Token { get; set; }
-            public required string NewPassword { get; set; }
-        }
 
+        /// <summary>
+        /// Changes the password of an authenticated user.
+        /// </summary>
+        /// <param name="model">Contains current password and new password.</param>
+        /// <returns>
+        /// Returns an IActionResult containing:
+        /// - 200 OK if password is changed successfully
+        /// - 400 Bad Request if current password is incorrect
+        /// - 401 Unauthorized if user is not authenticated
+        /// </returns>
+        /// <remarks>
+        /// Requires JWT authentication.
+        /// </remarks>
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
@@ -299,33 +399,167 @@ namespace backend.Controllers.Api
             var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
             Console.WriteLine(result);
             if (!result.Succeeded)
+            {
+                await _userLogService.LogAsync(user.Id, $"Password change failed for {user.Email}");
                 return BadRequest(new { message = "Erro ao alterar senha.", errors = result.Errors });
-
+            }
             await _signInManager.RefreshSignInAsync(user);
+            await _userLogService.LogAsync(user.Id, $"Password changed successfully for {user.Email}");
+
             return Ok(new { message = "Senha alterada com sucesso!" });
         }
-        public class ChangePasswordModel
+
+        /// <summary>
+        /// Confirms a user's email address.
+        /// </summary>
+        /// <param name="email">The email address to confirm.</param>
+        /// <param name="token">The confirmation token.</param>
+        /// <returns>
+        /// Returns an IActionResult containing:
+        /// - 200 OK if email is confirmed successfully
+        /// - 400 Bad Request if token is invalid or user not found
+        /// </returns>
+        [HttpGet("confirm-email")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string email, string token)
         {
-            public required string CurrentPassword { get; set; }
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return BadRequest(new { message = "User not found." });
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                await _userLogService.LogAsync(user.Id, $"Email confirmed for {user.Email}");
+                return Ok(new { message = "Email confirmado com sucesso!" });
+            }
+
+            await _userLogService.LogAsync(user.Id, $"Error confirming email for {user.Email}");
+            return BadRequest(new { message = "Error confirming email." });
+        }
+
+        /// <summary>
+        /// Model class for user login credentials.
+        /// </summary>
+        public class LoginModel
+        {
+            /// <summary>
+            /// Gets or sets the user's email address.
+            /// </summary>
+            public required string Email { get; set; }
+
+            /// <summary>
+            /// Gets or sets the user's password.
+            /// </summary>
+            public required string Password { get; set; }
+        }
+
+        /// <summary>
+        /// Model class for user registration.
+        /// </summary>
+        public class RegisterModel
+        {
+            /// <summary>
+            /// Gets or sets the email address for registration.
+            /// </summary>
+            public required string Email { get; set; }
+
+            /// <summary>
+            /// Gets or sets the password for the new account.
+            /// </summary>
+            public required string Password { get; set; }
+
+            /// <summary>
+            /// Gets or sets the client URL for email confirmation.
+            /// </summary>
+            public required string ClientUrl { get; set; }
+        }
+
+        /// <summary>
+        /// Model class for Google login requests.
+        /// </summary>
+        public class GoogleLoginRequest
+        {
+            /// <summary>
+            /// Gets or sets the Google ID token for authentication.
+            /// </summary>
+            public required string IdToken { get; set; }
+        }
+
+        /// <summary>
+        /// Model class for password recovery requests.
+        /// </summary>
+        public class ForgotPasswordModel
+        {
+            /// <summary>
+            /// Gets or sets the email address for password recovery.
+            /// </summary>
+            public required string Email { get; set; }
+
+            /// <summary>
+            /// Gets or sets the client URL for password reset.
+            /// </summary>
+            public required string ClientUrl { get; set; }
+        }
+
+        /// <summary>
+        /// Model class for password reset operations.
+        /// </summary>
+        public class ResetPasswordModel
+        {
+            /// <summary>
+            /// Gets or sets the email address of the account.
+            /// </summary>
+            public required string Email { get; set; }
+
+            /// <summary>
+            /// Gets or sets the password reset token.
+            /// </summary>
+            public required string Token { get; set; }
+
+            /// <summary>
+            /// Gets or sets the new password.
+            /// </summary>
             public required string NewPassword { get; set; }
         }
 
-        [HttpPost("send-email")]
-        public async Task<IActionResult> SendEmail([FromBody] EmailModel model)
+        /// <summary>
+        /// Model class for password change operations.
+        /// </summary>
+        public class ChangePasswordModel
         {
-            if (string.IsNullOrEmpty(model.To) || string.IsNullOrEmpty(model.Subject) || string.IsNullOrEmpty(model.Body))
-                return BadRequest("Invalid email request.");
+            /// <summary>
+            /// Gets or sets the current password.
+            /// </summary>
+            public required string CurrentPassword { get; set; }
 
-            await _emailService.SendEmailAsync(model.To, model.Subject, model.Body);
-            return Ok("Email sent successfully.");
+            /// <summary>
+            /// Gets or sets the new password.
+            /// </summary>
+            public required string NewPassword { get; set; }
         }
+
+        /// <summary>
+        /// Model class for email operations.
+        /// </summary>
         public class EmailModel
         {
+            /// <summary>
+            /// Gets or sets the recipient's email address.
+            /// </summary>
             public required string To { get; set; }
+
+            /// <summary>
+            /// Gets or sets the email subject.
+            /// </summary>
             public required string Subject { get; set; }
+
+            /// <summary>
+            /// Gets or sets the email body content.
+            /// </summary>
             public required string Body { get; set; }
         }
-
-
     }
 }

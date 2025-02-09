@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { PasswordValidatorService } from '../password-validator.service';
 
 @Component({
   selector: 'app-reset-password',
@@ -12,14 +13,12 @@ export class ResetPasswordComponent {
   token: string = '';
   newPassword: string = '';
   repeatPassword = '';
-  errorMessage: string | undefined;
-  passwordErrors: string[] = [];
-  showPassword: boolean = false;
+  isPasswordValid = false;
+  passwordErrorMessage = '';
+  errorMessage = '';
+  showPassword = false;
 
-  togglePasswordVisibility(): void {
-    this.showPassword = !this.showPassword;
-  }
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router, private passwordValidator: PasswordValidatorService) {}
 
   ngOnInit(): void {
     const urlParams = new URLSearchParams(window.location.search);
@@ -27,11 +26,27 @@ export class ResetPasswordComponent {
     this.token = urlParams.get('token') || '';
   }
 
+  validateNewPassword() {
+    const validation = this.passwordValidator.validate(this.newPassword);
+    this.isPasswordValid = validation.valid;
+    this.passwordErrorMessage = validation.message || '';
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
   onReset(): void {
-    if (this.newPassword !== this.repeatPassword) {
-      this.errorMessage = 'New Passwords do not match';
+    if (!this.newPassword || this.newPassword !== this.repeatPassword) {
+      this.errorMessage = 'Passwords do not match';
       return;
     }
+    this.validateNewPassword();
+    if (!this.isPasswordValid) {
+      this.errorMessage = 'Password is too weak';
+      return;
+    }
+
     const credentials = {
       email: this.email,
       token: this.token,
@@ -46,29 +61,5 @@ export class ResetPasswordComponent {
         this.errorMessage = err.error.message;
       },
     });
-  }
-
-  validatePassword(password: string) {
-    this.passwordErrors = []; // Clear errors on every input
-
-    if (!/[a-z]/.test(password)) {
-      this.passwordErrors.push('lower'); // Password requires at least one lowercase letter
-    }
-
-    if (!/[A-Z]/.test(password)) {
-      this.passwordErrors.push('upper'); // Password requires at least one uppercase letter
-    }
-
-    if (!/[0-9]/.test(password)) {
-      this.passwordErrors.push('digit'); // Password requires at least one digit
-    }
-
-    if (!/[^\w\s]/.test(password)) {
-      this.passwordErrors.push('nonAlphanumeric'); // Password requires at least one non-alphanumeric character
-    }
-  }
-
-  passwordIsValide(): boolean {
-    return this.passwordErrors.length === 0 && this.newPassword.length >= 8;
   }
 }

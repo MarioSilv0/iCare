@@ -7,6 +7,7 @@ using Xunit;
 
 namespace backendtest
 {
+    /// <author>Mário Silva - 202000500</author>
     public class UserLogServiceTests
     {
         private readonly UserLogService _userLogService;
