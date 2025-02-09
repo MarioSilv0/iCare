@@ -11,8 +11,6 @@ import { AuthService } from '../auth/auth.service';
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
-  private token: string | null = '';
-
   public user: User = {
     picture: '', name: 'A', email: 'A@example.com', birthdate: new Date(), notifications: true, height: 0, weight: 0, preferences: [], restrictions: [] };
   public todayDate: string;
@@ -26,24 +24,18 @@ export class ProfileComponent implements OnInit {
   }
 
   getUser() {
-    if (this.authService.isLogged()) {
-      this.token = localStorage.getItem('authToken'); 
-      if (this.token === null) return;
-
-      this.service.getUser(this.token).subscribe(
-        (result) => {
-          this.user = result;
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    } else this.router.navigate(['/login']);
+    this.service.getUser().subscribe(
+      (result) => {
+        this.user = result;
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   }
 
   updateUser() {
-    if (this.token === null) return;
-    this.service.updateUser(this.token, this.user).subscribe(
+    this.service.updateUser(this.user).subscribe(
       () => {
         this.router.navigate(['/']);
       },

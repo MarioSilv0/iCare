@@ -5,8 +5,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/// <summary>
+/// This file contains unit tests for the <c>User</c> model.
+/// The tests ensure the correctness of the <c>UpdateFromModel</c> method,
+/// verifying that valid data is correctly updated and invalid data is ignored.
+/// </summary>
+/// <author>Luís Martins - 202100239</author>
+/// <author>João Morais - 202001541</author>
+/// <date>Last Modified: 2025-01-30</date>
 namespace backendtest
 {
+    /// <summary>
+    /// Test class for the <c>User</c>.
+    /// This class contains tests for the <c>UpdateFromModel</c> method, checking various scenarios involving it.
+    /// </summary>
     public class UserTests
     {
         private readonly User user;

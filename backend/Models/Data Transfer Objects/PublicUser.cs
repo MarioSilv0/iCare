@@ -1,14 +1,13 @@
-﻿/// <summary>
+﻿using backend.Models.Preferences;
+using backend.Models.Restrictions;
+
+/// <summary>
 /// This file defines the <c>PublicUser</c> class, which represents a user's publicly
 /// accessible profile, including preferences and restrictions.
 /// </summary>
 /// <author>Luís Martins - 202100239</author>
 /// <author>João Morais  - 202001541</author>
 /// <date>Last Modified: 2025-01-27</date>
-
-using backend.Models.Preferences;
-using backend.Models.Restrictions;
-
 namespace backend.Models
 {
     /// <summary>

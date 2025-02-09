@@ -11,20 +11,12 @@ export class UsersService {
 
   constructor(private http: HttpClient) { }
 
-  getUser(token: string): Observable<User> {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    return this.http.get<User>(this.url, { headers });
+  getUser(): Observable<User> {
+    return this.http.get<User>(this.url);
   }
 
-  updateUser(token: string, user: User): Observable<User> {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    return this.http.put<User>(this.url, { ...user }, { headers });
+  updateUser(user: User): Observable<User> {
+    return this.http.put<User>(this.url, { ...user });
   }
 }
 interface Preference {

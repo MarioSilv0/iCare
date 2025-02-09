@@ -13,19 +13,17 @@ using System.Security.Claims;
 using System.Text;
 
 /// <summary>
-/// This file defines the <c>PublicUserController</c> class, which provides
-/// API endpoints for managing public user profiles, including retrieving and
-/// updating user data.
+/// This file defines the <c>PublicUserController</c> class, responsible for managing public user profiles.
+/// It provides API endpoints for retrieving and updating user data based on authentication tokens.
 /// </summary>
 /// <author>Luís Martins - 202100239</author>
 /// <author>João Morais  - 202001541</author>
-/// <date>Last Modified: 2025-01-27</date>
-
+/// <date>Last Modified: 2025-02-06</date>
 namespace backend.Controllers.Api
 {
     /// <summary>
-    /// Controller <c>PublicUserController</c> provides endpoints for interacting with
-    /// public user profiles, including retrieving and updating user data.
+    /// Controller <c>PublicUserController</c> manages public user profiles.
+    /// It allows authenticated users to retrieve and update their profile information.
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
@@ -33,26 +31,25 @@ namespace backend.Controllers.Api
     public class PublicUserController : ControllerBase
     {
         private readonly ICareServerContext _context;
-        private readonly IConfiguration _configuration;
         private readonly ILogger<PublicUserController> _logger;
 
         /// <summary>
         /// Initializes a new instance of the <c>PublicUserController</c> class.
         /// </summary>
-        /// <param name="context">The database context for interacting with the database.</param>
-        /// <param name="logger">The logger for recording application activity.</param>
-        public PublicUserController(ICareServerContext context, ILogger<PublicUserController> logger, IConfiguration configuration)
+        /// <param name="context">The database context for accessing user data.</param>
+        /// <param name="logger">The logger instance for logging application activity.</param>
+        /// <param name="configuration">The configuration instance for retrieving application settings.</param>
+        public PublicUserController(ICareServerContext context, ILogger<PublicUserController> logger)
         {
             _context = context;
-            _configuration = configuration;
             _logger = logger;
         }
 
         /// <summary>
-        /// Retrieves the public profile of a user based on their token.
+        /// Retrieves the public profile of the authenticated user.
         /// </summary>
         /// <returns>
-        /// An <c>ActionResult</c> containing the <c>PublicUser</c> object or an error response.
+        /// An <c>ActionResult</c> containing the <c>PublicUser</c> object if found, or an error response otherwise.
         /// </returns>
         [HttpGet("")]
         public async Task<ActionResult<PublicUser>> Edit()
@@ -83,12 +80,11 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
-        /// Updates the public profile of a user based on their ID.
+        /// Updates the public profile of the authenticated user.
         /// </summary>
-        /// <param name="id">The unique identifier of the user to update.</param>
-        /// <param name="model">The <c>PublicUser</c> model containing the updated data.</param>
+        /// <param name="model">The <c>PublicUser</c> model containing the updated profile data.</param>
         /// <returns>
-        /// An <c>ActionResult</c> containing the updated <c>PublicUser</c> object or an error response.
+        /// An <c>ActionResult</c> containing the updated <c>PublicUser</c> object if successful, or an error response otherwise.
         /// </returns>
         [HttpPut("")]
         public async Task<ActionResult<PublicUser>> Edit([FromBody] PublicUser model)
@@ -112,6 +108,8 @@ namespace backend.Controllers.Api
 
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();
+
+                _logger.LogInformation("User {UserId} updated their information.", user.Id);
 
                 return new PublicUser(user, model, [], []);
             }

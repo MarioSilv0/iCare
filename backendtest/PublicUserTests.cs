@@ -29,7 +29,6 @@ namespace backendtest
             Assert.NotNull(publicUser.Restrictions);
             Assert.Empty(publicUser.Preferences);
             Assert.Empty(publicUser.Restrictions);
-            Assert.Null(publicUser.Id);
             Assert.Null(publicUser.Picture);
             Assert.Null(publicUser.Name);
             Assert.Null(publicUser.Email);
@@ -68,7 +67,6 @@ namespace backendtest
 
             PublicUser publicUser = new (user, null, listPreferences, listRestrictions);
 
-            Assert.Equal(user.Id, publicUser.Id);
             Assert.Equal(user.Picture, publicUser.Picture);
             Assert.Equal(user.Name, publicUser.Name);
             Assert.Equal(user.Email, publicUser.Email);
@@ -114,7 +112,6 @@ namespace backendtest
 
             PublicUser result = new(user, publicUser, [], []);
 
-            Assert.Equal(user.Id, result.Id);
             Assert.Equal(user.Picture, result.Picture);
             Assert.Equal(user.Name, result.Name);
             Assert.Equal(user.Email, result.Email);
