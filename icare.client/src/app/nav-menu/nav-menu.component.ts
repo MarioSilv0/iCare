@@ -83,7 +83,6 @@ export class NavMenuComponent {
   logout() {
     if (this.isLoggedIn) {
       this.authService.logout();
-      this.router.navigateByUrl('login');
     }
   }
 }

@@ -13,7 +13,6 @@ import { ProfileComponent } from './profile/profile.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: '**', redirectTo: '' },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   {
     path: 'admin',
@@ -32,6 +31,7 @@ const routes: Routes = [
     component: ChangePasswordComponent,
     canActivate: [AuthGuard],
   },
+  { path: '**', redirectTo: '' },
 ];
 
 @NgModule({

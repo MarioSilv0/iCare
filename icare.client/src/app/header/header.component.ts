@@ -7,14 +7,11 @@ import { AuthService } from './../auth/auth.service';
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
-  isAuth = false;
-  authService: AuthService;
-  constructor(authService: AuthService) {
+  constructor(private authService: AuthService) {
     this.authService = authService;
-    this.isAuth = this.authService.isLogged();
   }
 
-  logout() {
+  public logout() {
     this.authService.logout();
   }
 }
