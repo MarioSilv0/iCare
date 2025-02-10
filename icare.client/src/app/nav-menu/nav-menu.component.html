@@ -50,7 +50,7 @@
           <a
             *ngIf="!isExpanded"
             href="{{ link.path }}"
-            class="text-start"
+            class="text-start nav-link"
             style="flex-wrap: wrap; cursor: pointer"
           >
             <img
@@ -68,7 +68,10 @@
         </div>
         <!-- actual link -->
         <span *ngIf="isExpanded" class="m-0">
-          <a href="{{ link.path }}" class="text-start" style="flex-wrap: wrap"
+          <a
+            href="{{ link.path }}"
+            class="text-start nav-link"
+            style="flex-wrap: wrap"
             >{{ link.text }}
           </a>
         </span>
@@ -86,7 +89,7 @@
           <a
             *ngIf="!isExpanded"
             href="{{ link.path }}"
-            class="text-start"
+            class="text-start nav-link"
             style="flex-wrap: wrap; cursor: pointer"
           >
             <img
@@ -106,9 +109,10 @@
         <span *ngIf="isExpanded" class="m-0" style="cursor: pointer">
           <a
             href="{{ link.path }}"
-            class="text-start"
+            class="text-start nav-link"
             style="cursor: pointer"
-            >{{ link.text }}</a
+          >
+            {{ link.text }}</a
           >
         </span>
       </article>
