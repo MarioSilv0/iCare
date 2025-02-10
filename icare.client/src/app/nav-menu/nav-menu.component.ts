@@ -10,57 +10,53 @@ import { AuthService } from '../auth/auth.service';
 
 //Mário
 export class NavMenuComponent {
-  public isExpanded = false;
+  public isExpanded: boolean = false;
   public isLoggedIn: boolean = false;
+  public username: string | null = null;
   public commonPath: string = '../../assets/svgs/';
   public extension: string = '.svg';
   public links = [
     {
       icon: `${this.commonPath}home${this.extension}`,
       text: 'Página Principal',
-      path: '/',
+      path: '/home',
     },
     {
       icon: `${this.commonPath}user${this.extension}`,
       text: 'Perfil',
-      path: '/profile',
+      path: '/perfil',
     },
     {
       icon: `${this.commonPath}receitas${this.extension}`,
       text: 'Receitas',
-      path: '',
+      path: '/recipes',
     },
     {
       icon: `${this.commonPath}metas${this.extension}`,
       text: 'Meta Alimentar',
-      path: '',
+      path: '/goal',
     },
     {
       icon: `${this.commonPath}inventory${this.extension}`,
       text: 'Inventário',
-      path: '',
+      path: '/inventory',
     },
     {
       icon: `${this.commonPath}metrics${this.extension}`,
       text: 'Progresso',
-      path: '',
+      path: '/progress',
     },
     {
       icon: `${this.commonPath}settings${this.extension}`,
       text: 'Configurações',
-      path: '',
+      path: '/settings',
     },
   ];
   public commandLinks = [
     {
       icon: `${this.commonPath}help${this.extension}`,
       text: 'Ajuda',
-      path: '',
-    },
-    {
-      icon: `${this.commonPath}exit${this.extension}`,
-      text: 'Terminar Sessão',
-      path: '',
+      path: '/help',
     },
   ];
 
@@ -70,6 +66,7 @@ export class NavMenuComponent {
     this.authService.onStateChanged().subscribe((state: boolean) => {
       this.isLoggedIn = state;
     });
+    //this.username = this.authService.
   }
 
   collapse() {
