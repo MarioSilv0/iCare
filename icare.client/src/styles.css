@@ -125,3 +125,12 @@ input[type="password"] {
 #navbar {
   border-right: 4px solid var(--bg-bege);
 }
+
+#nav-item {
+  background-color: var(--bg-bege-contrast);
+  transition: 200ms linear;
+}
+
+#nav-item:hover {
+  background-color: var(--bg-bege);
+}

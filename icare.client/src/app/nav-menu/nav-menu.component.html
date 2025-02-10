@@ -4,7 +4,7 @@
   style="max-width: 300px; min-height: calc(100vh - 80px)"
 >
   <nav
-    class="d-flex flex-column align-items-start justify-content-between m-0 flex-grow-1"
+    class="d-flex flex-column align-items-start justify-content-between m-0 gap-2 flex-grow-1"
   >
     <div class="d-flex w-100 align-items-center gap-3 m-0">
       <!-- profile pic -->
@@ -16,12 +16,17 @@
       />
       <p *ngIf="isExpanded" class="m-0" style="flex-wrap: wrap">
         <!-- user name/email -->
-        Armindo Costa
+        {{ this?.username ?? "User" }}
       </p>
     </div>
 
-    <div class="my-2">
-      <button class="bg-transparent" (click)="toggle()" style="border: 0">
+    <div class="m-0 bg-transparent rounded" style="width: 100%">
+      <button
+        id="nav-item"
+        class="rounded"
+        (click)="toggle()"
+        style="width: 100%; border: none"
+      >
         <img
           *ngIf="!isExpanded"
           src="../../assets/svgs/expand.svg"
@@ -39,11 +44,13 @@
       </button>
     </div>
 
-    <div class="d-flex flex-column flex-grow-1 gap-4">
+    <div class="d-flex flex-column flex-grow-1 gap-2">
       <!-- links -->
       <article
+        id="nav-item"
         *ngFor="let link of links"
-        class="d-flex flex-row align-items-center justify-content-start gap-3 m-0"
+        class="d-flex flex-row align-items-center justify-content-start gap-3 m-0 p-2 rounded"
+        title="{{ link.text }}"
       >
         <!-- icon -->
         <div class="m-0">
@@ -81,8 +88,10 @@
     <div class="d-flex flex-column w-100 gap-2 m-0">
       <!-- links -->
       <article
+        id="nav-item"
         *ngFor="let link of commandLinks"
-        class="d-flex flex-row align-items-center justify-content-start gap-3 m-0"
+        class="d-flex flex-row align-items-center justify-content-start gap-3 m-0 p-2 rounded"
+        title="{{ link.text }}"
       >
         <!-- icon -->
         <div class="m-0">
@@ -90,7 +99,7 @@
             *ngIf="!isExpanded"
             href="{{ link.path }}"
             class="text-start nav-link"
-            style="flex-wrap: wrap; cursor: pointer"
+            style="width: 100%; flex-wrap: wrap; cursor: pointer"
           >
             <img
               src="{{ link.icon }}"
@@ -106,11 +115,15 @@
           />
         </div>
         <!-- actual link -->
-        <span *ngIf="isExpanded" class="m-0" style="cursor: pointer">
+        <span
+          *ngIf="isExpanded"
+          class="m-0"
+          style="width: 100%; flex-grow: 1; cursor: pointer"
+        >
           <a
             href="{{ link.path }}"
             class="text-start nav-link"
-            style="cursor: pointer"
+            style="width: 100%; flex-grow: 1; cursor: pointer"
           >
             {{ link.text }}</a
           >
