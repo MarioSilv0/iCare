@@ -28,7 +28,7 @@ export class PasswordValidatorService {
       return { valid: false, message: "Enter one digit ('0'-'9')" };
     }
 
-    if (!/[!@#$%^&*]/.test(password)) {
+    if (!/[.!@#$%^&*]/.test(password)) {
       return { valid: false, message: 'Enter one special character' };
     }
 

@@ -90,36 +90,32 @@
                 class="form-control bg-bege"
                 [ngClass]="{
                   'is-invalid':
-                    confirmPasswordInput.invalid &&
-                    confirmPasswordInput.touched,
+                    (!isPasswordValid || confirmPasswordInput.invalid || password !== confirmPassword) && confirmPasswordInput.touched,
                   'is-valid':
-                    confirmPasswordInput.valid && confirmPasswordInput.touched
+                    isPasswordValid && confirmPasswordInput.valid && password === confirmPassword && confirmPasswordInput.touched
                 }"
                 placeholder="Confirm your password"
                 [(ngModel)]="confirmPassword"
                 required
+                minlength="8"
                 #confirmPasswordInput="ngModel"
               />
               <!-- Mensagem de erro -->
               <div
-                *ngIf="
-                  confirmPasswordInput.invalid && confirmPasswordInput.touched
-                "
+                *ngIf="confirmPasswordInput.invalid && confirmPasswordInput.touched"
                 class="text-danger"
               >
                 <small *ngIf="confirmPasswordInput.errors?.['required']">
                   Confirm password is required.
                 </small>
-                <small
-                  *ngIf="confirmPasswordInput.touched && password !== confirmPassword" >
+                <small *ngIf="password !== confirmPassword" >
                   Passwords do not match.
                 </small>
               </div>
               <!-- Mensagem de sucesso -->
               <div
                 *ngIf="
-                  password &&
-                  confirmPassword &&
+                  password && confirmPassword &&
                   password === confirmPassword &&
                   confirmPasswordInput.touched
                 "

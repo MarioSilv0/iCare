@@ -53,7 +53,7 @@ export class RegisterComponent {
     this.authService.register(this.email, this.password).subscribe({
       next: () => {
         this.router.navigate(['/login']);
-        alert("Please check your email to confirm your registration.");
+        alert("User Registed.\nPlease check your email to confirm your registration.");
       },
       error: (err) => {
         console.error(err);

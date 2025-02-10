@@ -156,25 +156,22 @@ namespace backend.Controllers.Api
                 return Conflict(new { message = "This email is already registered." });
             }
 
-            var user = new User
+            var user = new User()
             {
                 Email = model.Email,
-                UserName = model.Email.Split('@')[1],
-                Name = model.Email.Split('@')[1]
+                UserName = model.Email.Split('@')[0],
+                Name = model.Email.Split('@')[0]
             };
-            Console.WriteLine("User:", user);
-
-            await _userManager.AddToRoleAsync(user, "User");
 
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
-                // Generate email confirmation token
+                await _userManager.AddToRoleAsync(user, "User");
+
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var confirmationLink = $"{model.ClientUrl}/confirm-email?email={model.Email}&token={Uri.EscapeDataString(token)}";
 
-                // Send confirmation email
                 var subject = "Please confirm your email address";
                 var body = $@"
                     <p>Olá {user.Name},</p>
