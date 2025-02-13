@@ -38,4 +38,8 @@ export class RecipesComponent {
   ngOnInit() {
     console.log('HELP ME!');
   }
+
+  toggleFavoriteRecipe(id: number) {
+    this.recipes[id].isFavorite = !this.recipes[id].isFavorite;
+  }
 }

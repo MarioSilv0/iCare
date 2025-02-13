@@ -1,4 +1,4 @@
-<div>
+<div class="m-0 d-flex" style="min-height: calc(100vh - 80px)">
   <div>
     <h1>Sugestões de Receitas</h1>
 
@@ -9,6 +9,7 @@
     <!-- lista de receitas -->
     <div>
       <article *ngFor="let recipe of recipes; index as i">
+        <button (click)="toggleFavoriteRecipe(i)">❤️</button>
         <img src="{{ recipe.img }}" alt="{{ recipe.title }}" />
         <h4>{{ recipe.title }}</h4>
         <p>{{ recipe.description }}</p>
@@ -17,15 +18,32 @@
     </div>
   </div>
 
-  <aside>
+  <aside
+    class="m-0 py-2 ps-2 bg-bege-contrast shadow"
+    style="border-left: 4px solid var(--bg-bege)"
+  >
     <h4>Filtros</h4>
     <!-- lista de filtros -->
     <div>
-      <span *ngFor="let filter of filters" class="d-flex">
-        <input type="checkbox" name="" id="" />
-        <p>{{ filter }}</p>
+      <span
+        *ngFor="let filter of filters"
+        class="d-flex align-items-center justify-items-center gap-1"
+        style="height: 30px"
+      >
+        <input
+          type="checkbox"
+          name=""
+          id=""
+          style="width: 20px; height: 20px; cursor: pointer"
+        />
+        <p
+          class="m-0 d-flex align-items-center"
+          style="height: 100%; font-size: 0.8rem"
+        >
+          {{ filter }}
+        </p>
       </span>
     </div>
-    <button>Aplicar Filtros</button>
+    <button class="btn btn-primary">Aplicar Filtros</button>
   </aside>
 </div>
