@@ -22,7 +22,7 @@
           <input type="checkbox" id="userNotificacions" name="userNotificacions" [(ngModel)]="user.notifications" />
         </div>
         <div>
-          <input type="button" value="Change Password" />
+          <input type="button" value="Change Password" (click)="changePassword()" />
           <input type="submit" value="Save" class="submit-btn" />
         </div>
       </div>

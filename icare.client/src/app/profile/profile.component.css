@@ -112,7 +112,18 @@ label.hoverable {
 #userData input[type="button"] {
   background-color: #3B82F6;
   color: #FFFFFF;
+  transition: transform 0.2s, background-color 0.2s;
 }
+
+  #userData input[type="button"]:hover {
+    background-color: #2563EB;
+    transform: scale(1.05);
+  }
+
+  #userData input[type="button"]:active {
+    background-color: #1D4ED8;
+    transform: scale(0.95);
+  }
 
 #userData input[type="submit"] {
   background-color: #8EB155;
