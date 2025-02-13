@@ -10,6 +10,7 @@ import { RegisterComponent } from './auth/register/register.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
+import { RecipesComponent } from './recipes/recipes.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -31,11 +32,12 @@ const routes: Routes = [
     component: ChangePasswordComponent,
     canActivate: [AuthGuard],
   },
+  { path: 'recipes', component: RecipesComponent },
   { path: '**', redirectTo: '' },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule,],
+  exports: [RouterModule],
 })
 export class AppRoutingModule {}

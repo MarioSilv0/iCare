@@ -1,0 +1,31 @@
+<div>
+  <div>
+    <h1>Sugestões de Receitas</h1>
+
+    <div>
+      <input type="text" />
+    </div>
+
+    <!-- lista de receitas -->
+    <div>
+      <article *ngFor="let recipe of recipes; index as i">
+        <img src="{{ recipe.img }}" alt="{{ recipe.title }}" />
+        <h4>{{ recipe.title }}</h4>
+        <p>{{ recipe.description }}</p>
+        <a href="/recipe/{{ i }}">Ver Detalhes</a>
+      </article>
+    </div>
+  </div>
+
+  <aside>
+    <h4>Filtros</h4>
+    <!-- lista de filtros -->
+    <div>
+      <span *ngFor="let filter of filters" class="d-flex">
+        <input type="checkbox" name="" id="" />
+        <p>{{ filter }}</p>
+      </span>
+    </div>
+    <button>Aplicar Filtros</button>
+  </aside>
+</div>
