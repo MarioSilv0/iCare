@@ -32,6 +32,7 @@ export class RecipesComponent {
       isFavorite: true,
     },
   ];
+  public searchTerm: string = '';
 
   constructor() {}
 
@@ -41,5 +42,14 @@ export class RecipesComponent {
 
   toggleFavoriteRecipe(id: number) {
     this.recipes[id].isFavorite = !this.recipes[id].isFavorite;
+  }
+
+  searchRecipes(searchTerm: string) {
+    const filteredRecipes = this.recipes.forEach((r) => {
+      r.title.includes(searchTerm) || r.description.includes(searchTerm);
+    });
+    console.log(filteredRecipes);
+    // renderizar a nova lista
+    // guardar a antiga lista de receitas
   }
 }

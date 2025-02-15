@@ -3,13 +3,28 @@
     <h1>Sugestões de Receitas</h1>
 
     <div>
-      <input type="text" />
+      <input type="text" (change)="searchRecipes(searchTerm)" />
     </div>
 
     <!-- lista de receitas -->
     <div>
       <article *ngFor="let recipe of recipes; index as i">
-        <button (click)="toggleFavoriteRecipe(i)">❤️</button>
+        <button
+          (click)="toggleFavoriteRecipe(i)"
+          class="d-flex border boder-transparent"
+          style="width: 20px; height: 20px"
+        >
+          <img
+            *ngIf="recipe.isFavorite"
+            src="../../assets/svgs/heart-solid.svg"
+            alt=""
+          />
+          <img
+            *ngIf="!recipe.isFavorite"
+            src="../../assets/svgs/heart-regular.svg"
+            alt=""
+          />
+        </button>
         <img src="{{ recipe.img }}" alt="{{ recipe.title }}" />
         <h4>{{ recipe.title }}</h4>
         <p>{{ recipe.description }}</p>
