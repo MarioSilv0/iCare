@@ -19,6 +19,7 @@ export class UsersService {
     return this.http.put<User>(this.url, { ...user });
   }
 }
+
 interface Preference {
   id: number;
   name: string;
