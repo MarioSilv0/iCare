@@ -31,6 +31,72 @@ export class RecipesComponent {
       description: 'calorias: 760 kcal',
       isFavorite: true,
     },
+    {
+      img: '',
+      title: 'titulo da receita2',
+      description: 'calorias: 760 kcal',
+      isFavorite: true,
+    },
+    {
+      img: '',
+      title: 'titulo da receita2',
+      description: 'calorias: 760 kcal',
+      isFavorite: true,
+    },
+    {
+      img: '',
+      title: 'titulo da receita2',
+      description: 'calorias: 760 kcal',
+      isFavorite: true,
+    },
+    {
+      img: '',
+      title: 'titulo da receita2',
+      description: 'calorias: 760 kcal',
+      isFavorite: true,
+    },
+    {
+      img: '',
+      title: 'titulo da receita2',
+      description: 'calorias: 760 kcal',
+      isFavorite: true,
+    },
+    {
+      img: '',
+      title: 'titulo da receita2',
+      description: 'calorias: 760 kcal',
+      isFavorite: true,
+    },
+    {
+      img: '',
+      title: 'titulo da receita2',
+      description: 'calorias: 760 kcal',
+      isFavorite: true,
+    },
+    {
+      img: '',
+      title: 'titulo da receita2',
+      description: 'calorias: 760 kcal',
+      isFavorite: true,
+    },
+    {
+      img: '',
+      title: 'titulo da receita2',
+      description: 'calorias: 760 kcal',
+      isFavorite: true,
+    },
+    {
+      img: '',
+      title: 'titulo da receita2',
+      description: 'calorias: 760 kcal',
+      isFavorite: true,
+    },
+    {
+      img: '',
+      title: 'titulo da receita2',
+      description: 'calorias: 760 kcal',
+      isFavorite: true,
+    },
   ];
   public searchTerm: string = '';
 
