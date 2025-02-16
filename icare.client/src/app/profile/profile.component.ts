@@ -16,7 +16,7 @@ export class ProfileComponent implements OnInit {
     picture: '', name: 'A', email: 'A@example.com', birthdate: new Date(), notifications: true, height: 0, weight: 0, preferences: [], restrictions: [] };
   public todayDate: string;
 
-  constructor(private router: Router, private service: UsersService, private authService: AuthService) {
+  constructor(private router: Router, private service: UsersService) {
     this.todayDate = new Date().toISOString().split('T')[0];
   }
 

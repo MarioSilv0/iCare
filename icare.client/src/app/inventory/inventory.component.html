@@ -1,0 +1,33 @@
+<div class="container">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="search-bar">
+      <input type="text" placeholder="Pesquisar" />
+      <span class="search-icon">🔍</span>
+    </div>
+    <button class="add-button">
+      Adicionar ➕
+    </button>
+  </div>
+
+  <!-- Inventory Table -->
+  <div class="inventory-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Quantidade</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="inventory">
+        <tr *ngFor="let i of inventory">
+          <td>{{ i.name }}</td>
+          <td>{{ i.quantity }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="update-button">
+      Atualizar Inventário
+    </button>
+  </div>
+</div>

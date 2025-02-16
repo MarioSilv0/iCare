@@ -38,7 +38,6 @@ namespace backend.Controllers.Api
         /// </summary>
         /// <param name="context">The database context for accessing user data.</param>
         /// <param name="logger">The logger instance for logging application activity.</param>
-        /// <param name="configuration">The configuration instance for retrieving application settings.</param>
         public PublicUserController(ICareServerContext context, ILogger<PublicUserController> logger)
         {
             _context = context;

@@ -69,6 +69,12 @@ namespace backend.Models
         public ICollection<UserRestriction>? UserRestrictions { get; set; }
 
         /// <summary>
+        /// Gets or sets the user's items.
+        /// </summary>
+        [Display(Name = "Items")]
+        public ICollection<UserItem>? UserItems { get; set; }
+
+        /// <summary>
         /// Gets or sets the logs associated with the user.
         /// </summary>
         public ICollection<UserLog>? Logs { get; set; }

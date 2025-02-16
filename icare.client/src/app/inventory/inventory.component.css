@@ -1,0 +1,67 @@
+.container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+.sidebar {
+  width: 25%;
+  background: #fef3c7;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #d4af37;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+.search-bar input {
+  flex-grow: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+}
+
+.search-icon {
+  cursor: pointer;
+}
+
+.add-button, .update-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #fcd34d;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.add-button:hover, .update-button:hover {
+  background-color: #fbbf24;
+}
+
+.inventory-table {
+  flex-grow: 1;
+}
+
+.inventory-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fef3c7;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.inventory-table th, .inventory-table td {
+  padding: 10px;
+  border: 1px solid #d4af37;
+}
+
+.inventory-table th {
+  background: #fcd34d;
+}

@@ -10,6 +10,8 @@ import { RegisterComponent } from './auth/register/register.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
+import { InventoryComponent } from './inventory/inventory.component';
+
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -31,6 +33,7 @@ const routes: Routes = [
     component: ChangePasswordComponent,
     canActivate: [AuthGuard],
   },
+  { path: 'inventory', component: InventoryComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' },
 ];
 

@@ -16,6 +16,7 @@ import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { ProfileComponent } from './profile/profile.component';
+import { InventoryComponent } from './inventory/inventory.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { ProfileComponent } from './profile/profile.component';
     AdminComponent,
     HeaderComponent,
     ChangePasswordComponent,
+    InventoryComponent,
   ],
   imports: [
     BrowserModule,
