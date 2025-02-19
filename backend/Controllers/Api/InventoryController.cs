@@ -3,11 +3,8 @@ using backend.Models;
 using backend.Models.Data_Transfer_Objects;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Mono.TextTemplating;
-using System.Text.Json.Nodes;
 
 namespace backend.Controllers.Api
 {

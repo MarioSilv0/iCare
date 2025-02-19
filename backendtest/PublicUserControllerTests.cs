@@ -54,7 +54,7 @@ namespace backendtest
         [Fact]
         public async Task Edit_WhenIdIsInvalid_ReturnsNotFound()
         {
-            SetUserIdClaim("InvalidId");
+            Authenticate.SetUserIdClaim("InvalidId", controller);
 
             var result = await controller.Edit();
 
@@ -80,7 +80,7 @@ namespace backendtest
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            SetUserIdClaim(user.Id);
+            Authenticate.SetUserIdClaim(user.Id, controller);
 
             var result = await controller.Edit();
 
@@ -117,7 +117,7 @@ namespace backendtest
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            SetUserIdClaim(user.Id);
+            Authenticate.SetUserIdClaim(user.Id, controller);
 
             var result = await controller.Edit();
 
@@ -151,7 +151,7 @@ namespace backendtest
             _context.Restrictions.RemoveRange(_context.Restrictions);
             await _context.SaveChangesAsync();
 
-            SetUserIdClaim(user.Id);
+            Authenticate.SetUserIdClaim(user.Id, controller);
 
             var result = await controller.Edit();
 
@@ -162,18 +162,6 @@ namespace backendtest
 
             _context.Preferences.AddRange(p);
             _context.Restrictions.AddRange(r);
-        }
-
-        private void SetUserIdClaim(string userId)
-        {
-            var claims = new List<Claim> { new Claim("UserId", userId) };
-            var identity = new ClaimsIdentity(claims, "TestAuth");
-            var claimsPrincipal = new ClaimsPrincipal(identity);
-
-            controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext { User = claimsPrincipal }
-            };
         }
     }
 }
