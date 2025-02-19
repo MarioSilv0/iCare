@@ -16,6 +16,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "backendtest", "backendtest\
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "icare.client", "icare.client\icare.client.esproj", "{3B08EED3-96A9-4F11-9934-EA5026C69D13}"
 EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "TacoApi", "TacoApi\TacoApi.njsproj", "{111A5BD7-BD2E-47BF-BBF9-940BEF4241E9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,10 @@ Global
 		{3B08EED3-96A9-4F11-9934-EA5026C69D13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B08EED3-96A9-4F11-9934-EA5026C69D13}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3B08EED3-96A9-4F11-9934-EA5026C69D13}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{111A5BD7-BD2E-47BF-BBF9-940BEF4241E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{111A5BD7-BD2E-47BF-BBF9-940BEF4241E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{111A5BD7-BD2E-47BF-BBF9-940BEF4241E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{111A5BD7-BD2E-47BF-BBF9-940BEF4241E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,6 +50,7 @@ Global
 		{F1179E31-EC07-477F-9729-1512E7F09656} = {9C133E19-F40A-4D59-8696-73529BEBBF24}
 		{51730AA8-7904-4039-A832-F8824B79F52E} = {6F60255E-7B10-4364-A08F-95920C6959C3}
 		{3B08EED3-96A9-4F11-9934-EA5026C69D13} = {9C133E19-F40A-4D59-8696-73529BEBBF24}
+		{111A5BD7-BD2E-47BF-BBF9-940BEF4241E9} = {9C133E19-F40A-4D59-8696-73529BEBBF24}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F7A793CA-99B2-4CA1-B290-54F85EEDD57F}

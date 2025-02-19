@@ -65,9 +65,6 @@ builder.Services.AddControllersWithViews()
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-// Serviços personalizados
-builder.Services.AddScoped<UserLogService>();
-
 // Configuração de CORS
 builder.Services.AddCors(options =>
 {
@@ -88,11 +85,32 @@ builder.Services.ConfigureApplicationCookie(options =>
         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
         return Task.CompletedTask;
     };
-}); 
+});
 
-// Email Sender
+// Serviços personalizados
+builder.Services.AddScoped<UserLogService>();
+
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<EmailSenderService>();
+
+
+builder.Services.AddScoped<TacoApiService>();
+builder.Services.AddHttpClient("TacoApi", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:4000/graphql");
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowTacoApi",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:4000")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+        });
+});
+
 
 
 var app = builder.Build();
@@ -143,6 +161,8 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseCors("AllowSpecificOrigins");
+
+app.UseCors("AllowTacoApi");
 
 app.UseAuthentication();
 app.UseAuthorization();
