@@ -127,15 +127,167 @@ namespace backendtest
         }
 
         [Fact]
-        public async Task Update_WhenIdIsValid_ReturnsListOfItems()
+        public async Task Update_WhenIdIsValidAndUserHasNullListOfItems_ReturnsListOfItems()
         {
-            
+            User user = new User
+            {
+                Id = "Id 6",
+                UserItems = null
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            Authenticate.SetUserIdClaim(user.Id, controller);
+
+            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, User = user, UserId = user.Id };
+            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, User = user, UserId = user.Id };
+
+            var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item1.ItemName, Quantity = item1.Quantity },
+                                                                        new PublicItem { Name = item2.ItemName, Quantity = item2.Quantity },});
+
+            Assert.NotNull(result);
+            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            Assert.NotNull(items);
+            Assert.Equal(2, items.Count);
+            Assert.Contains(items, i => i.Name == item1.ItemName && i.Quantity == item1.Quantity);
+            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity);
         }
 
         [Fact]
-        public async Task Update_WhenUserHasNoItems_ReturnsEmptyListOfItems()
+        public async Task Update_WhenIdIsValidAndUserHasEmptyListOfItems_ReturnsEmptyListOfItems()
         {
-            
+            User user = new User
+            {
+                Id = "Id 7",
+                UserItems = null
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            Authenticate.SetUserIdClaim(user.Id, controller);
+
+            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, User = user, UserId = user.Id };
+            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, User = user, UserId = user.Id };
+
+            var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item1.ItemName, Quantity = item1.Quantity },
+                                                                        new PublicItem { Name = item2.ItemName, Quantity = item2.Quantity },});
+
+            Assert.NotNull(result);
+            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            Assert.NotNull(items);
+            Assert.Equal(2, items.Count);
+            Assert.Contains(items, i => i.Name == item1.ItemName && i.Quantity == item1.Quantity);
+            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity);
+        }
+
+        [Fact]
+        public async Task Update_WhenIdIsValidAndUserHasListOfItems_ReturnsEmptyListOfItems()
+        {
+
+            User user = new User
+            {
+                Id = "Id 8",
+                UserItems = new List<UserItem>()
+            };
+
+            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, User = user, UserId = user.Id };
+            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, User = user, UserId = user.Id };
+
+            user.UserItems.Add(item1);
+            user.UserItems.Add(item2);
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            Authenticate.SetUserIdClaim(user.Id, controller);
+
+            UserItem item3 = new UserItem { ItemName = "Meat", Quantity = 1, User = user, UserId = user.Id };
+
+            var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item3.ItemName, Quantity = item3.Quantity } });
+
+            Assert.NotNull(result);
+            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            Assert.NotNull(items);
+            Assert.Equal(3, items.Count);
+            Assert.Contains(items, i => i.Name == item1.ItemName && i.Quantity == item1.Quantity);
+            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity);
+            Assert.Contains(items, i => i.Name == item3.ItemName && i.Quantity == item3.Quantity);
+        }
+
+        [Fact]
+        public async Task Update_WhenIdIsValidAndUserHasListOfItemsAndItIsSentRepeatedItems_ReturnsEmptyListOfItems()
+        {
+
+            User user = new User
+            {
+                Id = "Id 9",
+                UserItems = new List<UserItem>()
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            Authenticate.SetUserIdClaim(user.Id, controller);
+
+            UserItem item1 = new UserItem { ItemName = "Meat", Quantity = 1, User = user, UserId = user.Id };
+            UserItem item2 = new UserItem { ItemName = "Potato", Quantity = 1, User = user, UserId = user.Id };
+            UserItem item3 = new UserItem { ItemName = "Meat", Quantity = 4, User = user, UserId = user.Id };
+
+            var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item1.ItemName, Quantity = item1.Quantity },
+                                                                        new PublicItem { Name = item2.ItemName, Quantity = item2.Quantity },
+                                                                        new PublicItem { Name = item3.ItemName, Quantity = item3.Quantity } });
+
+            Assert.NotNull(result);
+            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            Assert.NotNull(items);
+            Assert.Equal(2, items.Count);
+            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity);
+            Assert.Contains(items, i => i.Name == item3.ItemName && i.Quantity == item3.Quantity);
+        }
+
+        [Fact]
+        public async Task Update_WhenIdIsValidAndUserUpdatesAnItem_ReturnsEmptyListOfItems()
+        {
+
+            User user = new User
+            {
+                Id = "Id 10",
+                UserItems = new List<UserItem>()
+            };
+
+            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, User = user, UserId = user.Id };
+            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, User = user, UserId = user.Id };
+
+            user.UserItems.Add(item1);
+            user.UserItems.Add(item2);
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            Authenticate.SetUserIdClaim(user.Id, controller);
+
+            UserItem item3 = new UserItem { ItemName = "Potato", Quantity = 10, User = user, UserId = user.Id };
+
+            var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item3.ItemName, Quantity = item3.Quantity } });
+
+            Assert.NotNull(result);
+            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            Assert.NotNull(items);
+            Assert.Equal(2, items.Count);
+            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity);
+            Assert.Contains(items, i => i.Name == item3.ItemName && i.Quantity == item3.Quantity);
         }
 
         [Fact]
@@ -167,7 +319,7 @@ namespace backendtest
         {
             User user = new User
             {
-                Id = "Id 8",
+                Id = "Id 11",
                 UserItems = null
             };
 
@@ -191,7 +343,7 @@ namespace backendtest
         {
             User user = new User
             {
-                Id = "Id 9",
+                Id = "Id 12",
                 UserItems = new List<UserItem>()
             };
 
@@ -215,7 +367,7 @@ namespace backendtest
         {
             User user = new User
             {
-                Id = "Id 10",
+                Id = "Id 13",
                 UserItems = new List<UserItem>()
             };
 
@@ -239,7 +391,7 @@ namespace backendtest
             Assert.NotNull(items);
             Assert.Single(items);
             Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity);
-            Assert.DoesNotContain(items, i => i.Name == item1.ItemName && i.Quantity == item2.Quantity);
+            Assert.DoesNotContain(items, i => i.Name == item1.ItemName && i.Quantity == item1.Quantity);
         }
 
         [Fact]
@@ -247,7 +399,7 @@ namespace backendtest
         {
             User user = new User
             {
-                Id = "Id 11",
+                Id = "Id 14",
                 UserItems = new List<UserItem>()
             };
 
@@ -279,7 +431,7 @@ namespace backendtest
         {
             User user = new User
             {
-                Id = "Id 11",
+                Id = "Id 15",
                 UserItems = new List<UserItem>()
             };
 
