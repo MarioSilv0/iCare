@@ -7,8 +7,22 @@ using Microsoft.Extensions.Logging.Abstractions;
 using System.Security.Claims;
 using backend.Models.Data_Transfer_Objects;
 
+/// <summary>
+/// This file contains unit tests for the <c>InventoryController</c> class.
+/// These tests ensure that the controller functions correctly in various scenarios, 
+/// including inventory modifications or retrieval.
+/// The tests verify expected behavior under different conditions.
+/// </summary>
+/// <author>Luís Martins - 202100239</author>
+/// <author>João Morais - 202001541</author>
+/// <date>Last Modified: 2025-02-19</date>
 namespace backendtest
 {
+    /// <summary>
+    /// Test class for the <c>InventoryController</c>.
+    /// This class contains unit tests to validate the functionality of inventory management, 
+    /// ensuring correct handling of data retrieval, updates, and business logic enforcement.
+    /// </summary>
     public class InventoryControllerTests : IClassFixture<ICareContextFixture>
     {
         private readonly ICareServerContext _context;
