@@ -5,7 +5,14 @@
       <input type="text" placeholder="Pesquisar" />
       <span class="search-icon">🔍</span>
     </div>
-    <button class="add-button">
+    <ul *ngIf="listOfItems.size > 0">
+      <li *ngFor="let item of listOfItemsArray"
+          [class.selected]="selectedItems.has(item)"
+          (click)="toggleSelection(item)">
+        {{ item }}
+      </li>
+    </ul>
+    <button class="add-button" (click)="addItemsToInventory()">
       Adicionar ➕
     </button>
   </div>
@@ -19,14 +26,14 @@
           <th>Quantidade</th>
         </tr>
       </thead>
-      <tbody *ngIf="inventory">
-        <tr *ngFor="let i of inventory">
-          <td>{{ i.name }}</td>
-          <td>{{ i.quantity }}</td>
+      <tbody *ngIf="inventory.size > 0">
+        <tr *ngFor="let entry of inventoryArray">
+          <td>{{ entry[0] }}</td>
+          <td>{{ entry[1] }}</td>
         </tr>
       </tbody>
     </table>
-    <button class="update-button">
+    <button class="update-button" (click)="updateItemsInInventory()">
       Atualizar Inventário
     </button>
   </div>

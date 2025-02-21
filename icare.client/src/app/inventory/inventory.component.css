@@ -31,6 +31,12 @@
   cursor: pointer;
 }
 
+.selected {
+  background-color: lightblue;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 .add-button, .update-button {
   width: 100%;
   padding: 10px;
