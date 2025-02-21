@@ -93,26 +93,6 @@ builder.Services.AddScoped<UserLogService>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<EmailSenderService>();
 
-
-builder.Services.AddScoped<TacoApiService>();
-builder.Services.AddHttpClient("TacoApi", client =>
-{
-    client.BaseAddress = new Uri("http://localhost:4000/graphql");
-});
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowTacoApi",
-        builder =>
-        {
-            builder.WithOrigins("http://localhost:4000")
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-        });
-});
-
-
-
 var app = builder.Build();
 
 // Execução de migrações e seeding de dados
@@ -162,7 +142,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseCors("AllowSpecificOrigins");
 
-app.UseCors("AllowTacoApi");
+//app.UseCors("AllowTacoApi");
 
 app.UseAuthentication();
 app.UseAuthorization();

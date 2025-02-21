@@ -16,6 +16,8 @@ import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { ProfileComponent } from './profile/profile.component';
+import { TacoApiComponent } from './taco-api/taco-api.component';
+import { TacoApiService } from './services/taco-api.service';
 
 @NgModule({
   declarations: [
@@ -31,6 +33,7 @@ import { ProfileComponent } from './profile/profile.component';
     AdminComponent,
     HeaderComponent,
     ChangePasswordComponent,
+    TacoApiComponent,
   ],
   imports: [
     BrowserModule,
@@ -40,7 +43,8 @@ import { ProfileComponent } from './profile/profile.component';
     ReactiveFormsModule,
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    TacoApiService
   ],
   bootstrap: [AppComponent, NavMenuComponent],
 })

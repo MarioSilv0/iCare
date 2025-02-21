@@ -9,13 +9,15 @@ const PROXY_CONFIG = [
   },
   {
     context: [
-      "/taco-api",
+      "/taco",
     ],
     "target": "http://localhost:4000",
     "secure": false,
     "pathRewrite": {
-      "^/taco-api": "/graphql"
-    }
+      "^/taco": "/graphql"
+    },
+    "changeOrigin": true,
+    "logLevel": "debug"
   }
 ]
 

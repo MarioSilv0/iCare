@@ -36,8 +36,4 @@
 		</ProjectReference>
 	</ItemGroup>
 	
-	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-		<Exec Command="start /min cmd /c &quot;cd $(SolutionDir) &amp; bun run dev --filter=taco-api&quot;" />
-	</Target>
-	
 </Project>
