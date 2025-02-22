@@ -142,8 +142,6 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseCors("AllowSpecificOrigins");
 
-//app.UseCors("AllowTacoApi");
-
 app.UseAuthentication();
 app.UseAuthorization();
 

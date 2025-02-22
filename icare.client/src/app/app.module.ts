@@ -18,6 +18,7 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { ProfileComponent } from './profile/profile.component';
 import { TacoApiComponent } from './taco-api/taco-api.component';
 import { TacoApiService } from './services/taco-api.service';
+import { RecipeListComponent } from './recipe-list/recipe-list.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { TacoApiService } from './services/taco-api.service';
     HeaderComponent,
     ChangePasswordComponent,
     TacoApiComponent,
+    RecipeListComponent,
   ],
   imports: [
     BrowserModule,

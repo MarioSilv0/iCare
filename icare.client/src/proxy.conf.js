@@ -18,7 +18,19 @@ const PROXY_CONFIG = [
     },
     "changeOrigin": true,
     "logLevel": "debug"
-  }
+  },
+  {
+    context: [
+      "/themealdb",
+    ],
+    target: "https://www.themealdb.com",
+    secure: false,
+    "pathRewrite": {
+      "^/themealdb": "/api/json/v1/1"
+    },
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
 ]
 
 module.exports = PROXY_CONFIG;
