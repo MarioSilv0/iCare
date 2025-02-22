@@ -110,7 +110,7 @@ namespace backend.Controllers.Api
         /// An <c>ActionResult</c> containing the <c>List<PublicItem></c> object if found and deleted correctly, or an error response otherwise.
         /// </returns>
         [HttpDelete("")]
-        public async Task<ActionResult<List<PublicItem>>> Delete([FromBody] List<PublicItem> newItems)
+        public async Task<ActionResult<List<PublicItem>>> Delete([FromBody] List<string> nameOfItemsToRemove)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace backend.Controllers.Api
                 if (user == null) return NotFound();
                 if (user.UserItems == null || !user.UserItems.Any()) return Ok(new List<PublicItem>());
 
-                var itemsToRemove = user.UserItems.Where(i => newItems.Any(ni => ni.Name == i.ItemName)).ToList();
+                var itemsToRemove = user.UserItems.Where(i => nameOfItemsToRemove.Any(n => n == i.ItemName)).ToList();
 
                 if (itemsToRemove.Any())
                 {

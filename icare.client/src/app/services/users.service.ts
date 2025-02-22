@@ -26,11 +26,11 @@ export class UsersService {
   }
 
   updateInventory(items: Item[]): Observable<Item[]> {
-    return this.http.put<Item[]>(URL + INVENTORY, { ...items });
+    return this.http.put<Item[]>(URL + INVENTORY, items);
   }
 
-  removeInventory(items: Item[]): Observable<Item[]> {
-    return this.http.delete<Item[]>(URL + INVENTORY, { body: { ...items } });
+  removeInventory(items: string[]): Observable<Item[]> {
+    return this.http.delete<Item[]>(URL + INVENTORY, { body: items });
   }
 }
 

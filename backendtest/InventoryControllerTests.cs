@@ -313,7 +313,7 @@ namespace backendtest
                 HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity()) }
             };
 
-            var result = await controller.Delete(new List<PublicItem>());
+            var result = await controller.Delete([]);
 
             Assert.IsType<UnauthorizedObjectResult>(result.Result);
         }
@@ -323,7 +323,7 @@ namespace backendtest
         {
             Authenticate.SetUserIdClaim("InvalidId", controller);
 
-            var result = await controller.Delete(new List<PublicItem>());
+            var result = await controller.Delete([]);
 
             Assert.IsType<NotFoundResult>(result.Result);
         }
@@ -342,7 +342,7 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            var result = await controller.Delete(new List<PublicItem>());
+            var result = await controller.Delete([]);
 
             Assert.NotNull(result);
             Assert.IsType<ActionResult<List<PublicItem>>>(result);
@@ -366,7 +366,7 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            var result = await controller.Delete(new List<PublicItem>());
+            var result = await controller.Delete([]);
 
             Assert.NotNull(result);
             Assert.IsType<ActionResult<List<PublicItem>>>(result);
@@ -396,7 +396,7 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            var result = await controller.Delete(new List<PublicItem> { new PublicItem { Name = item1.ItemName, Quantity = item1.Quantity } });
+            var result = await controller.Delete(new List<string> { item1.ItemName });
 
             Assert.NotNull(result);
             Assert.IsType<ActionResult<List<PublicItem>>>(result);
@@ -428,7 +428,7 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            var result = await controller.Delete(new List<PublicItem>());
+            var result = await controller.Delete([]);
 
             Assert.NotNull(result);
             Assert.IsType<ActionResult<List<PublicItem>>>(result);
@@ -460,8 +460,7 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            var result = await controller.Delete(new List<PublicItem> { new PublicItem { Name = item1.ItemName, Quantity = item1.Quantity },
-                                                                        new PublicItem { Name = item2.ItemName, Quantity = item2.Quantity } });
+            var result = await controller.Delete(new List<string> {item1.ItemName, item2.ItemName });
 
             Assert.NotNull(result);
             Assert.IsType<ActionResult<List<PublicItem>>>(result);

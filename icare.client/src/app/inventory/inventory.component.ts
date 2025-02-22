@@ -13,7 +13,9 @@ import { ApiService, Item } from '../services/api.service';
 export class InventoryComponent {
   public inventory: Map<string, number> = new Map();
   public listOfItems: Set<string> = new Set();
+
   public selectedItems: Set<string> = new Set();
+  public selectedItemsInInventory: Set<string> = new Set();
 
   constructor(private service: UsersService, private api: ApiService) { }
 
@@ -34,6 +36,14 @@ export class InventoryComponent {
       this.selectedItems.delete(item);
     } else {
       this.selectedItems.add(item);
+    }
+  }
+
+  toggleInventorySelection(item: string) {
+    if (this.selectedItemsInInventory.has(item)) {
+      this.selectedItemsInInventory.delete(item);
+    } else {
+      this.selectedItemsInInventory.add(item);
     }
   }
 
@@ -66,7 +76,6 @@ export class InventoryComponent {
   }
 
   addItemsToInventory() {
-    console.log(this.selectedItems)
     const tmp: Item[] = Array.from(this.selectedItems).map(n => { return { name: n, quantity: 1 } });
 
     this.service.updateInventory(tmp).subscribe(
@@ -96,13 +105,25 @@ export class InventoryComponent {
   }
 
   removeItemFromInventory() {
-    this.service.removeInventory([]).subscribe(
+    const tmp: string[] = Array.from(this.selectedItemsInInventory);
+
+    this.service.removeInventory(tmp).subscribe(
       (result) => {
-        this.inventory.clear();
-        for (let i of result) {
-          this.inventory.set(i.name, i.quantity);
+        const res = new Set(result.map(i => i.name));
+        const inv = new Set([...this.inventory.keys()].filter(i => !this.selectedItemsInInventory.has(i)));
+        
+        const eqSet = (s1: Set<string>, s2: Set<string>) => s1.size === s2.size && [...s1].every((i) => s2.has(i));
+        if (!eqSet(res, inv)) {
+          console.error("Failed to delete items!");
+          return;
         }
-        this.getListItems();
+
+        for (let i of this.selectedItemsInInventory) {
+          this.inventory.delete(i);
+          this.listOfItems.add(i);
+        }
+
+        this.selectedItemsInInventory.clear();
       },
       (error) => {
         console.error(error);
