@@ -17,6 +17,7 @@ import { HomeComponent } from './home/home.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { ProfileComponent } from './profile/profile.component';
 import { InventoryComponent } from './inventory/inventory.component';
+import { MapKeysPipe } from './pipes/MapKeysPipe';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { InventoryComponent } from './inventory/inventory.component';
     HeaderComponent,
     ChangePasswordComponent,
     InventoryComponent,
+    MapKeysPipe
   ],
   imports: [
     BrowserModule,
@@ -45,5 +47,8 @@ import { InventoryComponent } from './inventory/inventory.component';
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [AppComponent, NavMenuComponent],
+  exports: [
+    MapKeysPipe
+  ]
 })
 export class AppModule {}
