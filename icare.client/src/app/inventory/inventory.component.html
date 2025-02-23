@@ -22,24 +22,55 @@
     <table>
       <thead>
         <tr>
-          <th>Nome</th>
-          <th>Quantidade</th>
+          <th class="small-col"></th>
+          <th class="small-col">
+            <input type="checkbox"
+                   [checked]="selectedItemsInInventory.size === inventory.size"
+                   (change)="toggleAllInventorySelection()">
+          </th>
+          <th class="large-col">Nome</th>
+          <th class="small-col">Quantidade</th>
         </tr>
       </thead>
       <tbody *ngIf="inventory.size > 0">
-        <tr *ngFor="let item of inventory | mapKeys"
-            [class.selected]="selectedItemsInInventory.has(item)"
-            (click)="toggleInventorySelection(item)">
-          <td>{{ item }}</td>
-          <td>{{ inventory.get(item) }}</td>
-        </tr>
+        <ng-container *ngFor="let item of inventory | mapKeys">
+          <tr>
+
+            <td (click)="toggleDetails(item)">
+              {{ expandedItems.has(item) ? '▼' : '▶️' }}
+            </td>
+
+            <td>
+              <input type="checkbox"
+                     [checked]="selectedItemsInInventory.has(item)"
+                     (change)="toggleInventorySelection(item)">
+            </td>
+
+            <td>{{ item }}</td>
+
+            <td>
+              <input type="number"
+                     [value]="inventory.get(item)"
+                     (input)="updateQuantity(item, $event)" />
+            </td>
+
+          </tr>
+          <tr *ngIf="expandedItems.has(item)">
+            <td colspan="4">
+              <div class="item-details">
+                <p *ngIf="!itemDetails.has(item)" (click)="getItemDetails(item)">A carregar...</p>
+                <p *ngIf="itemDetails.has(item)">{{ itemDetails.get(item) }}</p>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
       </tbody>
     </table>
-    <button class="update-button" (click)="removeItemFromInventory()">
-      Remover Selecionados
-    </button>
-    <button class="update-button" (click)="updateItemsInInventory()">
-      Atualizar Inventário
-    </button>
+    <div class="buttons-container">
+      <button class="update-button" (click)="updateItemsInInventory()">Atualizar Inventário</button>
+      <button class="delete-button" (click)="removeItemFromInventory()">
+        Excluir <span class="trash-icon">🗑️</span>
+      </button>
+    </div>
   </div>
 </div>

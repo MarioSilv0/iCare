@@ -50,21 +50,6 @@ li:hover {
 .selected {
   background-color: lightblue;
   font-weight: bold;
-  cursor: pointer;
-}
-
-.add-button, .update-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #fcd34d;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-}
-
-.add-button:hover, .update-button:hover {
-  background-color: #fbbf24;
 }
 
 .inventory-table {
@@ -86,4 +71,83 @@ li:hover {
 
 .inventory-table th {
   background: #fcd34d;
+}
+
+.item-details {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+td {
+  cursor: pointer;
+}
+
+.small-col {
+  width: 12.5%; /* 1/4 of the table */
+  text-align: center;
+}
+
+.large-col {
+  width: 50%;
+}
+
+td input[type="checkbox"] {
+  display: block;
+  margin: auto;
+}
+
+
+/* Buttons */
+.add-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #fcd34d;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.update-button {
+  padding: 10px 15px;
+  background-color: #fcd34d;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.delete-button {
+  padding: 10px 15px;
+  background-color: #dc3545;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.add-button:hover, .update-button:hover {
+  background-color: #fbbf24;
+}
+
+.delete-button:hover {
+  background-color: #bf2d3b;
+}
+
+.trash-icon {
+  margin-left: auto;
 }

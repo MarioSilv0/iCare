@@ -16,6 +16,10 @@ export class InventoryComponent {
 
   public selectedItems: Set<string> = new Set();
   public selectedItemsInInventory: Set<string> = new Set();
+  public expandedItems: Set<string> = new Set();
+  public editedItems = new Set<string>();
+
+  public itemDetails: Map<string, string> = new Map();
 
   constructor(private service: UsersService, private api: ApiService) { }
 
@@ -47,6 +51,25 @@ export class InventoryComponent {
     }
   }
 
+  toggleAllInventorySelection() {
+    if (this.selectedItemsInInventory.size === this.inventory.size) {
+      this.selectedItemsInInventory.clear();
+    } else {
+      for(const i of this.inventory.keys()) {
+        this.selectedItemsInInventory.add(i);
+      }
+    }
+  }
+
+  toggleDetails(item: string) {
+    if (this.expandedItems.has(item)) {
+      this.expandedItems.delete(item);
+    } else {
+      this.expandedItems.add(item);
+      this.getItemDetails(item);
+    }
+  }
+
   getInventory() {
     this.service.getInventory().subscribe(
       (result) => {
@@ -75,14 +98,47 @@ export class InventoryComponent {
     );
   }
 
-  addItemsToInventory() {
-    const tmp: Item[] = Array.from(this.selectedItems).map(n => { return { name: n, quantity: 1 } });
+  getItemDetails(item: string): void {
+    if (this.itemDetails.has(item)) return;
 
-    this.service.updateInventory(tmp).subscribe(
+    this.api.getSpecificItem(item).subscribe(
       (result) => {
-        for (let i of result) {
-          this.inventory.set(i.name, i.quantity);
-          this.listOfItems.delete(i.name);
+        const tmp = { name: "Apple", nutrients: { kcal: 124, kJ: 517, protein: 2.6, carbohydrates: 25.8 }, category: { name: "Fruit" } };
+
+        this.itemDetails = this.itemDetails.set(item,
+          `Nome: ${tmp.name} | Categoria: ${tmp.category.name}\n` +
+          `Kcal/KJ: ${tmp.nutrients.kcal}/${tmp.nutrients.kJ}\n` +
+          `Macronutrientes:\n\tProteína: ${tmp.nutrients.protein}\n\tHidratos de Carbono: ${tmp.nutrients.carbohydrates}`
+        );
+      },
+      (error) => {
+        console.error(error);
+        this.itemDetails = this.itemDetails.set(item, 'Unable to get Informations!');
+      }
+    );
+  }
+
+  updateQuantity(item: string, event: Event): void {
+    const newValue = +(event.target as HTMLInputElement).value;
+    if (newValue === this.inventory.get(item)) return;
+
+    this.inventory.set(item, newValue);
+    this.editedItems.add(item);
+  }
+
+  addItemsToInventory() {
+    const addedItems: Item[] = Array.from(this.selectedItems).map(n => { return { name: n, quantity: 1 } });
+
+    this.service.updateInventory(addedItems).subscribe(
+      (result) => {
+        const res: Set<string> = new Set(result.map(i => i.name));
+
+        const successfullyAdded: string[] = [...this.selectedItems].filter(name => res.has(name));
+        if (successfullyAdded.length !== this.selectedItems.size) console.error("Failed to add items!");
+
+        for (let name of successfullyAdded) {
+          this.inventory.set(name, 1);
+          this.listOfItems.delete(name);
         }
 
         this.selectedItems.clear();
@@ -94,9 +150,19 @@ export class InventoryComponent {
   }
 
   updateItemsInInventory() {
-    this.service.updateInventory([]).subscribe(
+    const updatedItems: Item[] = Array.from(this.editedItems).map(n => { return { name: n, quantity: this.inventory.get(n) ?? 0 } });
+    if (updatedItems.length === 0) return;
+
+    this.service.updateInventory(updatedItems).subscribe(
       (result) => {
-        console.log(result);
+        const resultMap = new Map(result.map((item) => [item.name, item.quantity]));
+
+        for (let item of this.editedItems) {
+          const value = resultMap.get(item) ?? 0;
+          if (value !== this.inventory.get(item)) this.inventory.set(item, value);
+        }
+
+        this.editedItems.clear();
       },
       (error) => {
         console.error(error);
@@ -105,22 +171,18 @@ export class InventoryComponent {
   }
 
   removeItemFromInventory() {
-    const tmp: string[] = Array.from(this.selectedItemsInInventory);
+    const deletedItems: string[] = Array.from(this.selectedItemsInInventory);
 
-    this.service.removeInventory(tmp).subscribe(
+    this.service.removeInventory(deletedItems).subscribe(
       (result) => {
         const res = new Set(result.map(i => i.name));
-        const inv = new Set([...this.inventory.keys()].filter(i => !this.selectedItemsInInventory.has(i)));
-        
-        const eqSet = (s1: Set<string>, s2: Set<string>) => s1.size === s2.size && [...s1].every((i) => s2.has(i));
-        if (!eqSet(res, inv)) {
-          console.error("Failed to delete items!");
-          return;
-        }
 
-        for (let i of this.selectedItemsInInventory) {
-          this.inventory.delete(i);
-          this.listOfItems.add(i);
+        const deletedItems = [...this.selectedItemsInInventory].filter(name => !res.has(name));
+        if (deletedItems.length !== this.selectedItemsInInventory.size) console.error("Failed to delete items!");
+
+        for (let name of deletedItems) {
+          this.listOfItems.add(name);
+          this.inventory.delete(name);
         }
 
         this.selectedItemsInInventory.clear();
