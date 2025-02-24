@@ -1,8 +1,7 @@
-import { NgModule } from '@angular/core';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AboutComponent } from './about/about.component';
 import { AdminComponent } from './admin/admin.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -14,8 +13,10 @@ import { RegisterComponent } from './auth/register/register.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { ProfileComponent } from './profile/profile.component';
+import { RecipesComponent } from './recipes/recipes.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { ProfileComponent } from './profile/profile.component';
     AdminComponent,
     HeaderComponent,
     ChangePasswordComponent,
+    RecipesComponent,
   ],
   imports: [
     BrowserModule,
@@ -40,7 +42,7 @@ import { ProfileComponent } from './profile/profile.component';
     ReactiveFormsModule,
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   bootstrap: [AppComponent, NavMenuComponent],
 })
