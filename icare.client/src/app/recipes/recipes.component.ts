@@ -103,7 +103,7 @@ export class RecipesComponent {
   constructor() {}
 
   ngOnInit() {
-    console.log('HELP ME!');
+    
   }
 
   toggleFavoriteRecipe(id: number) {

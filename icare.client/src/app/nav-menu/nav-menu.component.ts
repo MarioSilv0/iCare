@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
+import { MenuService } from '../services/menu.service';
 
 @Component({
   selector: 'app-nav-menu',
@@ -60,7 +61,7 @@ export class NavMenuComponent {
     },
   ];
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private menuService: MenuService, private router: Router) { }
 
   ngOnInit() {
     this.authService.onStateChanged().subscribe((state: boolean) => {
@@ -75,6 +76,7 @@ export class NavMenuComponent {
 
   toggle() {
     this.isExpanded = !this.isExpanded;
+    this.menuService.setMenuState(this.isExpanded)
   }
 
   logout() {

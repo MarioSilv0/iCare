@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
+import { MenuService } from './services/menu.service';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,10 @@ import { filter } from 'rxjs';
 export class AppComponent {
   showHeader = true;
   showNavMenu = true;
-  constructor(private router: Router) {
+  isExpanded = false;
+  constructor(private menuService: MenuService, private router: Router) {
+    this.menuService.showNavMenu$.subscribe(state => {this.isExpanded = state})
+
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {

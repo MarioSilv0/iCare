@@ -2,7 +2,10 @@
   <app-header *ngIf="showHeader" class="m-0"></app-header>
   <div class="d-flex mx-0 gap-0">
     <app-nav-menu *ngIf="showNavMenu" class="m-0"></app-nav-menu>
-    <div style="padding-top: 80px; width: 100vw" class="mx-0">
+
+    <div class="mx-0 content-container"
+         [style.padding-left.px]="isExpanded ? 250 : 65"
+         style="padding-top: 80px; width: 100vw;">
       <router-outlet class="mx-0"></router-outlet>
     </div>
   </div>
