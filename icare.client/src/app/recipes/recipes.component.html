@@ -1,42 +1,65 @@
 <div
-  class="m-0 d-flex"
-  style="min-height: calc(100vh - 80px); padding-top: 80px"
+  class="w-100 mx-0 d-flex justify-content-between"
+  style="min-height: calc(100vh - 80px); padding-left: 250px"
 >
-  <div>
-    <h1>Sugestões de Receitas</h1>
+  <div class="mx-0 w-100 d-flex flex-column align-items-center justify-content-center"
+       style="min-width: 300px; max-width:1300px; flex-grow: 1;">
+    <h1 class="pt-2 fs-3">Sugestões de Receitas</h1>
 
-    <div>
-      <input type="text" (change)="searchRecipes(searchTerm)" />
+    <!-- barra de filtros -->
+    <div class="w-100 m-0 w-50 d-flex flex-column">
+      <h1 class="m-0 align-self-center py-1 fs-5">Filtros</h1>
+      <!-- lista de filtros -->
+      <div class="m-0 d-flex flex-wrap align-items-center justify-content-between gap-2 py-2 me-2">
+      <span *ngFor="let filter of filters" class="d-flex gap-1 bg-bege-contrast p-1 rounded">
+          <input type="checkbox"
+                 name=""
+                 id=""
+                 style="width: 20px; height: 20px; cursor: pointer" />
+          <p class="m-0 p-0"
+             style="
+              font-size: .75rem;
+              display: flex;
+              text-wrap-mode: nowrap;
+              text-overflow: clip !important;
+          ">
+            {{ filter }}
+          </p>
+      </span>
+
+      </div>
+    </div>
+
+    <div class="w-100 pt-4" style="max-width: 500px;">
+      <input class="w-100" style="height: 30px;" type="text" (change)="searchRecipes(searchTerm)" />
     </div>
 
     <!-- lista de receitas -->
-    <div class="d-flex flex-column">
-      <article
-        *ngFor="let recipe of recipes; index as i"
-        class="m-0 p-2 bg-bege-contrast shadow"
-        style="max-width: 300px"
-      >
-        <div
-          class="m-0 p-0 bg-cinzento rounded"
-          style="
+    <div *ngIf="recipes.length === 0" class="pt-4 pe-4 d-flex flex-md-row flex-wrap flex-sm-column mx-0 align-items-center justify-content-evenly gap-4 pt-2">
+      <article>
+        No recipes available..
+      </article>
+    </div>
+      <div *ngIf="recipes.length > 0" class="pt-4 pe-4 d-flex flex-md-row flex-wrap flex-sm-column mx-0 align-items-center justify-content-evenly gap-4 pt-2">
+        <article *ngFor="let recipe of recipes; index as i"
+                 class="m-0 p-2 rounded bg-bege-contrast shadow"
+                 style="min-width: 300px">
+          <div class="m-0 p-0 bg-cinzento rounded"
+               style="
             max-width: 300px;
             max-height: 200px;
             min-width: 200px;
             min-height: 100px;
             display: flex;
             position: relative;
-          "
-        >
-          <img
-            src="{{ recipe.img }}"
-            alt="{{ recipe.title }}"
-            class="m-0 p-0 rounded"
-            style="width: 100%; min-height: 100%"
-          />
-          <button
-            (click)="toggleFavoriteRecipe(i)"
-            class="d-flex bg-transparent"
-            style="
+          ">
+            <img src="{{ recipe.img }}"
+                 alt="{{ recipe.title }}"
+                 class="m-0 p-0 rounded"
+                 style="width: 100%; min-height: 100%" />
+            <button (click)="toggleFavoriteRecipe(i)"
+                    class="d-flex bg-transparent"
+                    style="
               width: clamp(20px, 35px, 50px);
               height: clamp(20px, 35px, 50px);
               position: absolute;
@@ -44,64 +67,28 @@
               right: 5px;
               border: none;
               outline: none;
-            "
-          >
-            <img
-              *ngIf="recipe.isFavorite"
-              src="../../assets/svgs/heart-solid.svg"
-            />
-            <img
-              *ngIf="!recipe.isFavorite"
-              src="../../assets/svgs/heart-regular.svg"
-            />
-          </button>
-        </div>
-        <h4>{{ recipe.title }}</h4>
-        <p>{{ recipe.description }}</p>
-        <a
-          href="/recipe/{{ i }}"
-          class="mx-0 nav-link bg-verde rounded"
-          style="
+            ">
+              <img *ngIf="recipe.isFavorite"
+                   src="../../assets/svgs/heart-solid.svg" />
+              <img *ngIf="!recipe.isFavorite"
+                   src="../../assets/svgs/heart-regular.svg" />
+            </button>
+          </div>
+          <h4>{{ recipe.title }}</h4>
+          <p>{{ recipe.description }}</p>
+          <a href="/recipe/{{ i }}"
+             class="mx-0 nav-link bg-verde rounded"
+             style="
             width: 100px;
             height: 30px;
             font-size: 0.75rem;
             display: grid;
             align-content: center;
             justify-content: center;
-          "
-        >
-          Ver Detalhes
-        </a>
-      </article>
+          ">
+            Ver Detalhes
+          </a>
+        </article>
+      </div>
     </div>
-  </div>
-
-  <aside
-    class="m-0 py-2 ps-2 bg-bege-contrast shadow"
-    style="border-left: 4px solid var(--bg-bege)"
-  >
-    <h4>Filtros</h4>
-    <!-- lista de filtros -->
-    <div>
-      <span
-        *ngFor="let filter of filters"
-        class="d-flex align-items-center justify-items-center gap-1"
-        style="height: 30px"
-      >
-        <input
-          type="checkbox"
-          name=""
-          id=""
-          style="width: 20px; height: 20px; cursor: pointer"
-        />
-        <p
-          class="m-0 d-flex align-items-center"
-          style="height: 100%; font-size: 0.8rem"
-        >
-          {{ filter }}
-        </p>
-      </span>
-    </div>
-    <button class="btn btn-primary">Aplicar Filtros</button>
-  </aside>
 </div>

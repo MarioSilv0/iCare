@@ -2,6 +2,8 @@
   <app-header *ngIf="showHeader" class="m-0"></app-header>
   <div class="d-flex mx-0 gap-0">
     <app-nav-menu *ngIf="showNavMenu" class="m-0"></app-nav-menu>
-    <router-outlet class="mx-0"></router-outlet>
+    <div style="padding-top: 80px; width: 100vw" class="mx-0">
+      <router-outlet class="mx-0"></router-outlet>
+    </div>
   </div>
 </main>
