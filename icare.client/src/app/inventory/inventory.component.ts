@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { UsersService } from '../services/users.service';
-import { ApiService, Item } from '../services/api.service';
+import { ApiService, Ingredient, Item } from '../services/api.service';
+
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-inventory',
@@ -19,7 +21,7 @@ export class InventoryComponent {
   public expandedItems: Set<string> = new Set();
   public editedItems = new Set<string>();
 
-  public itemDetails: Map<string, string> = new Map();
+  public itemDetails: Map<string, Ingredient> = new Map();
 
   constructor(private service: UsersService, private api: ApiService) { }
 
@@ -103,25 +105,27 @@ export class InventoryComponent {
 
     this.api.getSpecificItem(item).subscribe(
       (result) => {
-        const tmp = { name: "Apple", nutrients: { kcal: 124, kJ: 517, protein: 2.6, carbohydrates: 25.8 }, category: { name: "Fruit" } };
+        const tmp: Ingredient = { name: "Apple", nutrients: { kcal: 124, kJ: 517, protein: 2.6, carbohydrates: 25.8 }, category: { name: "Fruit" } };
 
-        this.itemDetails = this.itemDetails.set(item,
-          `Nome: ${tmp.name} | Categoria: ${tmp.category.name}\n` +
-          `Kcal/KJ: ${tmp.nutrients.kcal}/${tmp.nutrients.kJ}\n` +
-          `Macronutrientes:\n\tProteína: ${tmp.nutrients.protein}\n\tHidratos de Carbono: ${tmp.nutrients.carbohydrates}`
-        );
+        this.itemDetails = this.itemDetails.set(item, tmp);
       },
       (error) => {
         console.error(error);
-        this.itemDetails = this.itemDetails.set(item, 'Unable to get Informations!');
+        this.itemDetails = this.itemDetails.set(item, { name: "Não foi possível obter as informações do ingrediente: " + item, nutrients: { kcal: 0, kJ: 0, protein: 0, carbohydrates: 0 }, category: { name: 'none' } });
       }
     );
   }
 
   updateQuantity(item: string, event: Event): void {
-    const newValue = +(event.target as HTMLInputElement).value;
+    const input = event.target as HTMLInputElement
+    let newValue = +(input).value;
     if (newValue === this.inventory.get(item)) return;
 
+    // No negative numbers and rounded to 2 decimal places
+    newValue = Math.max(0, newValue);
+    newValue = Math.round(newValue * 100) / 100;
+
+    input.value = newValue.toFixed(2);
     this.inventory.set(item, newValue);
     this.editedItems.add(item);
   }
@@ -191,5 +195,10 @@ export class InventoryComponent {
         console.error(error);
       }
     );
+  }
+
+  openDeleteModal() {
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
   }
 }

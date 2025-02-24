@@ -24,3 +24,19 @@ export interface Item {
   name: string;
   quantity: number;
 }
+
+interface Category {
+  name: string;
+}
+interface MacroNutrients {
+  kcal: number;
+  kJ: number;
+  protein: number;
+  carbohydrates: number;
+}
+
+export interface Ingredient {
+  name: string;
+  nutrients: MacroNutrients;
+  category: Category;
+}

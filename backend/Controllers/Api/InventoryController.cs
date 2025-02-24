@@ -82,8 +82,6 @@ namespace backend.Controllers.Api
 
                 foreach (PublicItem item in newItems)
                 {
-                    if(item.Quantity < 0) item.Quantity = 0;
-
                     if (!userItemsMap.TryGetValue(item.Name, out var tmp))
                     {
                         UserItem newItem = new UserItem { ItemName = item.Name, Quantity = item.Quantity, UserId = user.Id };

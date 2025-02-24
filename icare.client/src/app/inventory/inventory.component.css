@@ -37,13 +37,13 @@
   margin: 0;
 }
 
-li {
+.item-list li {
   cursor: pointer;
   padding: 5px;
   border-radius: 5px;
 }
 
-li:hover {
+.item-list li:hover {
   background-color: #f0f0f0;
 }
 
@@ -73,10 +73,25 @@ li:hover {
   background: #fcd34d;
 }
 
+.item-name, .item-quantity {
+  cursor: default;
+}
+
 .item-details {
   background-color: #f9f9f9;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: none;
+  background-color: transparent;
+  margin: 0px;
+  cursor: default;
+}
+
+.item-details p {
+    margin: 0px;
+}
+
+.details-text {
+  white-space: pre;
 }
 
 td {
@@ -92,9 +107,36 @@ td {
   width: 50%;
 }
 
+.empty-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: gray;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: default;
+}
+
 td input[type="checkbox"] {
   display: block;
   margin: auto;
+}
+
+.quantity-input {
+  width: 8ch; /* Space for ~5 digits */
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+  text-align: center;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.quantity-input:focus {
+  border-color: #007bff;
+  background-color: #ffffff;
+  outline: none;
 }
 
 

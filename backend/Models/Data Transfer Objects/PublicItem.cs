@@ -19,8 +19,17 @@ namespace backend.Models.Data_Transfer_Objects
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the quantity of the item.
+        /// Backing field for the Quantity property
         /// </summary>
-        public float Quantity { get; set; }
+        private float _quantity;
+
+        /// <summary>
+        /// Gets or sets the quantity, ensuring it is non-negative and rounded to 2 decimal places.
+        /// </summary>
+        public float Quantity
+        {
+            get => _quantity;
+            set => _quantity = (value < 0) ? 0 : (float)Math.Round(value, 2);
+        }
     }
 }
