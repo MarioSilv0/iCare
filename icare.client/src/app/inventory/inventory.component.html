@@ -51,9 +51,15 @@
             <td class="item-quantity">
               <input type="number"
                      class="quantity-input"
-                     [value]="inventory.get(item) || 0"
+                     [value]="inventory.get(item)?.quantity || 0"
                      (input)="updateQuantity(item, $event)"
                      min="0" />
+              <input type="text"
+                     class="unit-input"
+                     [value]="inventory.get(item)?.unit || ''"
+                     (input)="updateUnit(item, $event)"
+                     maxlength="3"
+                     placeholder="Unit" />
             </td>
 
           </tr>

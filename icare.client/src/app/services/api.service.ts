@@ -23,6 +23,7 @@ export class ApiService {
 export interface Item {
   name: string;
   quantity: number;
+  unit: string;
 }
 
 interface Category {

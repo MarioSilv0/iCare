@@ -77,6 +77,32 @@
   cursor: default;
 }
 
+.item-quantity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantity-input, .unit-input {
+  border: none;
+  border-bottom: 2px solid gray;
+  background: transparent;
+  outline: none;
+  text-align: center;
+  font-size: 1rem;
+  width: 60px;
+}
+
+.unit-input {
+  width: 50px;
+  text-transform: lowercase;
+}
+
+.quantity-input:focus, .unit-input:focus {
+  border-color: lightblue;
+  outline: none;
+}
+
 .item-details {
   background-color: #f9f9f9;
   padding: 10px;
@@ -120,23 +146,6 @@ td {
 td input[type="checkbox"] {
   display: block;
   margin: auto;
-}
-
-.quantity-input {
-  width: 8ch; /* Space for ~5 digits */
-  padding: 4px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background-color: #f8f8f8;
-  text-align: center;
-  font-size: 14px;
-  transition: 0.3s;
-}
-
-.quantity-input:focus {
-  border-color: #007bff;
-  background-color: #ffffff;
-  outline: none;
 }
 
 

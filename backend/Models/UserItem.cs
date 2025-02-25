@@ -24,6 +24,11 @@ namespace backend.Models
         public float Quantity { get; set; }
 
         /// <summary>
+        /// Gets or sets the unit of the item' quantity.
+        /// </summary>
+        public string? Unit { get; set; }
+
+        /// <summary>
         /// Gets or sets the unique identifier of the user associated with this item.
         /// </summary>
         public string UserId { get; set; }

@@ -346,6 +346,9 @@ namespace backend.Migrations
                     b.Property<float>("Quantity")
                         .HasColumnType("real");
 
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("UserId", "ItemName");
 
                     b.ToTable("UserItems");

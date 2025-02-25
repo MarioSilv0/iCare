@@ -31,5 +31,10 @@ namespace backend.Models.Data_Transfer_Objects
             get => _quantity;
             set => _quantity = (value < 0) ? 0 : (float)Math.Round(value, 2);
         }
+
+        /// <summary>
+        /// Gets or sets the unit of the item' quantity.
+        /// </summary>
+        public string? Unit { get; set; }
     }
 }

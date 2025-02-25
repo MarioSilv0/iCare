@@ -13,7 +13,7 @@ declare var bootstrap: any;
 })
 
 export class InventoryComponent {
-  public inventory: Map<string, number> = new Map();
+  public inventory: Map<string, { quantity: number, unit: string }> = new Map();
   public listOfItems: Set<string> = new Set();
 
   public selectedItems: Set<string> = new Set();
@@ -76,7 +76,7 @@ export class InventoryComponent {
     this.service.getInventory().subscribe(
       (result) => {
         for (let i of result) {
-          this.inventory.set(i.name, i.quantity);
+          this.inventory.set(i.name, { quantity: i.quantity, unit: i.unit });
         }
         this.getListItems();
       },
@@ -117,21 +117,33 @@ export class InventoryComponent {
   }
 
   updateQuantity(item: string, event: Event): void {
+    const inventoryItem = this.inventory.get(item);
+    if (!inventoryItem) return;
+
     const input = event.target as HTMLInputElement
     let newValue = +(input).value;
-    if (newValue === this.inventory.get(item)) return;
+    if (newValue === inventoryItem.quantity) return;
 
     // No negative numbers and rounded to 2 decimal places
     newValue = Math.max(0, newValue);
     newValue = Math.round(newValue * 100) / 100;
 
     input.value = newValue.toFixed(2);
-    this.inventory.set(item, newValue);
+    inventoryItem.quantity = newValue;
+    this.editedItems.add(item);
+  }
+
+  updateUnit(item: string, event: Event) {
+    const inventoryItem = this.inventory.get(item);
+    if (!inventoryItem) return;
+
+    const value = (event.target as HTMLInputElement).value.toLowerCase();
+    inventoryItem.unit = value.slice(0, 3);
     this.editedItems.add(item);
   }
 
   addItemsToInventory() {
-    const addedItems: Item[] = Array.from(this.selectedItems).map(n => { return { name: n, quantity: 1 } });
+    const addedItems: Item[] = Array.from(this.selectedItems).map(n => { return { name: n, quantity: 1, unit: "" } });
 
     this.service.updateInventory(addedItems).subscribe(
       (result) => {
@@ -141,7 +153,7 @@ export class InventoryComponent {
         if (successfullyAdded.length !== this.selectedItems.size) console.error("Failed to add items!");
 
         for (let name of successfullyAdded) {
-          this.inventory.set(name, 1);
+          this.inventory.set(name, { quantity: 1, unit: "" });
           this.listOfItems.delete(name);
         }
 
@@ -154,16 +166,19 @@ export class InventoryComponent {
   }
 
   updateItemsInInventory() {
-    const updatedItems: Item[] = Array.from(this.editedItems).map(n => { return { name: n, quantity: this.inventory.get(n) ?? 0 } });
+    const updatedItems: Item[] = Array.from(this.editedItems).map(n => { return { name: n, quantity: this.inventory.get(n)?.quantity ?? 0, unit: this.inventory.get(n)?.unit ?? "" } });
     if (updatedItems.length === 0) return;
 
     this.service.updateInventory(updatedItems).subscribe(
       (result) => {
-        const resultMap = new Map(result.map((item) => [item.name, item.quantity]));
+        const resultMap = new Map(result.map((item) => [item.name, { quantity: item.quantity, unit: item.unit }]));
 
         for (let item of this.editedItems) {
-          const value = resultMap.get(item) ?? 0;
-          if (value !== this.inventory.get(item)) this.inventory.set(item, value);
+          const value = resultMap.get(item) ?? { quantity: 0, unit: ""};
+          const current = this.inventory.get(item) ?? { quantity: 0, unit: "" };
+
+          if (value.quantity !== current.quantity) current.quantity = value.quantity;
+          if (value.unit !== current.unit) current.unit = value.unit;
         }
 
         this.editedItems.clear();

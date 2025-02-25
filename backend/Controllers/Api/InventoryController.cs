@@ -46,7 +46,7 @@ namespace backend.Controllers.Api
 
                 if (user == null) return NotFound();
 
-                List<PublicItem> items = user.UserItems?.Select(i => new PublicItem { Name = i.ItemName, Quantity = i.Quantity })
+                List<PublicItem> items = user.UserItems?.Select(i => new PublicItem { Name = i.ItemName, Quantity = i.Quantity, Unit = i.Unit })
                                                         .ToList() ?? new List<PublicItem>();
 
                 return Ok(items);
@@ -82,17 +82,22 @@ namespace backend.Controllers.Api
 
                 foreach (PublicItem item in newItems)
                 {
+                    // Add Item
                     if (!userItemsMap.TryGetValue(item.Name, out var tmp))
                     {
-                        UserItem newItem = new UserItem { ItemName = item.Name, Quantity = item.Quantity, UserId = user.Id };
+                        UserItem newItem = new UserItem { ItemName = item.Name, Quantity = item.Quantity, Unit = item.Unit, UserId = user.Id };
                         user.UserItems.Add(newItem);
                         userItemsMap[item.Name] = newItem;
                     }
-                    else tmp.Quantity = item.Quantity;
+                    else //Edit Item
+                    {
+                        tmp.Quantity = item.Quantity;
+                        tmp.Unit = item.Unit;
+                    }
                 }
                 await _context.SaveChangesAsync();
 
-                var updatedItems = user.UserItems.Select(i => new PublicItem { Name = i.ItemName, Quantity = i.Quantity }).ToList();
+                var updatedItems = user.UserItems.Select(i => new PublicItem { Name = i.ItemName, Quantity = i.Quantity, Unit = i.Unit }).ToList();
 
                 return Ok(updatedItems);
             }
@@ -131,7 +136,7 @@ namespace backend.Controllers.Api
                     await _context.SaveChangesAsync();
                 }
 
-                var updatedItems = user.UserItems.Select(i => new PublicItem { Name = i.ItemName, Quantity = i.Quantity }).ToList();
+                var updatedItems = user.UserItems.Select(i => new PublicItem { Name = i.ItemName, Quantity = i.Quantity, Unit = i.Unit }).ToList();
 
                 return Ok(updatedItems);
             }
