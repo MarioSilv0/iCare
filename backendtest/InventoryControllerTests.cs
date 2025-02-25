@@ -69,8 +69,8 @@ namespace backendtest
                 UserItems = new List<UserItem>()
             };
 
-            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, User = user, UserId = user.Id };
+            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
+            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
 
             user.UserItems.Add(item1);
             user.UserItems.Add(item2);
@@ -88,8 +88,8 @@ namespace backendtest
             var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
             Assert.NotNull(items);
             Assert.Equal(user.UserItems.Count, items.Count);
-            Assert.Contains(items, i => i.Name == item1.ItemName && i.Quantity == item1.Quantity);
-            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity);           
+            Assert.Contains(items, i => i.Name == item1.ItemName && i.Quantity == item1.Quantity && i.Unit == item1.Unit);
+            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity && i.Unit == item2.Unit);           
         }
 
         [Fact]
@@ -154,11 +154,11 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, User = user, UserId = user.Id };
+            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
+            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
 
-            var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item1.ItemName, Quantity = item1.Quantity },
-                                                                        new PublicItem { Name = item2.ItemName, Quantity = item2.Quantity },});
+            var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item1.ItemName, Quantity = item1.Quantity, Unit = item1.Unit },
+                                                                        new PublicItem { Name = item2.ItemName, Quantity = item2.Quantity, Unit = item2.Unit },});
 
             Assert.NotNull(result);
             Assert.IsType<ActionResult<List<PublicItem>>>(result);
@@ -166,8 +166,8 @@ namespace backendtest
             var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
             Assert.NotNull(items);
             Assert.Equal(2, items.Count);
-            Assert.Contains(items, i => i.Name == item1.ItemName && i.Quantity == item1.Quantity);
-            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity);
+            Assert.Contains(items, i => i.Name == item1.ItemName && i.Quantity == item1.Quantity && i.Unit == item1.Unit);
+            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity && i.Unit == item2.Unit);
         }
 
         [Fact]
@@ -184,11 +184,11 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, User = user, UserId = user.Id };
+            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
+            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
 
-            var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item1.ItemName, Quantity = item1.Quantity },
-                                                                        new PublicItem { Name = item2.ItemName, Quantity = item2.Quantity },});
+            var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item1.ItemName, Quantity = item1.Quantity, Unit = item1.Unit },
+                                                                        new PublicItem { Name = item2.ItemName, Quantity = item2.Quantity, Unit = item2.Unit },});
 
             Assert.NotNull(result);
             Assert.IsType<ActionResult<List<PublicItem>>>(result);
@@ -196,8 +196,8 @@ namespace backendtest
             var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
             Assert.NotNull(items);
             Assert.Equal(2, items.Count);
-            Assert.Contains(items, i => i.Name == item1.ItemName && i.Quantity == item1.Quantity);
-            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity);
+            Assert.Contains(items, i => i.Name == item1.ItemName && i.Quantity == item1.Quantity && i.Unit == item1.Unit);
+            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity && i.Unit == item2.Unit);
         }
 
         [Fact]
@@ -210,8 +210,8 @@ namespace backendtest
                 UserItems = new List<UserItem>()
             };
 
-            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, User = user, UserId = user.Id };
+            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
+            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
 
             user.UserItems.Add(item1);
             user.UserItems.Add(item2);
@@ -221,9 +221,9 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            UserItem item3 = new UserItem { ItemName = "Meat", Quantity = 1, User = user, UserId = user.Id };
+            UserItem item3 = new UserItem { ItemName = "Meat", Quantity = 1, Unit = "l", User = user, UserId = user.Id };
 
-            var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item3.ItemName, Quantity = item3.Quantity } });
+            var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item3.ItemName, Quantity = item3.Quantity, Unit = item3.Unit } });
 
             Assert.NotNull(result);
             Assert.IsType<ActionResult<List<PublicItem>>>(result);
@@ -231,9 +231,9 @@ namespace backendtest
             var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
             Assert.NotNull(items);
             Assert.Equal(3, items.Count);
-            Assert.Contains(items, i => i.Name == item1.ItemName && i.Quantity == item1.Quantity);
-            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity);
-            Assert.Contains(items, i => i.Name == item3.ItemName && i.Quantity == item3.Quantity);
+            Assert.Contains(items, i => i.Name == item1.ItemName && i.Quantity == item1.Quantity && i.Unit == item1.Unit);
+            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity && i.Unit == item2.Unit);
+            Assert.Contains(items, i => i.Name == item3.ItemName && i.Quantity == item3.Quantity && i.Unit == item3.Unit);
         }
 
         [Fact]
@@ -251,13 +251,13 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            UserItem item1 = new UserItem { ItemName = "Meat", Quantity = 1, User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Potato", Quantity = 1, User = user, UserId = user.Id };
-            UserItem item3 = new UserItem { ItemName = "Meat", Quantity = 4, User = user, UserId = user.Id };
+            UserItem item1 = new UserItem { ItemName = "Meat", Quantity = 1, Unit = "l", User = user, UserId = user.Id };
+            UserItem item2 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "ml", User = user, UserId = user.Id };
+            UserItem item3 = new UserItem { ItemName = "Meat", Quantity = 4, Unit = "ml", User = user, UserId = user.Id };
 
-            var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item1.ItemName, Quantity = item1.Quantity },
-                                                                        new PublicItem { Name = item2.ItemName, Quantity = item2.Quantity },
-                                                                        new PublicItem { Name = item3.ItemName, Quantity = item3.Quantity } });
+            var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item1.ItemName, Quantity = item1.Quantity, Unit = item1.Unit },
+                                                                        new PublicItem { Name = item2.ItemName, Quantity = item2.Quantity, Unit = item2.Unit },
+                                                                        new PublicItem { Name = item3.ItemName, Quantity = item3.Quantity, Unit = item3.Unit } });
 
             Assert.NotNull(result);
             Assert.IsType<ActionResult<List<PublicItem>>>(result);
@@ -265,8 +265,8 @@ namespace backendtest
             var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
             Assert.NotNull(items);
             Assert.Equal(2, items.Count);
-            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity);
-            Assert.Contains(items, i => i.Name == item3.ItemName && i.Quantity == item3.Quantity);
+            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity && i.Unit == item2.Unit);
+            Assert.Contains(items, i => i.Name == item3.ItemName && i.Quantity == item3.Quantity && i.Unit == item3.Unit);
         }
 
         [Fact]
@@ -279,8 +279,8 @@ namespace backendtest
                 UserItems = new List<UserItem>()
             };
 
-            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, User = user, UserId = user.Id };
+            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
+            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
 
             user.UserItems.Add(item1);
             user.UserItems.Add(item2);
@@ -290,9 +290,9 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            UserItem item3 = new UserItem { ItemName = "Potato", Quantity = 10, User = user, UserId = user.Id };
+            UserItem item3 = new UserItem { ItemName = "Potato", Quantity = 10, Unit = "g", User = user, UserId = user.Id };
 
-            var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item3.ItemName, Quantity = item3.Quantity } });
+            var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item3.ItemName, Quantity = item3.Quantity, Unit = item3.Unit } });
 
             Assert.NotNull(result);
             Assert.IsType<ActionResult<List<PublicItem>>>(result);
@@ -300,8 +300,8 @@ namespace backendtest
             var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
             Assert.NotNull(items);
             Assert.Equal(2, items.Count);
-            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity);
-            Assert.Contains(items, i => i.Name == item3.ItemName && i.Quantity == item3.Quantity);
+            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity && i.Unit == item2.Unit);
+            Assert.Contains(items, i => i.Name == item3.ItemName && i.Quantity == item3.Quantity && i.Unit == item3.Unit);
         }
 
         [Fact]
@@ -385,8 +385,8 @@ namespace backendtest
                 UserItems = new List<UserItem>()
             };
 
-            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, User = user, UserId = user.Id };
+            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
+            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
 
             user.UserItems.Add(item1);
             user.UserItems.Add(item2);
@@ -404,8 +404,8 @@ namespace backendtest
             var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
             Assert.NotNull(items);
             Assert.Single(items);
-            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity);
-            Assert.DoesNotContain(items, i => i.Name == item1.ItemName && i.Quantity == item1.Quantity);
+            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity && i.Unit == item2.Unit);
+            Assert.DoesNotContain(items, i => i.Name == item1.ItemName && i.Quantity == item1.Quantity && i.Unit == item1.Unit);
         }
 
         [Fact]
@@ -417,8 +417,8 @@ namespace backendtest
                 UserItems = new List<UserItem>()
             };
 
-            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, User = user, UserId = user.Id };
+            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
+            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
 
             user.UserItems.Add(item1);
             user.UserItems.Add(item2);
@@ -436,8 +436,8 @@ namespace backendtest
             var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
             Assert.NotNull(items);
             Assert.Equal(2, items.Count);
-            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity);
-            Assert.DoesNotContain(items, i => i.Name == item1.ItemName && i.Quantity == item2.Quantity);
+            Assert.Contains(items, i => i.Name == item1.ItemName && i.Quantity == item1.Quantity && i.Unit == item1.Unit);
+            Assert.Contains(items, i => i.Name == item2.ItemName && i.Quantity == item2.Quantity && i.Unit == item2.Unit);
         }
 
         [Fact]
@@ -449,8 +449,8 @@ namespace backendtest
                 UserItems = new List<UserItem>()
             };
 
-            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, User = user, UserId = user.Id };
+            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
+            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
 
             user.UserItems.Add(item1);
             user.UserItems.Add(item2);

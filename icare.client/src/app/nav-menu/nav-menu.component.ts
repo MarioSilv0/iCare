@@ -13,6 +13,7 @@ export class NavMenuComponent {
   public isExpanded: boolean = false;
   public isLoggedIn: boolean = false;
   public username: string | null = null;
+  public picture: string | null = null;
   public commonPath: string = '../../assets/svgs/';
   public extension: string = '.svg';
   public links = [
@@ -66,7 +67,19 @@ export class NavMenuComponent {
     this.authService.onStateChanged().subscribe((state: boolean) => {
       this.isLoggedIn = state;
     });
-    //this.username = this.authService.
+
+    const defaultData = { picture: '', name: 'Error' };
+    let data = defaultData;
+
+    try {
+      const storage = localStorage.getItem('user');
+      if (storage) data = { ...defaultData, ...JSON.parse(storage) };
+    } catch (error) {
+      console.error('Failed to parse user data from localStorage:', error);
+    }
+
+    this.username = data.name;
+    this.picture = data.picture;
   }
 
   collapse() {

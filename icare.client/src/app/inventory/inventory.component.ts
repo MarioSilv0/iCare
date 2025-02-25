@@ -165,23 +165,42 @@ export class InventoryComponent {
     );
   }
 
-  updateItemsInInventory() {
+  checkForEmptyItems() {
+    const allItems = Array.from(this.inventory.keys());
+    if (allItems.some(n => this.inventory.get(n)?.quantity === 0)) {
+      this.openModal('deleteZeroQuantityModal');
+    } else {
+      this.updateItemsInInventory();
+    }
+  }
+
+  updateItemsInInventory(removeZeroQuantity: boolean = false) {
     const updatedItems: Item[] = Array.from(this.editedItems).map(n => { return { name: n, quantity: this.inventory.get(n)?.quantity ?? 0, unit: this.inventory.get(n)?.unit ?? "" } });
-    if (updatedItems.length === 0) return;
+    if (updatedItems.length === 0 && !removeZeroQuantity) return;
 
     this.service.updateInventory(updatedItems).subscribe(
       (result) => {
         const resultMap = new Map(result.map((item) => [item.name, { quantity: item.quantity, unit: item.unit }]));
 
         for (let item of this.editedItems) {
-          const value = resultMap.get(item) ?? { quantity: 0, unit: ""};
+          const value = resultMap.get(item) ?? { quantity: 0, unit: "" };
           const current = this.inventory.get(item) ?? { quantity: 0, unit: "" };
 
-          if (value.quantity !== current.quantity) current.quantity = value.quantity;
-          if (value.unit !== current.unit) current.unit = value.unit;
+          if (!value) this.inventory.delete(item);
+          else {
+            if (!current) this.inventory.set(item, value);
+            else {
+              if (value.quantity !== current.quantity) current.quantity = value.quantity;
+              if (value.unit !== current.unit) current.unit = value.unit;
+            }
+          }
         }
 
         this.editedItems.clear();
+        if (removeZeroQuantity) {
+          const itemsToDelete = updatedItems.filter(i => i.quantity === 0).map(i => i.name);
+          this.removeItemFromInventory(itemsToDelete);  
+        }
       },
       (error) => {
         console.error(error);
@@ -189,22 +208,23 @@ export class InventoryComponent {
     );
   }
 
-  removeItemFromInventory() {
-    const deletedItems: string[] = Array.from(this.selectedItemsInInventory);
+  removeItemFromInventory(itemsToDelete: string[] | null | undefined) {
+    const itemsToRemove: string[] = itemsToDelete ?? Array.from(this.selectedItemsInInventory);
+    if (itemsToRemove.length === 0) return;
 
-    this.service.removeInventory(deletedItems).subscribe(
+    this.service.removeInventory(itemsToRemove).subscribe(
       (result) => {
         const res = new Set(result.map(i => i.name));
 
-        const deletedItems = [...this.selectedItemsInInventory].filter(name => !res.has(name));
-        if (deletedItems.length !== this.selectedItemsInInventory.size) console.error("Failed to delete items!");
+        const deletedItems = itemsToRemove.filter(name => !res.has(name));
+        if (deletedItems.length !== itemsToRemove.length) console.error("Failed to delete items!");
 
         for (let name of deletedItems) {
           this.listOfItems.add(name);
           this.inventory.delete(name);
         }
 
-        this.selectedItemsInInventory.clear();
+        if (itemsToDelete === null) this.selectedItemsInInventory.clear();
       },
       (error) => {
         console.error(error);
@@ -212,8 +232,11 @@ export class InventoryComponent {
     );
   }
 
-  openDeleteModal() {
-    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-    modal.show();
+  openModal(id: string) {
+    const modalElement = document.getElementById(id);
+    if (modalElement) {
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
+    }
   }
 }
