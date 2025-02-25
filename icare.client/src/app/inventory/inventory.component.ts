@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UsersService } from '../services/users.service';
 import { ApiService, Ingredient, Item } from '../services/api.service';
+import { NotificationService, addedItemNotification, editedItemNotification, removedItemNotification } from '../services/notifications.service';
 
 declare var bootstrap: any;
 
@@ -13,6 +14,8 @@ declare var bootstrap: any;
 })
 
 export class InventoryComponent {
+  private notificationsPermission: boolean = true;
+
   public inventory: Map<string, { quantity: number, unit: string }> = new Map();
   public listOfItems: Set<string> = new Set();
 
@@ -26,6 +29,15 @@ export class InventoryComponent {
   constructor(private service: UsersService, private api: ApiService) { }
 
   ngOnInit() {
+    try {
+      const storage = localStorage.getItem('user');
+      if (storage) {
+        this.notificationsPermission = JSON.parse(storage).notifications || true;
+      }
+    } catch (e) {
+      console.error('Failed to get user data in localStorage:', e);
+    }
+
     this.getInventory();
   }
 
@@ -158,6 +170,7 @@ export class InventoryComponent {
         }
 
         this.selectedItems.clear();
+        NotificationService.showNotification(this.notificationsPermission, addedItemNotification);
       },
       (error) => {
         console.error(error);
@@ -201,6 +214,8 @@ export class InventoryComponent {
           const itemsToDelete = updatedItems.filter(i => i.quantity === 0).map(i => i.name);
           this.removeItemFromInventory(itemsToDelete);  
         }
+
+        NotificationService.showNotification(this.notificationsPermission, editedItemNotification);
       },
       (error) => {
         console.error(error);
@@ -225,6 +240,7 @@ export class InventoryComponent {
         }
 
         if (itemsToDelete === null) this.selectedItemsInInventory.clear();
+        NotificationService.showNotification(this.notificationsPermission, removedItemNotification);
       },
       (error) => {
         console.error(error);

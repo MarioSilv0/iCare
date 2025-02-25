@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UsersService, User } from '../services/users.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
-import { NotificationService } from '../services/notifications.service';
+import { NotificationService, updatedUserNotification } from '../services/notifications.service';
 
 @Component({
   selector: 'app-profile',
@@ -38,14 +38,7 @@ export class ProfileComponent implements OnInit {
   updateUser() {
     this.service.updateUser(this.user).subscribe(
       (result) => {
-        const notification = {
-          permission: this.user.notifications,
-          icon: '/assets/svgs/user.svg',
-          title: 'Profile Updated',
-          body: 'The Information on your profile as been updated successfully!'
-        }
-
-        NotificationService.showNotification(notification.permission, notification.icon, notification.title, notification.body);
+        NotificationService.showNotification(this.user.notifications, updatedUserNotification);
 
         try {
           const storedUser = localStorage.getItem('user');
