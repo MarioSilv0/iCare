@@ -335,6 +335,25 @@ namespace backend.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("backend.Models.UserItem", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ItemName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<float>("Quantity")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "ItemName");
+
+                    b.ToTable("UserItems");
+                });
+
             modelBuilder.Entity("backend.Models.UserLog", b =>
                 {
                     b.Property<int>("Id")
@@ -452,6 +471,17 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("backend.Models.UserItem", b =>
+                {
+                    b.HasOne("backend.Models.User", "User")
+                        .WithMany("UserItems")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("backend.Models.UserLog", b =>
                 {
                     b.HasOne("backend.Models.User", "User")
@@ -474,6 +504,8 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.User", b =>
                 {
                     b.Navigation("Logs");
+
+                    b.Navigation("UserItems");
 
                     b.Navigation("UserPreferences");
 

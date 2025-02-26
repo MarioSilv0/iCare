@@ -1,0 +1,134 @@
+<div class="container">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="search-bar">
+      <input type="text" placeholder="Pesquisar"
+             [(ngModel)]="searchTerm"
+             (input)="onSearchChange()" />
+      <span class="search-icon">🔍</span>
+    </div>
+    <ul class="item-list" *ngIf="filteredItems.length > 0">
+      <li *ngFor="let item of filteredItems"
+          [class.selected]="selectedItems.has(item)"
+          (click)="toggleSelection(item)">
+        {{ item }}
+      </li>
+    </ul>
+    <button class="add-button" (click)="addItemsToInventory()">
+      Adicionar ➕
+    </button>
+  </div>
+
+  <!-- Inventory Table -->
+  <div class="inventory-table">
+    <table>
+      <thead>
+        <tr>
+          <th class="small-col"></th>
+          <th class="small-col">
+            <input type="checkbox"
+                   [checked]="selectedItemsInInventory.size === inventory.size"
+                   (change)="toggleAllInventorySelection()">
+          </th>
+          <th class="large-col">Nome</th>
+          <th class="small-col">Quantidade</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="inventory.size > 0; else emptyInventory">
+        <ng-container *ngFor="let item of inventory | mapKeys">
+          <tr>
+
+            <td (click)="toggleDetails(item)">
+              {{ expandedItems.has(item) ? '▼' : '▶️' }}
+            </td>
+
+            <td>
+              <input type="checkbox"
+                     [checked]="selectedItemsInInventory.has(item)"
+                     (change)="toggleInventorySelection(item)">
+            </td>
+
+            <td class="item-name">{{ item }}</td>
+
+            <td class="item-quantity">
+              <input type="number"
+                     class="quantity-input"
+                     [value]="inventory.get(item)?.quantity || 0"
+                     (input)="updateQuantity(item, $event)"
+                     min="0" />
+              <input type="text"
+                     class="unit-input"
+                     [value]="inventory.get(item)?.unit || ''"
+                     (input)="updateUnit(item, $event)"
+                     maxlength="3"
+                     placeholder="Unit" />
+            </td>
+
+          </tr>
+          <tr *ngIf="expandedItems.has(item)">
+            <td colspan="4">
+              <div class="item-details">
+                <p *ngIf="!itemDetails.has(item)">A carregar...</p>
+                <ng-container *ngIf="itemDetails.has(item)">
+                  <p><strong>Nome:</strong> {{ itemDetails.get(item)?.name }}</p>
+                  <p><strong>Categoria:</strong> {{ itemDetails.get(item)?.category?.name }}</p>
+                  <p><strong>Kcal/KJ:</strong> {{ itemDetails.get(item)?.nutrients?.kcal }} / {{ itemDetails.get(item)?.nutrients?.kJ }}</p>
+                  <p><strong>Macronutrientes:</strong></p>
+                  <ul>
+                    <li><strong>Proteína:</strong> {{ itemDetails.get(item)?.nutrients?.protein }}</li>
+                    <li><strong>Hidratos de Carbono:</strong> {{ itemDetails.get(item)?.nutrients?.carbohydrates }}</li>
+                  </ul>
+                </ng-container>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+      <ng-template #emptyInventory>
+        <tbody>
+          <tr>
+            <td colspan="4" class="empty-message">O inventário está vazio.</td>
+          </tr>
+        </tbody>
+      </ng-template>
+    </table>
+    <div class="buttons-container">
+      <button class="update-button" (click)="checkForEmptyItems()">Atualizar Inventário</button>
+      <button class="delete-button" (click)="openModal('deleteModal')">
+        Excluir <span class="trash-icon">🗑️</span>
+      </button>
+    </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Confirmação</h5>
+          </div>
+          <div class="modal-body">
+            Tem a certeza que deseja eliminar os itens selecionados?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-danger" (click)="removeItemFromInventory(null)" data-bs-dismiss="modal">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="deleteZeroQuantityModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Remover Itens?</h5>
+          </div>
+          <div class="modal-body">
+            Alguns itens têm a quantidade de 0. Gostaria de removê-los antes de atualizar o inventário?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"  (click)="updateItemsInInventory()" data-bs-dismiss="modal">Não</button>
+            <button type="button" class="btn btn-danger" (click)="updateItemsInInventory(true)" data-bs-dismiss="modal">Sim, Remover</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

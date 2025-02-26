@@ -34,6 +34,7 @@ export class AuthService {
   private clearToken(): void {
     localStorage.removeItem('authToken');
     localStorage.removeItem('roles');
+    localStorage.removeItem('user');
   }
 
   // Verifica se está Logged

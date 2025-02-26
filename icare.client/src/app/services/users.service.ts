@@ -1,24 +1,39 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Item } from './api.service';
+
+const URL: string = 'https://localhost:7266/api/';
+const PROFILE: string = 'PublicUser/';
+const INVENTORY: string = 'Inventory/';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService {
-
-  private url: string = 'https://localhost:7266/api/PublicUser/';
-
   constructor(private http: HttpClient) { }
 
   getUser(): Observable<User> {
-    return this.http.get<User>(this.url);
+    return this.http.get<User>(URL + PROFILE);
   }
 
   updateUser(user: User): Observable<User> {
-    return this.http.put<User>(this.url, { ...user });
+    return this.http.put<User>(URL + PROFILE, { ...user });
+  }
+
+  getInventory(): Observable<Item[]> {
+    return this.http.get<Item[]>(URL + INVENTORY);
+  }
+
+  updateInventory(items: Item[]): Observable<Item[]> {
+    return this.http.put<Item[]>(URL + INVENTORY, items);
+  }
+
+  removeInventory(items: string[]): Observable<Item[]> {
+    return this.http.delete<Item[]>(URL + INVENTORY, { body: items });
   }
 }
+
 interface Preference {
   id: number;
   name: string;

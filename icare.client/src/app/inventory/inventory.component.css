@@ -1,0 +1,204 @@
+.container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+.sidebar {
+  width: 25%;
+  background: #fef3c7;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #d4af37;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+.search-bar input {
+  flex-grow: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+}
+
+.search-icon {
+  cursor: pointer;
+}
+
+.item-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item-list li {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.item-list li:hover {
+  background-color: #f0f0f0;
+}
+
+.selected {
+  background-color: lightblue;
+  font-weight: bold;
+}
+
+.inventory-table {
+  flex-grow: 1;
+}
+
+.inventory-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fef3c7;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.inventory-table th, .inventory-table td {
+  padding: 10px;
+  border: 1px solid #d4af37;
+}
+
+.inventory-table th {
+  background: #fcd34d;
+}
+
+.item-name, .item-quantity {
+  cursor: default;
+}
+
+.item-quantity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantity-input, .unit-input {
+  border: none;
+  border-bottom: 2px solid gray;
+  background: transparent;
+  outline: none;
+  text-align: center;
+  font-size: 1rem;
+  width: 60px;
+}
+
+.unit-input {
+  width: 50px;
+  text-transform: lowercase;
+}
+
+.quantity-input:focus, .unit-input:focus {
+  border-color: lightblue;
+  outline: none;
+}
+
+.item-details {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border: none;
+  background-color: transparent;
+  margin: 0px;
+  cursor: default;
+}
+
+.item-details p {
+    margin: 0px;
+}
+
+.details-text {
+  white-space: pre;
+}
+
+td {
+  cursor: pointer;
+}
+
+.small-col {
+  width: 12.5%; /* 1/4 of the table */
+  text-align: center;
+}
+
+.large-col {
+  width: 50%;
+}
+
+.empty-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: gray;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: default;
+}
+
+td input[type="checkbox"] {
+  display: block;
+  margin: auto;
+}
+
+
+/* Buttons */
+.add-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #fcd34d;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.update-button {
+  padding: 10px 15px;
+  background-color: #fcd34d;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.delete-button {
+  padding: 10px 15px;
+  background-color: #dc3545;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.add-button:hover, .update-button:hover {
+  background-color: #fbbf24;
+}
+
+.delete-button:hover {
+  background-color: #bf2d3b;
+}
+
+.trash-icon {
+  margin-left: auto;
+}

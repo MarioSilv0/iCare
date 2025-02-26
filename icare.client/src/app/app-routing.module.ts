@@ -12,6 +12,8 @@ import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { RecipesComponent } from './recipes/recipes.component';
 import { RecipeComponent } from './recipe/recipe.component';
+import { InventoryComponent } from './inventory/inventory.component';
+
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -35,6 +37,7 @@ const routes: Routes = [
   },
   { path: 'recipes', component: RecipesComponent },
   { path: 'recipe/:id', component: RecipeComponent },
+  { path: 'inventory', component: InventoryComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' },
 ];
 

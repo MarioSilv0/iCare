@@ -17,6 +17,7 @@ namespace backend.Data
         public DbSet<UserPreference> UserPreferences { get; set; } = default!;
         public DbSet<Restriction> Restrictions { get; set; } = default!;
         public DbSet<UserRestriction> UserRestrictions { get; set; } = default!;
+        public DbSet<UserItem> UserItems { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -56,6 +57,15 @@ namespace backend.Data
                 new Restriction { Id = 1, Name = "Lactose Intolerance" },
                 new Restriction { Id = 2, Name = "Gluten Intolerance" }
             );
+
+            modelBuilder.Entity<UserItem>()
+                .HasKey(ui => new { ui.UserId, ui.ItemName });
+
+            modelBuilder.Entity<UserItem>()
+                .HasOne(ui => ui.User)
+                .WithMany(u => u.UserItems)
+                .HasForeignKey(ui => ui.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
     }

@@ -18,6 +18,8 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { ProfileComponent } from './profile/profile.component';
 import { RecipesComponent } from './recipes/recipes.component';
 import { RecipeComponent } from './recipe/recipe.component';
+import { InventoryComponent } from './inventory/inventory.component';
+import { MapKeysPipe } from './pipes/MapKeysPipe';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,8 @@ import { RecipeComponent } from './recipe/recipe.component';
     ChangePasswordComponent,
     RecipesComponent,
     RecipeComponent,
+    InventoryComponent,
+    MapKeysPipe
   ],
   imports: [
     BrowserModule,
@@ -47,5 +51,8 @@ import { RecipeComponent } from './recipe/recipe.component';
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   bootstrap: [AppComponent, NavMenuComponent],
+  exports: [
+    MapKeysPipe
+  ]
 })
 export class AppModule {}
