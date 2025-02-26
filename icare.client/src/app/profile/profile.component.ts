@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UsersService, User } from '../services/users.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
-import { NotificationService, updatedUserNotification } from '../services/notifications.service';
+import { NotificationService, updatedUserNotification, failedToEditEmailUserNotification } from '../services/notifications.service';
 
 @Component({
   selector: 'app-profile',
@@ -39,6 +39,8 @@ export class ProfileComponent implements OnInit {
     this.service.updateUser(this.user).subscribe(
       (result) => {
         NotificationService.showNotification(this.user.notifications, updatedUserNotification);
+
+        if (result.email !== this.user.email) NotificationService.showNotification(this.user.notifications, failedToEditEmailUserNotification);
 
         try {
           const storedUser = localStorage.getItem('user');

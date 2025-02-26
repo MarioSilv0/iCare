@@ -31,20 +31,26 @@ export const updatedUserNotification: Notification = {
   body: 'As Informações do seu perfil foram atualizadas com sucesso!'
 }
 
-export const addedItemNotification: Notification = {
+export const failedToEditEmailUserNotification: Notification = {
   icon: '/assets/svgs/user.svg',
+  title: 'Email Inválido ou Duplicado',
+  body: 'Não foi possível atualizar o seu email! Isto pode ter ocorrido devido ao email ser inválido ou duplicado.'
+}
+
+export const addedItemNotification: Notification = {
+  icon: '/assets/svgs/inventory.svg',
   title: 'Itens Adicionados',
   body: 'Os Itens foram adicionados com sucesso!'
 }
 
 export const editedItemNotification: Notification = {
-  icon: '/assets/svgs/user.svg',
+  icon: '/assets/svgs/inventory.svg',
   title: 'Itens Editados',
   body: 'Os Itens foram editados com sucesso!'
 }
 
 export const removedItemNotification: Notification = {
-  icon: '/assets/svgs/user.svg',
+  icon: '/assets/svgs/inventory.svg',
   title: 'Itens Removidos',
   body: 'Os Itens foram removidos com sucesso!'
 }

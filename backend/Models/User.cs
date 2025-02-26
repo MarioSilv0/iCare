@@ -2,7 +2,7 @@
 using backend.Models.Restrictions;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
-using System.Configuration;
+using System.Text.RegularExpressions;
 
 /// <summary>
 /// Represents an application user with personal details, preferences, and restrictions.
@@ -91,7 +91,7 @@ namespace backend.Models
             if(Name != model.Name && !string.IsNullOrWhiteSpace(model.Name))
                 Name = model.Name;
 
-            if(Email != model.Email && !string.IsNullOrWhiteSpace(model.Email))
+            if(Email != model.Email && !string.IsNullOrWhiteSpace(model.Email) && this.IsValidEmail(model.Email))
                 Email = model.Email;
 
             if (Birthdate != model.Birthdate)
@@ -127,6 +127,19 @@ namespace backend.Models
                 age -= 1;
 
             return age;
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

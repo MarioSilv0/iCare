@@ -6,6 +6,7 @@ using backend.Models.Preferences;
 using backend.Models.Restrictions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Security.Claims;
 
@@ -38,7 +39,7 @@ namespace backendtest
         }
 
         [Fact]
-        public async Task Edit_WhenIdIsNull_ReturnsUnauthorized()
+        public async Task Get_WhenIdIsNull_ReturnsUnauthorized()
         {
             // Do not set user ID in claims (simulate missing token)
             controller.ControllerContext = new ControllerContext
@@ -46,23 +47,23 @@ namespace backendtest
                 HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity()) }
             };
 
-            var result = await controller.Edit();
+            var result = await controller.Get();
 
             Assert.IsType<UnauthorizedObjectResult>(result.Result);
         }
 
         [Fact]
-        public async Task Edit_WhenIdIsInvalid_ReturnsNotFound()
+        public async Task Get_WhenIdIsInvalid_ReturnsNotFound()
         {
             Authenticate.SetUserIdClaim("InvalidId", controller);
 
-            var result = await controller.Edit();
+            var result = await controller.Get();
 
             Assert.IsType<NotFoundResult>(result.Result);
         }
 
         [Fact]
-        public async Task Edit_WhenIdIsValid_ReturnsPublicUser()
+        public async Task Get_WhenIdIsValid_ReturnsPublicUser()
         {
             User user = new User
             {
@@ -82,7 +83,7 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            var result = await controller.Edit();
+            var result = await controller.Get();
 
             Assert.NotNull(result);
             Assert.IsType<ActionResult<PublicUser>>(result);
@@ -104,7 +105,7 @@ namespace backendtest
         }
 
         [Fact]
-        public async Task Edit_WhenUserHasNoPreferencesOrRestrictions_ReturnsPublicUser()
+        public async Task Get_WhenUserHasNoPreferencesOrRestrictions_ReturnsPublicUser()
         {
             User user = new User
             {
@@ -119,7 +120,7 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            var result = await controller.Edit();
+            var result = await controller.Get();
 
             var publicUser = Assert.IsType<OkObjectResult>(result.Result)?.Value as PublicUser;
             Assert.NotNull(publicUser);
@@ -130,7 +131,7 @@ namespace backendtest
         }
 
         [Fact]
-        public async Task Edit_WhenPreferencesAndRestrictionsAreEmpty_ReturnsPublicUser()
+        public async Task Get_WhenPreferencesAndRestrictionsAreEmpty_ReturnsPublicUser()
         {
             User user = new User
             {
@@ -153,7 +154,7 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            var result = await controller.Edit();
+            var result = await controller.Get();
 
             var publicUser = Assert.IsType<OkObjectResult>(result.Result)?.Value as PublicUser;
             Assert.NotNull(publicUser);
@@ -162,6 +163,100 @@ namespace backendtest
 
             _context.Preferences.AddRange(p);
             _context.Restrictions.AddRange(r);
+        }
+
+        [Fact]
+        public async Task Edit_WhenModelIsNull_ReturnsBadRequest()
+        {
+            Authenticate.SetUserIdClaim("some-user-id", controller);
+            PublicUser? pu = null;
+            var result = await controller.Edit(pu);
+
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.Equal("Invalid data provided.", badRequest.Value);
+        }
+
+        [Fact]
+        public async Task Edit_WhenIdIsNull_ReturnsUnauthorized()
+        {
+            // Do not set user ID in claims (simulate missing token)
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity()) }
+            };
+
+            var model = new PublicUser { Email = "test@email.com" };
+            var result = await controller.Edit(model);
+
+            var unauthorized = Assert.IsType<UnauthorizedObjectResult>(result.Result);
+            Assert.Equal("User ID not found in token.", unauthorized.Value);
+        }
+
+        [Fact]
+        public async Task Edit_WhenIdIsInvalid_ReturnsNotFound()
+        {
+            Authenticate.SetUserIdClaim("InvalidId", controller);
+
+            var model = new PublicUser { Email = "test@email.com" };
+            var result = await controller.Edit(model);
+
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task Edit_WhenEmailIsNotUnique_KeepsOldEmail()
+        {
+            User user1 = new User
+            {
+                Id = "User1",
+                Name = "User1",
+                Email = "user1@email.com",                
+            };
+
+            User user2 = new User
+            {
+                Id = "User2",
+                Name = "User2",
+                Email = "user2@email.com",
+            };
+
+            _context.Users.Add(user1);
+            _context.Users.Add(user2);
+            await _context.SaveChangesAsync();
+
+            Authenticate.SetUserIdClaim(user1.Id, controller);
+            var model = new PublicUser { Email = user2.Email };
+
+            var result = await controller.Edit(model);
+
+            var publicUser = Assert.IsType<OkObjectResult>(result.Result)?.Value as PublicUser;
+
+            Assert.NotNull(publicUser);
+            Assert.Equal(user1.Email, publicUser.Email);
+        }
+
+        [Fact]
+        public async Task Edit_WhenValidUser_UpdatesSuccessfully()
+        {
+            User user = new User
+            {
+                Id = "User",
+                Name = "User",
+                Email = "user@email.com",
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            Authenticate.SetUserIdClaim(user.Id, controller);
+            var model = new PublicUser { Email = "new@email.com", Name = "New Name" };
+
+            var result = await controller.Edit(model);
+            var publicUser = Assert.IsType<OkObjectResult>(result.Result)?.Value as PublicUser;
+
+            Assert.NotNull(publicUser);
+            Assert.Equal(model.Email, publicUser.Email);
+            Assert.Equal(model.Name, publicUser.Name);
         }
     }
 }
