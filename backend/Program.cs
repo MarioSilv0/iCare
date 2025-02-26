@@ -65,9 +65,6 @@ builder.Services.AddControllersWithViews()
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-// Serviços personalizados
-builder.Services.AddScoped<UserLogService>();
-
 // Configuração de CORS
 builder.Services.AddCors(options =>
 {
@@ -88,9 +85,10 @@ builder.Services.ConfigureApplicationCookie(options =>
         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
         return Task.CompletedTask;
     };
-}); 
+});
 
-// Email Sender
+// Serviços personalizados
+builder.Services.AddScoped<UserLogService>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<EmailSenderService>();
 
