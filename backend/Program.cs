@@ -71,6 +71,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
         policy.WithOrigins("https://localhost:4200")
+              .WithOrigins("https://icaresite.azurewebsites.net")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -138,7 +139,6 @@ else
 
 app.UseHttpsRedirection();
 app.UseDefaultFiles();
-app.UseStaticFiles();
 app.UseRouting();
 app.UseCors("AllowSpecificOrigins");
 
@@ -159,4 +159,19 @@ app.Use(async (context, next) =>
     context.Response.Headers.Append("Cross-Origin-Embedder-Policy", "credentialless");
     await next();
 });
+
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.Value != null &&
+        !context.Request.Path.Value.StartsWith("/api") &&
+        !System.IO.Path.HasExtension(context.Request.Path.Value))
+    {
+        context.Request.Path = "/index.html";
+    }
+    await next();
+});
+app.UseStaticFiles();
+
+
 app.Run();
