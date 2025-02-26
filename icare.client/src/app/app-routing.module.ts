@@ -11,6 +11,7 @@ import { ResetPasswordComponent } from './auth/reset-password/reset-password.com
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { RecipesComponent } from './recipes/recipes.component';
+import { RecipeComponent } from './recipe/recipe.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -33,6 +34,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   { path: 'recipes', component: RecipesComponent },
+  { path: 'recipe/:id', component: RecipeComponent },
   { path: '**', redirectTo: '' },
 ];
 
