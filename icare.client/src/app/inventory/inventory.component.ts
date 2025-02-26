@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { UsersService } from '../services/users.service';
 import { ApiService, Ingredient, Item } from '../services/api.service';
 import { NotificationService, addedItemNotification, editedItemNotification, removedItemNotification } from '../services/notifications.service';
+import { debounceTime, Subject } from "rxjs";
 
 declare var bootstrap: any;
 
@@ -15,9 +16,12 @@ declare var bootstrap: any;
 
 export class InventoryComponent {
   private notificationsPermission: boolean = true;
+  public searchTerm: string = "";
+  public searchSubject = new Subject<string>();
 
   public inventory: Map<string, { quantity: number, unit: string }> = new Map();
   public listOfItems: Set<string> = new Set();
+  public filteredItems: string[] = [];
 
   public selectedItems: Set<string> = new Set();
   public selectedItemsInInventory: Set<string> = new Set();
@@ -26,7 +30,9 @@ export class InventoryComponent {
 
   public itemDetails: Map<string, Ingredient> = new Map();
 
-  constructor(private service: UsersService, private api: ApiService) { }
+  constructor(private service: UsersService, private api: ApiService) {
+    this.searchSubject.pipe(debounceTime(300)).subscribe(() => this.filterItems());
+  }
 
   ngOnInit() {
     try {
@@ -84,6 +90,16 @@ export class InventoryComponent {
     }
   }
 
+  onSearchChange() {
+    this.searchSubject.next(this.searchTerm);
+  }
+
+  filterItems() {
+    const query = this.searchTerm.toLowerCase().trim();
+
+    this.filteredItems = Array.from(this.listOfItems).filter(n => n.toLowerCase().includes(query))
+  }
+
   getInventory() {
     this.service.getInventory().subscribe(
       (result) => {
@@ -105,6 +121,8 @@ export class InventoryComponent {
         for (let i of tmp) {
           if (!this.inventory.has(i.name)) this.listOfItems.add(i.name);
         }
+
+        this.filterItems();
       },
       (error) => {
         console.error(error);
@@ -170,6 +188,7 @@ export class InventoryComponent {
         }
 
         this.selectedItems.clear();
+        this.filterItems();
         NotificationService.showNotification(this.notificationsPermission, addedItemNotification);
       },
       (error) => {
@@ -240,6 +259,7 @@ export class InventoryComponent {
         }
 
         if (itemsToDelete === null) this.selectedItemsInInventory.clear();
+        this.filterItems();
         NotificationService.showNotification(this.notificationsPermission, removedItemNotification);
       },
       (error) => {

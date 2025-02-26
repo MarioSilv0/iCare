@@ -2,11 +2,13 @@
   <!-- Sidebar -->
   <div class="sidebar">
     <div class="search-bar">
-      <input type="text" placeholder="Pesquisar" />
+      <input type="text" placeholder="Pesquisar"
+             [(ngModel)]="searchTerm"
+             (input)="onSearchChange()" />
       <span class="search-icon">🔍</span>
     </div>
-    <ul class="item-list" *ngIf="listOfItems.size > 0">
-      <li *ngFor="let item of listOfItemsArray"
+    <ul class="item-list" *ngIf="filteredItems.length > 0">
+      <li *ngFor="let item of filteredItems"
           [class.selected]="selectedItems.has(item)"
           (click)="toggleSelection(item)">
         {{ item }}
