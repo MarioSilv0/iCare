@@ -17,6 +17,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { ProfileComponent } from './profile/profile.component';
 import { RecipesComponent } from './recipes/recipes.component';
+import { RecipeComponent } from './recipe/recipe.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { RecipesComponent } from './recipes/recipes.component';
     HeaderComponent,
     ChangePasswordComponent,
     RecipesComponent,
+    RecipeComponent,
   ],
   imports: [
     BrowserModule,

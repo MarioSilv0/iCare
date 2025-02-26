@@ -1,0 +1,76 @@
+<div *ngIf="!recipe" class="d-flex p-5">receita não encontrada..</div>
+
+<div *ngIf="recipe" class="mx-0 d-flex flex-column p-5">
+  <div class="d-flex w-100 align-items-center justify-content-between">
+    <h1 class="m-0 p-0 my-2">{{ recipe.title }}</h1>
+    <span class="m-0 justify-self-end">
+      <!--svg-->
+      <img
+        *ngIf="!recipe.isFavorite"
+        src="../../assets/svgs/heart-regular.svg"
+        alt="Imagem de coração"
+        style="width: 40px; cursor: pointer"
+        (click)="toggleFavorite()"
+      />
+      <img
+        *ngIf="recipe.isFavorite"
+        src="../../assets/svgs/heart-solid.svg"
+        alt="Imagem de coração"
+        style="width: 40px; cursor: pointer"
+        (click)="toggleFavorite()"
+      />
+    </span>
+  </div>
+  <hr />
+  <div
+    class="d-flex flex-column w-100 align-items-center justify-content-between"
+  >
+    <h2 class="mx-0 align-self-start">Instruções</h2>
+    <p>
+      {{ recipe.instructions }}
+    </p>
+  </div>
+  <!-- TODO -->
+  <!-- <div>
+    <h2>Informações Nutricionais</h2>
+    <ul>
+      <li>v1</li>
+      <li>v2</li>
+      <li>v3</li>
+    </ul>
+  </div> -->
+  <hr />
+  <h2 class="mx-0 align-self-start">Ingredientes</h2>
+  <div class="d-flex flex-md-row w-100 justify-content-around flex-sm-column">
+    <div class="mx-0 justify-self-start">
+      <ul
+        class="mx-0 w-100 d-flex align-self-start list-group list-unstyled"
+        style="max-width: 600px"
+      >
+        <li
+          *ngFor="let ingredient of recipe.ingredients"
+          class="m-0 list-group-item w-100 bg-bege-contrast mb-2 rounded"
+          style="box-shadow: rgba(0, 0, 0, 0.2) 0 2px 2px 0"
+        >
+          <div
+            class="w-100 mx-0 d-flex align-items-center justify-content-between"
+          >
+            <span
+              class="mx-0 justify-self-start"
+              style="max-width: 50%; flex-wrap: wrap"
+              >{{ ingredient.name }}</span
+            >
+            <span class="mx-0 justify-self-end">{{ ingredient.measure }}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <!--imagem receita-->
+    <img
+      src="{{ recipe.thumb }}"
+      alt="Imagem da receita"
+      class="mx-0 shadow rounded"
+      style="width: 25%; max-height: fit-content"
+    />
+  </div>
+</div>
