@@ -19,7 +19,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { RecipesComponent } from './recipes/recipes.component';
 import { RecipeComponent } from './recipe/recipe.component';
 import { InventoryComponent } from './inventory/inventory.component';
-import { MapKeysPipe } from './pipes/MapKeysPipe';
+import { MapKeysPipe } from './pipes/map-keys-pipe';
 
 @NgModule({
   declarations: [
