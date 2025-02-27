@@ -10,10 +10,13 @@ import { RegisterComponent } from './auth/register/register.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
+import { RecipesComponent } from './recipes/recipes.component';
+import { RecipeComponent } from './recipe/recipe.component';
+import { InventoryComponent } from './inventory/inventory.component';
+
 
 const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: '', component: HomeComponent, canActivate: [AuthGuard], pathMatch: 'full' },
   {
     path: 'admin',
     component: AdminComponent,
@@ -31,11 +34,14 @@ const routes: Routes = [
     component: ChangePasswordComponent,
     canActivate: [AuthGuard],
   },
+  { path: 'recipes', component: RecipesComponent },
+  { path: 'recipe/:id', component: RecipeComponent },
+  { path: 'inventory', component: InventoryComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule,],
+  imports: [RouterModule.forRoot(routes, { useHash: true })],
+  exports: [RouterModule],
 })
 export class AppRoutingModule {}

@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 
 @Injectable({
@@ -8,12 +9,12 @@ import { BehaviorSubject, Observable, map } from 'rxjs';
 
 /// <author>Mário Silva - 202000500</author>
 export class AuthService {
-  private baseUrl = '../api/account';
+  private baseUrl = '/api/account';
 
   private _authStateChanged: BehaviorSubject<boolean> =
     new BehaviorSubject<boolean>(this.hasToken());
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   public onStateChanged() {
     return this._authStateChanged.asObservable();
@@ -34,6 +35,7 @@ export class AuthService {
   private clearToken(): void {
     localStorage.removeItem('authToken');
     localStorage.removeItem('roles');
+    localStorage.removeItem('user');
   }
 
   // Verifica se está Logged
@@ -72,7 +74,7 @@ export class AuthService {
   public logout(): void {
     this.clearToken();
     this._authStateChanged.next(false);
-    window.location.href = '/login';
+    this.router.navigate(['/login']);
   }
 
   public register(email: string, password: string ): Observable<any> {

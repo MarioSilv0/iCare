@@ -38,7 +38,6 @@ namespace backend.Controllers.Api
         /// </summary>
         /// <param name="context">The database context for accessing user data.</param>
         /// <param name="logger">The logger instance for logging application activity.</param>
-        /// <param name="configuration">The configuration instance for retrieving application settings.</param>
         public PublicUserController(ICareServerContext context, ILogger<PublicUserController> logger)
         {
             _context = context;
@@ -52,7 +51,7 @@ namespace backend.Controllers.Api
         /// An <c>ActionResult</c> containing the <c>PublicUser</c> object if found, or an error response otherwise.
         /// </returns>
         [HttpGet("")]
-        public async Task<ActionResult<PublicUser>> Edit()
+        public async Task<ActionResult<PublicUser>> Get()
         {
             try
             {
@@ -101,6 +100,9 @@ namespace backend.Controllers.Api
 
                 if (user == null) return NotFound();
 
+                bool isUnique = await IsEmailUnique(model.Email);
+                if (!isUnique) model.Email = user.Email;
+
                 user.UpdateFromModel(model);
 
                 user.UserPreferences.UpdateCollection(model.Preferences, e => new UserPreference { UserId = user.Id, PreferenceId = e.Id });
@@ -111,13 +113,20 @@ namespace backend.Controllers.Api
 
                 _logger.LogInformation("User {UserId} updated their information.", user.Id);
 
-                return new PublicUser(user, model, [], []);
+                return Ok(new PublicUser(user, model, [], []));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating user");
                 return StatusCode(500, "An error occurred while processing your request.");
             }
+        }
+
+        private async Task<bool> IsEmailUnique(string? email)
+        {
+            if (email == null) return false;
+
+            return !await _context.Users.AnyAsync(u => u.Email == email);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace backendtest
             DbContext.Database.EnsureCreated();
 
             // Persist Data created on OnModelCreating
-            if (DbContext.Preferences.Any() || DbContext.Restrictions.Any())
+            if (DbContext.Preferences.Any() || DbContext.Restrictions.Any() || DbContext.UserItems.Any())
             {
                 DbContext.SaveChanges();
             }

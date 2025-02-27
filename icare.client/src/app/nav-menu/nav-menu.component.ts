@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
+import { MenuService } from '../services/menu.service';
 
 @Component({
   selector: 'app-nav-menu',
@@ -13,6 +14,7 @@ export class NavMenuComponent {
   public isExpanded: boolean = false;
   public isLoggedIn: boolean = false;
   public username: string | null = null;
+  public picture: string | null = null;
   public commonPath: string = '../../assets/svgs/';
   public extension: string = '.svg';
   public links = [
@@ -60,13 +62,25 @@ export class NavMenuComponent {
     },
   ];
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private menuService: MenuService, private router: Router) { }
 
   ngOnInit() {
     this.authService.onStateChanged().subscribe((state: boolean) => {
       this.isLoggedIn = state;
     });
-    //this.username = this.authService.
+
+    const defaultData = { picture: '', name: 'Error' };
+    let data = defaultData;
+
+    try {
+      const storage = localStorage.getItem('user');
+      if (storage) data = { ...defaultData, ...JSON.parse(storage) };
+    } catch (error) {
+      console.error('Failed to parse user data from localStorage:', error);
+    }
+
+    this.username = data.name;
+    this.picture = data.picture;
   }
 
   collapse() {
@@ -75,6 +89,7 @@ export class NavMenuComponent {
 
   toggle() {
     this.isExpanded = !this.isExpanded;
+    this.menuService.setMenuState(this.isExpanded)
   }
 
   logout() {

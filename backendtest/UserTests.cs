@@ -138,6 +138,16 @@ namespace backendtest
             Assert.NotEqual(pu.Email, user.Email);
             Assert.Equal(expected, user.Email);
 
+            pu.Email = "invalid email@mail.com";
+            user.UpdateFromModel(pu);
+            Assert.NotEqual(pu.Email, user.Email);
+            Assert.Equal(expected, user.Email);
+
+            pu.Email = "invalidEmailmail.com";
+            user.UpdateFromModel(pu);
+            Assert.NotEqual(pu.Email, user.Email);
+            Assert.Equal(expected, user.Email);
+
             Assert.Equal(pu.Picture, user.Picture);
             Assert.Equal(pu.Name, user.Name);
             Assert.Equal(pu.Birthdate, user.Birthdate);
