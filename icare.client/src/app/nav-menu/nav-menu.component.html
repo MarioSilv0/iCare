@@ -62,7 +62,7 @@
         <div class="m-0">
           <a
             *ngIf="!isExpanded"
-            href="{{ link.path }}"
+            [routerLink]="link.path"
             class="text-start nav-link"
             style="flex-wrap: wrap; cursor: pointer"
           >
@@ -82,7 +82,7 @@
         <!-- actual link -->
         <span *ngIf="isExpanded" class="m-0">
           <a
-            href="{{ link.path }}"
+            [routerLink]="link.path"
             class="text-start nav-link"
             style="flex-wrap: wrap"
             >{{ link.text }}
@@ -103,7 +103,7 @@
         <div class="m-0">
           <a
             *ngIf="!isExpanded"
-            href="{{ link.path }}"
+            [routerLink]="link.path"
             class="text-start nav-link"
             style="width: 100%; flex-wrap: wrap; cursor: pointer"
           >
@@ -127,7 +127,7 @@
           style="width: 100%; flex-grow: 1; cursor: pointer"
         >
           <a
-            href="{{ link.path }}"
+            [routerLink]="link.path"
             class="text-start nav-link"
             style="width: 100%; flex-grow: 1; cursor: pointer"
           >
