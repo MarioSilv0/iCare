@@ -20,6 +20,9 @@ import { RecipesComponent } from './recipes/recipes.component';
 import { RecipeComponent } from './recipe/recipe.component';
 import { InventoryComponent } from './inventory/inventory.component';
 import { MapKeysPipe } from './pipes/MapKeysPipe';
+import { TacoApiComponent } from './taco-api/taco-api.component';
+import { TacoApiService } from './services/taco-api.service';
+import { RecipeListComponent } from './recipe-list/recipe-list.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +42,8 @@ import { MapKeysPipe } from './pipes/MapKeysPipe';
     RecipeComponent,
     InventoryComponent,
     MapKeysPipe
+    TacoApiComponent,
+    RecipeListComponent,
   ],
   imports: [
     BrowserModule,
@@ -49,6 +54,7 @@ import { MapKeysPipe } from './pipes/MapKeysPipe';
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    TacoApiService
   ],
   bootstrap: [AppComponent, NavMenuComponent],
   exports: [

@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <SkipNodeJsBuild>true</SkipNodeJsBuild>
+        <ScriptArguments>run dev --filter=taco-api</ScriptArguments>
+        <StartupCommand>bun $(ScriptArguments)</StartupCommand>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <SchemaVersion>2.0</SchemaVersion>
+        <ProjectGuid>{3f30e08e-a3ea-4841-86e7-4d63b4903f82}</ProjectGuid>
+        <ProjectHome>.</ProjectHome>
+        <ProjectView>ShowAllFiles</ProjectView>
+        <StartupFile />
+        <WorkingDirectory>.</WorkingDirectory>
+        <OutputPath>.</OutputPath>
+        <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+        <EnableTypeScript>true</EnableTypeScript>
+        <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">17.0</VisualStudioVersion>
+        <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+    <ItemGroup>
+        <Content Include="biome.json" />
+        <Content Include="package.json" />
+        <None Include="tsconfig.json" />
+        <Content Include="turbo.json" />
+        <Content Include="CHANGELOG.md" />
+        <Content Include="LICENSE.md" />
+        <Content Include="README.md" />
+        <Content Include="references\README.md" />
+        <None Include="scripts\build-image.ts" />
+        <None Include="scripts\fix-graphql-types.ts" />
+        <Content Include="apps\api\biome.json" />
+        <Content Include="apps\api\package.json" />
+        <None Include="apps\api\tsconfig.json" />
+        <Content Include="apps\api\CHANGELOG.md" />
+        <Content Include="apps\api\README.md" />
+        <Content Include="apps\website\package.json" />
+        <None Include="apps\website\tsconfig.json" />
+        <Content Include="apps\website\README.md" />
+        <None Include="apps\api\scripts\build.ts" />
+        <None Include="apps\api\src\app.ts" />
+        <None Include="apps\api\src\infrastructure\env.ts" />
+        <None Include="apps\api\src\infrastructure\primaClient.ts" />
+        <None Include="apps\api\src\modules\index.ts" />
+        <None Include="apps\api\src\infrastructure\seed\amino-acids.ts" />
+        <None Include="apps\api\src\infrastructure\seed\categories.ts" />
+        <None Include="apps\api\src\infrastructure\seed\fatty-acids.ts" />
+        <None Include="apps\api\src\infrastructure\seed\foods.ts" />
+        <None Include="apps\api\src\infrastructure\seed\index.ts" />
+        <None Include="apps\api\src\infrastructure\seed\nutrients.ts" />
+        <None Include="apps\api\src\infrastructure\seed\units\index.ts" />
+        <None Include="apps\api\src\infrastructure\seed\units\types.ts" />
+        <None Include="apps\api\src\infrastructure\seed\units\unitsToSave.ts" />
+        <None Include="apps\api\src\modules\aminoAcid\index.ts" />
+        <None Include="apps\api\src\modules\aminoAcid\schema.ts" />
+        <None Include="apps\api\src\modules\aminoAcid\typeDef.ts" />
+        <None Include="apps\api\src\modules\category\index.ts" />
+        <None Include="apps\api\src\modules\category\schema.ts" />
+        <None Include="apps\api\src\modules\category\typeDef.ts" />
+        <None Include="apps\api\src\modules\fattyAcid\index.ts" />
+        <None Include="apps\api\src\modules\fattyAcid\schema.ts" />
+        <None Include="apps\api\src\modules\fattyAcid\typeDef.ts" />
+        <None Include="apps\api\src\modules\food\index.ts" />
+        <None Include="apps\api\src\modules\food\schema.ts" />
+        <None Include="apps\api\src\modules\food\typeDef.ts" />
+        <None Include="apps\api\src\modules\main\index.ts" />
+        <None Include="apps\api\src\modules\main\schema.ts" />
+        <None Include="apps\api\src\modules\nutrient\index.ts" />
+        <None Include="apps\api\src\modules\nutrient\schema.ts" />
+        <None Include="apps\api\src\modules\nutrient\typeDef.ts" />
+        <None Include="apps\api\src\modules\unit\index.ts" />
+        <None Include="apps\api\src\modules\unit\schema.ts" />
+        <None Include="apps\api\src\modules\unit\typeDefs.ts" />
+        <Content Include="apps\website\public\favicon.svg" />
+        <None Include="apps\website\src\env.d.ts" />
+        <Content Include="apps\website\src\assets\graphql-playground.png" />
+        <None Include="apps\website\src\content\config.ts" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="apps" />
+        <Folder Include="apps\api" />
+        <Folder Include="apps\api\prisma" />
+        <Folder Include="apps\api\prisma\migrations" />
+        <Folder Include="apps\api\prisma\migrations\20230425065839_initial" />
+        <Folder Include="apps\api\scripts" />
+        <Folder Include="apps\api\src" />
+        <Folder Include="apps\api\src\infrastructure" />
+        <Folder Include="apps\api\src\infrastructure\seed" />
+        <Folder Include="apps\api\src\infrastructure\seed\units" />
+        <Folder Include="apps\api\src\modules" />
+        <Folder Include="apps\api\src\modules\aminoAcid" />
+        <Folder Include="apps\api\src\modules\category" />
+        <Folder Include="apps\api\src\modules\fattyAcid" />
+        <Folder Include="apps\api\src\modules\food" />
+        <Folder Include="apps\api\src\modules\main" />
+        <Folder Include="apps\api\src\modules\nutrient" />
+        <Folder Include="apps\api\src\modules\unit" />
+        <Folder Include="apps\website" />
+        <Folder Include="apps\website\public" />
+        <Folder Include="apps\website\src" />
+        <Folder Include="apps\website\src\assets" />
+        <Folder Include="apps\website\src\content" />
+        <Folder Include="apps\website\src\content\docs" />
+        <Folder Include="apps\website\src\content\docs\en" />
+        <Folder Include="references" />
+        <Folder Include="references\csv" />
+        <Folder Include="references\normalization" />
+        <Folder Include="scripts" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
+    <ProjectExtensions>
+        <VisualStudio>
+          <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+            <WebProjectProperties>
+              <UseIIS>False</UseIIS>
+              <AutoAssignPort>True</AutoAssignPort>
+              <DevelopmentServerPort>0</DevelopmentServerPort>
+              <DevelopmentServerVPath>/</DevelopmentServerVPath>
+              <IISUrl>http://localhost:48022/</IISUrl>
+              <NTLMAuthentication>False</NTLMAuthentication>
+              <UseCustomServer>True</UseCustomServer>
+              <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+              <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+            </WebProjectProperties>
+          </FlavorProperties>
+          <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+            <WebProjectProperties>
+              <StartPageUrl>
+              </StartPageUrl>
+              <StartAction>CurrentPage</StartAction>
+              <AspNetDebugging>True</AspNetDebugging>
+              <SilverlightDebugging>False</SilverlightDebugging>
+              <NativeDebugging>False</NativeDebugging>
+              <SQLDebugging>False</SQLDebugging>
+              <ExternalProgram>
+              </ExternalProgram>
+              <StartExternalURL>
+              </StartExternalURL>
+              <StartCmdLineArguments>
+              </StartCmdLineArguments>
+              <StartWorkingDirectory>
+              </StartWorkingDirectory>
+              <EnableENC>False</EnableENC>
+              <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+            </WebProjectProperties>
+          </FlavorProperties>
+        </VisualStudio>
+    </ProjectExtensions>
+</Project>
