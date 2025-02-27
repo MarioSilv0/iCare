@@ -8,7 +8,7 @@ import { UsersService } from '../services/users.service';
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  isAdmin: boolean = false;
+  public isAdmin: boolean = false;
   constructor(private authService: AuthService, private service: UsersService) { }
 
   ngOnInit() {

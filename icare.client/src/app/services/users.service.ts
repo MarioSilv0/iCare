@@ -14,23 +14,23 @@ export class UsersService {
   constructor(private http: HttpClient) { }
 
   getUser(): Observable<User> {
-    return this.http.get<User>(URL + PROFILE);
+    return this.http.get<User>(`${URL}${PROFILE}`);
   }
 
   updateUser(user: User): Observable<User> {
-    return this.http.put<User>(URL + PROFILE, { ...user });
+    return this.http.put<User>(`${URL}${PROFILE}`, { ...user });
   }
 
   getInventory(): Observable<Item[]> {
-    return this.http.get<Item[]>(URL + INVENTORY);
+    return this.http.get<Item[]>(`${URL}${PROFILE}`);
   }
 
   updateInventory(items: Item[]): Observable<Item[]> {
-    return this.http.put<Item[]>(URL + INVENTORY, items);
+    return this.http.put<Item[]>(`${URL}${PROFILE}`, items);
   }
 
   removeInventory(items: string[]): Observable<Item[]> {
-    return this.http.delete<Item[]>(URL + INVENTORY, { body: items });
+    return this.http.delete<Item[]>(`${URL}${PROFILE}`, { body: items });
   }
 }
 
