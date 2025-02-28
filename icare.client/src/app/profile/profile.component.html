@@ -15,17 +15,25 @@
         <label for="userBirthdate">Birthdate</label>
         <input type="date" id="userBirthdate" name="userBirthdate" [(ngModel)]="user.birthdate" min="1910-01-01" [max]="todayDate" required />
       </div>
+
+
+
+
       <div id="extraData">
         <img src="/assets/images/cog.png" alt="Cogwheel Icon" />
-        <div>
+        <div id="extraData-notifications">
           <label for="userNotificacions">Notifications</label>
           <input type="checkbox" id="userNotificacions" name="userNotificacions" [(ngModel)]="user.notifications" />
         </div>
-        <div>
-          <input type="button" value="Change Password" (click)="changePassword()" />
-          <input type="submit" value="Save" class="submit-btn" />
+        <div id="extraData-controls">
+          <input class="rounded" type="button" value="Change Password" (click)="changePassword()" />
+          <input type="submit" value="Save" class="submit-btn rounded" />
         </div>
       </div>
+
+
+
+
     </section>
     <section id="userCharacteristics">
       <label for="userHeight">Height (m)</label>
