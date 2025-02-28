@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Item } from './api.service';
 
 const URL: string = 'https://localhost:7266/api/';
 const PROFILE: string = 'PublicUser/';
@@ -44,6 +43,12 @@ interface Restrictions {
   id: number;
   name: string;
   isSelected: boolean;
+}
+
+export interface Item {
+  name: string;
+  quantity: number;
+  unit: string;
 }
 
 export interface User {

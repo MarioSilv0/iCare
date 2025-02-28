@@ -1,4 +1,6 @@
-﻿namespace backend.Models.Ingredients
+﻿using backend.Models.Recipes;
+
+namespace backend.Models.Ingredients
 {
     public class RecipeIngredient
     {

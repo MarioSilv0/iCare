@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { UsersService } from '../services/users.service';
-import { ApiService, Ingredient, Item } from '../services/api.service';
+import { UsersService, Item } from '../services/users.service';
+import { ApiService, Ingredient } from '../services/api.service';
 import { NotificationService, addedItemNotification, editedItemNotification, removedItemNotification } from '../services/notifications.service';
 import { debounceTime, Subject } from "rxjs";
 
@@ -106,6 +106,7 @@ export class InventoryComponent {
         for (let i of result) {
           this.inventory.set(i.name, { quantity: i.quantity, unit: i.unit });
         }
+
         this.getListItems();
       },
       (error) => {
@@ -117,9 +118,8 @@ export class InventoryComponent {
   getListItems() {
     this.api.getAllItems().subscribe(
       (result) => {
-        const tmp = [{ name: "Banana" }, { name: "Potato" }, { name: "Apple" }, { name: "Carrot" }]
-        for (let i of tmp) {
-          if (!this.inventory.has(i.name)) this.listOfItems.add(i.name);
+        for (let itemName of result) {
+          if (!this.inventory.has(itemName)) this.listOfItems.add(itemName);
         }
 
         this.filterItems();
@@ -135,13 +135,11 @@ export class InventoryComponent {
 
     this.api.getSpecificItem(item).subscribe(
       (result) => {
-        const tmp: Ingredient = { name: "Apple", nutrients: { kcal: 124, kJ: 517, protein: 2.6, carbohydrates: 25.8 }, category: { name: "Fruit" } };
-
-        this.itemDetails = this.itemDetails.set(item, tmp);
+        this.itemDetails = this.itemDetails.set(item, result);
       },
       (error) => {
         console.error(error);
-        this.itemDetails = this.itemDetails.set(item, { name: "Não foi possível obter as informações do ingrediente: " + item, nutrients: { kcal: 0, kJ: 0, protein: 0, carbohydrates: 0 }, category: { name: 'none' } });
+        this.itemDetails = this.itemDetails.set(item, { name: "Não foi possível obter as informações do ingrediente: " + item, kcal: 0, kj: 0, protein: 0, carbohydrates: 0, lipids: 0, fibers: 0, category: 'none' });
       }
     );
   }
@@ -230,7 +228,7 @@ export class InventoryComponent {
 
         this.editedItems.clear();
         if (removeZeroQuantity) {
-          const itemsToDelete = updatedItems.filter(i => i.quantity === 0).map(i => i.name);
+          const itemsToDelete: string[] = Array.from(this.inventory.keys()).filter(n => this.inventory.get(n)?.quantity === 0);
           this.removeItemFromInventory(itemsToDelete);  
         }
 

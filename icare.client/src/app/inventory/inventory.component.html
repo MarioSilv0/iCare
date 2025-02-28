@@ -71,12 +71,14 @@
                 <p *ngIf="!itemDetails.has(item)">A carregar...</p>
                 <ng-container *ngIf="itemDetails.has(item)">
                   <p><strong>Nome:</strong> {{ itemDetails.get(item)?.name }}</p>
-                  <p><strong>Categoria:</strong> {{ itemDetails.get(item)?.category?.name }}</p>
-                  <p><strong>Kcal/KJ:</strong> {{ itemDetails.get(item)?.nutrients?.kcal }} / {{ itemDetails.get(item)?.nutrients?.kJ }}</p>
+                  <p><strong>Categoria:</strong> {{ itemDetails.get(item)?.category }}</p>
+                  <p><strong>Kcal/KJ:</strong> {{ itemDetails.get(item)?.kcal }} / {{ itemDetails.get(item)?.kj }}</p>
                   <p><strong>Macronutrientes:</strong></p>
                   <ul>
-                    <li><strong>Proteína:</strong> {{ itemDetails.get(item)?.nutrients?.protein }}</li>
-                    <li><strong>Hidratos de Carbono:</strong> {{ itemDetails.get(item)?.nutrients?.carbohydrates }}</li>
+                    <li><strong>Proteína:</strong> {{ itemDetails.get(item)?.protein }}</li>
+                    <li><strong>Hidratos de Carbono:</strong> {{ itemDetails.get(item)?.carbohydrates }}</li>
+                    <li><strong>Lípidos:</strong> {{ itemDetails.get(item)?.lipids }}</li>
+                    <li><strong>Fibras:</strong> {{ itemDetails.get(item)?.fibers }}</li>
                   </ul>
                 </ng-container>
               </div>

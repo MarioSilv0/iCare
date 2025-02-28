@@ -45,7 +45,7 @@ namespace backend.Data
                     Email = "admin@example.com",
                     Name = "Admin",
                     EmailConfirmed = true,
-                    UserIngredients = [new UserIngredient { IngredientName = "Potato", Quantity = 1 }, new UserIngredient { IngredientName = "Apple", Quantity = 3.5f, Unit = "Kg"  }]
+                    UserIngredients = [new UserIngredient { IngredientId = 1, Quantity = 1 }, new UserIngredient { IngredientId = 2, Quantity = 3.5f, Unit = "Kg"  }]
                 };
                 await userManager.CreateAsync(admin, "AdminPass123!");
                 await userManager.AddToRoleAsync(admin, "User");

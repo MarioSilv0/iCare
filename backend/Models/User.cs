@@ -1,5 +1,6 @@
 ﻿using backend.Models.Ingredients;
 using backend.Models.Preferences;
+using backend.Models.Recipes;
 using backend.Models.Restrictions;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
@@ -70,10 +71,16 @@ namespace backend.Models
         public ICollection<UserRestriction>? UserRestrictions { get; set; }
 
         /// <summary>
-        /// Gets or sets the user's items.
+        /// Gets or sets the user's ingredients.
         /// </summary>
         [Display(Name = "Items")]
         public ICollection<UserIngredient>? UserIngredients { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user's favorite recipes.
+        /// </summary>
+        [Display(Name = "Items")]
+        public ICollection<UserRecipe>? favoriteRecipes { get; set; }
 
         /// <summary>
         /// Gets or sets the logs associated with the user.

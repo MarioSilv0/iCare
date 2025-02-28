@@ -41,15 +41,17 @@ namespace backend.Controllers.Api
                 var id = User.FindFirst("UserId")?.Value;
                 if (id == null) return Unauthorized("User ID not found in token.");
 
-                var user = await _context.Users.Include(u => u.UserIngredients)
-                                               .FirstOrDefaultAsync(u => u.Id == id);
+                var ingredients = await _context.UserIngredients
+                                                .Where(ui => ui.UserId == id)
+                                                .Select(ui => new PublicItem
+                                                {
+                                                    Name = ui.Ingredient.Name,
+                                                    Quantity = ui.Quantity,
+                                                    Unit = ui.Unit
+                                                })
+                                                .ToListAsync();
 
-                if (user == null) return NotFound();
-
-                List<PublicItem> items = user.UserIngredients?.Select(ui => new PublicItem { Name = ui.Ingredient.Name, Quantity = ui.Quantity, Unit = ui.Unit })
-                                                        .ToList() ?? new List<PublicItem>();
-
-                return Ok(items);
+                return Ok(ingredients);
             }
             catch (Exception ex)
             {
@@ -72,37 +74,33 @@ namespace backend.Controllers.Api
                 var id = User.FindFirst("UserId")?.Value;
                 if (id == null) return Unauthorized("User ID not found in token.");
 
-                var user = await _context.Users.Include(u => u.UserIngredients)
-                                               .FirstOrDefaultAsync(u => u.Id == id);
+                var userIngredients = await _context.UserIngredients
+                                                    .Where(ui => ui.UserId == id)
+                                                    .Include(ui => ui.Ingredient)
+                                                    .ToDictionaryAsync(ui => ui.Ingredient.Name);
 
-                if (user == null) return NotFound();
-                if (user.UserIngredients == null) user.UserIngredients = new List<UserIngredient>();
-
-                var ingredients = _context.Ingredients.Select(i => new { i.Id, i.Name })
-                                                      .ToList()
-                                                      .ToDictionary(i => i.Name);
-                
-                var userItemsMap = user.UserIngredients.ToDictionary(i => i.Ingredient.Name);
+                var ingredients = await _context.Ingredients.ToDictionaryAsync(i => i.Name);
 
                 foreach (PublicItem item in newItems)
                 {
                     // Add Item
-                    if (!userItemsMap.TryGetValue(item.Name, out var tmp))
+                    if (!userIngredients.TryGetValue(item.Name, out var existingIngredient))
                     {
-                        ingredients.TryGetValue(item.Name, out var ingredient);
-                        UserIngredient newItem = new UserIngredient { IngredientId = ingredient.Id, Quantity = item.Quantity, Unit = item.Unit, UserId = user.Id };
-                        user.UserIngredients.Add(newItem);
-                        userItemsMap[item.Name] = newItem;
+                        if (!ingredients.TryGetValue(item.Name, out var ingredient)) return BadRequest($"Ingredient '{item.Name}' does not exist.");
+
+                        _context.UserIngredients.Add(new UserIngredient { IngredientId = ingredient.Id, Quantity = item.Quantity, Unit = item.Unit, UserId = id });
                     }
                     else //Edit Item
                     {
-                        tmp.Quantity = item.Quantity;
-                        tmp.Unit = item.Unit;
+                        existingIngredient.Quantity = item.Quantity;
+                        existingIngredient.Unit = item.Unit;
                     }
                 }
                 await _context.SaveChangesAsync();
 
-                var updatedItems = user.UserIngredients.Select(i => new PublicItem { Name = i.Ingredient.Name, Quantity = i.Quantity, Unit = i.Unit }).ToList();
+                var updatedItems = await _context.UserIngredients.Where(ui => ui.UserId == id)
+                                                                 .Select(i => new PublicItem { Name = i.Ingredient.Name, Quantity = i.Quantity, Unit = i.Unit })
+                                                                 .ToListAsync();
 
                 return Ok(updatedItems);
             }
@@ -127,13 +125,21 @@ namespace backend.Controllers.Api
                 var id = User.FindFirst("UserId")?.Value;
                 if (id == null) return Unauthorized("User ID not found in token.");
 
-                var user = await _context.Users.Include(u => u.UserIngredients)
-                                               .FirstOrDefaultAsync(u => u.Id == id);
+                if (nameOfItemsToRemove == null || !nameOfItemsToRemove.Any()) {
+                    var currentItems = await _context.UserIngredients.Where(ui => ui.UserId == id)
+                                                                     .Include(ui => ui.Ingredient)
+                                                                     .Select(ui => new PublicItem { Name = ui.Ingredient.Name, Quantity = ui.Quantity, Unit = ui.Unit })
+                                                                     .ToListAsync();
+                    return Ok(currentItems);
+                }
 
-                if (user == null) return NotFound();
-                if (user.UserIngredients == null || !user.UserIngredients.Any()) return Ok(new List<PublicItem>());
+                var itemsToRemoveSet = new HashSet<string>(nameOfItemsToRemove);
 
-                var itemsToRemove = user.UserIngredients.Where(i => nameOfItemsToRemove.Any(n => n == i.IngredientName)).ToList();
+                var itemsToRemove = await _context.UserIngredients
+                                          .Where(ui => ui.UserId == id)
+                                          .Include(ui => ui.Ingredient)
+                                          .Where(ui => itemsToRemoveSet.Contains(ui.Ingredient.Name))
+                                          .ToListAsync();
 
                 if (itemsToRemove.Any())
                 {
@@ -141,7 +147,10 @@ namespace backend.Controllers.Api
                     await _context.SaveChangesAsync();
                 }
 
-                var updatedItems = user.UserIngredients.Select(i => new PublicItem { Name = i.IngredientName, Quantity = i.Quantity, Unit = i.Unit }).ToList();
+                var updatedItems = await _context.UserIngredients.Where(ui => ui.UserId == id)
+                                                                 .Include(ui => ui.Ingredient)
+                                                                 .Select(ui => new PublicItem { Name = ui.Ingredient.Name, Quantity = ui.Quantity, Unit = ui.Unit })
+                                                                 .ToListAsync();
 
                 return Ok(updatedItems);
             }
