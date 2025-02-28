@@ -1,4 +1,5 @@
-﻿using backend.Models.Preferences;
+﻿using backend.Models.Ingredients;
+using backend.Models.Preferences;
 using backend.Models.Restrictions;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
@@ -72,7 +73,7 @@ namespace backend.Models
         /// Gets or sets the user's items.
         /// </summary>
         [Display(Name = "Items")]
-        public ICollection<UserItem>? UserItems { get; set; }
+        public ICollection<UserIngredient>? UserIngredients { get; set; }
 
         /// <summary>
         /// Gets or sets the logs associated with the user.

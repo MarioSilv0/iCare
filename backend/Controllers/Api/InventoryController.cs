@@ -1,6 +1,6 @@
 ﻿using backend.Data;
-using backend.Models;
 using backend.Models.Data_Transfer_Objects;
+using backend.Models.Ingredients;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +28,7 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
-        /// Retrieves the items of the authenticated user.
+        /// Retrieves the ingredients of the authenticated user.
         /// </summary>
         /// <returns>
         /// An <c>ActionResult</c> containing the <c>List<PublicItem></c> object if found, or an error response otherwise.
@@ -41,25 +41,25 @@ namespace backend.Controllers.Api
                 var id = User.FindFirst("UserId")?.Value;
                 if (id == null) return Unauthorized("User ID not found in token.");
 
-                var user = await _context.Users.Include(u => u.UserItems)
+                var user = await _context.Users.Include(u => u.UserIngredients)
                                                .FirstOrDefaultAsync(u => u.Id == id);
 
                 if (user == null) return NotFound();
 
-                List<PublicItem> items = user.UserItems?.Select(i => new PublicItem { Name = i.ItemName, Quantity = i.Quantity, Unit = i.Unit })
+                List<PublicItem> items = user.UserIngredients?.Select(ui => new PublicItem { Name = ui.Ingredient.Name, Quantity = ui.Quantity, Unit = ui.Unit })
                                                         .ToList() ?? new List<PublicItem>();
 
                 return Ok(items);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving user items");
+                _logger.LogError(ex, "Error retrieving user ingredients");
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
 
         /// <summary>
-        /// Adds or updates the items to the authenticated user.
+        /// Adds or updates the ingredients to the authenticated user.
         /// </summary>
         /// <returns>
         /// An <c>ActionResult</c> containing the <c>List<PublicItem></c> object if found and added/updated correctly, or an error response otherwise.
@@ -72,21 +72,26 @@ namespace backend.Controllers.Api
                 var id = User.FindFirst("UserId")?.Value;
                 if (id == null) return Unauthorized("User ID not found in token.");
 
-                var user = await _context.Users.Include(u => u.UserItems)
+                var user = await _context.Users.Include(u => u.UserIngredients)
                                                .FirstOrDefaultAsync(u => u.Id == id);
 
                 if (user == null) return NotFound();
-                if (user.UserItems == null) user.UserItems = new List<UserItem>();
+                if (user.UserIngredients == null) user.UserIngredients = new List<UserIngredient>();
 
-                var userItemsMap = user.UserItems.ToDictionary(i => i.ItemName);
+                var ingredients = _context.Ingredients.Select(i => new { i.Id, i.Name })
+                                                      .ToList()
+                                                      .ToDictionary(i => i.Name);
+                
+                var userItemsMap = user.UserIngredients.ToDictionary(i => i.Ingredient.Name);
 
                 foreach (PublicItem item in newItems)
                 {
                     // Add Item
                     if (!userItemsMap.TryGetValue(item.Name, out var tmp))
                     {
-                        UserItem newItem = new UserItem { ItemName = item.Name, Quantity = item.Quantity, Unit = item.Unit, UserId = user.Id };
-                        user.UserItems.Add(newItem);
+                        ingredients.TryGetValue(item.Name, out var ingredient);
+                        UserIngredient newItem = new UserIngredient { IngredientId = ingredient.Id, Quantity = item.Quantity, Unit = item.Unit, UserId = user.Id };
+                        user.UserIngredients.Add(newItem);
                         userItemsMap[item.Name] = newItem;
                     }
                     else //Edit Item
@@ -97,19 +102,19 @@ namespace backend.Controllers.Api
                 }
                 await _context.SaveChangesAsync();
 
-                var updatedItems = user.UserItems.Select(i => new PublicItem { Name = i.ItemName, Quantity = i.Quantity, Unit = i.Unit }).ToList();
+                var updatedItems = user.UserIngredients.Select(i => new PublicItem { Name = i.Ingredient.Name, Quantity = i.Quantity, Unit = i.Unit }).ToList();
 
                 return Ok(updatedItems);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error adding/updating user items");
+                _logger.LogError(ex, "Error adding/updating user ingredients");
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
 
         /// <summary>
-        /// Deletes the items of the authenticated user.
+        /// Deletes the ingredients of the authenticated user.
         /// </summary>
         /// <returns>
         /// An <c>ActionResult</c> containing the <c>List<PublicItem></c> object if found and deleted correctly, or an error response otherwise.
@@ -122,27 +127,27 @@ namespace backend.Controllers.Api
                 var id = User.FindFirst("UserId")?.Value;
                 if (id == null) return Unauthorized("User ID not found in token.");
 
-                var user = await _context.Users.Include(u => u.UserItems)
+                var user = await _context.Users.Include(u => u.UserIngredients)
                                                .FirstOrDefaultAsync(u => u.Id == id);
 
                 if (user == null) return NotFound();
-                if (user.UserItems == null || !user.UserItems.Any()) return Ok(new List<PublicItem>());
+                if (user.UserIngredients == null || !user.UserIngredients.Any()) return Ok(new List<PublicItem>());
 
-                var itemsToRemove = user.UserItems.Where(i => nameOfItemsToRemove.Any(n => n == i.ItemName)).ToList();
+                var itemsToRemove = user.UserIngredients.Where(i => nameOfItemsToRemove.Any(n => n == i.IngredientName)).ToList();
 
                 if (itemsToRemove.Any())
                 {
-                    _context.UserItems.RemoveRange(itemsToRemove);
+                    _context.UserIngredients.RemoveRange(itemsToRemove);
                     await _context.SaveChangesAsync();
                 }
 
-                var updatedItems = user.UserItems.Select(i => new PublicItem { Name = i.ItemName, Quantity = i.Quantity, Unit = i.Unit }).ToList();
+                var updatedItems = user.UserIngredients.Select(i => new PublicItem { Name = i.IngredientName, Quantity = i.Quantity, Unit = i.Unit }).ToList();
 
                 return Ok(updatedItems);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting user items");
+                _logger.LogError(ex, "Error deleting user ingredients");
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Security.Claims;
 using backend.Models.Data_Transfer_Objects;
+using backend.Models.Ingredients;
 
 /// <summary>
 /// This file contains unit tests for the <c>InventoryController</c> class.
@@ -66,11 +67,11 @@ namespace backendtest
             User user = new User
             {
                 Id = "Id 4",
-                UserItems = new List<UserItem>()
+                UserItems = new List<UserIngredient>()
             };
 
-            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
+            UserIngredient item1 = new UserIngredient { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
+            UserIngredient item2 = new UserIngredient { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
 
             user.UserItems.Add(item1);
             user.UserItems.Add(item2);
@@ -98,7 +99,7 @@ namespace backendtest
             User user = new User
             {
                 Id = "Id 5",
-                UserItems = new List<UserItem>()
+                UserItems = new List<UserIngredient>()
             };
 
             _context.Users.Add(user);
@@ -154,8 +155,8 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
+            UserIngredient item1 = new UserIngredient { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
+            UserIngredient item2 = new UserIngredient { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
 
             var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item1.ItemName, Quantity = item1.Quantity, Unit = item1.Unit },
                                                                         new PublicItem { Name = item2.ItemName, Quantity = item2.Quantity, Unit = item2.Unit },});
@@ -184,8 +185,8 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
+            UserIngredient item1 = new UserIngredient { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
+            UserIngredient item2 = new UserIngredient { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
 
             var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item1.ItemName, Quantity = item1.Quantity, Unit = item1.Unit },
                                                                         new PublicItem { Name = item2.ItemName, Quantity = item2.Quantity, Unit = item2.Unit },});
@@ -207,11 +208,11 @@ namespace backendtest
             User user = new User
             {
                 Id = "Id 8",
-                UserItems = new List<UserItem>()
+                UserItems = new List<UserIngredient>()
             };
 
-            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
+            UserIngredient item1 = new UserIngredient { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
+            UserIngredient item2 = new UserIngredient { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
 
             user.UserItems.Add(item1);
             user.UserItems.Add(item2);
@@ -221,7 +222,7 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            UserItem item3 = new UserItem { ItemName = "Meat", Quantity = 1, Unit = "l", User = user, UserId = user.Id };
+            UserIngredient item3 = new UserIngredient { ItemName = "Meat", Quantity = 1, Unit = "l", User = user, UserId = user.Id };
 
             var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item3.ItemName, Quantity = item3.Quantity, Unit = item3.Unit } });
 
@@ -243,7 +244,7 @@ namespace backendtest
             User user = new User
             {
                 Id = "Id 9",
-                UserItems = new List<UserItem>()
+                UserItems = new List<UserIngredient>()
             };
 
             _context.Users.Add(user);
@@ -251,9 +252,9 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            UserItem item1 = new UserItem { ItemName = "Meat", Quantity = 1, Unit = "l", User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "ml", User = user, UserId = user.Id };
-            UserItem item3 = new UserItem { ItemName = "Meat", Quantity = 4, Unit = "ml", User = user, UserId = user.Id };
+            UserIngredient item1 = new UserIngredient { ItemName = "Meat", Quantity = 1, Unit = "l", User = user, UserId = user.Id };
+            UserIngredient item2 = new UserIngredient { ItemName = "Potato", Quantity = 1, Unit = "ml", User = user, UserId = user.Id };
+            UserIngredient item3 = new UserIngredient { ItemName = "Meat", Quantity = 4, Unit = "ml", User = user, UserId = user.Id };
 
             var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item1.ItemName, Quantity = item1.Quantity, Unit = item1.Unit },
                                                                         new PublicItem { Name = item2.ItemName, Quantity = item2.Quantity, Unit = item2.Unit },
@@ -276,11 +277,11 @@ namespace backendtest
             User user = new User
             {
                 Id = "Id 10",
-                UserItems = new List<UserItem>()
+                UserItems = new List<UserIngredient>()
             };
 
-            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
+            UserIngredient item1 = new UserIngredient { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
+            UserIngredient item2 = new UserIngredient { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
 
             user.UserItems.Add(item1);
             user.UserItems.Add(item2);
@@ -290,7 +291,7 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            UserItem item3 = new UserItem { ItemName = "Potato", Quantity = 10, Unit = "g", User = user, UserId = user.Id };
+            UserIngredient item3 = new UserIngredient { ItemName = "Potato", Quantity = 10, Unit = "g", User = user, UserId = user.Id };
 
             var result = await controller.Update(new List<PublicItem> { new PublicItem { Name = item3.ItemName, Quantity = item3.Quantity, Unit = item3.Unit } });
 
@@ -358,7 +359,7 @@ namespace backendtest
             User user = new User
             {
                 Id = "Id 12",
-                UserItems = new List<UserItem>()
+                UserItems = new List<UserIngredient>()
             };
 
             _context.Users.Add(user);
@@ -382,11 +383,11 @@ namespace backendtest
             User user = new User
             {
                 Id = "Id 13",
-                UserItems = new List<UserItem>()
+                UserItems = new List<UserIngredient>()
             };
 
-            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
+            UserIngredient item1 = new UserIngredient { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
+            UserIngredient item2 = new UserIngredient { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
 
             user.UserItems.Add(item1);
             user.UserItems.Add(item2);
@@ -414,11 +415,11 @@ namespace backendtest
             User user = new User
             {
                 Id = "Id 14",
-                UserItems = new List<UserItem>()
+                UserItems = new List<UserIngredient>()
             };
 
-            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
+            UserIngredient item1 = new UserIngredient { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
+            UserIngredient item2 = new UserIngredient { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
 
             user.UserItems.Add(item1);
             user.UserItems.Add(item2);
@@ -446,11 +447,11 @@ namespace backendtest
             User user = new User
             {
                 Id = "Id 15",
-                UserItems = new List<UserItem>()
+                UserItems = new List<UserIngredient>()
             };
 
-            UserItem item1 = new UserItem { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
-            UserItem item2 = new UserItem { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
+            UserIngredient item1 = new UserIngredient { ItemName = "Potato", Quantity = 1, Unit = "kg", User = user, UserId = user.Id };
+            UserIngredient item2 = new UserIngredient { ItemName = "Tomato", Quantity = 5, Unit = "ml", User = user, UserId = user.Id };
 
             user.UserItems.Add(item1);
             user.UserItems.Add(item2);

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using backend.Models;
+using backend.Models.Ingredients;
 
 namespace backend.Data
 {
@@ -44,7 +45,7 @@ namespace backend.Data
                     Email = "admin@example.com",
                     Name = "Admin",
                     EmailConfirmed = true,
-                    UserItems = [new UserItem { ItemName = "Potato", Quantity = 1 }, new UserItem { ItemName = "Apple", Quantity = 3.5f, Unit = "Kg"  }]
+                    UserIngredients = [new UserIngredient { IngredientName = "Potato", Quantity = 1 }, new UserIngredient { IngredientName = "Apple", Quantity = 3.5f, Unit = "Kg"  }]
                 };
                 await userManager.CreateAsync(admin, "AdminPass123!");
                 await userManager.AddToRoleAsync(admin, "User");
