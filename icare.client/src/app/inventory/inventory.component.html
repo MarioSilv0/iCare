@@ -1,12 +1,16 @@
 <div class="container">
   <!-- Sidebar -->
-  <div class="sidebar">
+  <div class="sidebar shadow">
     <div class="search-bar">
-      <input type="text" placeholder="Pesquisar"
+      <input class="rounded shadow" type="text" placeholder="Pesquisar"
              [(ngModel)]="searchTerm"
              (input)="onSearchChange()" />
       <span class="search-icon">🔍</span>
+
     </div>
+
+      <hr *ngIf="filteredItems.length > 0" style="margin-top: 0;" />
+
     <ul class="item-list" *ngIf="filteredItems.length > 0">
       <li *ngFor="let item of filteredItems"
           [class.selected]="selectedItems.has(item)"
@@ -15,13 +19,16 @@
       </li>
     </ul>
     <button class="add-button" (click)="addItemsToInventory()">
-      Adicionar ➕
+      <span class="add-text">
+        Adicionar
+      </span>
+      <span class="add-icon">➕</span>
     </button>
   </div>
 
   <!-- Inventory Table -->
   <div class="inventory-table">
-    <table>
+    <table class="shadow">
       <thead>
         <tr>
           <th class="small-col"></th>

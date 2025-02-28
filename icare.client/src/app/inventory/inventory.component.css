@@ -1,33 +1,38 @@
 .container {
   display: flex;
+  align-items: center;
   gap: 20px;
   padding: 20px;
 }
 
 .sidebar {
   width: 25%;
-  background: #fef3c7;
+  background: var(--bg-bege-contrast);
   padding: 15px;
   border-radius: 8px;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  margin: 0;
 }
 
 .search-bar {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #d4af37;
-  padding-bottom: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+  position: relative;
 }
 
 .search-bar input {
+  width: 100%;
   flex-grow: 1;
   border: none;
-  background: transparent;
+  background: var(--bg-bege);
+  padding: 5px;
   outline: none;
+  font-size: 1rem;
 }
 
 .search-icon {
+  position: absolute;
+  right: 5px;
   cursor: pointer;
 }
 
@@ -70,7 +75,7 @@
 }
 
 .inventory-table th {
-  background: #fcd34d;
+  background: var(--bg-bege);
 }
 
 .item-name, .item-quantity {
@@ -141,6 +146,7 @@ td {
   border-radius: 8px;
   font-weight: bold;
   cursor: default;
+  background-color: var(--bg-bege-contrast);
 }
 
 td input[type="checkbox"] {
@@ -150,10 +156,25 @@ td input[type="checkbox"] {
 
 
 /* Buttons */
+
+.add-button, .update-button, .delete-button {
+text-align: center;
+font-size: .9rem;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.add-button:hover, .update-button:hover, .delete-button:hover {
+  transform: scale(1.05);
+}
+
+.add-button:focus, .update-button:focus, .delete-button:focus {
+  transform: scale(0.95);
+}
+
 .add-button {
   width: 100%;
   padding: 10px;
-  background-color: #fcd34d;
+  background-color: var(--bg-verde);
   border: none;
   border-radius: 8px;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
@@ -169,7 +190,7 @@ td input[type="checkbox"] {
 
 .update-button {
   padding: 10px 15px;
-  background-color: #fcd34d;
+  background-color: var(--bg-cinzento);
   color: black;
   border: none;
   border-radius: 8px;
@@ -179,7 +200,7 @@ td input[type="checkbox"] {
 
 .delete-button {
   padding: 10px 15px;
-  background-color: #dc3545;
+  background-color: var(--bg-vermelho);
   color: black;
   border: none;
   border-radius: 8px;
@@ -191,14 +212,47 @@ td input[type="checkbox"] {
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.add-button:hover, .update-button:hover {
-  background-color: #fbbf24;
+.add-button:hover {
+  background-color: var(--bg-verde-contrast);
+}
+
+.update-button:hover {
+  background-color: var(--bg-cinzento-contrast);
 }
 
 .delete-button:hover {
-  background-color: #bf2d3b;
+  background-color: var(--bg-vermelho-contrast);
 }
 
 .trash-icon {
   margin-left: auto;
+}
+
+@media (max-width: 780px) {
+  .container {
+    flex-direction: column-reverse;
+  }
+
+  .sidebar {
+    gap: .6rem;
+    width: 100%;
+  }
+
+  
+
+  .add-button .add-text {
+      display: none;
+  }
+}
+
+@media (max-width: 500px) {
+  .search-bar {
+    margin: 0;
+  }
+}
+
+@media (max-width: 1000px) {
+  .search-bar .search-icon {
+    display: none;
+  }
 }
