@@ -1,6 +1,4 @@
-﻿using backend.Models.Preferences;
-
-namespace backend.Models.Recipes
+﻿namespace backend.Models.Recipes
 {
     public class UserRecipe // Favorite Recipes of the user
     {

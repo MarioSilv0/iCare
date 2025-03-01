@@ -1,7 +1,5 @@
 ﻿using backend.Models.Ingredients;
-using backend.Models.Preferences;
 using backend.Models.Recipes;
-using backend.Models.Restrictions;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
@@ -62,13 +60,13 @@ namespace backend.Models
         /// Gets or sets the user's preferences.
         /// </summary>
         [Display(Name = "Preferences")]
-        public ICollection<UserPreference>? UserPreferences { get; set; }
+        public IList<string>? Preferences { get; set; }
 
         /// <summary>
         /// Gets or sets the user's restrictions.
         /// </summary>
         [Display(Name = "Restrictions")]
-        public ICollection<UserRestriction>? UserRestrictions { get; set; }
+        public IList<string>? Restrictions { get; set; }
 
         /// <summary>
         /// Gets or sets the user's ingredients.
@@ -118,6 +116,12 @@ namespace backend.Models
             float roundedWeight = (float) Math.Round(model.Weight, 1);
             if (Weight != roundedWeight && roundedWeight > 0 && roundedWeight < 700)
                 Weight = roundedWeight;
+
+            if(model.Preferences != Preferences)
+                Preferences = model.Preferences;
+
+            if (model.Restrictions != Restrictions)
+                Restrictions = model.Restrictions;
         }
 
         /// <summary>

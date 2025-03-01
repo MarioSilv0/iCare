@@ -33,18 +33,6 @@ export class UsersService {
   }
 }
 
-interface Preference {
-  id: number;
-  name: string;
-  isSelected: boolean;
-}
-
-interface Restrictions {
-  id: number;
-  name: string;
-  isSelected: boolean;
-}
-
 export interface Item {
   name: string;
   quantity: number;
@@ -59,6 +47,7 @@ export interface User {
   notifications: Boolean;
   height: number;
   weight: number;
-  preferences: Preference[];
-  restrictions: Restrictions[];
+  preferences: Set<string>;
+  restrictions: Set<string>;
+  categories: Set<string>;
 }

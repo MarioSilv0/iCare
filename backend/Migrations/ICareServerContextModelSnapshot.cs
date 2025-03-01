@@ -267,59 +267,6 @@ namespace backend.Migrations
                     b.ToTable("UserIngredients");
                 });
 
-            modelBuilder.Entity("backend.Models.Preferences.Preference", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Preferences");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Vegetarian"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Vegan"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Carnivore"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Keto"
-                        });
-                });
-
-            modelBuilder.Entity("backend.Models.Preferences.UserPreference", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("PreferenceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "PreferenceId");
-
-                    b.HasIndex("PreferenceId");
-
-                    b.ToTable("UserPreferences");
-                });
-
             modelBuilder.Entity("backend.Models.Recipes.Recipe", b =>
                 {
                     b.Property<int>("Id")
@@ -338,6 +285,7 @@ namespace backend.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Picture")
@@ -386,49 +334,6 @@ namespace backend.Migrations
                     b.HasIndex("RecipeId");
 
                     b.ToTable("UserRecipes");
-                });
-
-            modelBuilder.Entity("backend.Models.Restrictions.Restriction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Restrictions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Lactose Intolerance"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Gluten Intolerance"
-                        });
-                });
-
-            modelBuilder.Entity("backend.Models.Restrictions.UserRestriction", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("RestrictionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "RestrictionId");
-
-                    b.HasIndex("RestrictionId");
-
-                    b.ToTable("UserRestrictions");
                 });
 
             modelBuilder.Entity("backend.Models.User", b =>
@@ -487,6 +392,12 @@ namespace backend.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Picture")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Preferences")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Restrictions")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
@@ -632,25 +543,6 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("backend.Models.Preferences.UserPreference", b =>
-                {
-                    b.HasOne("backend.Models.Preferences.Preference", "Preference")
-                        .WithMany("UserPreferences")
-                        .HasForeignKey("PreferenceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("backend.Models.User", "User")
-                        .WithMany("UserPreferences")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Preference");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("backend.Models.Recipes.UserRecipe", b =>
                 {
                     b.HasOne("backend.Models.Recipes.Recipe", "Recipe")
@@ -666,25 +558,6 @@ namespace backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Recipe");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("backend.Models.Restrictions.UserRestriction", b =>
-                {
-                    b.HasOne("backend.Models.Restrictions.Restriction", "Restriction")
-                        .WithMany("UserRestrictions")
-                        .HasForeignKey("RestrictionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("backend.Models.User", "User")
-                        .WithMany("UserRestrictions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Restriction");
 
                     b.Navigation("User");
                 });
@@ -705,11 +578,6 @@ namespace backend.Migrations
                     b.Navigation("UserIngredients");
                 });
 
-            modelBuilder.Entity("backend.Models.Preferences.Preference", b =>
-                {
-                    b.Navigation("UserPreferences");
-                });
-
             modelBuilder.Entity("backend.Models.Recipes.Recipe", b =>
                 {
                     b.Navigation("RecipeIngredients");
@@ -717,20 +585,11 @@ namespace backend.Migrations
                     b.Navigation("UserRecipes");
                 });
 
-            modelBuilder.Entity("backend.Models.Restrictions.Restriction", b =>
-                {
-                    b.Navigation("UserRestrictions");
-                });
-
             modelBuilder.Entity("backend.Models.User", b =>
                 {
                     b.Navigation("Logs");
 
                     b.Navigation("UserIngredients");
-
-                    b.Navigation("UserPreferences");
-
-                    b.Navigation("UserRestrictions");
 
                     b.Navigation("favoriteRecipes");
                 });

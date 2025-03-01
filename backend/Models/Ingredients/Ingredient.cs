@@ -1,7 +1,4 @@
-﻿using backend.Models.Preferences;
-using Microsoft.EntityFrameworkCore;
-
-namespace backend.Models.Ingredients
+﻿namespace backend.Models.Ingredients
 {
     public class Ingredient
     {
