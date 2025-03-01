@@ -84,6 +84,14 @@ namespace backend.Controllers.Api
                 var id = User.FindFirst("UserId")?.Value;
                 if (id == null) return Unauthorized("User ID not found in token.");
 
+                if (newItems == null || !newItems.Any())
+                {
+                    var currentItems = await _context.UserIngredients.Where(ui => ui.UserId == id)
+                                                                     .Select(i => new PublicItem { Name = i.Ingredient.Name, Quantity = i.Quantity, Unit = i.Unit })
+                                                                     .ToListAsync();
+                    return Ok(currentItems);
+                }
+
                 var userIngredients = await _context.UserIngredients
                                                     .Where(ui => ui.UserId == id)
                                                     .Include(ui => ui.Ingredient)
@@ -96,9 +104,12 @@ namespace backend.Controllers.Api
                     // Add Item
                     if (!userIngredients.TryGetValue(item.Name, out var existingIngredient))
                     {
-                        if (!ingredients.TryGetValue(item.Name, out var ingredient)) return BadRequest($"Ingredient '{item.Name}' does not exist.");
+                        if (!ingredients.TryGetValue(item.Name, out var ingredient)) continue;
 
-                        _context.UserIngredients.Add(new UserIngredient { IngredientId = ingredient.Id, Quantity = item.Quantity, Unit = item.Unit, UserId = id });
+                        var ui = new UserIngredient { IngredientId = ingredient.Id, Quantity = item.Quantity, Unit = item.Unit, UserId = id };
+                        _context.UserIngredients.Add(ui);
+                        userIngredients.Add(item.Name, ui);
+
                     }
                     else //Edit Item
                     {
