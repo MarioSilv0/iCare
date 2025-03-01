@@ -21,7 +21,7 @@
       <div *ngFor="let food of results" class="list-group-item">
         <h5>{{ food.name }}</h5>
         <p>Categoria: {{ food.category?.name || 'N/A' }}</p>
-        <p>Energia: {{ food.nutrients?.kJ || 'N/A' }} kcal</p>
+        <p>Energia: {{ food.nutrients?.kJ || 'N/A' }} kJ</p>
         <p>Calorias: {{ food.nutrients?.kcal || 'N/A' }} kcal</p>
         <p>Proteína: {{ food.nutrients?.protein || 'N/A' }} g</p>
         <p>Carboidratos: {{ food.nutrients?.carbohydrates || 'N/A' }} g</p>

@@ -1,23 +1,4 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.4.0/schema.json",
-  "files": {
-    "ignore": ["*.d.ts"]
-  },
-  "organizeImports": {
-    "enabled": true
-  },
-  "json": {
-    "parser": {
-      "allowComments": true
-    }
-  },
-  "formatter": {
-    "indentStyle": "space"
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true
-    }
-  }
+  "extends": ["../../biome.json"]
 }

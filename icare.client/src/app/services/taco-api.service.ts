@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { env } from '../../environments/env';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TacoApiService {
+  tacoApi = env.tacoApiUrl;
+
   constructor(private http: HttpClient) { }
 
   //funciona com o filtro da API mas é muito strict recomendo fazer filtro do zero sobre o getAllFood
@@ -30,7 +33,7 @@ export class TacoApiService {
         }
       `
     };
-    return this.http.post('/taco', graphqlQuery);
+    return this.http.post(this.tacoApi, graphqlQuery);
   }
 
   getAllFood(): Observable < any > {
@@ -54,7 +57,8 @@ export class TacoApiService {
         }
       `
     };
-    return this.http.post('/taco', graphqlQuery);
+    console.log(this.tacoApi);
+    return this.http.post(this.tacoApi, graphqlQuery);
    }
 
 

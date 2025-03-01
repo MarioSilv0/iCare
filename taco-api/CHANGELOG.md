@@ -1,98 +1,97 @@
-# Changelog
+# taco-api
 
-## 2.3.0
+## 4.0.1
+
+### Patch Changes
+
+- 7fce14c: Fix Dockerfile
+
+## 4.0.0
+
+### Major Changes
+
+- 38d751c: Upgrade all dependencies
+
+  In theory, nothing has changed except the dependencies version. This is a major because I've migrated from Prisma 5 to 6.
+
+## 3.2.0
 
 ### Minor Changes
 
-- 003ecdb: Minor updates
+- eba8667: update dependencies
 
-  - update from node18 to node20;
-  - bump all dev and prod dependencies to its latest versions;
-  - add `packageManager` to package.json;
-  - add `.nvmrc` to enforce node version;
-  - pin `pnpm` on Docker image;
+### Patch Changes
 
-## 2.2.0
+- eba8667: fix dev and start command
+
+## 3.1.0
 
 ### Minor Changes
 
-- aa9b51c: update all dependencies, including [Prisma 5](https://www.prisma.io/blog/prisma-5-f66prwkjx72s) which brings huge performance improvement
-- aa9b51c: add a build step and run the production with node itself instead `tsx`
+- 12d8a88: build api with --compile and reduce the docker image 76%~
 
-All notable changes to this project will be documented in this file.
+## 3.0.2
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+### Patch Changes
 
-<!--
-Added for new features.
-Changed for changes in existing functionality.
-Deprecated for soon-to-be removed features.
-Removed for now removed features.
-Fixed for any bug fixes.
-Security in case of vulnerabilities.
+- 76e7f1a: update bun to 1.0.20
 
- -->
+## 3.0.1
 
-## [2.1.0]
+### Patch Changes
 
-### What has changed?
+- 5257a21: fix optional options
 
-- add new `getFoodByName` query:
+## 3.0.0
 
-```gql
-query FoodByName {
-  getFoodByName(name: "carne") {
-    name
-  }
-}
-```
+### Major Changes
 
-## [2.0.0]
+- 65ccf6d: replace express with elysia.
 
-This is the major change after 5 years of this project creation.
+  Taco API now runs on top of bun and we have faster and better HTTP frameworks.
 
-I've decided to revamp completely the project using modern tech and implementing a few features some people asked a couple years ago.
+  We don't do anything fancy that only express could do. To provide an HTTP client for a single endpoint, we can rely on something more modern.
 
-### What has changed?
+- bc854f6: Switch from node to bun
 
-The main change here is now the project is complete type-safe thanks to [Prisma](https://prisma.io).
+  In case you don't know bun, I strongly recommend you to take a look in [their docs](https://bun.sh/). In summary, it's a fast JavaScript runtime that provides tons of performance and great nodejs compat.
 
-Also, instead Rest API, I've decide to switch completely to GraphQL. This will makes the documentation and the ability to fetch data easier.
+  The advantage of using Bun instead Node is:
 
-### all changes
+  - We don't need `tsx` for handling TypeScript files (such as scripts) or running the dev locally;
+  - We don't need `esbuild` to build the final file;
+  - We don't need `pnpm` to install dependencies;
+  - everything is fast
 
-- refactor everything to TypeScript;
-- re-done the data processing to fix data mistakes such as keeping strings with numbers;
-- remove APIDoc in favor of GraphQL api docs;
-- update docs;
-- switch from `npm` to `pnpm`;
-- use relational database (`SQLite`) instead local `json` files for storing data;
-- implement filter ability. Now for in a few endpoints you can pass `skip` and `take` ([see more here](https://www.prisma.io/docs/concepts/components/prisma-client/pagination#offset-pagination));
-- migrate to Node18;
-- use full ESM instead CJS;
+  Though, because we're using Prisma and it relies on NodeJS to do some generation, you may still have Node installed.
 
-## [1.0.1]
+  Some differences from the previous setup:
 
-- tag docker image with `v1`
+  Install dependencies:
 
-## [1.0.0]
+  ```diff
+  -pnpm install
+  +bun install
+  ```
 
-- create a tag version to prep v2 to get in place
+  Run dev server:
 
-## [0.1.0]
+  ```diff
+  -pnpm run dev
+  +bun run dev
+  ```
 
-### Added
+  Build the project:
 
-- MIT License;
-- Changelog file;
-- CI with Travis;
-- Unit/integration tests with Jest;
-- Prettier/eslint to keep code quality;
-- API Documentation with [apidocJS](http://apidocjs.com/#param-api-success)
+  ```diff
+  -pnpm run build
+  +bun run build
+  ```
 
-### Changed
+  etc..
 
-- Improve `package.json` information;
-- Rename all files/methods/code in general to ENGLISH;
-- Refactor routes
+  Because we're changing the runner, it's a major bump. If you still want to use Node, I'd recommend you to be in the version 2.
+
+- 5384de3: new docs website.
+
+  Now, instead using vuepress, I've switch to starlight and refactor the whole docs.

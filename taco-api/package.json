@@ -1,40 +1,46 @@
 {
-  "name": "taco-workspace",
-  "private": true,
-  "workspaces": ["apps/*"],
+  "name": "taco-api",
+  "description": "Brazilian Table of Food Composition (TACO) - GraphQL API",
+  "version": "4.0.1",
   "type": "module",
-  "license": "MIT",
-  "author": {
-    "name": "Raul de Melo",
-    "email": "contact@raulmelo.me"
+  "homepage": "https://github.com/raulfdm/taco-api",
+  "bugs": {
+    "url": "https://github.com/raulfdm/taco-api/issues"
   },
   "scripts": {
-    "prepare": "husky && bun run scripts/fix-graphql-types.ts",
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "dev:docker": "docker-compose -f ./apps/api/docker-compose.yml up",
-    "start": "turbo start",
-    "lint": "turbo lint",
-    "lint:ci": "turbo lint:ci",
-    "db:generate": "turbo db:generate",
-    "image:build": "bun run scripts/build-image.ts",
-    "image:deploy": "bun run image:build"
+    "start": "bun run build && NODE_ENV=production ./dist/taco-api-standalone",
+    "dev": "prisma generate && NODE_ENV=development bun --watch src/app.ts",
+    "studio": "prisma studio",
+    "build": "bun build src/app.ts --compile --outfile dist/taco-api-standalone",
+    "lint": "biome lint src",
+    "lint:ci": "biome ci src",
+    "db:migrate": "NODE_ENV=development prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:seed": "NODE_ENV=development prisma db seed",
+    "db:reset": "NODE_ENV=development prisma migrate reset"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "1.2.0",
+    "@elysiajs/graphql-yoga": "1.2.0",
+    "@envelop/graphql-modules": "6.0.0",
+    "@prisma/client": "6.3.1",
+    "elysia": "1.2.12",
+    "graphql-modules": "2.4.0",
+    "graphql": "16.10.0",
+    "zod": "3.24.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@changesets/cli": "2.27.12",
     "@types/bun": "1.2.2",
-    "husky": "9.1.7",
-    "lint-staged": "15.4.3",
-    "minimist": "1.2.8",
-    "turbo": "2.4.0",
+    "csvtojson": "2.0.10",
+    "prisma": "6.3.1",
     "typescript": "5.7.3"
   },
   "packageManager": "bun@1.2.2",
   "engines": {
     "bun": "1.2.2"
   },
-  "lint-staged": {
-    "*.{js,ts,json}": "bunx @biomejs/biome check --apply"
+  "prisma": {
+    "seed": "bun run ./src/infrastructure/seed/index.ts",
+    "schema": "./prisma/schema.prisma"
   }
 }

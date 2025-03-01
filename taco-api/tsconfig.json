@@ -3,6 +3,10 @@
     "lib": [
       "ESNext"
     ],
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
     "module": "esnext",
     "target": "esnext",
     "moduleResolution": "bundler",
@@ -11,11 +15,21 @@
     "noEmit": true,
     "composite": true,
     "strict": true,
+    "noUncheckedIndexedAccess": true,
     "downlevelIteration": true,
     "skipLibCheck": true,
     "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "allowJs": true
+    "allowJs": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@prisma/client": [
+        "dist/generated"
+      ]
+    },
   }
 }

@@ -3,9 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Item } from './api.service';
 
-const URL: string = 'https://localhost:7266/api/';
-const PROFILE: string = 'PublicUser/';
-const INVENTORY: string = 'Inventory/';
+const PROFILE: string = '/api/PublicUser';
+const INVENTORY: string = '/api/Inventory';
 
 @Injectable({
   providedIn: 'root'
@@ -14,23 +13,23 @@ export class UsersService {
   constructor(private http: HttpClient) { }
 
   getUser(): Observable<User> {
-    return this.http.get<User>(URL + PROFILE);
+    return this.http.get<User>(PROFILE);
   }
 
   updateUser(user: User): Observable<User> {
-    return this.http.put<User>(URL + PROFILE, { ...user });
+    return this.http.put<User>(PROFILE, { ...user });
   }
 
   getInventory(): Observable<Item[]> {
-    return this.http.get<Item[]>(URL + INVENTORY);
+    return this.http.get<Item[]>(INVENTORY);
   }
 
   updateInventory(items: Item[]): Observable<Item[]> {
-    return this.http.put<Item[]>(URL + INVENTORY, items);
+    return this.http.put<Item[]>(INVENTORY, items);
   }
 
   removeInventory(items: string[]): Observable<Item[]> {
-    return this.http.delete<Item[]>(URL + INVENTORY, { body: items });
+    return this.http.delete<Item[]>(INVENTORY, { body: items });
   }
 }
 

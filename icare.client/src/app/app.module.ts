@@ -41,7 +41,7 @@ import { RecipeListComponent } from './recipe-list/recipe-list.component';
     RecipesComponent,
     RecipeComponent,
     InventoryComponent,
-    MapKeysPipe
+    MapKeysPipe,
     TacoApiComponent,
     RecipeListComponent,
   ],

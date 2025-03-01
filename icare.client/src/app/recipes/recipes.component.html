@@ -76,7 +76,7 @@
           </div>
           <h4>{{ recipe.title }}</h4>
           <p>{{ recipe.description }}</p>
-          <a href="/recipe/{{ i }}"
+          <a [routerLink]="['/recipe/{{ i }}']"
              class="mx-0 nav-link bg-verde rounded"
              style="
             width: 100px;

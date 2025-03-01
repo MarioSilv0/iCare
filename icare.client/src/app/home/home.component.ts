@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../services/users.service';
-import { UpdateRecipesService } from '../services/update-recipes.service';
 
 @Component({
   selector: 'app-home',
@@ -11,20 +10,11 @@ import { UpdateRecipesService } from '../services/update-recipes.service';
 export class HomeComponent {
   isAdmin: boolean = false;
   
-  //Lista de receitas do teste
-  mealsList: any[] = [];
-
-  constructor(private authService: AuthService, private service: UsersService, private updateRecipesService: UpdateRecipesService) { }
+  constructor(private authService: AuthService, private service: UsersService) { }
 
   ngOnInit() {
     this.isAdmin = this.authService.userHasRole('Admin'); // Checa se o usuário é admin
-    
-    
-    //teste do UpdateRecipesService
-    await this.updateRecipesService.updateDatabase();
-    this.mealsList = this.updateRecipesService.mealsList;
-
-    
+  
     const userData = localStorage.getItem('user');
     if (userData) return;
     

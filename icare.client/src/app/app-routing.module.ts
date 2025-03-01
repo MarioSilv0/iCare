@@ -16,7 +16,7 @@ import { InventoryComponent } from './inventory/inventory.component';
 
 
 const routes: Routes = [
-  { path: '', component: HomeComponent, canActivate: [AuthGuard], pathMatch: 'full' },
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard], pathMatch: 'full' },
   {
     path: 'admin',
     component: AdminComponent,
@@ -37,7 +37,7 @@ const routes: Routes = [
   { path: 'recipes', component: RecipesComponent },
   { path: 'recipe/:id', component: RecipeComponent },
   { path: 'inventory', component: InventoryComponent, canActivate: [AuthGuard] },
-  { path: '**', redirectTo: '' },
+  { path: '**', redirectTo: 'home' },
 ];
 
 @NgModule({

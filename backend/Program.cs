@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 
 /// <author>Mário Silva - 202000500</author>
@@ -40,6 +41,9 @@ builder.Services
     .AddDefaultUI();
 
 // Configuração de autenticação e JWT
+var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not found.");
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT Issuer not found.");
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? throw new InvalidOperationException("JWT Audience not found.");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -51,12 +55,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtKey))
         };
     });
+
 
 builder.Services.AddAuthorization();
 
@@ -70,13 +74,16 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins("https://localhost:4200")
-              .WithOrigins("https://icaresite.azurewebsites.net")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        policy.WithOrigins(
+            "https://localhost:4200",
+            "https://127.0.0.1:4200"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
+
 
 // Evitar redirecionamentos automáticos
 builder.Services.ConfigureApplicationCookie(options =>
@@ -122,7 +129,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-
 // Configuração do pipeline de middleware
 if (app.Environment.IsDevelopment())
 {
@@ -148,22 +154,23 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapRazorPages();
 app.MapGroup("/api");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Append("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
-    context.Response.Headers.Append("Cross-Origin-Embedder-Policy", "credentialless");
-    await next();
-});
-
+//app.Use(async (context, next) =>
+//{
+//    context.Response.Headers.Append("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+//    context.Response.Headers.Append("Cross-Origin-Embedder-Policy", "credentialless");
+//    await next();
+//});
 
 app.Use(async (context, next) =>
 {
     if (context.Request.Path.Value != null &&
         !context.Request.Path.Value.StartsWith("/api") &&
+        !context.Request.Path.Value.StartsWith("/swagger") &&
         !System.IO.Path.HasExtension(context.Request.Path.Value))
     {
         context.Request.Path = "/index.html";
@@ -171,6 +178,5 @@ app.Use(async (context, next) =>
     await next();
 });
 app.UseStaticFiles();
-
 
 app.Run();

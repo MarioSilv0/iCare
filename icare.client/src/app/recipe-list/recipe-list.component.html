@@ -1,6 +1,7 @@
 <div class="recipe-list">
   <h2>Lista de Receitas</h2>
-  <ul>
+  <h4 *ngIf="!mealsList[0]" >Empty list, Update Recipes...</h4>
+  <ul *ngIf="mealsList">
     <li *ngFor="let meal of mealsList">
       <img [src]="meal.strMealThumb" [alt]="meal.strMeal">
       <h3>{{ meal.strMeal }}</h3>

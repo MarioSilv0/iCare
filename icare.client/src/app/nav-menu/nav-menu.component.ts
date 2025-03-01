@@ -9,7 +9,6 @@ import { MenuService } from '../services/menu.service';
   styleUrls: ['./nav-menu.component.css'],
 })
 
-//Mário
 export class NavMenuComponent {
   public isExpanded: boolean = false;
   public isLoggedIn: boolean = false;
@@ -62,7 +61,7 @@ export class NavMenuComponent {
     },
   ];
 
-  constructor(private authService: AuthService, private menuService: MenuService, private router: Router) { }
+  constructor(private authService: AuthService, private menuService: MenuService) { }
 
   ngOnInit() {
     this.authService.onStateChanged().subscribe((state: boolean) => {

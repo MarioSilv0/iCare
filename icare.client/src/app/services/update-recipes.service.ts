@@ -1,14 +1,16 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, lastValueFrom } from 'rxjs';
+import { Observable } from 'rxjs';
+import { env } from '../../environments/env';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class UpdateRecipesService {
-  private categoryListUrl = '/themealdb/categories.php';
-  private mealsByCategoryUrl = '/themealdb/filter.php?c=';
-  private mealByIdUrl = '/themealdb/lookup.php?i=';
+  private categoryListUrl = `${env.mealDbApiUrl}/categories.php`;
+  private mealsByCategoryUrl = `${env.mealDbApiUrl}/filter.php?c=`;
+  private mealByIdUrl = `${env.mealDbApiUrl}/lookup.php?i=`;
 
   public mealsList: any[] = [];
   constructor(private http: HttpClient) { }
@@ -28,7 +30,7 @@ export class UpdateRecipesService {
   async updateDatabase() {
     try {
       const categoriesResponse = await this.http.get<any>(this.categoryListUrl).toPromise();
-      const categories = categoriesResponse.categories;
+      const categories = categoriesResponse.categories
 
       for (const category of categories) {
         await this.delay(500); // Pequeno atraso para evitar 429
