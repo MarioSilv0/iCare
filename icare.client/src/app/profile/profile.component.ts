@@ -34,6 +34,8 @@ export class ProfileComponent implements OnInit {
 
     this.user.preferences.add(preference);
     this.availablePreferences.delete(preference);
+
+    target.value = "";
   }
 
   removePreference(preference: string) {
@@ -48,6 +50,8 @@ export class ProfileComponent implements OnInit {
 
     this.user.restrictions.add(restriction);
     this.availableRestrictions.delete(restriction);
+
+    target.value = "";
   }
 
   removeRestriction(restriction: string) {
@@ -59,7 +63,7 @@ export class ProfileComponent implements OnInit {
     this.service.getUser().subscribe(
       (result) => {
         this.user = { ...result, categories: new Set(result.categories), preferences: new Set(result.preferences), restrictions: new Set(result.restrictions)};
-        console.log(this.user)
+
         for (const c of this.user.categories) {
           if (!this.user.preferences.has(c)) this.availablePreferences.add(c);
           if (!this.user.restrictions.has(c)) this.availableRestrictions.add(c);

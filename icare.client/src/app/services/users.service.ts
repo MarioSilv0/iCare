@@ -17,7 +17,9 @@ export class UsersService {
   }
 
   updateUser(user: User): Observable<User> {
-    return this.http.put<User>(URL + PROFILE, { ...user });
+    const u = { ...user, preferences: Array.from(user.preferences), restrictions: Array.from(user.restrictions), categories: Array.from(user.categories) }
+
+    return this.http.put<User>(URL + PROFILE, u);
   }
 
   getInventory(): Observable<Item[]> {

@@ -67,8 +67,8 @@ namespace backend.Models
             Notifications = user.Notifications;
             Height = user.Height;
             Weight = user.Weight;
-            Preferences = model?.Preferences ?? new List<string>();
-            Restrictions = model?.Restrictions ?? new List<string>();
+            Preferences = model?.Preferences ?? new List<string>(user.Preferences ?? []);
+            Restrictions = model?.Restrictions ?? new List<string>(user.Restrictions ?? []);
             Categories = categories;
         }
     }
