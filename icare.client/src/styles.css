@@ -7,12 +7,12 @@
   --bg-verde-contrast: #00ff5e;
   --bg-azul: #3b82f6;
   --bg-cinzento: #6b7280;
+  --bg-cinzento-contrast: #37383a;
   --bg-branco: #ffffff;
   --bg-preto: #000000;
   --bg-font: "Geist Mono", serif;
   --bg-radius: 10px;
-  --bg-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px,
-    rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  --bg-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 }
 
 *,

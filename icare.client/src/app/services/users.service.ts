@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Item } from './api.service';
 
 const PROFILE: string = '/api/PublicUser';
 const INVENTORY: string = '/api/Inventory';
@@ -17,6 +16,8 @@ export class UsersService {
   }
 
   updateUser(user: User): Observable<User> {
+    const u = { ...user, preferences: Array.from(user.preferences), restrictions: Array.from(user.restrictions), categories: Array.from(user.categories) }
+
     return this.http.put<User>(PROFILE, { ...user });
   }
 
@@ -33,16 +34,10 @@ export class UsersService {
   }
 }
 
-interface Preference {
-  id: number;
+export interface Item {
   name: string;
-  isSelected: boolean;
-}
-
-interface Restrictions {
-  id: number;
-  name: string;
-  isSelected: boolean;
+  quantity: number;
+  unit: string;
 }
 
 export interface User {
@@ -53,6 +48,7 @@ export interface User {
   notifications: Boolean;
   height: number;
   weight: number;
-  preferences: Preference[];
-  restrictions: Restrictions[];
+  preferences: Set<string>;
+  restrictions: Set<string>;
+  categories: Set<string>;
 }

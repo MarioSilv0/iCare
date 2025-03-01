@@ -76,7 +76,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
             "https://localhost:4200",
-            "https://127.0.0.1:4200"
+            "https://127.0.0.1:4200",
+            "https://icaresite.azurewebsites.net"
         )
         .AllowAnyHeader()
         .AllowAnyMethod()

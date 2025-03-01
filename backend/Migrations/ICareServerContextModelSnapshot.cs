@@ -155,7 +155,7 @@ namespace backend.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("backend.Models.Preferences.Preference", b =>
+            modelBuilder.Entity("backend.Models.Ingredients.Ingredient", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -163,52 +163,111 @@ namespace backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
+                    b.Property<float>("Carbohydrates")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Fibers")
+                        .HasColumnType("real");
+
+                    b.Property<float>("KJ")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Kcal")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Lipids")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Protein")
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Preferences");
+                    b.ToTable("Ingredients");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            Name = "Vegetarian"
+                            Carbohydrates = 25.8f,
+                            Category = "Cereais e Derivados",
+                            Fibers = 10f,
+                            KJ = 517f,
+                            Kcal = 124f,
+                            Lipids = 10f,
+                            Name = "Arroz",
+                            Protein = 2.6f
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Vegan"
+                            Carbohydrates = 35.4f,
+                            Category = "Cereais e Derivados",
+                            Fibers = 103f,
+                            KJ = 175f,
+                            Kcal = 137f,
+                            Lipids = 2f,
+                            Name = "Batata",
+                            Protein = 1.6f
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Carnivore"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Keto"
+                            Carbohydrates = 35.4f,
+                            Category = "Carne",
+                            Fibers = 103f,
+                            KJ = 175f,
+                            Kcal = 137f,
+                            Lipids = 2f,
+                            Name = "Carne",
+                            Protein = 1.6f
                         });
                 });
 
-            modelBuilder.Entity("backend.Models.Preferences.UserPreference", b =>
+            modelBuilder.Entity("backend.Models.Ingredients.RecipeIngredient", b =>
+                {
+                    b.Property<int>("RecipeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IngredientId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RecipeId", "IngredientId");
+
+                    b.HasIndex("IngredientId");
+
+                    b.ToTable("RecipeIngredients");
+                });
+
+            modelBuilder.Entity("backend.Models.Ingredients.UserIngredient", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("PreferenceId")
+                    b.Property<int>("IngredientId")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId", "PreferenceId");
+                    b.Property<float>("Quantity")
+                        .HasColumnType("real");
 
-                    b.HasIndex("PreferenceId");
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("UserPreferences");
+                    b.HasKey("UserId", "IngredientId");
+
+                    b.HasIndex("IngredientId");
+
+                    b.ToTable("UserIngredients");
                 });
 
-            modelBuilder.Entity("backend.Models.Restrictions.Restriction", b =>
+            modelBuilder.Entity("backend.Models.Recipes.Recipe", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -216,39 +275,65 @@ namespace backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Area")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Picture")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("YoutubeVideo")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Restrictions");
+                    b.ToTable("Recipes");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            Name = "Lactose Intolerance"
+                            Area = "Portugal",
+                            Category = "Bom",
+                            Description = "Tu Consegues",
+                            Name = "Algo de Bom",
+                            Picture = "",
+                            YoutubeVideo = ""
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Gluten Intolerance"
+                            Area = "Bugs",
+                            Category = "Mau",
+                            Description = "Boa Sorte",
+                            Name = "Algo de Mau",
+                            Picture = "",
+                            YoutubeVideo = ""
                         });
                 });
 
-            modelBuilder.Entity("backend.Models.Restrictions.UserRestriction", b =>
+            modelBuilder.Entity("backend.Models.Recipes.UserRecipe", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("RestrictionId")
+                    b.Property<int>("RecipeId")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId", "RestrictionId");
+                    b.HasKey("UserId", "RecipeId");
 
-                    b.HasIndex("RestrictionId");
+                    b.HasIndex("RecipeId");
 
-                    b.ToTable("UserRestrictions");
+                    b.ToTable("UserRecipes");
                 });
 
             modelBuilder.Entity("backend.Models.User", b =>
@@ -309,6 +394,12 @@ namespace backend.Migrations
                     b.Property<string>("Picture")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Preferences")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Restrictions")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -333,25 +424,6 @@ namespace backend.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("backend.Models.UserItem", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ItemName")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<float>("Quantity")
-                        .HasColumnType("real");
-
-                    b.Property<string>("Unit")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId", "ItemName");
-
-                    b.ToTable("UserItems");
                 });
 
             modelBuilder.Entity("backend.Models.UserLog", b =>
@@ -433,51 +505,59 @@ namespace backend.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("backend.Models.Preferences.UserPreference", b =>
+            modelBuilder.Entity("backend.Models.Ingredients.RecipeIngredient", b =>
                 {
-                    b.HasOne("backend.Models.Preferences.Preference", "Preference")
-                        .WithMany("UserPreferences")
-                        .HasForeignKey("PreferenceId")
+                    b.HasOne("backend.Models.Ingredients.Ingredient", "Ingredient")
+                        .WithMany("RecipeIngredients")
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.Recipes.Recipe", "Recipe")
+                        .WithMany("RecipeIngredients")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ingredient");
+
+                    b.Navigation("Recipe");
+                });
+
+            modelBuilder.Entity("backend.Models.Ingredients.UserIngredient", b =>
+                {
+                    b.HasOne("backend.Models.Ingredients.Ingredient", "Ingredient")
+                        .WithMany("UserIngredients")
+                        .HasForeignKey("IngredientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("backend.Models.User", "User")
-                        .WithMany("UserPreferences")
+                        .WithMany("UserIngredients")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Preference");
+                    b.Navigation("Ingredient");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("backend.Models.Restrictions.UserRestriction", b =>
+            modelBuilder.Entity("backend.Models.Recipes.UserRecipe", b =>
                 {
-                    b.HasOne("backend.Models.Restrictions.Restriction", "Restriction")
-                        .WithMany("UserRestrictions")
-                        .HasForeignKey("RestrictionId")
+                    b.HasOne("backend.Models.Recipes.Recipe", "Recipe")
+                        .WithMany("UserRecipes")
+                        .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("backend.Models.User", "User")
-                        .WithMany("UserRestrictions")
+                        .WithMany("favoriteRecipes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Restriction");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("backend.Models.UserItem", b =>
-                {
-                    b.HasOne("backend.Models.User", "User")
-                        .WithMany("UserItems")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Recipe");
 
                     b.Navigation("User");
                 });
@@ -491,25 +571,27 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("backend.Models.Preferences.Preference", b =>
+            modelBuilder.Entity("backend.Models.Ingredients.Ingredient", b =>
                 {
-                    b.Navigation("UserPreferences");
+                    b.Navigation("RecipeIngredients");
+
+                    b.Navigation("UserIngredients");
                 });
 
-            modelBuilder.Entity("backend.Models.Restrictions.Restriction", b =>
+            modelBuilder.Entity("backend.Models.Recipes.Recipe", b =>
                 {
-                    b.Navigation("UserRestrictions");
+                    b.Navigation("RecipeIngredients");
+
+                    b.Navigation("UserRecipes");
                 });
 
             modelBuilder.Entity("backend.Models.User", b =>
                 {
                     b.Navigation("Logs");
 
-                    b.Navigation("UserItems");
+                    b.Navigation("UserIngredients");
 
-                    b.Navigation("UserPreferences");
-
-                    b.Navigation("UserRestrictions");
+                    b.Navigation("favoriteRecipes");
                 });
 #pragma warning restore 612, 618
         }

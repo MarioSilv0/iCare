@@ -52,13 +52,13 @@ section {
 
 #profileImage {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 1/1;
   border-radius: 50%;
   transition: filter 0.3s ease-in-out;
 }
 
 .hoverable:hover #profileImage {
-  filter: brightness(80%);
+  filter: brightness(60%);
 }
 
 label.hoverable {
@@ -77,68 +77,88 @@ label.hoverable {
 }
 
 #extraData {
-  align-items: flex-end;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
   justify-content: space-between;
+  height: 100%;
 }
 
-#extraData img {
-  width: 10%;
-}
-
-#extraData div {
+#extraData #extraData-notifications {
+  margin: 0;
+  width: 100%;
   display: flex;
   flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+#extraData #extraData-controls {
+    margin: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    justify-content: space-evenly;
+}
+
+#extraData #extraData-controls input {
+  width: 100%;
+  max-width: 200px !important;
+  border: none;
+  outline: none;
+  padding: 5px;
+  font-size: .9rem;
+}
+
+#extraData #extraData-controls input:hover {
+    cursor: pointer;
 }
 
 #extraData img {
-  margin: 0% 0% 20% 20%;
+  width: 6rem;
+  margin-bottom: 2rem;
 }
 
-#extraData div label {
-  margin-right: 10%;
-}
-
-#extraData div input {
-  margin-right: 5%;
-}
-
-#userData input  {
-  margin-top: 10px;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-}
-
-#userData input[type="button"] {
-  background-color: #3B82F6;
-  color: #FFFFFF;
+#userData input[type="button"], #userData input[type="submit"] {
   transition: transform 0.2s, background-color 0.2s;
 }
 
-  #userData input[type="button"]:hover {
-    background-color: #2563EB;
-    transform: scale(1.05);
-  }
 
-  #userData input[type="button"]:active {
-    background-color: #1D4ED8;
-    transform: scale(0.95);
-  }
+#userData input[type="button"] {
+  background-color: var(--bg-cinzento);
+  color: #FFFFFF;
+}
+
+#userData input[type="button"]:hover {
+  background-color: var(--bg-cinzento-contrast);
+  transform: scale(1.05);
+}
+
+#userData input[type="button"]:active {
+  background-color: var(--bg-cinzento-contrast);
+  transform: scale(0.95);
+}
 
 #userData input[type="submit"] {
-  background-color: #8EB155;
+  background-color: var(--bg-verde);
   color: #FFFFFF;
 }
 
 #userData input[type="submit"]:hover {
-  background-color: #45a049;
+  background-color: var(--bg-verde-contrast);
   transform: scale(1.05);
 }
 
-#userData input[type="submit"]:active {
-  background-color: #3e8e41;
-  transform: scale(0.95);
-}
+  #userData input[type="submit"]:active {
+    background-color: var(--bg-verde-contrast);
+    transform: scale(0.95);
+  }
+
+#userName, #userEmail, #userHeight, #userWeight, #userBirthdate {
+    background: var(--bg-bege);
+} 
 
 #userName:hover,
 #userEmail:hover {
@@ -199,15 +219,40 @@ input[type="checkbox"] {
   }
 
   #extraData {
-    align-items: flex-start;
+    width: 100%;
+    max-width: 300px;
+    align-items: start;
   }
 
   #extraData img {
     display: none;
   }
+}
 
-  #extraData div:last-child {
-    justify-content: center;
-    width: 100%;
+@media (max-width: 320px) {
+  #extraData #extraData-controls {
+    flex-direction: column;
+    gap: .4rem;
   }
 }
+.selected-items {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.selected-item {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  background-color: #f0f0f0;
+  border-radius: 15px;
+}
+
+  .selected-item img {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    margin-left: 5px;
+  }
