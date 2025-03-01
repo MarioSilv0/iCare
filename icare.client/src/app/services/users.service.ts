@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Item } from './api.service';
 
 const URL: string = 'https://localhost:7266/api/';
 const PROFILE: string = 'PublicUser/';
@@ -18,7 +17,9 @@ export class UsersService {
   }
 
   updateUser(user: User): Observable<User> {
-    return this.http.put<User>(URL + PROFILE, { ...user });
+    const u = { ...user, preferences: Array.from(user.preferences), restrictions: Array.from(user.restrictions), categories: Array.from(user.categories) }
+
+    return this.http.put<User>(URL + PROFILE, u);
   }
 
   getInventory(): Observable<Item[]> {
@@ -34,16 +35,10 @@ export class UsersService {
   }
 }
 
-interface Preference {
-  id: number;
+export interface Item {
   name: string;
-  isSelected: boolean;
-}
-
-interface Restrictions {
-  id: number;
-  name: string;
-  isSelected: boolean;
+  quantity: number;
+  unit: string;
 }
 
 export interface User {
@@ -54,6 +49,7 @@ export interface User {
   notifications: Boolean;
   height: number;
   weight: number;
-  preferences: Preference[];
-  restrictions: Restrictions[];
+  preferences: Set<string>;
+  restrictions: Set<string>;
+  categories: Set<string>;
 }

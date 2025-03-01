@@ -13,8 +13,11 @@ import { NotificationService, updatedUserNotification, failedToEditEmailUserNoti
 })
 export class ProfileComponent implements OnInit {
   public user: User = {
-    picture: '', name: 'A', email: 'A@example.com', birthdate: new Date(), notifications: true, height: 0, weight: 0, preferences: [], restrictions: [] };
+    picture: '', name: 'Loading', email: '...', birthdate: new Date("01/01/2000"), notifications: true, height: 0, weight: 0, preferences: new Set(), restrictions: new Set(), categories: new Set() };
   public todayDate: string;
+
+  public availablePreferences: Set<string> = new Set();
+  public availableRestrictions: Set<string> = new Set();
 
   constructor(private router: Router, private service: UsersService) {
     this.todayDate = new Date().toISOString().split('T')[0];
@@ -24,10 +27,47 @@ export class ProfileComponent implements OnInit {
     this.getUser();
   }
 
+  addPreference(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const preference = target.value;
+    if (!preference) return;
+
+    this.user.preferences.add(preference);
+    this.availablePreferences.delete(preference);
+
+    target.value = "";
+  }
+
+  removePreference(preference: string) {
+    this.user.preferences.delete(preference);
+    this.availablePreferences.add(preference);
+  }
+
+  addRestriction(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    const restriction = target.value;
+    if (!restriction) return;
+
+    this.user.restrictions.add(restriction);
+    this.availableRestrictions.delete(restriction);
+
+    target.value = "";
+  }
+
+  removeRestriction(restriction: string) {
+    this.user.restrictions.delete(restriction);
+    this.availableRestrictions.add(restriction);
+  }
+
   getUser() {
     this.service.getUser().subscribe(
       (result) => {
-        this.user = result;
+        this.user = { ...result, categories: new Set(result.categories), preferences: new Set(result.preferences), restrictions: new Set(result.restrictions)};
+
+        for (const c of this.user.categories) {
+          if (!this.user.preferences.has(c)) this.availablePreferences.add(c);
+          if (!this.user.restrictions.has(c)) this.availableRestrictions.add(c);
+        }
       },
       (error) => {
         console.error(error);

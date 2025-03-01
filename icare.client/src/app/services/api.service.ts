@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 const URL: string = 'https://localhost:7266/api/';
-const INVENTORY: string = 'Inventory/';
+const INGREDIENT: string = 'Ingredient/';
 
 @Injectable({
   providedIn: 'root'
@@ -11,33 +11,22 @@ const INVENTORY: string = 'Inventory/';
 export class ApiService {
   constructor(private http: HttpClient) { }
 
-  getAllItems(): Observable<Item[]> {
-    return this.http.get<Item[]>(URL + INVENTORY);
+  getAllItems(): Observable<string[]> {
+    return this.http.get<string[]>(URL + INGREDIENT);
   }
 
-  getSpecificItem(itemName: string): Observable<Item | Item[]> {
-    return this.http.get<Item[]>(URL + INVENTORY);
+  getSpecificItem(itemName: string): Observable<Ingredient> {
+    return this.http.get<Ingredient>(URL + INGREDIENT + itemName);
   }
-}
-
-export interface Item {
-  name: string;
-  quantity: number;
-  unit: string;
-}
-
-interface Category {
-  name: string;
-}
-interface MacroNutrients {
-  kcal: number;
-  kJ: number;
-  protein: number;
-  carbohydrates: number;
 }
 
 export interface Ingredient {
   name: string;
-  nutrients: MacroNutrients;
-  category: Category;
+  kcal: number;
+  kj: number;
+  protein: number;
+  carbohydrates: number;
+  lipids: number;
+  fibers: number;
+  category: string;
 }

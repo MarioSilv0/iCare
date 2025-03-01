@@ -5,18 +5,19 @@
 /// <author>Luís Martins - 202100239</author>
 /// <author>João Morais - 202001541</author>
 /// <date>Last Modified: 2025-02-19</date>
-namespace backend.Models
+namespace backend.Models.Ingredients
 {
     /// <summary>
     /// The <c>UserItem</c> class represents an item that belongs to a user, 
     /// including the item's name, quantity, and the associated user.
     /// </summary>
-    public class UserItem
+    public class UserIngredient
     {
         /// <summary>
         /// Gets or sets the name of the item.
         /// </summary>
-        public string ItemName { get; set; }
+        public int IngredientId { get; set; }
+        public Ingredient Ingredient { get; set; }
 
         /// <summary>
         /// Gets or sets the quantity of the item.
