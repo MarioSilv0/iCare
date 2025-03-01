@@ -10,27 +10,32 @@
 namespace backend.Models.Extensions
 {
     /// <summary>
-    /// The <c>CollectionExtensions</c> static class provides extension methods for working with collections.
+    /// The <c>CollectionExtensions</c> static class provides helper methods to manipulate and validate collections.
+    /// It includes utility functions that ensure collections adhere to predefined constraints, improving 
+    /// data integrity and preventing invalid data from persisting.
     /// </summary>
     public static class CollectionExtensions
     {
         /// <summary>
-        /// Ensures that the elements of the given collection exist in a provided list of valid items.
+        /// Ensures that the elements in the given collection exist in a provided list of valid items.
         /// Any elements not found in <paramref name="allItems"/> are removed from <paramref name="collection"/>.
         /// </summary>
         /// <param name="collection">The collection to be validated and fixed.</param>
         /// <param name="allItems">A list of valid items that should be retained in the collection.</param>
-        public static void FixCollection(this ICollection<string> collection, List<string> allItems)
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if either <paramref name="collection"/> or <paramref name="allItems"/> is null.
+        /// </exception>
+        public static void FixCollection(this ICollection<string> collection, IEnumerable<string> allItems)
         {
             ArgumentNullException.ThrowIfNull(collection);
             ArgumentNullException.ThrowIfNull(allItems);
-            
-            HashSet<string> c = new(allItems);
-            foreach (var e in collection)
-            {
-                if(c.Contains(e)) continue;
 
-                collection.Remove(e);
+            HashSet<string> validItems = new(allItems);
+
+            var itemsToRemove = collection.Where(e => !validItems.Contains(e)).ToList();
+            foreach (var item in itemsToRemove)
+            {
+                collection.Remove(item);
             }
         }
     }
