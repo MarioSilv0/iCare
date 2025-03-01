@@ -30,6 +30,7 @@ export class InventoryComponent {
 
   public itemDetails: Map<string, Ingredient> = new Map();
 
+  public units: string[] = ["g", "kg"]
   constructor(private service: UsersService, private api: ApiService) {
     this.searchSubject.pipe(debounceTime(300)).subscribe(() => this.filterItems());
   }
@@ -135,6 +136,7 @@ export class InventoryComponent {
 
     this.api.getSpecificItem(item).subscribe(
       (result) => {
+        console.log({result})
         this.itemDetails = this.itemDetails.set(item, result);
       },
       (error) => {
@@ -163,10 +165,22 @@ export class InventoryComponent {
 
   updateUnit(item: string, event: Event) {
     const inventoryItem = this.inventory.get(item);
-    if (!inventoryItem) return;
+    const itemDetails = this.itemDetails.get(item);
+    if (!inventoryItem || !itemDetails || !inventoryItem.unit) return;
 
-    const value = (event.target as HTMLInputElement).value.toLowerCase();
-    inventoryItem.unit = value.slice(0, 3);
+    const value = (event.target as HTMLSelectElement).value.toLowerCase();
+    inventoryItem.unit = value;
+    let macros = this.updateMacroByUnit(inventoryItem, itemDetails)
+    this.itemDetails.set(item, {
+      name: itemDetails.name,
+      category: itemDetails.category,
+      kcal: itemDetails.kcal,
+      kj: itemDetails.kj,
+      protein: macros.protein,
+      carbohydrates: macros.carbs,
+      lipids: macros.lipids,
+      fibers: macros.fibers
+    })
     this.editedItems.add(item);
   }
 
@@ -272,5 +286,25 @@ export class InventoryComponent {
       const modal = new bootstrap.Modal(modalElement);
       modal.show();
     }
+  }
+
+  updateMacroByUnit(inventory: {quantity: number, unit: string}, details: Ingredient) {
+    let { quantity, unit } = inventory;
+    let { protein, carbohydrates, lipids, fibers, name, category, kcal, kj } = details
+
+    const quantityInGrams = unit === 'kg' ? this.fromKilogramsToGrams(quantity) : quantity;
+
+    const totalMacros = {
+      carbs: carbohydrates * quantityInGrams,
+      protein: protein * quantityInGrams,
+      lipids: lipids * quantityInGrams,
+      fibers: fibers * quantityInGrams
+    };
+
+    return totalMacros;
+  }
+
+  private fromKilogramsToGrams(quantity: number): number {
+    return quantity * 1000;
   }
 }

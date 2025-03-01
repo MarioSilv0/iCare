@@ -1,3 +1,26 @@
+
+.pg-protaina {
+  accent-color: var(--bg-vermelho-contrast);
+}
+
+.pg-hidratos {
+  accent-color: #37383a;
+}
+
+.pg-lipidos {
+    accent-color: var(--bg-azul);
+}
+
+.pg-fibras {
+    accent-color: green;
+}
+
+progress {
+    height: 20px;
+    margin: 0;
+    width: 100%;
+}
+
 .container {
   width: 100%;
   display: flex;
