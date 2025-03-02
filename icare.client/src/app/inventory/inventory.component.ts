@@ -1,3 +1,14 @@
+/**
+ * @file Defines the `InventoryComponent` class, responsible for managing the user's inventory.
+ * It provides functionalities for searching, selecting, modifying, and updating inventory items.
+ * 
+ * @author João Morais  - 202001541
+ * @author Luís Martins - 202100239
+ * @author Mário Silva  - 202000500
+ * 
+ * @date Last Modified: 2025-03-01
+ */
+
 import { Component } from '@angular/core';
 import { UsersService, Item } from '../services/users.service';
 import { ApiService, Ingredient } from '../services/api.service';
@@ -14,6 +25,10 @@ declare var bootstrap: any;
   styleUrl: './inventory.component.css'
 })
 
+/**
+  * The `InventoryComponent` class manages the user's inventory,
+  * allowing the user to add, remove, and update items while handling notifications.
+  */
 export class InventoryComponent {
   private notificationsPermission: boolean = true;
   public searchTerm: string = "";
@@ -34,6 +49,10 @@ export class InventoryComponent {
     this.searchSubject.pipe(debounceTime(300)).subscribe(() => this.filterItems());
   }
 
+  /**
+   * Initializes the inventory component, retrieves user notification settings,
+   * and loads the current inventory.
+   */
   ngOnInit() {
     try {
       const storage = localStorage.getItem('user');
@@ -47,14 +66,24 @@ export class InventoryComponent {
     this.getInventory();
   }
 
+  /**
+   * @returns {Array} An array of inventory items. 
+   */
   get inventoryArray() {
     return Array.from(this.inventory.entries());
   }
 
+  /**
+   * @returns {Array} An array of all available item names. 
+   */
   get listOfItemsArray() {
     return Array.from(this.listOfItems);
   }
 
+  /**
+   * Toggles the selection state of an item in the list.
+   * @param {string} item - The name of the item to toggle.
+   */
   toggleSelection(item: string) {
     if (this.selectedItems.has(item)) {
       this.selectedItems.delete(item);
@@ -63,6 +92,10 @@ export class InventoryComponent {
     }
   }
 
+  /**
+   * Toggles the selection state of an inventory item.
+   * @param {string} item - The name of the item to toggle.
+   */
   toggleInventorySelection(item: string) {
     if (this.selectedItemsInInventory.has(item)) {
       this.selectedItemsInInventory.delete(item);
@@ -71,6 +104,9 @@ export class InventoryComponent {
     }
   }
 
+  /**
+   * Toggles selection for all inventory items.
+   */
   toggleAllInventorySelection() {
     if (this.selectedItemsInInventory.size === this.inventory.size) {
       this.selectedItemsInInventory.clear();
@@ -81,6 +117,10 @@ export class InventoryComponent {
     }
   }
 
+  /**
+   * Toggles the expanded details view for a specific item.
+   * @param {string} item - The name of the item.
+   */
   toggleDetails(item: string) {
     if (this.expandedItems.has(item)) {
       this.expandedItems.delete(item);
@@ -90,16 +130,25 @@ export class InventoryComponent {
     }
   }
 
+  /**
+   * Handles search input changes and triggers filtering.
+   */
   onSearchChange() {
     this.searchSubject.next(this.searchTerm);
   }
 
+  /**
+   * Filters available items based on the search term.
+   */
   filterItems() {
     const query = this.searchTerm.toLowerCase().trim();
 
     this.filteredItems = Array.from(this.listOfItems).filter(n => n.toLowerCase().includes(query))
   }
 
+  /**
+   * Retrieves the current inventory from the server.
+   */
   getInventory() {
     this.service.getInventory().subscribe(
       (result) => {
@@ -115,6 +164,9 @@ export class InventoryComponent {
     );
   }
 
+  /**
+   * Retrieves the list of all available items.
+   */
   getListItems() {
     this.api.getAllItems().subscribe(
       (result) => {
@@ -130,6 +182,10 @@ export class InventoryComponent {
     );
   }
 
+  /**
+   * Fetches details for a specific item.
+   * @param {string} item - The name of the item.
+   */
   getItemDetails(item: string): void {
     if (this.itemDetails.has(item)) return;
 
@@ -144,23 +200,30 @@ export class InventoryComponent {
     );
   }
 
+  /**
+   * Updates the quantity of an inventory item.
+   * @param {string} item - The name of the item.
+   * @param {Event} event - The event from the input field.
+   */
   updateQuantity(item: string, event: Event): void {
     const inventoryItem = this.inventory.get(item);
     if (!inventoryItem) return;
 
     const input = event.target as HTMLInputElement
     let newValue = +(input).value;
+    newValue = Math.max(0, Math.round(newValue * 100) / 100);
     if (newValue === inventoryItem.quantity) return;
-
-    // No negative numbers and rounded to 2 decimal places
-    newValue = Math.max(0, newValue);
-    newValue = Math.round(newValue * 100) / 100;
 
     input.value = newValue.toFixed(2);
     inventoryItem.quantity = newValue;
     this.editedItems.add(item);
   }
 
+  /**
+   * Updates the unit of measurement for an inventory item.
+   * @param {string} item - The name of the item.
+   * @param {Event} event - The event from the input field.
+   */
   updateUnit(item: string, event: Event) {
     const inventoryItem = this.inventory.get(item);
     if (!inventoryItem) return;
@@ -170,6 +233,9 @@ export class InventoryComponent {
     this.editedItems.add(item);
   }
 
+  /**
+   * Adds selected items to the inventory.
+   */
   addItemsToInventory() {
     const addedItems: Item[] = Array.from(this.selectedItems).map(n => { return { name: n, quantity: 1, unit: "" } });
 
@@ -195,6 +261,10 @@ export class InventoryComponent {
     );
   }
 
+  /**
+   * Checks if there are any inventory items with a quantity of zero.
+   * If found, prompts the user to confirm deletion; otherwise, updates the inventory.
+   */
   checkForEmptyItems() {
     const allItems = Array.from(this.inventory.keys());
     if (allItems.some(n => this.inventory.get(n)?.quantity === 0)) {
@@ -204,6 +274,12 @@ export class InventoryComponent {
     }
   }
 
+  /**
+   * Updates the inventory with modified item quantities and units.
+   * If `removeZeroQuantity` is true, removes items with zero quantity after updating.
+   *
+   * @param {boolean} [removeZeroQuantity=false] - Whether to remove items with zero quantity after updating.
+   */
   updateItemsInInventory(removeZeroQuantity: boolean = false) {
     const updatedItems: Item[] = Array.from(this.editedItems).map(n => { return { name: n, quantity: this.inventory.get(n)?.quantity ?? 0, unit: this.inventory.get(n)?.unit ?? "" } });
     if (updatedItems.length === 0 && !removeZeroQuantity) return;
@@ -240,6 +316,10 @@ export class InventoryComponent {
     );
   }
 
+  /**
+   * Removes selected items from the inventory.
+   * @param {string[]} [itemsToDelete] - Optional list of items to delete.
+   */
   removeItemFromInventory(itemsToDelete: string[] | null | undefined) {
     const itemsToRemove: string[] = itemsToDelete ?? Array.from(this.selectedItemsInInventory);
     if (itemsToRemove.length === 0) return;
@@ -266,6 +346,10 @@ export class InventoryComponent {
     );
   }
 
+  /**
+   * Opens a Bootstrap modal by its ID.
+   * @param {string} id - The ID of the modal to be opened.
+   */
   openModal(id: string) {
     const modalElement = document.getElementById(id);
     if (modalElement) {
