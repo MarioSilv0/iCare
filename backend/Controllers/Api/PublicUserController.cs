@@ -1,4 +1,13 @@
-﻿using backend.Data;
+﻿/// <summary>
+/// This file defines the <c>PublicUserController</c> class, responsible for managing the public profiles of authenticated users.
+/// It provides API endpoints for retrieving and updating user profile data based on authentication tokens.
+/// </summary>
+/// <author>João Morais  - 202001541</author>
+/// <author>Luís Martins - 202100239</author>
+/// <author>Mário Silva  - 202000500</author>
+/// <date>Last Modified: 2025-03-01</date>
+
+using backend.Data;
 using backend.Models;
 using backend.Models.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -6,18 +15,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-/// <summary>
-/// This file defines the <c>PublicUserController</c> class, responsible for managing public user profiles.
-/// It provides API endpoints for retrieving and updating user data based on authentication tokens.
-/// </summary>
-/// <author>Luís Martins - 202100239</author>
-/// <author>João Morais  - 202001541</author>
-/// <date>Last Modified: 2025-02-06</date>
 namespace backend.Controllers.Api
 {
     /// <summary>
-    /// Controller <c>PublicUserController</c> manages public user profiles.
-    /// It allows authenticated users to retrieve and update their profile information.
+    /// Controller <c>PublicUserController</c> manages the public profiles of authenticated users.
+    /// It allows users to retrieve and update their public profile information.
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
@@ -120,6 +122,13 @@ namespace backend.Controllers.Api
             }
         }
 
+        /// <summary>
+        /// Checks whether the provided email is unique in the system.
+        /// </summary>
+        /// <param name="email">The email to check for uniqueness.</param>
+        /// <returns>
+        /// <c>true</c> if the email is unique; otherwise, <c>false</c>.
+        /// </returns>
         private async Task<bool> IsEmailUnique(string? email)
         {
             if (email == null) return false;

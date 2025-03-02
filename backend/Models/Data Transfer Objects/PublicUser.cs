@@ -2,62 +2,81 @@
 /// This file defines the <c>PublicUser</c> class, which represents a user's publicly
 /// accessible profile, including preferences and restrictions.
 /// </summary>
-/// <author>Luís Martins - 202100239</author>
 /// <author>João Morais  - 202001541</author>
-/// <date>Last Modified: 2025-01-27</date>
+/// <author>Luís Martins - 202100239</author>
+/// <author>Mário Silva  - 202000500</author>
+/// <date>Last Modified: 2025-03-01</date>
+
 namespace backend.Models
 {
     /// <summary>
-    /// Class <c>PublicUser</c> represents a user's public profile with personal details,
-    /// preferences, and restrictions.
+    /// The <c>PublicUser</c> class represents a user's public profile, including personal details,
+    /// preferences, and dietary restrictions. This class is used for data transfer where only
+    /// publicly available user information is needed.
     /// </summary>
     public class PublicUser
     {
-        /// <value>
-        /// Property <c>Picture</c> represents the user's profile picture URL.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the URL of the user's profile picture.
+        /// </summary>
         public string? Picture { get; set; }
 
-        /// <value>
-        /// Property <c>Name</c> represents the user's name.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the user's name.
+        /// </summary>
         public string? Name { get; set; }
 
-        /// <value>
-        /// Property <c>Email</c> represents the user's email address.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the user's email address.
+        /// </summary>
         public string? Email { get; set; }
 
-        /// <value>
-        /// Property <c>Birthdate</c> represents the user's birthdate.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the user's birthdate.
+        /// </summary>
         public DateOnly Birthdate { get; set; }
 
-        /// <value>
-        /// Property <c>Notifications</c> indicates whether the user has notifications enabled.
-        /// </value>
+        /// <summary>
+        /// Gets or sets a value indicating whether the user has notifications enabled.
+        /// </summary>
         public Boolean Notifications { get; set; }
 
-        /// <value>
-        /// Property <c>Height</c> represents the user's height in meters.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the user's height in meters.
+        /// </summary>
         public float Height { get; set; }
 
-        /// <value>
-        /// Property <c>Weight</c> represents the user's weight in kilograms.
-        /// </value>
+        /// <summary>
+        /// Gets or sets the user's weight in kilograms.
+        /// </summary>
         public float Weight { get; set; }
 
-        
+        /// <summary>
+        /// Gets or sets the user's preferred food categories.
+        /// </summary>
         public List<string> Preferences { get; set; } = new();
+
+        /// <summary>
+        /// Gets or sets the user's dietary restrictions.
+        /// </summary>
         public List<string> Restrictions { get; set; } = new();
+
+        /// <summary>
+        /// Gets or sets the list of available food categories.
+        /// </summary>
         public List<string> Categories { get; set; } = new();
 
         /// <summary>
-        /// Default constructor for the <c>PublicUser</c> class.
+        /// Initializes a new instance of the <c>PublicUser</c> class.
         /// </summary>
         public PublicUser() { }
 
+        /// <summary>
+        /// Initializes a new instance of the <c>PublicUser</c> class with data from an existing user.
+        /// </summary>
+        /// <param name="user">The user entity containing profile information.</param>
+        /// <param name="model">An optional existing <c>PublicUser</c> model to retrieve preferences and restrictions from.</param>
+        /// <param name="categories">A list of available food categories.</param>
         public PublicUser(User user, PublicUser? model, List<string> categories)
         {
             Picture = user.Picture;

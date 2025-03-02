@@ -1,14 +1,25 @@
-﻿using backend.Data;
+﻿/// <summary>
+/// This file defines the <c>IngredientController</c> class, responsible for managing ingredient data.
+/// It provides API endpoints for retrieving all ingredient names and detailed information about specific ingredients.
+/// </summary>
+/// <author>João Morais  - 202001541</author>
+/// <author>Luís Martins - 202100239</author>
+/// <author>Mário Silva  - 202000500</author>
+/// <date>Last Modified: 2025-03-01</date> 
+
+using backend.Data;
 using backend.Models.Data_Transfer_Objects;
-using backend.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using backend.Models.Ingredients;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers.Api
 {
+    /// <summary>
+    /// Controller <c>IngredientController</c> manages ingredients for authenticated users.
+    /// It provides endpoints for retrieving ingredient names and detailed information about individual ingredients.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -20,7 +31,7 @@ namespace backend.Controllers.Api
         /// <summary>
         /// Initializes a new instance of the <c>IngredientController</c> class.
         /// </summary>
-        /// <param name="context">The database context for accessing user data.</param>
+        /// <param name="context">The database context for accessing ingredient data.</param>
         /// <param name="logger">The logger instance for logging application activity.</param>
         public IngredientController(ICareServerContext context, ILogger<IngredientController> logger)
         {
@@ -29,7 +40,7 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
-        /// Retrieves all ingredient names.
+        /// Retrieves all ingredient names from the database.
         /// </summary>
         /// <returns>
         /// An <c>ActionResult</c> containing a list of ingredient names, or an error response otherwise.
@@ -55,11 +66,11 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
-        /// Retrieves information about a specific ingredient.
+        /// Retrieves detailed information about a specific ingredient.
         /// </summary>
-        /// <param name="ingredientName">The name of the ingredient to retrieve.</param>
+        /// <param name="ingredientName">The name of the ingredient to retrieve information for.</param>
         /// <returns>
-        /// An <c>ActionResult</c> containing the ingredient if found, or <c>NotFound</c> if not found.
+        /// An <c>ActionResult</c> containing the ingredient details if found, or <c>NotFound</c> if the ingredient is not found.
         /// </returns>
         [HttpGet("{ingredientName}")]
         public async Task<ActionResult<PublicIngredient>> Get(string ingredientName)

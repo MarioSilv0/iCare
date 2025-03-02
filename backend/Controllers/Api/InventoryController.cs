@@ -1,4 +1,13 @@
-﻿using backend.Data;
+﻿/// <summary>
+/// This file defines the <c>InventoryController</c> class, responsible for managing the inventory of ingredients for authenticated users.
+/// It provides API endpoints for retrieving, updating, and deleting user ingredients based on authentication tokens.
+/// </summary>
+/// <author>João Morais  - 202001541</author>
+/// <author>Luís Martins - 202100239</author>
+/// <author>Mário Silva  - 202000500</author>
+/// <date>Last Modified: 2025-03-01</date>
+
+using backend.Data;
 using backend.Models.Data_Transfer_Objects;
 using backend.Models.Ingredients;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,10 +26,10 @@ namespace backend.Controllers.Api
         private readonly ILogger<InventoryController> _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <c>InventoryController</c> class.
+        /// Initializes the <c>InventoryController</c> with necessary dependencies.
         /// </summary>
-        /// <param name="context">The database context for accessing user data.</param>
-        /// <param name="logger">The logger instance for logging application activity.</param>
+        /// <param name="context">The database context used for accessing user data and ingredients.</param>
+        /// <param name="logger">The logger instance used for logging errors and events.</param>
         public InventoryController(ICareServerContext context, ILogger<InventoryController> logger)
         {
             _context = context;
@@ -28,10 +37,10 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
-        /// Retrieves the ingredients of the authenticated user.
+        /// Retrieves the list of ingredients for the authenticated user.
         /// </summary>
         /// <returns>
-        /// An <c>ActionResult</c> containing the <c>List<PublicItem></c> object if found, or an error response otherwise.
+        /// A list of <see cref="PublicItem"/> representing the user's ingredients, or an error response if an issue occurs.
         /// </returns>
         [HttpGet("")]
         public async Task<ActionResult<List<PublicItem>>> Get()
@@ -61,10 +70,11 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
-        /// Adds or updates the ingredients to the authenticated user.
+        /// Adds or updates the ingredients for the authenticated user.
         /// </summary>
+        /// <param name="newItems">A list of <see cref="PublicItem"/> representing the new or updated ingredients.</param>
         /// <returns>
-        /// An <c>ActionResult</c> containing the <c>List<PublicItem></c> object if found and added/updated correctly, or an error response otherwise.
+        /// A list of <see cref="PublicItem"/> representing the updated ingredients, or an error response if an issue occurs.
         /// </returns>
         [HttpPut("")]
         public async Task<ActionResult<List<PublicItem>>> Update([FromBody] List<PublicItem> newItems)
@@ -73,6 +83,14 @@ namespace backend.Controllers.Api
             {
                 var id = User.FindFirst("UserId")?.Value;
                 if (id == null) return Unauthorized("User ID not found in token.");
+
+                if (newItems == null || !newItems.Any())
+                {
+                    var currentItems = await _context.UserIngredients.Where(ui => ui.UserId == id)
+                                                                     .Select(i => new PublicItem { Name = i.Ingredient.Name, Quantity = i.Quantity, Unit = i.Unit })
+                                                                     .ToListAsync();
+                    return Ok(currentItems);
+                }
 
                 var userIngredients = await _context.UserIngredients
                                                     .Where(ui => ui.UserId == id)
@@ -86,9 +104,12 @@ namespace backend.Controllers.Api
                     // Add Item
                     if (!userIngredients.TryGetValue(item.Name, out var existingIngredient))
                     {
-                        if (!ingredients.TryGetValue(item.Name, out var ingredient)) return BadRequest($"Ingredient '{item.Name}' does not exist.");
+                        if (!ingredients.TryGetValue(item.Name, out var ingredient)) continue;
 
-                        _context.UserIngredients.Add(new UserIngredient { IngredientId = ingredient.Id, Quantity = item.Quantity, Unit = item.Unit, UserId = id });
+                        var ui = new UserIngredient { IngredientId = ingredient.Id, Quantity = item.Quantity, Unit = item.Unit, UserId = id };
+                        _context.UserIngredients.Add(ui);
+                        userIngredients.Add(item.Name, ui);
+
                     }
                     else //Edit Item
                     {
@@ -112,10 +133,11 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
-        /// Deletes the ingredients of the authenticated user.
+        /// Deletes the specified ingredients from the authenticated user's inventory.
         /// </summary>
+        /// <param name="nameOfItemsToRemove">A list of ingredient names to be removed from the user's inventory.</param>
         /// <returns>
-        /// An <c>ActionResult</c> containing the <c>List<PublicItem></c> object if found and deleted correctly, or an error response otherwise.
+        /// A list of <see cref="PublicItem"/> representing the remaining ingredients after deletion, or an error response if an issue occurs.
         /// </returns>
         [HttpDelete("")]
         public async Task<ActionResult<List<PublicItem>>> Delete([FromBody] List<string> nameOfItemsToRemove)
