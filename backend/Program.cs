@@ -5,25 +5,26 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 
-/// <author>Mário Silva - 202000500</author>
-/// <author>Luís Martins - 202100239</author>
+/// <author>MÃ¡rio Silva - 202000500</author>
+/// <author>LuÃ­s Martins - 202100239</author>
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuração de serviços
+// ConfiguraÃ§Ã£o de serviÃ§os
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Configuração do banco de dados
+// ConfiguraÃ§Ã£o do banco de dados
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ICareServerContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Configuração do Identity
+// ConfiguraÃ§Ã£o do Identity
 builder.Services
     .AddIdentity<User, IdentityRole>(options =>
     {
@@ -39,7 +40,10 @@ builder.Services
     .AddDefaultTokenProviders()
     .AddDefaultUI();
 
-// Configuração de autenticação e JWT
+// ConfiguraÃ§Ã£o de autenticaÃ§Ã£o e JWT
+var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not found.");
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT Issuer not found.");
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? throw new InvalidOperationException("JWT Audience not found.");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -51,35 +55,38 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtKey))
         };
     });
 
+
 builder.Services.AddAuthorization();
 
-// Configuração de serialização JSON
+// ConfiguraÃ§Ã£o de serializaÃ§Ã£o JSON
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-// Configuração de CORS
+// ConfiguraÃ§Ã£o de CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins("https://localhost:4200")
-              .WithOrigins("https://127.0.0.1:4200")
-              .WithOrigins("https://icaresite.azurewebsites.net")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        policy.WithOrigins(
+            "https://localhost:4200",
+            "https://127.0.0.1:4200",
+            "https://icaresite.azurewebsites.net"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
 
-// Evitar redirecionamentos automáticos
+
+// Evitar redirecionamentos automÃ¡ticos
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Events.OnRedirectToLogin = context =>
@@ -89,15 +96,14 @@ builder.Services.ConfigureApplicationCookie(options =>
     };
 });
 
-// Serviços personalizados
+// ServiÃ§os personalizados
 builder.Services.AddScoped<UserLogService>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<EmailSenderService>();
 
-
 var app = builder.Build();
 
-// Execução de migrações e seeding de dados
+// ExecuÃ§Ã£o de migraÃ§Ãµes e seeding de dados
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -108,7 +114,7 @@ using (var scope = app.Services.CreateScope())
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = services.GetRequiredService<UserManager<User>>();
 
-        // Aplicar migrações
+        // Aplicar migraÃ§Ãµes
         await context.Database.MigrateAsync();
 
         // Executar seeding
@@ -119,13 +125,12 @@ using (var scope = app.Services.CreateScope())
     {
         // Log do erro
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Ocorreu um erro ao aplicar migrações ou executar o seeding.");
+        logger.LogError(ex, "Ocorreu um erro ao aplicar migraÃ§Ãµes ou executar o seeding.");
         throw;
     }
 }
 
-
-// Configuração do pipeline de middleware
+// ConfiguraÃ§Ã£o do pipeline de middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -150,22 +155,23 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapRazorPages();
 app.MapGroup("/api");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Append("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
-    context.Response.Headers.Append("Cross-Origin-Embedder-Policy", "credentialless");
-    await next();
-});
-
+//app.Use(async (context, next) =>
+//{
+//    context.Response.Headers.Append("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+//    context.Response.Headers.Append("Cross-Origin-Embedder-Policy", "credentialless");
+//    await next();
+//});
 
 app.Use(async (context, next) =>
 {
     if (context.Request.Path.Value != null &&
         !context.Request.Path.Value.StartsWith("/api") &&
+        !context.Request.Path.Value.StartsWith("/swagger") &&
         !System.IO.Path.HasExtension(context.Request.Path.Value))
     {
         context.Request.Path = "/index.html";
@@ -173,6 +179,5 @@ app.Use(async (context, next) =>
     await next();
 });
 app.UseStaticFiles();
-
 
 app.Run();

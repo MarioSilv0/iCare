@@ -24,7 +24,8 @@ export class AppComponent {
         if (
           currentRoute.includes('login') ||
           currentRoute.includes('register') ||
-          currentRoute.includes('password')
+          currentRoute.includes('reset-password')||
+          currentRoute.includes('recover-password')
         ) {
           this.showHeader = false;
           this.showNavMenu = false;

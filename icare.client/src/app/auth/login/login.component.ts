@@ -65,13 +65,12 @@ export class LoginComponent {
       },
       error: (err) => {
         this.errorMessage = 'Invalid login credentials';
-        console.error('login credentials:', err);
+        console.error('login credentials:', err.message);
       },
     });
   }
 
   onGoogleLogin(response: any): void {
-    console.log('Token de ID recebido:', response.credential);
     this.authService.googleLogin(response.credential).subscribe({
       next: () => {
         this.ngZone.run(() => {
@@ -79,7 +78,7 @@ export class LoginComponent {
         });
       },
       error: (err) => {
-        console.error('Erro ao processar login via Google:', err);
+        console.error('Erro ao processar login via Google:', err.message);
       }
     });
   }

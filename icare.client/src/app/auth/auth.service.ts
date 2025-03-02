@@ -49,8 +49,9 @@ export class AuthService {
   }
 
   public userHasRole(role: string): boolean {
-    const roles = this.getUserRoles();
-    return roles?.includes(role) ?? false;
+    const roles = this.getUserRoles() ?? '';
+    return roles.includes(role);
+    //return roles?.includes(role) ?? false;
   }  
 
   public login(credentials: { email: string; password: string }): Observable<any> {
@@ -101,7 +102,4 @@ export class AuthService {
   public confirmEmail(email: string, token: string): Observable<any> {
     return this.http.get(`/api/account/confirm-email?email=${email}&token=${token}`);
   }
-
-
-
 }

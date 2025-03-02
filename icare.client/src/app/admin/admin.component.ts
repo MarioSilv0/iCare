@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RecipeComponent } from '../recipe/recipe.component';
 
 @Component({
   selector: 'app-admin',
@@ -7,4 +8,8 @@ import { Component } from '@angular/core';
 })
 export class AdminComponent {
 
+  constructor() { }
+
+
 }
+

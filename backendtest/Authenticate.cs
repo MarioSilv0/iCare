@@ -1,22 +1,23 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using System.Security.Claims;
-
-/// <summary>
+﻿/// <summary>
 /// This file contains the <c>Authenticate</c> class, which is used for unit testing.
 /// It provides a helper method to set a user token by adding a "UserId" claim to a controller's HTTP context.
 /// This ensures that controller actions requiring authentication can be tested effectively.
 /// </summary>
+/// <author>João Morais  - 202001541</author>
 /// <author>Luís Martins - 202100239</author>
-/// <author>João Morais - 202001541</author>
-/// <date>Last Modified: 2025-02-19</date>
+/// <author>Mário Silva  - 202000500</author>
+/// <date>Last Modified: 2025-03-01</date>
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
 namespace backendtest
 {
     /// <summary>
-    /// Provides authentication utilities for unit tests.
-    /// This class allows setting a "UserId" claim within a controller’s HTTP context 
-    /// to simulate an authenticated user during testing.
+    /// The <c>Authenticate</c> class provides authentication utilities for unit tests.
+    /// It enables the simulation of an authenticated user by setting a "UserId" claim 
+    /// within a controller's HTTP context.
     /// </summary>
     public class Authenticate
     {

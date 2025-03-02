@@ -1,54 +1,56 @@
-﻿//using backend.Models;
-//using backend.Models.Extensions;
+﻿/// <summary>
+/// This file defines the <c>CollectionExtensionTests</c> class, which contains unit tests 
+/// for the <c>FixCollection</c> extension method in <see cref="CollectionExtensions"/>.
+/// These tests validate that the method correctly filters collections and handles invalid parameters.
+/// </summary>
+/// <author>João Morais  - 202001541</author>
+/// <author>Luís Martins - 202100239</author>
+/// <author>Mário Silva  - 202000500</author>
+/// <date>Last Modified: 2025-03-01</date>
 
-///// <summary>
-///// This file contains unit tests for the <c>CollectionExtensions</c> class.
-///// These tests verify the functionality of the <c>UpdateCollection</c> extension method for the <c>ICollection</c> interface.
-///// Specifically, it tests how the method handles various parameter scenarios, including invalid inputs and successful collection updates.
-///// </summary>
-///// <author>Luís Martins - 202100239</author>
-///// <author>João Morais  - 202001541</author>
-///// <date>Last Modified: 2025-01-30</date>
+using backend.Models.Extensions;
 
+namespace backendtest
+{
+    /// <summary>
+    /// The <c>CollectionExtensionTests</c> class contains unit tests for the <see cref="CollectionExtensions.FixCollection"/> method.
+    /// It verifies correct handling of invalid parameters and ensures the method properly filters collections.
+    /// </summary>
+    public class CollectionExtensionTests
+    {
+        /// <summary>
+        /// Tests that <c>FixCollection</c> throws an <see cref="ArgumentNullException"/> 
+        /// when either the collection or the list of valid items is null.
+        /// </summary>
+        [Fact]
+        public async Task FixCollection_WhenParametersAreInvalid_ThrowsArgumentNullException()
+        {
+            List<string>? allItems = ["Item1", "Item2"];
 
-//namespace backendtest
-//{
-//    /// <summary>
-//    /// Test class for the <c>CollectionExtensions</c> class.
-//    /// This class includes tests for the <c>UpdateCollection</c> method, covering edge cases and validation of parameters.
-//    /// </summary>
-//    public class CollectionExtensionTests
-//    {
-//        [Fact]
-//        public async Task UpdateCollection_WhenParametersAreInvalid_ThrowsArgumentNullException() 
-//        {
-//            ICollection<Preferences>? preferences = null;
-//            List<SelectionObject>? selectionObjects = [ new() { Id = 1, IsSelected = true } ];
-//            Func<SelectionObject, Preferences>? func = e => new Preferences { UserId = "123", PreferenceId = e.Id };
+            ICollection<string>? collection = null;
+            Assert.Throws<ArgumentNullException>(() => collection.FixCollection(allItems));
 
-//            Assert.Throws<ArgumentNullException>(() => preferences.UpdateCollection(selectionObjects, func));
+            allItems = null;
+            collection = [];
+            Assert.Throws<ArgumentNullException>(() => collection.FixCollection(allItems));
+        }
 
-//            preferences = [];
-//            selectionObjects = null;
-//            Assert.Throws<ArgumentNullException>(() => preferences.UpdateCollection(selectionObjects, func));
+        /// <summary>
+        /// Tests that <c>FixCollection</c> correctly filters the collection, 
+        /// removing elements not present in the valid items list.
+        /// </summary>
+        [Fact]
+        public async Task FixCollection_WhenParametersAreValid_FixesCollectionCorrectly()
+        {
+            string item2 = "Item2", item3 = "Item3";
+            List<string> allItems = ["Item1", item2, item3];
 
-//            selectionObjects = [new() { Id = 1, IsSelected = true }];
-//            func = null;
-//            Assert.Throws<ArgumentNullException>(() => preferences.UpdateCollection(selectionObjects, func));
-//        }
+            ICollection<string> newItems = [item2, item3, "Item4"];
+            newItems.FixCollection(allItems);
 
-//        [Fact]
-//        public async Task UpdateCollection_WhenParametersAreValid_UpdatesCollectionCorrectly()
-//        {
-//            ICollection<Preferences> preferences = [];
-//            List<SelectionObject> selectionObjects = [new() { Id = 1, IsSelected = true }, new() { Id = 2, IsSelected = false }, new() { Id = 3, IsSelected = true }];
-//            static Preferences func(SelectionObject e) => new Preferences { UserId = "123", PreferenceId = e.Id };
-
-//            preferences.UpdateCollection(selectionObjects, func);
-            
-//            Assert.Equal(2, preferences.Count);
-//            Assert.Contains(preferences, p => p.PreferenceId == 1);
-//            Assert.Contains(preferences, p => p.PreferenceId == 3);
-//        }
-//    }
-//}
+            Assert.Equal(2, newItems.Count);
+            Assert.Contains(newItems, i => i == item2);
+            Assert.Contains(newItems, i => i == item3);
+        }
+    }
+}

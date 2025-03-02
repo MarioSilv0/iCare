@@ -1,3 +1,14 @@
+/**
+ * @file Defines the `InventoryComponent` class, responsible for managing the user's inventory.
+ * It provides functionalities for searching, selecting, modifying, and updating inventory items.
+ * 
+ * @author João Morais  - 202001541
+ * @author Luís Martins - 202100239
+ * @author Mário Silva  - 202000500
+ * 
+ * @date Last Modified: 2025-03-01
+ */
+
 import { Component } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
 import { ApiService, Ingredient } from '../services/api.service';
@@ -42,6 +53,10 @@ export class InventoryComponent {
       .subscribe(() => this.filterItems());
   }
 
+  /**
+   * Initializes the inventory component, retrieves user notification settings,
+   * and loads the current inventory.
+   */
   ngOnInit() {
     this.loadNotificationPreferences();
     this.getInventory();
@@ -58,28 +73,49 @@ export class InventoryComponent {
     }
   }
 
+  /**
+   * @returns {Array} An array of inventory items. 
+   */
   get inventoryArray() {
     return Array.from(this.inventory.entries());
   }
 
+  /**
+   * @returns {Array} An array of all available item names. 
+   */
   get listOfItemsArray() {
     return Array.from(this.listOfItems);
   }
 
+  /**
+   * Toggles the selection state of an item in the list.
+   * @param {string} item - The name of the item to toggle.
+   */
   toggleSelection(item: string) {
     this.selectedItems.has(item) ? this.selectedItems.delete(item) : this.selectedItems.add(item);
   }
 
+  /**
+   * Toggles the selection state of an inventory item.
+   * @param {string} item - The name of the item to toggle.
+   */
   toggleInventorySelection(item: string) {
     this.selectedItemsInInventory.has(item) ? this.selectedItemsInInventory.delete(item) : this.selectedItemsInInventory.add(item);
   }
 
+  /**
+   * Toggles selection for all inventory items.
+   */
   toggleAllInventorySelection() {
     this.selectedItemsInInventory.size === this.inventory.size
       ? this.selectedItemsInInventory.clear()
       : this.inventory.forEach((_, key) => this.selectedItemsInInventory.add(key));
   }
 
+  /**
+   * Toggles the expanded details view for a specific item.
+   * @param {string} item - The name of the item.
+   */
   toggleDetails(item: string) {
     this.expandedItems.has(item) ? this.expandedItems.delete(item) : this.expandedItems.add(item);
     if (!this.itemDetails.has(item)) {
@@ -87,15 +123,24 @@ export class InventoryComponent {
     }
   }
 
+  /**
+   * Handles search input changes and triggers filtering.
+   */
   onSearchChange() {
     this.searchSubject.next(this.searchTerm);
   }
 
+  /**
+   * Filters available items based on the search term.
+   */
   filterItems() {
     const query = this.searchTerm.toLowerCase().trim();
     this.filteredItems = Array.from(this.listOfItems).filter((n) => n.toLowerCase().includes(query));
   }
 
+  /**
+   * Retrieves the current inventory from the server.
+   */
   getInventory() {
     this.service.getInventory().subscribe(
       (result) => {
@@ -108,6 +153,9 @@ export class InventoryComponent {
     );
   }
 
+  /**
+   * Retrieves the list of all available items.
+   */
   getListItems() {
     this.api.getAllItems().subscribe(
       (result) => {
@@ -120,6 +168,10 @@ export class InventoryComponent {
     );
   }
 
+  /**
+   * Fetches details for a specific item.
+   * @param {string} item - The name of the item.
+   */
   getItemDetails(item: string): void {
     if (this.itemDetails.has(item)) return;
 
@@ -142,6 +194,11 @@ export class InventoryComponent {
     );
   }
 
+  /**
+   * Updates the quantity of an inventory item.
+   * @param {string} item - The name of the item.
+   * @param {Event} event - The event from the input field.
+   */
   updateQuantity(item: string, event: Event): void {
     const inventoryItem = this.inventory.get(item);
     if (!inventoryItem) return;
@@ -161,6 +218,11 @@ export class InventoryComponent {
     else this.getItemDetails(item);
   }
 
+  /**
+   * Updates the unit of measurement for an inventory item.
+   * @param {string} item - The name of the item.
+   * @param {Event} event - The event from the input field.
+   */
   updateUnit(item: string, event: Event) {
     const inventoryItem = this.inventory.get(item);
     if (!inventoryItem) return;
@@ -175,6 +237,9 @@ export class InventoryComponent {
     }
   }
 
+  /**
+   * Adds selected items to the inventory.
+   */
   addItemsToInventory() {
     const addedItems: Item[] = Array.from(this.selectedItems).map((n) => {
       return { name: n, quantity: 1, unit: '' };
@@ -202,11 +267,21 @@ export class InventoryComponent {
     );
   }
 
+  /**
+   * Checks if there are any inventory items with a quantity of zero.
+   * If found, prompts the user to confirm deletion; otherwise, updates the inventory.
+   */
   checkForEmptyItems() {
     const hasEmptyItems = Array.from(this.inventory.values()).some((item) => item.quantity === 0);
     hasEmptyItems ? this.openModal('deleteZeroQuantityModal') : this.updateItemsInInventory();
   }
 
+  /**
+   * Updates the inventory with modified item quantities and units.
+   * If `removeZeroQuantity` is true, removes items with zero quantity after updating.
+   *
+   * @param {boolean} [removeZeroQuantity=false] - Whether to remove items with zero quantity after updating.
+   */
   updateItemsInInventory(removeZeroQuantity: boolean = false) {
     const updatedItems: Item[] = Array.from(this.editedItems).map((n) => {
       return {
@@ -246,6 +321,10 @@ export class InventoryComponent {
     );
   }
 
+  /**
+   * Removes selected items from the inventory.
+   * @param {string[]} [itemsToDelete] - Optional list of items to delete.
+   */
   removeItemFromInventory(itemsToDelete: string[] | null | undefined) {
     const itemsToRemove: string[] =
       itemsToDelete ?? Array.from(this.selectedItemsInInventory);
@@ -273,6 +352,10 @@ export class InventoryComponent {
     );
   }
 
+  /**
+   * Opens a Bootstrap modal by its ID.
+   * @param {string} id - The ID of the modal to be opened.
+   */
   openModal(id: string) {
     const modalElement = document.getElementById(id);
     if (modalElement) {

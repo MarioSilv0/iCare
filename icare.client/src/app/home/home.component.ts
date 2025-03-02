@@ -8,12 +8,12 @@ import { UsersService } from '../services/users.service';
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  isAdmin: boolean = false;
+  public isAdmin: boolean = false;
   constructor(private authService: AuthService, private service: UsersService) { }
 
   ngOnInit() {
     this.isAdmin = this.authService.userHasRole('Admin'); // Checa se o usuário é admin
-
+  
     const userData = localStorage.getItem('user');
     if (userData) return;
     

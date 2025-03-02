@@ -1,3 +1,14 @@
+/**
+ * @file Defines the `NavMenuComponent` class, responsible for managing the navigation menu.
+ * It handles menu expansion, user authentication state, and navigation links.
+ * 
+ * @author João Morais  - 202001541
+ * @author Luís Martins - 202100239
+ * @author Mário Silva  - 202000500
+ * 
+ * @date Last Modified: 2025-03-01
+ */
+
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
@@ -9,7 +20,10 @@ import { MenuService } from '../services/menu.service';
   styleUrls: ['./nav-menu.component.css'],
 })
 
-//Mário
+/**
+  * The `NavMenuComponent` class manages the navigation menu, including user authentication state,
+  * menu expansion/collapse functionality, and available navigation links.
+  */
 export class NavMenuComponent {
   public isExpanded: boolean = false;
   public isLoggedIn: boolean = false;
@@ -62,8 +76,11 @@ export class NavMenuComponent {
     },
   ];
 
-  constructor(private authService: AuthService, private menuService: MenuService, private router: Router) { }
+  constructor(private authService: AuthService, private menuService: MenuService) { }
 
+  /**
+   * Initializes the component, subscribes to authentication state changes, and retrieves user data from local storage.
+   */
   ngOnInit() {
     this.authService.onStateChanged().subscribe((state: boolean) => {
       this.isLoggedIn = state;
@@ -83,15 +100,24 @@ export class NavMenuComponent {
     this.picture = data.picture;
   }
 
+  /**
+   * Collapses the navigation menu.
+   */
   collapse() {
     this.isExpanded = false;
   }
 
+  /**
+   * Toggles the navigation menu state and notifies the `MenuService` of the change.
+   */
   toggle() {
     this.isExpanded = !this.isExpanded;
     this.menuService.setMenuState(this.isExpanded)
   }
 
+  /**
+   * Logs out the user if they are currently logged in.
+   */
   logout() {
     if (this.isLoggedIn) {
       this.authService.logout();
