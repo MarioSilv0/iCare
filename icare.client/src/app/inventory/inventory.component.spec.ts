@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { InventoryComponent } from './inventory.component';
+import { HttpClient, HttpHandler } from '@angular/common/http';
 
 describe('InventoryComponent', () => {
   let component: InventoryComponent;
@@ -8,7 +8,8 @@ describe('InventoryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [InventoryComponent]
+      declarations: [InventoryComponent],
+      providers: [HttpClient, HttpHandler]
     })
     .compileComponents();
     

@@ -4,14 +4,12 @@ import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { RegisterComponent } from './register.component';
 import { AuthService } from '../auth.service';
-import { PasswordValidatorService } from '../password-validator.service';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
   let mockAuthService: any;
   let mockRouter: any;
-  let mockPasswordValidatorService: any;
 
   beforeEach(async () => {
     mockAuthService = {
