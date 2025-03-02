@@ -1,83 +1,76 @@
-﻿using backend.Models.Ingredients;
+﻿/// <summary>
+/// This file defines the <c>User</c> class, which represents an application user with personal details, 
+/// preferences, restrictions, and authentication features.
+/// The class extends <see cref="IdentityUser"/> to integrate with ASP.NET Core Identity for user authentication.
+/// </summary>
+/// <author>João Morais  - 202001541</author>
+/// <author>Luís Martins - 202100239</author>
+/// <author>Mário Silva  - 202000500</author>
+/// <date>Last Modified: 2025-03-01</date>
+
+using backend.Models.Ingredients;
 using backend.Models.Recipes;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
 
-/// <summary>
-/// Represents an application user with personal details, preferences, and restrictions.
-/// Inherits from <see cref="IdentityUser"/> to provide authentication and identity features.
-/// </summary>
-/// <author>Luís Martins - 202100239</author>
-/// <author>João Morais - 202001541</author>
-/// <date>Last Modified: 2025-01-27</date>
 namespace backend.Models
 {
     /// <summary>
-    /// Represents a user in the system, inheriting from <see cref="IdentityUser"/>.
-    /// This model includes additional properties such as personal details, preferences, and restrictions.
+    /// The <c>User</c> class represents a user in the system, extending <see cref="IdentityUser"/>.
+    /// It includes additional properties such as profile details, dietary preferences, 
+    /// and restrictions. Users can also have associated ingredients and favorite recipes.
     /// </summary>
     public class User : IdentityUser
     {
         /// <summary>
-        /// Gets or sets the user's full name.
+        /// Gets or sets the user's name.
         /// </summary>
-        [Display(Name = "Name")]
         [PersonalData]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the profile picture URL of the user.
         /// </summary>
-        [Display(Name = "Picture")]
         public string? Picture { get; set; }
 
         /// <summary>
         /// Gets or sets the user's birthdate.
         /// </summary>
-        [Display(Name = "Birthdate")]
         public DateOnly Birthdate { get; set; } = new DateOnly();
 
         /// <summary>
         /// Indicates whether the user has enabled notifications.
         /// </summary>
-        [Display(Name = "Notifications")]
         public bool Notifications { get; set; } = false;
 
         /// <summary>
         /// Gets or sets the user's height in meters.
         /// </summary>
-        [Display(Name = "Height")]
         public float Height { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the user's weight in kilograms.
         /// </summary>
-        [Display(Name = "Weight")]
         public float Weight { get; set; } = 0f;
 
         /// <summary>
-        /// Gets or sets the user's preferences.
+        /// Gets or sets the user's dietary preferences.
         /// </summary>
-        [Display(Name = "Preferences")]
         public IList<string>? Preferences { get; set; }
 
         /// <summary>
-        /// Gets or sets the user's restrictions.
+        /// Gets or sets the user's dietary restrictions.
         /// </summary>
-        [Display(Name = "Restrictions")]
         public IList<string>? Restrictions { get; set; }
 
         /// <summary>
-        /// Gets or sets the user's ingredients.
+        /// Gets or sets the ingredients associated with the user.
         /// </summary>
-        [Display(Name = "Items")]
         public ICollection<UserIngredient>? UserIngredients { get; set; }
 
         /// <summary>
         /// Gets or sets the user's favorite recipes.
         /// </summary>
-        [Display(Name = "Items")]
         public ICollection<UserRecipe>? favoriteRecipes { get; set; }
 
         /// <summary>
@@ -125,10 +118,10 @@ namespace backend.Models
         }
 
         /// <summary>
-        /// Calculates the age based on the given birthdate.
+        /// Calculates the user's age based on the given birthdate.
         /// </summary>
-        /// <param name="birthdate">The birthdate of the user.</param>
-        /// <returns>The calculated age.</returns>
+        /// <param name="birthdate">The user's birthdate.</param>
+        /// <returns>The calculated age of the user.</returns>
         private int CaculateAge(DateOnly birthdate)
         {
             int age = DateTime.Today.Year - birthdate.Year;
@@ -141,6 +134,11 @@ namespace backend.Models
             return age;
         }
 
+        /// <summary>
+        /// Validates whether the provided email address follows a valid format.
+        /// </summary>
+        /// <param name="email">The email address to validate.</param>
+        /// <returns><c>true</c> if the email format is valid; otherwise, <c>false</c>.</returns>
         private bool IsValidEmail(string email)
         {
             try
