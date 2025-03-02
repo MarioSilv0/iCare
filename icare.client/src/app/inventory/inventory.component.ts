@@ -1,8 +1,13 @@
 import { Component } from '@angular/core';
-import { UsersService, Item } from '../services/users.service';
+import { debounceTime, Subject } from 'rxjs';
 import { ApiService, Ingredient } from '../services/api.service';
-import { NotificationService, addedItemNotification, editedItemNotification, removedItemNotification } from '../services/notifications.service';
-import { debounceTime, Subject } from "rxjs";
+import {
+  addedItemNotification,
+  editedItemNotification,
+  NotificationService,
+  removedItemNotification,
+} from '../services/notifications.service';
+import { Item, UsersService } from '../services/users.service';
 
 declare var bootstrap: any;
 
@@ -11,15 +16,14 @@ declare var bootstrap: any;
   standalone: false,
 
   templateUrl: './inventory.component.html',
-  styleUrl: './inventory.component.css'
+  styleUrl: './inventory.component.css',
 })
-
 export class InventoryComponent {
   private notificationsPermission: boolean = true;
-  public searchTerm: string = "";
+  public searchTerm: string = '';
   public searchSubject = new Subject<string>();
 
-  public inventory: Map<string, { quantity: number, unit: string }> = new Map();
+  public inventory: Map<string, { quantity: number; unit: string }> = new Map();
   public listOfItems: Set<string> = new Set();
   public filteredItems: string[] = [];
 
@@ -30,16 +34,19 @@ export class InventoryComponent {
 
   public itemDetails: Map<string, Ingredient> = new Map();
 
-  public units: string[] = ["g", "kg"]
+  public units: string[] = ['g', 'kg'];
   constructor(private service: UsersService, private api: ApiService) {
-    this.searchSubject.pipe(debounceTime(300)).subscribe(() => this.filterItems());
+    this.searchSubject
+      .pipe(debounceTime(300))
+      .subscribe(() => this.filterItems());
   }
 
   ngOnInit() {
     try {
       const storage = localStorage.getItem('user');
       if (storage) {
-        this.notificationsPermission = JSON.parse(storage).notifications || true;
+        this.notificationsPermission =
+          JSON.parse(storage).notifications || true;
       }
     } catch (e) {
       console.error('Failed to get user data in localStorage:', e);
@@ -76,7 +83,7 @@ export class InventoryComponent {
     if (this.selectedItemsInInventory.size === this.inventory.size) {
       this.selectedItemsInInventory.clear();
     } else {
-      for(const i of this.inventory.keys()) {
+      for (const i of this.inventory.keys()) {
         this.selectedItemsInInventory.add(i);
       }
     }
@@ -98,7 +105,9 @@ export class InventoryComponent {
   filterItems() {
     const query = this.searchTerm.toLowerCase().trim();
 
-    this.filteredItems = Array.from(this.listOfItems).filter(n => n.toLowerCase().includes(query))
+    this.filteredItems = Array.from(this.listOfItems).filter((n) =>
+      n.toLowerCase().includes(query)
+    );
   }
 
   getInventory() {
@@ -136,12 +145,21 @@ export class InventoryComponent {
 
     this.api.getSpecificItem(item).subscribe(
       (result) => {
-        console.log({result})
+        console.log({ result });
         this.itemDetails = this.itemDetails.set(item, result);
       },
       (error) => {
         console.error(error);
-        this.itemDetails = this.itemDetails.set(item, { name: "Não foi possível obter as informações do ingrediente: " + item, kcal: 0, kj: 0, protein: 0, carbohydrates: 0, lipids: 0, fibers: 0, category: 'none' });
+        this.itemDetails = this.itemDetails.set(item, {
+          name: 'Não foi possível obter as informações do ingrediente: ' + item,
+          kcal: 0,
+          kj: 0,
+          protein: 0,
+          carbohydrates: 0,
+          lipids: 0,
+          fibers: 0,
+          category: 'none',
+        });
       }
     );
   }
@@ -150,8 +168,8 @@ export class InventoryComponent {
     const inventoryItem = this.inventory.get(item);
     if (!inventoryItem) return;
 
-    const input = event.target as HTMLInputElement
-    let newValue = +(input).value;
+    const input = event.target as HTMLInputElement;
+    let newValue = +input.value;
     if (newValue === inventoryItem.quantity) return;
 
     // No negative numbers and rounded to 2 decimal places
@@ -165,43 +183,41 @@ export class InventoryComponent {
 
   updateUnit(item: string, event: Event) {
     const inventoryItem = this.inventory.get(item);
-    const itemDetails = this.itemDetails.get(item);
-    if (!inventoryItem || !itemDetails || !inventoryItem.unit) return;
+    if (!inventoryItem) return;
 
-    const value = (event.target as HTMLSelectElement).value.toLowerCase();
+    const value = (event.target as HTMLSelectElement).value;
     inventoryItem.unit = value;
-    let macros = this.updateMacroByUnit(inventoryItem, itemDetails)
-    this.itemDetails.set(item, {
-      name: itemDetails.name,
-      category: itemDetails.category,
-      kcal: itemDetails.kcal,
-      kj: itemDetails.kj,
-      protein: macros.protein,
-      carbohydrates: macros.carbs,
-      lipids: macros.lipids,
-      fibers: macros.fibers
-    })
+    this.updateMacroByUnit(item);
     this.editedItems.add(item);
+    console.log({ inventoryItem });
   }
 
   addItemsToInventory() {
-    const addedItems: Item[] = Array.from(this.selectedItems).map(n => { return { name: n, quantity: 1, unit: "" } });
+    const addedItems: Item[] = Array.from(this.selectedItems).map((n) => {
+      return { name: n, quantity: 1, unit: '' };
+    });
 
     this.service.updateInventory(addedItems).subscribe(
       (result) => {
-        const res: Set<string> = new Set(result.map(i => i.name));
+        const res: Set<string> = new Set(result.map((i) => i.name));
 
-        const successfullyAdded: string[] = [...this.selectedItems].filter(name => res.has(name));
-        if (successfullyAdded.length !== this.selectedItems.size) console.error("Failed to add items!");
+        const successfullyAdded: string[] = [...this.selectedItems].filter(
+          (name) => res.has(name)
+        );
+        if (successfullyAdded.length !== this.selectedItems.size)
+          console.error('Failed to add items!');
 
         for (let name of successfullyAdded) {
-          this.inventory.set(name, { quantity: 1, unit: "" });
+          this.inventory.set(name, { quantity: 1, unit: '' });
           this.listOfItems.delete(name);
         }
 
         this.selectedItems.clear();
         this.filterItems();
-        NotificationService.showNotification(this.notificationsPermission, addedItemNotification);
+        NotificationService.showNotification(
+          this.notificationsPermission,
+          addedItemNotification
+        );
       },
       (error) => {
         console.error(error);
@@ -211,7 +227,7 @@ export class InventoryComponent {
 
   checkForEmptyItems() {
     const allItems = Array.from(this.inventory.keys());
-    if (allItems.some(n => this.inventory.get(n)?.quantity === 0)) {
+    if (allItems.some((n) => this.inventory.get(n)?.quantity === 0)) {
       this.openModal('deleteZeroQuantityModal');
     } else {
       this.updateItemsInInventory();
@@ -219,22 +235,34 @@ export class InventoryComponent {
   }
 
   updateItemsInInventory(removeZeroQuantity: boolean = false) {
-    const updatedItems: Item[] = Array.from(this.editedItems).map(n => { return { name: n, quantity: this.inventory.get(n)?.quantity ?? 0, unit: this.inventory.get(n)?.unit ?? "" } });
+    const updatedItems: Item[] = Array.from(this.editedItems).map((n) => {
+      return {
+        name: n,
+        quantity: this.inventory.get(n)?.quantity ?? 0,
+        unit: this.inventory.get(n)?.unit ?? '',
+      };
+    });
     if (updatedItems.length === 0 && !removeZeroQuantity) return;
 
     this.service.updateInventory(updatedItems).subscribe(
       (result) => {
-        const resultMap = new Map(result.map((item) => [item.name, { quantity: item.quantity, unit: item.unit }]));
+        const resultMap = new Map(
+          result.map((item) => [
+            item.name,
+            { quantity: item.quantity, unit: item.unit },
+          ])
+        );
 
         for (let item of this.editedItems) {
-          const value = resultMap.get(item) ?? { quantity: 0, unit: "" };
-          const current = this.inventory.get(item) ?? { quantity: 0, unit: "" };
+          const value = resultMap.get(item) ?? { quantity: 0, unit: '' };
+          const current = this.inventory.get(item) ?? { quantity: 0, unit: '' };
 
           if (!value) this.inventory.delete(item);
           else {
             if (!current) this.inventory.set(item, value);
             else {
-              if (value.quantity !== current.quantity) current.quantity = value.quantity;
+              if (value.quantity !== current.quantity)
+                current.quantity = value.quantity;
               if (value.unit !== current.unit) current.unit = value.unit;
             }
           }
@@ -242,11 +270,16 @@ export class InventoryComponent {
 
         this.editedItems.clear();
         if (removeZeroQuantity) {
-          const itemsToDelete: string[] = Array.from(this.inventory.keys()).filter(n => this.inventory.get(n)?.quantity === 0);
-          this.removeItemFromInventory(itemsToDelete);  
+          const itemsToDelete: string[] = Array.from(
+            this.inventory.keys()
+          ).filter((n) => this.inventory.get(n)?.quantity === 0);
+          this.removeItemFromInventory(itemsToDelete);
         }
 
-        NotificationService.showNotification(this.notificationsPermission, editedItemNotification);
+        NotificationService.showNotification(
+          this.notificationsPermission,
+          editedItemNotification
+        );
       },
       (error) => {
         console.error(error);
@@ -255,15 +288,17 @@ export class InventoryComponent {
   }
 
   removeItemFromInventory(itemsToDelete: string[] | null | undefined) {
-    const itemsToRemove: string[] = itemsToDelete ?? Array.from(this.selectedItemsInInventory);
+    const itemsToRemove: string[] =
+      itemsToDelete ?? Array.from(this.selectedItemsInInventory);
     if (itemsToRemove.length === 0) return;
 
     this.service.removeInventory(itemsToRemove).subscribe(
       (result) => {
-        const res = new Set(result.map(i => i.name));
+        const res = new Set(result.map((i) => i.name));
 
-        const deletedItems = itemsToRemove.filter(name => !res.has(name));
-        if (deletedItems.length !== itemsToRemove.length) console.error("Failed to delete items!");
+        const deletedItems = itemsToRemove.filter((name) => !res.has(name));
+        if (deletedItems.length !== itemsToRemove.length)
+          console.error('Failed to delete items!');
 
         for (let name of deletedItems) {
           this.listOfItems.add(name);
@@ -272,7 +307,10 @@ export class InventoryComponent {
 
         if (itemsToDelete === null) this.selectedItemsInInventory.clear();
         this.filterItems();
-        NotificationService.showNotification(this.notificationsPermission, removedItemNotification);
+        NotificationService.showNotification(
+          this.notificationsPermission,
+          removedItemNotification
+        );
       },
       (error) => {
         console.error(error);
@@ -288,23 +326,52 @@ export class InventoryComponent {
     }
   }
 
-  updateMacroByUnit(inventory: {quantity: number, unit: string}, details: Ingredient) {
+  updateMacroByUnit(item: string) {
+    const inventory = this.inventory.get(item);
+    const details = this.itemDetails.get(item);
+    if (!inventory || !details || !inventory.unit) return;
+
     let { quantity, unit } = inventory;
-    let { protein, carbohydrates, lipids, fibers, name, category, kcal, kj } = details
+    let { protein, carbohydrates, lipids, fibers, name, category, kcal, kj } =
+      details;
 
-    const quantityInGrams = unit === 'kg' ? this.fromKilogramsToGrams(quantity) : quantity;
+    quantity =
+      unit === 'kg'
+        ? this.fromKilogramsToGrams(quantity)
+        : this.fromGramsToKilograms(quantity);
+    this.inventory.set(item, { quantity, unit });
+    let ing: Ingredient;
 
-    const totalMacros = {
-      carbs: carbohydrates * quantityInGrams,
-      protein: protein * quantityInGrams,
-      lipids: lipids * quantityInGrams,
-      fibers: fibers * quantityInGrams
-    };
-
-    return totalMacros;
+    if (unit === 'g') {
+      ing = {
+        name,
+        category,
+        kcal,
+        kj,
+        protein: (protein * quantity) / 100,
+        carbohydrates: (carbohydrates * quantity) / 100,
+        lipids: (lipids * quantity) / 100,
+        fibers: (fibers * quantity) / 100,
+      };
+    } else {
+      ing = {
+        name,
+        category,
+        kcal,
+        kj,
+        protein: (protein * quantity) / 0.1,
+        carbohydrates: (carbohydrates * quantity) / 0.1,
+        lipids: (lipids * quantity) / 0.1,
+        fibers: (fibers * quantity) / 0.1,
+      };
+      this.itemDetails.set(item, ing);
+    }
   }
 
   private fromKilogramsToGrams(quantity: number): number {
     return quantity * 1000;
+  }
+  private fromGramsToKilograms(quantity: number): number {
+    return quantity / 1000;
   }
 }
