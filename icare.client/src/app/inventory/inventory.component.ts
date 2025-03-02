@@ -10,10 +10,15 @@
  */
 
 import { Component } from '@angular/core';
-import { UsersService, Item } from '../services/users.service';
+import { debounceTime, Subject } from 'rxjs';
 import { ApiService, Ingredient } from '../services/api.service';
-import { NotificationService, addedItemNotification, editedItemNotification, removedItemNotification } from '../services/notifications.service';
-import { debounceTime, Subject } from "rxjs";
+import {
+  addedItemNotification,
+  editedItemNotification,
+  NotificationService,
+  removedItemNotification,
+} from '../services/notifications.service';
+import { Item, UsersService } from '../services/users.service';
 
 declare var bootstrap: any;
 
@@ -22,19 +27,14 @@ declare var bootstrap: any;
   standalone: false,
 
   templateUrl: './inventory.component.html',
-  styleUrl: './inventory.component.css'
+  styleUrl: './inventory.component.css',
 })
-
-/**
-  * The `InventoryComponent` class manages the user's inventory,
-  * allowing the user to add, remove, and update items while handling notifications.
-  */
 export class InventoryComponent {
   private notificationsPermission: boolean = true;
-  public searchTerm: string = "";
+  public searchTerm: string = '';
   public searchSubject = new Subject<string>();
 
-  public inventory: Map<string, { quantity: number, unit: string }> = new Map();
+  public inventory: Map<string, { quantity: number; unit: string }> = new Map();
   public listOfItems: Set<string> = new Set();
   public filteredItems: string[] = [];
 
@@ -45,8 +45,12 @@ export class InventoryComponent {
 
   public itemDetails: Map<string, Ingredient> = new Map();
 
+  public units: string[] = ['g', 'kg'];
+
   constructor(private service: UsersService, private api: ApiService) {
-    this.searchSubject.pipe(debounceTime(300)).subscribe(() => this.filterItems());
+    this.searchSubject
+      .pipe(debounceTime(300))
+      .subscribe(() => this.filterItems());
   }
 
   /**
@@ -54,16 +58,19 @@ export class InventoryComponent {
    * and loads the current inventory.
    */
   ngOnInit() {
+    this.loadNotificationPreferences();
+    this.getInventory();
+  }
+
+  private loadNotificationPreferences() {
     try {
       const storage = localStorage.getItem('user');
       if (storage) {
-        this.notificationsPermission = JSON.parse(storage).notifications || true;
+        this.notificationsPermission = JSON.parse(storage).notifications ?? true;
       }
     } catch (e) {
       console.error('Failed to get user data in localStorage:', e);
     }
-
-    this.getInventory();
   }
 
   /**
@@ -85,11 +92,7 @@ export class InventoryComponent {
    * @param {string} item - The name of the item to toggle.
    */
   toggleSelection(item: string) {
-    if (this.selectedItems.has(item)) {
-      this.selectedItems.delete(item);
-    } else {
-      this.selectedItems.add(item);
-    }
+    this.selectedItems.has(item) ? this.selectedItems.delete(item) : this.selectedItems.add(item);
   }
 
   /**
@@ -97,24 +100,16 @@ export class InventoryComponent {
    * @param {string} item - The name of the item to toggle.
    */
   toggleInventorySelection(item: string) {
-    if (this.selectedItemsInInventory.has(item)) {
-      this.selectedItemsInInventory.delete(item);
-    } else {
-      this.selectedItemsInInventory.add(item);
-    }
+    this.selectedItemsInInventory.has(item) ? this.selectedItemsInInventory.delete(item) : this.selectedItemsInInventory.add(item);
   }
 
   /**
    * Toggles selection for all inventory items.
    */
   toggleAllInventorySelection() {
-    if (this.selectedItemsInInventory.size === this.inventory.size) {
-      this.selectedItemsInInventory.clear();
-    } else {
-      for(const i of this.inventory.keys()) {
-        this.selectedItemsInInventory.add(i);
-      }
-    }
+    this.selectedItemsInInventory.size === this.inventory.size
+      ? this.selectedItemsInInventory.clear()
+      : this.inventory.forEach((_, key) => this.selectedItemsInInventory.add(key));
   }
 
   /**
@@ -122,10 +117,8 @@ export class InventoryComponent {
    * @param {string} item - The name of the item.
    */
   toggleDetails(item: string) {
-    if (this.expandedItems.has(item)) {
-      this.expandedItems.delete(item);
-    } else {
-      this.expandedItems.add(item);
+    this.expandedItems.has(item) ? this.expandedItems.delete(item) : this.expandedItems.add(item);
+    if (!this.itemDetails.has(item)) {
       this.getItemDetails(item);
     }
   }
@@ -142,8 +135,7 @@ export class InventoryComponent {
    */
   filterItems() {
     const query = this.searchTerm.toLowerCase().trim();
-
-    this.filteredItems = Array.from(this.listOfItems).filter(n => n.toLowerCase().includes(query))
+    this.filteredItems = Array.from(this.listOfItems).filter((n) => n.toLowerCase().includes(query));
   }
 
   /**
@@ -152,10 +144,7 @@ export class InventoryComponent {
   getInventory() {
     this.service.getInventory().subscribe(
       (result) => {
-        for (let i of result) {
-          this.inventory.set(i.name, { quantity: i.quantity, unit: i.unit });
-        }
-
+        result.forEach((i) => this.inventory.set(i.name, { quantity: i.quantity, unit: i.unit }));
         this.getListItems();
       },
       (error) => {
@@ -170,10 +159,7 @@ export class InventoryComponent {
   getListItems() {
     this.api.getAllItems().subscribe(
       (result) => {
-        for (let itemName of result) {
-          if (!this.inventory.has(itemName)) this.listOfItems.add(itemName);
-        }
-
+        result.forEach((itemName) => { if (!this.inventory.has(itemName)) this.listOfItems.add(itemName); });
         this.filterItems();
       },
       (error) => {
@@ -191,11 +177,19 @@ export class InventoryComponent {
 
     this.api.getSpecificItem(item).subscribe(
       (result) => {
-        this.itemDetails = this.itemDetails.set(item, result);
+        console.log({ ...result  });
+        let info = this.inventory.get(item) ?? { quantity: 1, unit: "g" };
+        if (!info.unit) info.unit = "g";
+
+        const total = info.unit === "g" ? 100 : 0.1;
+        this.itemDetails.set(item, this.calculateIngredient(result, total, info.quantity));
       },
       (error) => {
         console.error(error);
-        this.itemDetails = this.itemDetails.set(item, { name: "Não foi possível obter as informações do ingrediente: " + item, kcal: 0, kj: 0, protein: 0, carbohydrates: 0, lipids: 0, fibers: 0, category: 'none' });
+        this.itemDetails.set(item, {
+          name: `Não foi possível obter as informações do ingrediente: ${item}`,
+          kcal: 0, kj: 0, protein: 0, carbohydrates: 0, lipids: 0, fibers: 0, category: 'none',
+        });
       }
     );
   }
@@ -209,14 +203,19 @@ export class InventoryComponent {
     const inventoryItem = this.inventory.get(item);
     if (!inventoryItem) return;
 
-    const input = event.target as HTMLInputElement
-    let newValue = +(input).value;
-    newValue = Math.max(0, Math.round(newValue * 100) / 100);
+    const input = event.target as HTMLInputElement;
+    let newValue = Math.max(0, Math.round(+input.value * 100) / 100);
+    input.value = newValue.toFixed(2);
     if (newValue === inventoryItem.quantity) return;
 
-    input.value = newValue.toFixed(2);
+    const previousQuantity = inventoryItem.quantity;
+    if (!previousQuantity) this.itemDetails.delete(item);
+
     inventoryItem.quantity = newValue;
     this.editedItems.add(item);
+
+    if (this.itemDetails.has(item)) this.itemDetails.set(item, this.calculateIngredient(this.itemDetails.get(item)!, previousQuantity, newValue));
+    else this.getItemDetails(item);
   }
 
   /**
@@ -228,26 +227,33 @@ export class InventoryComponent {
     const inventoryItem = this.inventory.get(item);
     if (!inventoryItem) return;
 
-    const value = (event.target as HTMLInputElement).value.toLowerCase();
-    inventoryItem.unit = value.slice(0, 3);
+    const previousUnit = inventoryItem.unit;
+    inventoryItem.unit = (event.target as HTMLSelectElement).value;
     this.editedItems.add(item);
+
+    if (this.itemDetails.has(item)) {
+      const ingredient = this.itemDetails.get(item)!;
+      this.convertIngredientUnits(ingredient, previousUnit, inventoryItem.unit);
+    }
   }
 
   /**
    * Adds selected items to the inventory.
    */
   addItemsToInventory() {
-    const addedItems: Item[] = Array.from(this.selectedItems).map(n => { return { name: n, quantity: 1, unit: "" } });
+    const addedItems: Item[] = Array.from(this.selectedItems).map((n) => {
+      return { name: n, quantity: 1, unit: '' };
+    });
 
     this.service.updateInventory(addedItems).subscribe(
       (result) => {
-        const res: Set<string> = new Set(result.map(i => i.name));
+        const res: Set<string> = new Set(result.map((i) => i.name));
 
-        const successfullyAdded: string[] = [...this.selectedItems].filter(name => res.has(name));
-        if (successfullyAdded.length !== this.selectedItems.size) console.error("Failed to add items!");
+        const successfullyAdded: string[] = [...this.selectedItems].filter((name) => res.has(name));
+        if (successfullyAdded.length !== this.selectedItems.size) console.error('Failed to add items!');
 
         for (let name of successfullyAdded) {
-          this.inventory.set(name, { quantity: 1, unit: "" });
+          this.inventory.set(name, { quantity: 1, unit: '' });
           this.listOfItems.delete(name);
         }
 
@@ -266,12 +272,8 @@ export class InventoryComponent {
    * If found, prompts the user to confirm deletion; otherwise, updates the inventory.
    */
   checkForEmptyItems() {
-    const allItems = Array.from(this.inventory.keys());
-    if (allItems.some(n => this.inventory.get(n)?.quantity === 0)) {
-      this.openModal('deleteZeroQuantityModal');
-    } else {
-      this.updateItemsInInventory();
-    }
+    const hasEmptyItems = Array.from(this.inventory.values()).some((item) => item.quantity === 0);
+    hasEmptyItems ? this.openModal('deleteZeroQuantityModal') : this.updateItemsInInventory();
   }
 
   /**
@@ -281,31 +283,34 @@ export class InventoryComponent {
    * @param {boolean} [removeZeroQuantity=false] - Whether to remove items with zero quantity after updating.
    */
   updateItemsInInventory(removeZeroQuantity: boolean = false) {
-    const updatedItems: Item[] = Array.from(this.editedItems).map(n => { return { name: n, quantity: this.inventory.get(n)?.quantity ?? 0, unit: this.inventory.get(n)?.unit ?? "" } });
+    const updatedItems: Item[] = Array.from(this.editedItems).map((n) => {
+      return {
+        name: n,
+        quantity: this.inventory.get(n)?.quantity ?? 0,
+        unit: this.inventory.get(n)?.unit ?? '',
+      };
+    });
     if (updatedItems.length === 0 && !removeZeroQuantity) return;
 
     this.service.updateInventory(updatedItems).subscribe(
       (result) => {
-        const resultMap = new Map(result.map((item) => [item.name, { quantity: item.quantity, unit: item.unit }]));
+        const resultMap = new Map(
+          result.map((item) => [
+            item.name,
+            { quantity: item.quantity, unit: item.unit },
+          ])
+        );
 
         for (let item of this.editedItems) {
-          const value = resultMap.get(item) ?? { quantity: 0, unit: "" };
-          const current = this.inventory.get(item) ?? { quantity: 0, unit: "" };
-
-          if (!value) this.inventory.delete(item);
-          else {
-            if (!current) this.inventory.set(item, value);
-            else {
-              if (value.quantity !== current.quantity) current.quantity = value.quantity;
-              if (value.unit !== current.unit) current.unit = value.unit;
-            }
-          }
+          const updatedValue = resultMap.get(item) ?? { quantity: 0, unit: '' };
+          (!updatedValue) ? this.inventory.delete(item) : this.inventory.set(item, { ...updatedValue });
         }
 
         this.editedItems.clear();
+        
         if (removeZeroQuantity) {
-          const itemsToDelete: string[] = Array.from(this.inventory.keys()).filter(n => this.inventory.get(n)?.quantity === 0);
-          this.removeItemFromInventory(itemsToDelete);  
+          const itemsToDelete = Array.from(this.inventory.keys()).filter((name) => this.inventory.get(name)?.quantity === 0);
+          this.removeItemFromInventory(itemsToDelete);
         }
 
         NotificationService.showNotification(this.notificationsPermission, editedItemNotification);
@@ -321,22 +326,23 @@ export class InventoryComponent {
    * @param {string[]} [itemsToDelete] - Optional list of items to delete.
    */
   removeItemFromInventory(itemsToDelete: string[] | null | undefined) {
-    const itemsToRemove: string[] = itemsToDelete ?? Array.from(this.selectedItemsInInventory);
+    const itemsToRemove: string[] =
+      itemsToDelete ?? Array.from(this.selectedItemsInInventory);
     if (itemsToRemove.length === 0) return;
 
     this.service.removeInventory(itemsToRemove).subscribe(
       (result) => {
-        const res = new Set(result.map(i => i.name));
+        const res = new Set(result.map((i) => i.name));
 
-        const deletedItems = itemsToRemove.filter(name => !res.has(name));
-        if (deletedItems.length !== itemsToRemove.length) console.error("Failed to delete items!");
+        const deletedItems = itemsToRemove.filter((name) => !res.has(name));
+        if (deletedItems.length !== itemsToRemove.length) console.error('Failed to delete items!');
 
         for (let name of deletedItems) {
           this.listOfItems.add(name);
           this.inventory.delete(name);
         }
 
-        if (itemsToDelete === null) this.selectedItemsInInventory.clear();
+        if (!itemsToDelete) this.selectedItemsInInventory.clear();
         this.filterItems();
         NotificationService.showNotification(this.notificationsPermission, removedItemNotification);
       },
@@ -356,5 +362,41 @@ export class InventoryComponent {
       const modal = new bootstrap.Modal(modalElement);
       modal.show();
     }
+  }
+
+  private convertIngredientUnits(ingredient: Ingredient, fromUnit: string, toUnit: string) {
+    if (fromUnit === toUnit) return;
+
+    if (fromUnit === 'g') {
+      ingredient.kcal *= 1000;
+      ingredient.kj *= 1000;
+      ingredient.protein *= 1000;
+      ingredient.carbohydrates *= 1000;
+      ingredient.lipids *= 1000;
+      ingredient.fibers *= 1000;
+    } else {
+      ingredient.kcal /= 1000;
+      ingredient.kj /= 1000;
+      ingredient.protein /= 1000;
+      ingredient.carbohydrates /= 1000;
+      ingredient.lipids /= 1000;
+      ingredient.fibers /= 1000;
+    }
+  }
+
+  private calculateIngredient(result: Ingredient, total: number, newQuantity: number): Ingredient {
+    if (total === 0) return { ...result, kcal: 0, kj: 0, protein: 0, carbohydrates: 0, lipids: 0, fibers: 0 };
+
+    const decimalPlaces = 1000000;
+    const newIngredient = { ...result };
+
+    newIngredient.kcal = Math.round(((result.kcal * newQuantity) / total) * decimalPlaces) / decimalPlaces;
+    newIngredient.kj = Math.round(((result.kj * newQuantity) / total) * decimalPlaces) / decimalPlaces;
+    newIngredient.protein = Math.round(((result.protein * newQuantity) / total) * decimalPlaces) / decimalPlaces;
+    newIngredient.carbohydrates = Math.round(((result.carbohydrates * newQuantity) / total) * decimalPlaces) / decimalPlaces;
+    newIngredient.lipids = Math.round(((result.lipids * newQuantity) / total) * decimalPlaces) / decimalPlaces;
+    newIngredient.fibers = Math.round(((result.fibers * newQuantity) / total) * decimalPlaces) / decimalPlaces;
+
+    return newIngredient;
   }
 }
