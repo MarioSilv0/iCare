@@ -128,12 +128,8 @@ export class InventoryComponent {
         console.log({ ...result  });
         let info = this.inventory.get(item) ?? { quantity: 1, unit: "g" };
         if (!info.unit) info.unit = "g";
-        console.log(info.unit)
 
-        let total: number = info.unit === "g" ? 100 : 0.1;
-        console.log(total)
-
-        this.convertIngredientUnits(result, 'g', info.unit);
+        const total = info.unit === "g" ? 100 : 0.1;
         this.itemDetails.set(item, this.calculateIngredient(result, total, info.quantity));
       },
       (error) => {
