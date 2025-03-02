@@ -18,7 +18,7 @@ export class UsersService {
   updateUser(user: User): Observable<User> {
     const u = { ...user, preferences: Array.from(user.preferences), restrictions: Array.from(user.restrictions), categories: Array.from(user.categories) }
 
-    return this.http.put<User>(PROFILE, { ...user });
+    return this.http.put<User>(PROFILE, u);
   }
 
   getInventory(): Observable<Item[]> {
@@ -44,7 +44,7 @@ export interface User {
   picture: string;
   name: string;
   email: string;
-  birthdate: Date;
+  birthdate: string;
   notifications: Boolean;
   height: number;
   weight: number;

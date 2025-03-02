@@ -13,7 +13,7 @@ import { NotificationService, updatedUserNotification, failedToEditEmailUserNoti
 })
 export class ProfileComponent implements OnInit {
   public user: User = {
-    picture: '', name: 'Loading', email: '...', birthdate: new Date("01/01/2000"), notifications: true, height: 0, weight: 0, preferences: new Set(), restrictions: new Set(), categories: new Set() };
+    picture: '', name: 'Loading', email: '...', birthdate: "2000-01-01", notifications: true, height: 0, weight: 0, preferences: new Set(), restrictions: new Set(), categories: new Set() };
   public todayDate: string;
 
   public availablePreferences: Set<string> = new Set();
@@ -62,7 +62,8 @@ export class ProfileComponent implements OnInit {
   getUser() {
     this.service.getUser().subscribe(
       (result) => {
-        this.user = { ...result, categories: new Set(result.categories), preferences: new Set(result.preferences), restrictions: new Set(result.restrictions)};
+        let birthdate = (!result.birthdate || result.birthdate === '0001-01-01') ? this.user.birthdate : result.birthdate;
+        this.user = { ...result, birthdate, categories: new Set(result.categories), preferences: new Set(result.preferences), restrictions: new Set(result.restrictions) };
 
         for (const c of this.user.categories) {
           if (!this.user.preferences.has(c)) this.availablePreferences.add(c);
