@@ -1,71 +1,127 @@
-  <p *ngIf="!user"><em>Loading...</em></p>
+<p *ngIf="!user"><em>Loading...</em></p>
 
-  <form *ngIf="user" (ngSubmit)="updateUser()">
-    <section id="userData">
-      <label class="hoverable" for="fileInput">
-        <img id="profileImage" [src]="user.picture ? user.picture : 'https://www.w3schools.com/howto/img_avatar.png'" />
-      </label>
-      <br />
-      <input id="fileInput" type='file' (change)="onSelectFile($event)">
-      <div>
-        <label for="userName">Name</label>
-        <input type="text" id="userName" name="userName" [(ngModel)]="user.name" />
-        <label for="userEmail">Email</label>
-        <input type="email" id="userEmail" name="userEmail" [(ngModel)]="user.email" required />
-        <label for="userBirthdate">Birthdate</label>
-        <input type="date" id="userBirthdate" name="userBirthdate" [(ngModel)]="user.birthdate" min="1910-01-01" [max]="todayDate" required />
+<form *ngIf="user" (ngSubmit)="updateUser()">
+  <section id="userData">
+    <label id="profile-image-container" class="hoverable" for="fileInput">
+      <img
+        id="profileImage"
+        [src]="
+          user.picture
+            ? user.picture
+            : 'https://www.w3schools.com/howto/img_avatar.png'
+        "
+      />
+      <div>adicionar imagem</div>
+    </label>
+    <br />
+    <input id="fileInput" type="file" (change)="onSelectFile($event)" />
+    <div>
+      <label for="userName">Name</label>
+      <input
+        type="text"
+        id="userName"
+        name="userName"
+        [(ngModel)]="user.name"
+      />
+      <label for="userEmail">Email</label>
+      <input
+        type="email"
+        id="userEmail"
+        name="userEmail"
+        [(ngModel)]="user.email"
+        required
+      />
+      <label for="userBirthdate">Birthdate</label>
+      <input
+        type="date"
+        id="userBirthdate"
+        name="userBirthdate"
+        [(ngModel)]="user.birthdate"
+        min="1910-01-01"
+        [max]="todayDate"
+        required
+      />
+    </div>
+
+    <div id="extraData">
+      <img src="/assets/images/cog.png" alt="Cogwheel Icon" />
+      <div id="extraData-notifications">
+        <label for="userNotificacions">Notifications</label>
+        <input
+          type="checkbox"
+          id="userNotificacions"
+          name="userNotificacions"
+          [(ngModel)]="user.notifications"
+        />
       </div>
-
-
-
-
-      <div id="extraData">
-        <img src="/assets/images/cog.png" alt="Cogwheel Icon" />
-        <div id="extraData-notifications">
-          <label for="userNotificacions">Notifications</label>
-          <input type="checkbox" id="userNotificacions" name="userNotificacions" [(ngModel)]="user.notifications" />
-        </div>
-        <div id="extraData-controls">
-          <input class="rounded" type="button" value="Change Password" (click)="changePassword()" />
-          <input type="submit" value="Save" class="submit-btn rounded" />
-        </div>
+      <div id="extraData-controls">
+        <input
+          class="rounded"
+          type="button"
+          value="Change Password"
+          (click)="changePassword()"
+        />
+        <input type="submit" value="Save" class="submit-btn rounded" />
       </div>
+    </div>
+  </section>
+  <section id="userCharacteristics">
+    <label for="userHeight">Height (m)</label>
+    <input
+      type="number"
+      id="userHeight"
+      name="userHeight"
+      [(ngModel)]="user.height"
+      min="0"
+      max="3"
+      required
+    />
+    <label for="userWeight">Weight (kg)</label>
+    <input
+      type="number"
+      id="userWeight"
+      name="userWeight"
+      [(ngModel)]="user.weight"
+      min="0"
+      max="700"
+      required
+    />
+  </section>
+  <section>
+    <p>Preferences</p>
+    <select (change)="addPreference($event)">
+      <option value="" disabled selected>Select a preference</option>
+      <option *ngFor="let p of availablePreferences" [value]="p">
+        {{ p }}
+      </option>
+    </select>
+    <div class="selected-items">
+      <button
+        (click)="removePreference(p)"
+        *ngFor="let p of user.preferences"
+        class="selected-item shadow"
+      >
+        {{ p }}
+      </button>
+    </div>
+  </section>
 
-
-
-
-    </section>
-    <section id="userCharacteristics">
-      <label for="userHeight">Height (m)</label>
-      <input type="number" id="userHeight" name="userHeight" [(ngModel)]="user.height" min=0 max=3 required />
-      <label for="userWeight">Weight (kg)</label>
-      <input type="number" id="userWeight" name="userWeight" [(ngModel)]="user.weight" min=0 max=700 required />
-    </section>
-    <section>
-      <p>Preferences</p>
-      <select (change)="addPreference($event)">
-        <option value="" disabled selected>Select a preference</option>
-        <option *ngFor="let p of availablePreferences" [value]="p">{{ p }}</option>
-      </select>
-      <div class="selected-items">
-        <span *ngFor="let p of user.preferences" class="selected-item">
-          {{ p }}
-          <img src="/assets/svgs/exit.svg" alt="Remove" (click)="removePreference(p)" />
-        </span>
-      </div>
-    </section>
-
-    <section>
-      <p>Restrictions</p>
-      <select (change)="addRestriction($event)">
-        <option value="" disabled selected>Select a restriction</option>
-        <option *ngFor="let r of availableRestrictions" [value]="r">{{ r }}</option>
-      </select>
-      <div class="selected-items">
-        <span *ngFor="let r of user.restrictions" class="selected-item">
-          {{ r }}
-          <img src="/assets/svgs/exit.svg" alt="Remove" (click)="removeRestriction(r)" />
-        </span>
-      </div>
-    </section>
-  </form>
+  <section>
+    <p>Restrictions</p>
+    <select (change)="addRestriction($event)">
+      <option value="" disabled selected>Select a restriction</option>
+      <option *ngFor="let r of availableRestrictions" [value]="r">
+        {{ r }}
+      </option>
+    </select>
+    <div class="selected-items">
+      <button
+        (click)="removeRestriction(r)"
+        *ngFor="let r of user.restrictions"
+        class="selected-item"
+      >
+        {{ r }}
+      </button>
+    </div>
+  </section>
+</form>
