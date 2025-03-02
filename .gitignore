@@ -376,3 +376,4 @@ backendtest/obj/project.nuget.cache
 /backend/Migrations
 /backend/Migrations
 backend/Migrations/20250128042153_initial.cs
+taco-api/dist/taco-api-standalone.exe
