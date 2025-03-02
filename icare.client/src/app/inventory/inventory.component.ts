@@ -177,7 +177,6 @@ export class InventoryComponent {
 
     this.api.getSpecificItem(item).subscribe(
       (result) => {
-        console.log({ ...result  });
         let info = this.inventory.get(item) ?? { quantity: 1, unit: "g" };
         if (!info.unit) info.unit = "g";
 
