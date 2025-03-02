@@ -38,12 +38,6 @@ namespace backendtest
 
             DbContext = new ICareServerContext(options);
             DbContext.Database.EnsureCreated();
-
-            // Persist Data created on OnModelCreating
-            if (DbContext.Ingredients.Any() || DbContext.Recipes.Any())
-            {
-                DbContext.SaveChanges();
-            }
         }
 
         /// <summary>
