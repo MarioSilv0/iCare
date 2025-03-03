@@ -29,6 +29,16 @@ namespace backend.Models.Ingredients
         public Ingredient Ingredient { get; set; }
 
         /// <summary>
+        /// Gets or sets the quantity of the ingredient that the recipe needs.
+        /// </summary>
+        public float Quantity { get; set; }
+
+        /// <summary>
+        /// Gets or sets the unit of measurement for the ingredient quantity.
+        /// </summary>
+        public string? Unit { get; set; }
+
+        /// <summary>
         /// Gets or sets the unique identifier of the recipe associated with this ingredient.
         /// </summary>
         public int RecipeId { get; set; }

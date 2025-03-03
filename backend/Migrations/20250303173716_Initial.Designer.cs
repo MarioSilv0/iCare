@@ -12,7 +12,7 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ICareServerContext))]
-    [Migration("20250303125457_Initial")]
+    [Migration("20250303173716_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -241,6 +241,12 @@ namespace backend.Migrations
 
                     b.Property<int>("IngredientId")
                         .HasColumnType("int");
+
+                    b.Property<float>("Quantity")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("RecipeId", "IngredientId");
 

@@ -56,7 +56,7 @@ namespace backend.Models.Recipes
         /// <summary>
         /// Gets or sets the collection of ingredients associated with the recipe.
         /// </summary>
-        public ICollection<RecipeIngredient>? RecipeIngredients { get; set; }
+        public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
 
         /// <summary>
         /// Gets or sets the collection of user interactions with this recipe, such as favorites.

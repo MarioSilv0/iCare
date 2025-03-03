@@ -8,6 +8,7 @@
 /// <date>Last Modified: 2025-03-01</date>
 
 using backend.Data;
+using backend.Models;
 using backend.Models.Data_Transfer_Objects;
 using backend.Models.Ingredients;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -109,12 +110,14 @@ namespace backend.Controllers.Api
                         var ui = new UserIngredient { IngredientId = ingredient.Id, Quantity = item.Quantity, Unit = item.Unit, UserId = id };
                         _context.UserIngredients.Add(ui);
                         userIngredients.Add(item.Name, ui);
+                        _logger.LogInformation("Ingredient {IngredientName} has been added to user {UserId}.", item.Name, id);
 
                     }
                     else //Edit Item
                     {
                         existingIngredient.Quantity = item.Quantity;
                         existingIngredient.Unit = item.Unit;
+                        _logger.LogInformation("Ingredient {IngredientName} has been eddited to quantity: {Quantity}; unit: {Unit}; for user {UserId}.", item.Name, item.Quantity, item.Unit, id);
                     }
                 }
                 await _context.SaveChangesAsync();
@@ -174,6 +177,7 @@ namespace backend.Controllers.Api
                                                                  .Select(ui => new PublicItem { Name = ui.Ingredient.Name, Quantity = ui.Quantity, Unit = ui.Unit })
                                                                  .ToListAsync();
 
+                _logger.LogInformation("Ingredients {IngredientsName} have been deleted.", nameOfItemsToRemove.ToString());
                 return Ok(updatedItems);
             }
             catch (Exception ex)

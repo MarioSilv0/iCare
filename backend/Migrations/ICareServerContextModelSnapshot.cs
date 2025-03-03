@@ -239,6 +239,12 @@ namespace backend.Migrations
                     b.Property<int>("IngredientId")
                         .HasColumnType("int");
 
+                    b.Property<float>("Quantity")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("RecipeId", "IngredientId");
 
                     b.HasIndex("IngredientId");
