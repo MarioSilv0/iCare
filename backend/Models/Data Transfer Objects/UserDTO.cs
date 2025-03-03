@@ -14,7 +14,7 @@ namespace backend.Models
     /// preferences, and dietary restrictions. This class is used for data transfer where only
     /// publicly available user information is needed.
     /// </summary>
-    public class PublicUser
+    public class UserDTO
     {
         /// <summary>
         /// Gets or sets the URL of the user's profile picture.
@@ -69,7 +69,7 @@ namespace backend.Models
         /// <summary>
         /// Initializes a new instance of the <c>PublicUser</c> class.
         /// </summary>
-        public PublicUser() { }
+        public UserDTO() { }
 
         /// <summary>
         /// Initializes a new instance of the <c>PublicUser</c> class with data from an existing user.
@@ -77,7 +77,7 @@ namespace backend.Models
         /// <param name="user">The user entity containing profile information.</param>
         /// <param name="model">An optional existing <c>PublicUser</c> model to retrieve preferences and restrictions from.</param>
         /// <param name="categories">A list of available food categories.</param>
-        public PublicUser(User user, PublicUser? model, List<string> categories)
+        public UserDTO(User user, UserDTO? model, List<string> categories)
         {
             Picture = user.Picture;
             Name = user.Name;

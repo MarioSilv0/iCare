@@ -79,10 +79,10 @@ namespace backend.Models
         public ICollection<UserLog>? Logs { get; set; }
 
         /// <summary>
-        /// Updates the user properties based on the provided <see cref="PublicUser"/> model.
+        /// Updates the user properties based on the provided <see cref="UserDTO"/> model.
         /// </summary>
         /// <param name="model">The public user model containing updated user data.</param>
-        public void UpdateFromModel(PublicUser model)
+        public void UpdateFromModel(UserDTO model)
         {
             if(Picture != model.Picture && !string.IsNullOrWhiteSpace(model.Picture))
                 Picture = model.Picture;

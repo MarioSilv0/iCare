@@ -1,6 +1,6 @@
 ﻿/// <summary>
 /// This file contains the <c>PublicItemTests</c> class, which provides unit tests 
-/// for the <see cref="PublicItem"/> class. The tests ensure that the <c>Quantity</c> 
+/// for the <see cref="ItemDTO"/> class. The tests ensure that the <c>Quantity</c> 
 /// property correctly rounds values and handles edge cases.
 /// </summary>
 /// <author>João Morais  - 202001541</author>
@@ -13,19 +13,19 @@ using backend.Models.Data_Transfer_Objects;
 namespace backendtest
 {
     /// <summary>
-    /// The <c>PublicItemTests</c> class contains unit tests for the <see cref="PublicItem"/> model.
+    /// The <c>PublicItemTests</c> class contains unit tests for the <see cref="ItemDTO"/> model.
     /// It ensures that the <c>Quantity</c> property rounds values correctly and handles edge cases such as negatives.
     /// </summary>
-    public class PublicItemTests
+    public class ItemDTOTests
     {
-        PublicItem publicItem;
+        ItemDTO publicItem;
 
         /// <summary>
         /// Initializes a new instance of the <c>PublicItemTests</c> class.
-        /// Creates a fresh <see cref="PublicItem"/> instance before each test.
+        /// Creates a fresh <see cref="ItemDTO"/> instance before each test.
         /// </summary>
-        public PublicItemTests() { 
-            publicItem = new PublicItem();
+        public ItemDTOTests() { 
+            publicItem = new ItemDTO();
         }
 
         /// <summary>

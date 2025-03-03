@@ -73,7 +73,7 @@ namespace backend.Controllers.Api
         /// An <c>ActionResult</c> containing the ingredient details if found, or <c>NotFound</c> if the ingredient is not found.
         /// </returns>
         [HttpGet("{ingredientName}")]
-        public async Task<ActionResult<PublicIngredient>> Get(string ingredientName)
+        public async Task<ActionResult<IngredientDTO>> Get(string ingredientName)
         {
             try
             {
@@ -83,17 +83,7 @@ namespace backend.Controllers.Api
                 var ingredient = await _context.Ingredients.FirstOrDefaultAsync(i => i.Name == ingredientName);
                 if (ingredient == null) return NotFound($"Ingredient '{ingredientName}' not found.");
 
-                var publicIngredient = new PublicIngredient
-                {
-                    Name = ingredient.Name,
-                    Kcal = ingredient.Kcal,
-                    KJ = ingredient.KJ,
-                    Protein = ingredient.Protein,
-                    Carbohydrates = ingredient.Carbohydrates,
-                    Lipids = ingredient.Lipids,
-                    Fibers = ingredient.Fibers,
-                    Category = ingredient.Category
-                };
+                var publicIngredient = new IngredientDTO(ingredient);
 
                 return Ok(publicIngredient);
             }

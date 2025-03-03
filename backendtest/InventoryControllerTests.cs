@@ -71,9 +71,9 @@ namespace backendtest
 
             var result = await controller.Get();
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
             Assert.Empty(items);
         }
 
@@ -107,9 +107,9 @@ namespace backendtest
             var result = await controller.Get();
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var ingredients = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            var ingredients = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
             Assert.NotNull(ingredients);
             Assert.Equal(user.UserIngredients.Count, ingredients.Count);
             Assert.Contains(ingredients, i => i.Name == ingredient1.Name && i.Quantity == item1.Quantity && i.Unit == item1.Unit);
@@ -136,9 +136,9 @@ namespace backendtest
             var result = await controller.Get();
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
             Assert.NotNull(items);
             Assert.Empty(items);
         }
@@ -156,7 +156,7 @@ namespace backendtest
                 HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity()) }
             };
 
-            var result = await controller.Update(new List<PublicItem>());
+            var result = await controller.Update(new List<ItemDTO>());
 
             Assert.IsType<UnauthorizedObjectResult>(result.Result);
         }
@@ -183,17 +183,17 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            PublicItem item1 = new PublicItem() { Name = ingredient1.Name, Quantity = 1, Unit = "kg" };
-            PublicItem item2 = new PublicItem() { Name = ingredient2.Name, Quantity = 1, Unit = "kg" };
+            ItemDTO item1 = new ItemDTO() { Name = ingredient1.Name, Quantity = 1, Unit = "kg" };
+            ItemDTO item2 = new ItemDTO() { Name = ingredient2.Name, Quantity = 1, Unit = "kg" };
 
-            List<PublicItem> newItems = new () { item1, item2};
+            List<ItemDTO> newItems = new () { item1, item2};
 
             var result = await controller.Update(newItems);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
             Assert.NotNull(items);
             Assert.Equal(2, items.Count);
             Assert.Contains(items, i => i.Name == ingredient1.Name && i.Quantity == item1.Quantity && i.Unit == item1.Unit);
@@ -221,17 +221,17 @@ namespace backendtest
             Ingredient ingredient1 = new Ingredient { Id = 14, Name = "Foo" };
             Ingredient ingredient2 = new Ingredient { Id = 15, Name = "Bar" };
 
-            PublicItem item1 = new PublicItem() { Name = ingredient1.Name, Quantity = 1, Unit = "kg" };
-            PublicItem item2 = new PublicItem() { Name = ingredient2.Name, Quantity = 1, Unit = "kg" };
+            ItemDTO item1 = new ItemDTO() { Name = ingredient1.Name, Quantity = 1, Unit = "kg" };
+            ItemDTO item2 = new ItemDTO() { Name = ingredient2.Name, Quantity = 1, Unit = "kg" };
 
-            List<PublicItem> newItems = new() { item1, item2 };
+            List<ItemDTO> newItems = new() { item1, item2 };
 
             var result = await controller.Update(newItems);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
             Assert.NotNull(items);
             Assert.Empty(items);
         }
@@ -258,17 +258,17 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            PublicItem item1 = new PublicItem() { Name = ingredient1.Name, Quantity = 1, Unit = "kg" };
-            PublicItem item2 = new PublicItem() { Name = ingredient2.Name, Quantity = 1, Unit = "kg" };
+            ItemDTO item1 = new ItemDTO() { Name = ingredient1.Name, Quantity = 1, Unit = "kg" };
+            ItemDTO item2 = new ItemDTO() { Name = ingredient2.Name, Quantity = 1, Unit = "kg" };
 
-            List<PublicItem> newItems = new() { item1, item2 };
+            List<ItemDTO> newItems = new() { item1, item2 };
 
             var result = await controller.Update(newItems);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
             Assert.NotNull(items);
             Assert.Equal(2, items.Count);
             Assert.Contains(items, i => i.Name == ingredient1.Name && i.Quantity == item1.Quantity && i.Unit == item1.Unit);
@@ -297,14 +297,14 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            List<PublicItem> newItems = new();
+            List<ItemDTO> newItems = new();
 
             var result = await controller.Update(newItems);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
             Assert.NotNull(items);
             Assert.Empty(items);
         }
@@ -332,18 +332,18 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            PublicItem item1 = new PublicItem() { Name = ingredient1.Name, Quantity = 1, Unit = "kg" };
-            PublicItem item2 = new PublicItem() { Name = ingredient2.Name, Quantity = 1, Unit = "kg" };
-            PublicItem item3 = new PublicItem() { Name = ingredient1.Name, Quantity = 2, Unit = "g" };
+            ItemDTO item1 = new ItemDTO() { Name = ingredient1.Name, Quantity = 1, Unit = "kg" };
+            ItemDTO item2 = new ItemDTO() { Name = ingredient2.Name, Quantity = 1, Unit = "kg" };
+            ItemDTO item3 = new ItemDTO() { Name = ingredient1.Name, Quantity = 2, Unit = "g" };
 
-            List<PublicItem> newItems = new() { item1, item2, item3 };
+            List<ItemDTO> newItems = new() { item1, item2, item3 };
 
             var result = await controller.Update(newItems);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
             Assert.NotNull(items);
             Assert.Equal(2, items.Count);
             Assert.Contains(items, i => i.Name == ingredient1.Name && i.Quantity == item3.Quantity && i.Unit == item3.Unit);
@@ -375,16 +375,16 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, controller);
 
-            PublicItem item1 = new PublicItem() { Name = ingredient1.Name, Quantity = 3, Unit = "g" };
+            ItemDTO item1 = new ItemDTO() { Name = ingredient1.Name, Quantity = 3, Unit = "g" };
 
-            List<PublicItem> newItems = new() { item1 };
+            List<ItemDTO> newItems = new() { item1 };
 
             var result = await controller.Update(newItems);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
             Assert.NotNull(items);
             Assert.Single(items);
             Assert.Contains(items, i => i.Name == ingredient1.Name && i.Quantity == item1.Quantity && i.Unit == item1.Unit);
@@ -429,9 +429,9 @@ namespace backendtest
             var result = await controller.Delete(deleteItems);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
             Assert.NotNull(items);
             Assert.Empty(items);
         }
@@ -466,9 +466,9 @@ namespace backendtest
             var result = await controller.Delete([]);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
             Assert.NotNull(items);
             Assert.Equal(2, items.Count);
             Assert.Contains(items, i => i.Name == ingredient1.Name && i.Quantity == ui1.Quantity && i.Unit == ui1.Unit);
@@ -508,9 +508,9 @@ namespace backendtest
             var result = await controller.Delete(deleteItems);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
             Assert.NotNull(items);
             Assert.Single(items);
             Assert.Contains(items, i => i.Name == ingredient1.Name && i.Quantity == ui1.Quantity && i.Unit == ui1.Unit);
@@ -550,9 +550,9 @@ namespace backendtest
             var result = await controller.Delete(deleteItems);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
             Assert.NotNull(items);
             Assert.Empty(items);
         }

@@ -1,4 +1,13 @@
-﻿using backend.Data;
+﻿/// <summary>
+/// This file defines the <c>RecipeController</c> class, responsible for managing recipe-related API endpoints.
+/// It provides endpoints to retrieve all recipes and fetch details of a specific recipe.
+/// </summary>
+/// <author>João Morais  - 202001541</author>
+/// <author>Luís Martins - 202100239</author>
+/// <author>Mário Silva  - 202000500</author>
+/// <date>Last Modified: 2025-03-03</date>
+
+using backend.Data;
 using backend.Models.Data_Transfer_Objects;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +16,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers.Api
 {
+    /// <summary>
+    /// The <c>RecipeController</c> class provides API endpoints for retrieving recipes.
+    /// It allows authenticated users to fetch a list of recipes and details of a specific recipe.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -15,66 +28,76 @@ namespace backend.Controllers.Api
         private readonly ICareServerContext _context;
         private readonly ILogger<RecipeController> _logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <c>RecipeController</c> class.
+        /// </summary>
+        /// <param name="context">The database context used for accessing recipe data.</param>
+        /// <param name="logger">The logger instance used for logging application activity.</param>
         public RecipeController(ICareServerContext context, ILogger<RecipeController> logger)
         {
             _context = context;
             _logger = logger;
         }
 
+        /// <summary>
+        /// Retrieves all available recipes.
+        /// </summary>
+        /// <returns>
+        /// An <c>ActionResult</c> containing a list of <c>RecipeDTO</c> objects 
+        /// if recipes are found, or an error response otherwise.
+        /// </returns>
         [HttpGet("")]
-        public async Task<ActionResult<List<string>>> Get()
+        public async Task<ActionResult<List<RecipeDTO>>> Get()
         {
             try
             {
                 var id = User.FindFirst("UserId")?.Value;
                 if (id == null) return Unauthorized("User ID not found in token.");
 
-                var recipes = await _context.Recipes.Include(i => i.RecipeIngredients)
+                var recipes = await _context.Recipes.AsNoTracking()
+                                                    .Include(r => r.RecipeIngredients)
                                                     .ThenInclude(ri => ri.Ingredient)
-                                                    .Select(i => new { i.Name, i.Picture, calories = i.RecipeIngredients.Sum(ri => ri.Ingredient.Kcal * (ri.Quantity / 100.0)) })
+                                                    .Select(r => new RecipeDTO(r, false, id))
                                                     .ToListAsync();
 
                 return Ok(recipes);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving ingredients");
+                _logger.LogError(ex, "Error retrieving recipes");
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
 
+        /// <summary>
+        /// Retrieves details of a specific recipe by name.
+        /// </summary>
+        /// <param name="recipeName">The name of the recipe to retrieve.</param>
+        /// <returns>
+        /// An <c>ActionResult</c> containing the <c>RecipeDTO</c> object if found, 
+        /// or a <c>NotFound</c> response if the recipe does not exist.
+        /// </returns>
         [HttpGet("{recipeName}")]
-        public async Task<ActionResult<PublicIngredient>> Get(string recipeName)
+        public async Task<ActionResult<RecipeDTO>> Get(string recipeName)
         {
             try
             {
                 var id = User.FindFirst("UserId")?.Value;
                 if (id == null) return Unauthorized("User ID not found in token.");
 
-                var recipe = await _context.Recipes.Where(i => i.Name == recipeName)
-                                                   .Include(r => r.RecipeIngredients)
+                var recipe = await _context.Recipes.Include(r => r.RecipeIngredients)
                                                    .ThenInclude(ri => ri.Ingredient)
-                                                   .Select(r => new
-                                                    {
-                                                         r.Name,
-                                                        r.Picture,
-                                                        Ingredients = r.RecipeIngredients.Select(ri => new
-                                                        {
-                                                            ri.Ingredient.Name,
-                                                            ri.Quantity,
-                                                            ri.Unit
-                                                        }).ToList()
-                                                    })
-                                                   .FirstOrDefaultAsync();
-                if (recipe == null) return NotFound($"Ingredient '{recipe}' not found.");
+                                                   .Include(r => r.UserRecipes)
+                                                   .FirstOrDefaultAsync(r => r.Name == recipeName);
+                if (recipe == null) return NotFound($"Recipe '{recipe}' not found.");
 
-                // Falta deixar receita so a retornar dados publicos (PublicRecipe)
+                var publicRecipe = new RecipeDTO(recipe!, true, id);
 
-                return Ok(recipe);
+                return Ok(publicRecipe);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving ingredient");
+                _logger.LogError(ex, "Error retrieving recipe {RecipeName}", recipeName);
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }

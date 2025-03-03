@@ -24,17 +24,17 @@ namespace backend.Controllers.Api
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class PublicUserController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly ICareServerContext _context;
-        private readonly ILogger<PublicUserController> _logger;
+        private readonly ILogger<UserController> _logger;
 
         /// <summary>
         /// Initializes a new instance of the <c>PublicUserController</c> class.
         /// </summary>
         /// <param name="context">The database context for accessing user data.</param>
         /// <param name="logger">The logger instance for logging application activity.</param>
-        public PublicUserController(ICareServerContext context, ILogger<PublicUserController> logger)
+        public UserController(ICareServerContext context, ILogger<UserController> logger)
         {
             _context = context;
             _logger = logger;
@@ -47,7 +47,7 @@ namespace backend.Controllers.Api
         /// An <c>ActionResult</c> containing the <c>PublicUser</c> object if found, or an error response otherwise.
         /// </returns>
         [HttpGet("")]
-        public async Task<ActionResult<PublicUser>> Get()
+        public async Task<ActionResult<UserDTO>> Get()
         {
             try
             {
@@ -63,7 +63,7 @@ namespace backend.Controllers.Api
                                                        .AsNoTracking()
                                                        .ToListAsync();
 
-                return Ok(new PublicUser(user, null, categories));
+                return Ok(new UserDTO(user, null, categories));
             }
             catch (Exception ex) 
             {
@@ -80,7 +80,7 @@ namespace backend.Controllers.Api
         /// An <c>ActionResult</c> containing the updated <c>PublicUser</c> object if successful, or an error response otherwise.
         /// </returns>
         [HttpPut("")]
-        public async Task<ActionResult<PublicUser>> Edit([FromBody] PublicUser model)
+        public async Task<ActionResult<UserDTO>> Edit([FromBody] UserDTO model)
         {
             if (model == null) return BadRequest("Invalid data provided.");
 
@@ -113,7 +113,7 @@ namespace backend.Controllers.Api
 
                 _logger.LogInformation("User {UserId} updated their information.", user.Id);
 
-                return Ok(new PublicUser(user, model, categories));
+                return Ok(new UserDTO(user, model, categories));
             }
             catch (Exception ex)
             {
