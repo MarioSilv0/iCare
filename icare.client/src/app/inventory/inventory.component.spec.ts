@@ -6,6 +6,8 @@ import { NotificationService } from '../services/notifications.service';
 import { of } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
+declare var bootstrap: any;
+
 describe('InventoryComponent', () => {
   let component: InventoryComponent;
   let fixture: ComponentFixture<InventoryComponent>;
@@ -154,7 +156,7 @@ describe('InventoryComponent', () => {
 
       usersServiceMock.removeInventory.and.returnValue(of([{ name: 'Apple' }]));
 
-      component.removeItemFromInventory();
+      component.removeItemFromInventory(["Apple"]);
 
       expect(component.inventory.has('Apple')).toBeFalse();
       expect(notificationServiceMock.showNotification).toHaveBeenCalled();

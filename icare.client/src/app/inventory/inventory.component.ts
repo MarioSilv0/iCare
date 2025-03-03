@@ -30,7 +30,7 @@ declare var bootstrap: any;
   styleUrl: './inventory.component.css',
 })
 export class InventoryComponent {
-  private notificationsPermission: boolean = true;
+  public notificationsPermission: boolean = true;
   public searchTerm: string = '';
   public searchSubject = new Subject<string>();
 
