@@ -13,8 +13,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-const URL: string = 'https://localhost:7266/api/';
-const INGREDIENT: string = 'Ingredient/';
+const INGREDIENT: string = '/api/Ingredient/';
 
 /**
  * The `ApiService` class provides methods for fetching ingredient data from the backend API.
@@ -32,7 +31,7 @@ export class ApiService {
    * @returns {Observable<string[]>} An observable containing an array of ingredient names.
    */
   getAllItems(): Observable<string[]> {
-    return this.http.get<string[]>(URL + INGREDIENT);
+    return this.http.get<string[]>(INGREDIENT);
   }
 
   /**
@@ -42,7 +41,7 @@ export class ApiService {
    * @returns {Observable<Ingredient>} An observable containing the ingredient details.
    */
   getSpecificItem(itemName: string): Observable<Ingredient> {
-    return this.http.get<Ingredient>(URL + INGREDIENT + itemName);
+    return this.http.get<Ingredient>(INGREDIENT + itemName);
   }
 }
 
