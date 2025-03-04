@@ -239,11 +239,40 @@ namespace backend.Migrations
                     b.Property<int>("IngredientId")
                         .HasColumnType("int");
 
+                    b.Property<float>("Quantity")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("RecipeId", "IngredientId");
 
                     b.HasIndex("IngredientId");
 
                     b.ToTable("RecipeIngredients");
+
+                    b.HasData(
+                        new
+                        {
+                            RecipeId = 1,
+                            IngredientId = 1,
+                            Quantity = 3f,
+                            Unit = "g"
+                        },
+                        new
+                        {
+                            RecipeId = 1,
+                            IngredientId = 2,
+                            Quantity = 3f,
+                            Unit = "g"
+                        },
+                        new
+                        {
+                            RecipeId = 2,
+                            IngredientId = 3,
+                            Quantity = 3f,
+                            Unit = "kg"
+                        });
                 });
 
             modelBuilder.Entity("backend.Models.Ingredients.UserIngredient", b =>

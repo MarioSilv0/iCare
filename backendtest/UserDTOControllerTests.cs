@@ -1,6 +1,6 @@
 ﻿/// <summary>
 /// This file contains the <c>PublicUserControllerTests</c> class, which provides unit tests 
-/// for the <see cref="PublicUserController"/> class. These tests validate the functionality 
+/// for the <see cref="UserController"/> class. These tests validate the functionality 
 /// of retrieving and updating public user profiles while handling authentication and data constraints.
 /// </summary>
 /// <author>João Morais  - 202001541</author>
@@ -20,23 +20,23 @@ using backend.Models.Recipes;
 namespace backendtest
 {
     /// <summary>
-    /// The <c>PublicUserControllerTests</c> class contains unit tests for the <see cref="PublicUserController"/> API.
+    /// The <c>PublicUserControllerTests</c> class contains unit tests for the <see cref="UserController"/> API.
     /// It verifies that user profile retrieval and updates work correctly, including authentication handling.
     /// </summary>
-    public class PublicUserControllerTests : IClassFixture<ICareContextFixture>, IAsyncLifetime
+    public class UserDTOControllerTests : IClassFixture<ICareContextFixture>, IAsyncLifetime
     {
         private readonly ICareServerContext _context;
-        private PublicUserController _controller;
+        private UserController _controller;
 
         /// <summary>
         /// Initializes a new instance of the <c>PublicUserControllerTests</c> class.
         /// Sets up the database context and controller for testing.
         /// </summary>
         /// <param name="fixture">The test fixture that provides an in-memory database context.</param>
-        public PublicUserControllerTests(ICareContextFixture fixture)
+        public UserDTOControllerTests(ICareContextFixture fixture)
         {
             _context = fixture.DbContext;
-            var logger = NullLogger<PublicUserController>.Instance;
+            var logger = NullLogger<UserController>.Instance;
             _controller = new(_context, logger);
         }
 
@@ -106,9 +106,9 @@ namespace backendtest
             var result = await _controller.Get();
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<PublicUser>>(result);
+            Assert.IsType<ActionResult<UserDTO>>(result);
 
-            var publicUser = Assert.IsType<OkObjectResult>(result.Result)?.Value as PublicUser;
+            var publicUser = Assert.IsType<OkObjectResult>(result.Result)?.Value as UserDTO;
             Assert.NotNull(publicUser);
             Assert.Equal(user.Email, publicUser.Email);
             Assert.Single(publicUser.Preferences);
@@ -131,7 +131,7 @@ namespace backendtest
                 HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity()) }
             };
 
-            var result = await _controller.Edit(new PublicUser());
+            var result = await _controller.Edit(new UserDTO());
 
             Assert.IsType<UnauthorizedObjectResult>(result.Result);
         }
@@ -144,7 +144,7 @@ namespace backendtest
         {
             Authenticate.SetUserIdClaim("NonExistingUser", _controller);
 
-            var result = await _controller.Edit(new PublicUser());
+            var result = await _controller.Edit(new UserDTO());
 
             Assert.IsType<NotFoundResult>(result.Result);
         }
@@ -178,7 +178,7 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user.Id, _controller);
 
-            var updatedModel = new PublicUser
+            var updatedModel = new UserDTO
             {
                 Picture = "picture",
                 Name = "name",
@@ -193,9 +193,9 @@ namespace backendtest
             var result = await _controller.Edit(updatedModel);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<PublicUser>>(result);
+            Assert.IsType<ActionResult<UserDTO>>(result);
 
-            var updatedUser = Assert.IsType<OkObjectResult>(result.Result)?.Value as PublicUser;
+            var updatedUser = Assert.IsType<OkObjectResult>(result.Result)?.Value as UserDTO;
             Assert.NotNull(updatedUser);
             Assert.Equal(updatedModel.Picture, updatedUser.Picture);
             Assert.Equal(updatedModel.Name, updatedUser.Name);
@@ -222,14 +222,14 @@ namespace backendtest
 
             Authenticate.SetUserIdClaim(user1.Id, _controller);
 
-            var updatedModel = new PublicUser { Email = user2.Email };
+            var updatedModel = new UserDTO { Email = user2.Email };
 
             var result = await _controller.Edit(updatedModel);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<PublicUser>>(result);
+            Assert.IsType<ActionResult<UserDTO>>(result);
 
-            var updatedUser = Assert.IsType<OkObjectResult>(result.Result)?.Value as PublicUser;
+            var updatedUser = Assert.IsType<OkObjectResult>(result.Result)?.Value as UserDTO;
             Assert.NotNull(updatedUser);
             Assert.Equal("user1@example.com", updatedUser.Email);
         }

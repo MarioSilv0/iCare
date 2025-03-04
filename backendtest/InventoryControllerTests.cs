@@ -1,560 +1,469 @@
 ﻿/// <summary>
 /// This file contains the <c>InventoryControllerTests</c> class, which provides unit tests 
-/// for the <see cref="InventoryController"/>. It validates the behavior of inventory-related 
-/// API endpoints such as retrieving, updating, and deleting user ingredients.
+/// for the <see cref="InventoryController"/> class. These tests validate the functionality 
+/// of retrieving, updating, and deleting user inventory items while handling authentication and data constraints.
 /// </summary>
 /// <author>João Morais  - 202001541</author>
 /// <author>Luís Martins - 202100239</author>
 /// <author>Mário Silva  - 202000500</author>
-/// <date>Last Modified: 2025-03-01</date>
+/// <date>Last Modified: 2025-03-04</date>
 
 using backend.Controllers.Api;
 using backend.Data;
 using backend.Models;
+using backend.Models.Data_Transfer_Objects;
+using backend.Models.Ingredients;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Security.Claims;
-using backend.Models.Data_Transfer_Objects;
-using backend.Models.Ingredients;
 
 namespace backendtest
 {
     /// <summary>
-    /// The <c>InventoryControllerTests</c> class contains unit tests for the <see cref="InventoryController"/>.
-    /// It verifies the behavior of API methods responsible for managing user inventory, 
-    /// ensuring correct handling of valid and invalid requests.
+    /// The <c>InventoryControllerTests</c> class contains unit tests for the <see cref="InventoryController"/> API.
+    /// It verifies that user inventory retrieval, updates, and deletions work correctly, including authentication handling.
     /// </summary>
-    public class InventoryControllerTests : IClassFixture<ICareContextFixture>
+    public class InventoryControllerTests : IClassFixture<ICareContextFixture>, IAsyncLifetime
     {
         private readonly ICareServerContext _context;
-        private InventoryController controller;
+        private InventoryController _controller;
 
         /// <summary>
         /// Initializes a new instance of the <c>InventoryControllerTests</c> class.
-        /// Sets up a test database and an instance of the InventoryController for testing.
+        /// Sets up the database context and controller for testing.
         /// </summary>
-        /// <param name="fixture">The test fixture providing a shared in-memory database context.</param>
+        /// <param name="fixture">The test fixture that provides an in-memory database context.</param>
         public InventoryControllerTests(ICareContextFixture fixture)
         {
             _context = fixture.DbContext;
             var logger = NullLogger<InventoryController>.Instance;
-
-            controller = new(_context, logger);
+            _controller = new(_context, logger);
         }
 
         /// <summary>
-        /// Tests that <c>Get()</c> returns <see cref="UnauthorizedObjectResult"/> 
-        /// when the user ID is missing from the authentication token.
+        /// Clears existing users, ingredients, and user inventory items before running tests.
+        /// Then, it seeds the database with sample ingredient data.
+        /// </summary>
+        public async Task InitializeAsync()
+        {
+            _context.Users.RemoveRange(_context.Users);
+            _context.Ingredients.RemoveRange(_context.Ingredients);
+            _context.UserIngredients.RemoveRange(_context.UserIngredients);
+            await _context.SaveChangesAsync();
+
+            _context.Ingredients.AddRange(
+                new Ingredient { Id = 1, Name = "Arroz", Kcal = 124, Category = "Cereais e Derivados" },
+                new Ingredient { Id = 2, Name = "Batata", Kcal = 137, Category = "Cereais e Derivados" },
+                new Ingredient { Id = 3, Name = "Carne", Kcal = 200, Category = "Carne" }
+            );
+
+            var user1 = new User { Id = "User1", UserIngredients = new List<UserIngredient>() };
+            var user2 = new User { Id = "User2", UserIngredients = new List<UserIngredient>() };
+
+            user1.UserIngredients.Add(new UserIngredient { IngredientId = 1, Quantity = 200, Unit = "g", UserId = user1.Id });
+            user1.UserIngredients.Add(new UserIngredient { IngredientId = 2, Quantity = 150, Unit = "g", UserId = user1.Id });
+
+            user2.UserIngredients.Add(new UserIngredient { IngredientId = 3, Quantity = 100, Unit = "g", UserId = user2.Id });
+
+            _context.Users.AddRange(user1, user2);
+            await _context.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Handles asynchronous cleanup after tests (no action needed).
+        /// </summary>
+        public Task DisposeAsync() => Task.CompletedTask;
+
+        /// <summary>
+        /// Tests that <c>Get()</c> returns <see cref="UnauthorizedObjectResult"/> when no user ID is provided.
         /// </summary>
         [Fact]
-        public async Task Get_WhenIdIsNull_ReturnsUnauthorized()
+        public async Task Get_WhenUserIdIsNull_ReturnsUnauthorized()
         {
-            // Do not set user ID in claims (simulate missing token)
-            controller.ControllerContext = new ControllerContext
+            _controller.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity()) }
             };
 
-            var result = await controller.Get();
+            var result = await _controller.Get();
 
             Assert.IsType<UnauthorizedObjectResult>(result.Result);
         }
 
         /// <summary>
-        /// Tests that <c>Get()</c> returns an empty list when the provided user ID does not exist.
+        /// Tests that <c>Get()</c> returns the correct list of user ingredients when a valid user ID is provided.
         /// </summary>
         [Fact]
-        public async Task Get_WhenIdIsInvalid_ReturnsEmptyList()
+        public async Task Get_WhenIdIsValid_ReturnsUserIngredients()
         {
-            Authenticate.SetUserIdClaim("InvalidId", controller);
+            Authenticate.SetUserIdClaim("User1", _controller);
 
-            var result = await controller.Get();
-            Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
-
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
-            Assert.Empty(items);
-        }
-
-        /// <summary>
-        /// Tests that <c>Get()</c> returns a list of ingredients when a valid user ID is provided.
-        /// </summary>
-        [Fact]
-        public async Task Get_WhenIdIsValid_ReturnsList()
-        {
-            User user = new User
-            {
-                Id = "Id 4",
-                UserIngredients = new List<UserIngredient>()
-            };
-
-            Ingredient ingredient1 = new Ingredient { Id = 10, Name = "Foo" };
-            Ingredient ingredient2 = new Ingredient { Id = 11, Name = "Bar" };
-
-            UserIngredient item1 = new UserIngredient { IngredientId = ingredient1.Id, Quantity = 1, Unit = "kg", UserId = user.Id };
-            UserIngredient item2 = new UserIngredient { IngredientId = ingredient2.Id, Quantity = 5, Unit = "ml", UserId = user.Id };
-
-            user.UserIngredients.Add(item1);
-            user.UserIngredients.Add(item2);
-
-            _context.Ingredients.AddRange(ingredient1, ingredient2);
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            Authenticate.SetUserIdClaim(user.Id, controller);
-
-            var result = await controller.Get();
+            var result = await _controller.Get();
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var ingredients = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            var ingredients = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
             Assert.NotNull(ingredients);
-            Assert.Equal(user.UserIngredients.Count, ingredients.Count);
-            Assert.Contains(ingredients, i => i.Name == ingredient1.Name && i.Quantity == item1.Quantity && i.Unit == item1.Unit);
-            Assert.Contains(ingredients, i => i.Name == ingredient2.Name && i.Quantity == item2.Quantity && i.Unit == item2.Unit);
+            Assert.Equal(2, ingredients.Count);
+            Assert.Contains(ingredients, i => i.Name == "Arroz"  && i.Quantity == 200);
+            Assert.Contains(ingredients, i => i.Name == "Batata"  && i.Quantity == 150);
         }
 
         /// <summary>
-        /// Tests that <c>Get()</c> returns an empty list of ingredients when a valid user ID is provided and the user doesn't have ingredients associated.
+        /// Tests that when a user has no ingredients in their inventory, 
+        /// the API correctly returns an empty list.
         /// </summary>
         [Fact]
         public async Task Get_WhenUserHasNoItems_ReturnsEmptyList()
         {
-            User user = new User
-            {
-                Id = "Id 5",
-                UserIngredients = new List<UserIngredient>()
-            };
-
+            var user = new User { Id = "EmptyUser", UserIngredients = new List<UserIngredient>() };
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            Authenticate.SetUserIdClaim(user.Id, controller);
+            Authenticate.SetUserIdClaim(user.Id, _controller);
 
-            var result = await controller.Get();
+            var result = await _controller.Get();
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
+            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
             Assert.NotNull(items);
             Assert.Empty(items);
         }
 
         /// <summary>
-        /// Tests that <c>Update()</c> returns <see cref="UnauthorizedObjectResult"/> 
-        /// when the user ID is missing from the authentication token.
+        /// Tests that when a request to update the inventory is made 
+        /// without a valid user ID (unauthenticated request), 
+        /// the API returns an unauthorized response.
         /// </summary>
         [Fact]
-        public async Task Update_WhenIdIsNull_ReturnsUnauthorized()
+        public async Task Update_WhenUserIdIsNull_ReturnsUnauthorized()
         {
-            // Do not set user ID in claims (simulate missing token)
-            controller.ControllerContext = new ControllerContext
+            _controller.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity()) }
             };
 
-            var result = await controller.Update(new List<PublicItem>());
+            var result = await _controller.Update([]);
 
             Assert.IsType<UnauthorizedObjectResult>(result.Result);
         }
 
         /// <summary>
-        /// Tests that <c>Update()</c> correctly processes updates when a user has a null list of ingredients.
-        /// It ensures that new ingredients are added properly.
+        /// Tests that <c>Update()</c> correctly updates a user's ingredient quantity and unit.
         /// </summary>
         [Fact]
-        public async Task Update_WhenIdIsValidAndUserHasNullListOfIngredients_ReturnsList()
+        public async Task Update_WhenUserUpdatesIngredient_UpdatesSuccessfully()
         {
-            User user = new User
-            {
-                Id = "Id 6",
-                UserIngredients = null
-            };
+            Authenticate.SetUserIdClaim("User1", _controller);
 
-            Ingredient ingredient1 = new Ingredient { Id = 12, Name = "Foo" };
-            Ingredient ingredient2 = new Ingredient { Id = 13, Name = "Bar" };
+            ItemDTO item1 = new ItemDTO { Name = "Arroz", Quantity = 300, Unit = "g" };
+            ItemDTO item2 = new ItemDTO { Name = "Batata", Quantity = 100, Unit = "kg" };
 
-            _context.Ingredients.AddRange(ingredient1, ingredient2);
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            var updatedIngredients = new List<ItemDTO> { item1, item2 };
 
-            Authenticate.SetUserIdClaim(user.Id, controller);
-
-            PublicItem item1 = new PublicItem() { Name = ingredient1.Name, Quantity = 1, Unit = "kg" };
-            PublicItem item2 = new PublicItem() { Name = ingredient2.Name, Quantity = 1, Unit = "kg" };
-
-            List<PublicItem> newItems = new () { item1, item2};
-
-            var result = await controller.Update(newItems);
+            var result = await _controller.Update(updatedIngredients);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
-            Assert.NotNull(items);
-            Assert.Equal(2, items.Count);
-            Assert.Contains(items, i => i.Name == ingredient1.Name && i.Quantity == item1.Quantity && i.Unit == item1.Unit);
-            Assert.Contains(items, i => i.Name == ingredient2.Name && i.Quantity == item2.Quantity && i.Unit == item2.Unit);
+            var updatedList = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
+            Assert.NotNull(updatedList);
+            Assert.Equal(2, updatedList.Count);
+            Assert.Contains(updatedList, i => i.Name == item1.Name && i.Quantity == item1.Quantity && i.Unit == item1.Unit);
+            Assert.Contains(updatedList, i => i.Name == item2.Name && i.Quantity == item2.Quantity && i.Unit == item2.Unit);
         }
 
         /// <summary>
-        /// Tests that <c>Update()</c> returns an empty list when a user tries to update ingredients 
-        /// that do not exist in the database.
+        /// Tests that when a user adds a new ingredient to their inventory, 
+        /// it is successfully added alongside their existing ingredients.
         /// </summary>
         [Fact]
-        public async Task Update_WhenIdIsValidAndTheIngredientsDontExist_ReturnsEmptyList()
+        public async Task Update_WhenAddingNewIngredient_AddsSuccessfully()
         {
-            User user = new User
-            {
-                Id = "Id 7",
-                UserIngredients = new List<UserIngredient>()
-            };
+            Authenticate.SetUserIdClaim("User1", _controller);
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            ItemDTO item = new ItemDTO { Name = "Carne", Quantity = 500, Unit = "g" };
 
-            Authenticate.SetUserIdClaim(user.Id, controller);
+            var newIngredients = new List<ItemDTO> { item };
 
-            Ingredient ingredient1 = new Ingredient { Id = 14, Name = "Foo" };
-            Ingredient ingredient2 = new Ingredient { Id = 15, Name = "Bar" };
-
-            PublicItem item1 = new PublicItem() { Name = ingredient1.Name, Quantity = 1, Unit = "kg" };
-            PublicItem item2 = new PublicItem() { Name = ingredient2.Name, Quantity = 1, Unit = "kg" };
-
-            List<PublicItem> newItems = new() { item1, item2 };
-
-            var result = await controller.Update(newItems);
+            var result = await _controller.Update(newIngredients);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
-            Assert.NotNull(items);
-            Assert.Empty(items);
+            var updatedList = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
+            Assert.NotNull(updatedList);
+            Assert.Equal(3, updatedList.Count);
+            Assert.Contains(updatedList, i => i.Name == "Arroz" && i.Quantity == 200 && i.Unit == "g");
+            Assert.Contains(updatedList, i => i.Name == "Batata" && i.Quantity == 150 && i.Unit == "g");
+            Assert.Contains(updatedList, i => i.Name == item.Name && i.Quantity == item.Quantity && i.Unit == item.Unit);
         }
 
         /// <summary>
-        /// Tests that <c>Update()</c> correctly updates a user’s ingredient list when they already have ingredients.
+        /// Tests that when a user attempts to add ingredients that do not exist in the database,
+        /// those ingredients are not added, and the inventory remains unchanged.
         /// </summary>
         [Fact]
-        public async Task Update_WhenIdIsValidAndUserHasListOfIngredients_ReturnsList()
+        public async Task Update_WhenUserAddsIngredientThatDontExist_UpdatesSuccessfully()
         {
+            Authenticate.SetUserIdClaim("User1", _controller);
 
-            User user = new User
-            {
-                Id = "Id 8",
-                UserIngredients = new List<UserIngredient>()
-            };
+            ItemDTO item1 = new ItemDTO { Name = "Não Existe", Quantity = 100, Unit = "g" };
+            ItemDTO item2 = new ItemDTO { Name = "Também Não Existe", Quantity = 100, Unit = "g" };
 
-            Ingredient ingredient1 = new Ingredient { Id = 16, Name = "Foo" };
-            Ingredient ingredient2 = new Ingredient { Id = 17, Name = "Bar" };
+            var nonExistentIngredients = new List<ItemDTO> { item1, item2 };
 
-            _context.Ingredients.AddRange(ingredient1, ingredient2);
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            Authenticate.SetUserIdClaim(user.Id, controller);
-
-            PublicItem item1 = new PublicItem() { Name = ingredient1.Name, Quantity = 1, Unit = "kg" };
-            PublicItem item2 = new PublicItem() { Name = ingredient2.Name, Quantity = 1, Unit = "kg" };
-
-            List<PublicItem> newItems = new() { item1, item2 };
-
-            var result = await controller.Update(newItems);
+            var result = await _controller.Update(nonExistentIngredients);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
-            Assert.NotNull(items);
-            Assert.Equal(2, items.Count);
-            Assert.Contains(items, i => i.Name == ingredient1.Name && i.Quantity == item1.Quantity && i.Unit == item1.Unit);
-            Assert.Contains(items, i => i.Name == ingredient2.Name && i.Quantity == item2.Quantity && i.Unit == item2.Unit);
+            var updatedList = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
+            Assert.NotNull(updatedList);
+            Assert.Equal(2, updatedList.Count);
+            Assert.DoesNotContain(updatedList, i => i.Name == item1.Name && i.Quantity == item1.Quantity && i.Unit == item1.Unit);
+            Assert.DoesNotContain(updatedList, i => i.Name == item2.Name && i.Quantity == item2.Quantity && i.Unit == item2.Unit);
+            Assert.Contains(updatedList, i => i.Name == "Arroz" && i.Quantity == 200 && i.Unit == "g");
+            Assert.Contains(updatedList, i => i.Name == "Batata" && i.Quantity == 150 && i.Unit == "g");
         }
 
         /// <summary>
-        /// Tests that <c>Update()</c> returns an empty list when a user provides an empty list of ingredients.
+        /// Tests that when a user provides an empty ingredient list for an update, 
+        /// the system does not modify their existing ingredients.
         /// </summary>
         [Fact]
-        public async Task Update_WhenIdIsValidAndUserAddsEmprtyListOfIngredients_ReturnsEmptyList()
+        public async Task Update_WhenUserUpdatesIngredientWithEmptyList_UpdatesSuccessfully()
         {
+            Authenticate.SetUserIdClaim("User1", _controller);
 
-            User user = new User
-            {
-                Id = "Id 9",
-                UserIngredients = new List<UserIngredient>()
-            };
+            var updatedIngredients = new List<ItemDTO>();
 
-            Ingredient ingredient1 = new Ingredient { Id = 18, Name = "Foo" };
-            Ingredient ingredient2 = new Ingredient { Id = 19, Name = "Bar" };
-
-            _context.Ingredients.AddRange(ingredient1, ingredient2);
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            Authenticate.SetUserIdClaim(user.Id, controller);
-
-            List<PublicItem> newItems = new();
-
-            var result = await controller.Update(newItems);
+            var result = await _controller.Update(updatedIngredients);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
-            Assert.NotNull(items);
-            Assert.Empty(items);
+            var updatedList = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
+            Assert.NotNull(updatedList);
+            Assert.Equal(2, updatedList.Count);
+            Assert.Contains(updatedList, i => i.Name == "Arroz" && i.Quantity == 200 && i.Unit == "g");
+            Assert.Contains(updatedList, i => i.Name == "Batata" && i.Quantity == 150 && i.Unit == "g");
         }
 
         /// <summary>
-        /// Tests that <c>Update()</c> removes duplicate ingredients and keeps only the last occurrence.
-        /// Ensures that repeated ingredient entries are consolidated correctly.
+        /// Tests that when a user adds new ingredients, including duplicates, the system correctly 
+        /// updates the inventory without storing repeated items.
         /// </summary>
         [Fact]
-        public async Task Update_WhenIdIsValidAndUserAddsRepeatedIngredients_ReturnsListWithoutRepetitions()
+        public async Task Update_WhenAddingNewIngredientThatHaveRepeatedValues_AddsSuccessfullyWithoutRepeatedItems()
         {
+            Authenticate.SetUserIdClaim("User1", _controller);
 
-            User user = new User
-            {
-                Id = "Id 10",
-                UserIngredients = new List<UserIngredient>()
-            };
+            ItemDTO item1 = new ItemDTO { Name = "Batata", Quantity = 300, Unit = "kg" };
+            ItemDTO item2 = new ItemDTO { Name = "Carne", Quantity = 500, Unit = "g" };
+            ItemDTO item3 = new ItemDTO { Name = "Batata", Quantity = 500, Unit = "g" };
 
-            Ingredient ingredient1 = new Ingredient { Id = 20, Name = "Foo" };
-            Ingredient ingredient2 = new Ingredient { Id = 21, Name = "Bar" };
+            var newIngredients = new List<ItemDTO> { item1, item2, item3 };
 
-            _context.Ingredients.AddRange(ingredient1, ingredient2);
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            Authenticate.SetUserIdClaim(user.Id, controller);
-
-            PublicItem item1 = new PublicItem() { Name = ingredient1.Name, Quantity = 1, Unit = "kg" };
-            PublicItem item2 = new PublicItem() { Name = ingredient2.Name, Quantity = 1, Unit = "kg" };
-            PublicItem item3 = new PublicItem() { Name = ingredient1.Name, Quantity = 2, Unit = "g" };
-
-            List<PublicItem> newItems = new() { item1, item2, item3 };
-
-            var result = await controller.Update(newItems);
+            var result = await _controller.Update(newIngredients);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
-            Assert.NotNull(items);
-            Assert.Equal(2, items.Count);
-            Assert.Contains(items, i => i.Name == ingredient1.Name && i.Quantity == item3.Quantity && i.Unit == item3.Unit);
-            Assert.Contains(items, i => i.Name == ingredient2.Name && i.Quantity == item2.Quantity && i.Unit == item2.Unit);
+            var updatedList = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
+            Assert.NotNull(updatedList);
+            Assert.Equal(3, updatedList.Count);
+            Assert.Contains(updatedList, i => i.Name == "Arroz" && i.Quantity == 200 && i.Unit == "g");
+            Assert.Contains(updatedList, i => i.Name == item2.Name && i.Quantity == item2.Quantity && i.Unit == item2.Unit);
+            Assert.Contains(updatedList, i => i.Name == item3.Name && i.Quantity == item3.Quantity && i.Unit == item3.Unit);
         }
 
         /// <summary>
-        /// Tests that <c>Update()</c> correctly updates an existing ingredient's quantity and unit.
-        /// Ensures that modifications to a user's existing ingredient list are applied.
+        /// Tests that when a user with a null list of ingredients adds a new ingredient, 
+        /// the system correctly initializes the ingredient list and adds the new ingredient.
         /// </summary>
         [Fact]
-        public async Task Update_WhenIdIsValidAndUserEditsIngredient_ReturnsList()
+        public async Task Update_WhenAddingNewIngredientAndUserAsNullList_AddsSuccessfully()
         {
-
-            User user = new User
-            {
-                Id = "Id 11",
-                UserIngredients = new List<UserIngredient>()
-            };
-
-            Ingredient ingredient1 = new Ingredient { Id = 22, Name = "Foo" };
-            Ingredient ingredient2 = new Ingredient { Id = 23, Name = "Bar" };
-
-            user.UserIngredients.Add(new UserIngredient { IngredientId = ingredient1.Id, Quantity = 1, Unit = "kg", UserId = user.Id });
-
-            _context.Ingredients.AddRange(ingredient1, ingredient2);
+            var user = new User { Id = "EmptyUser", UserIngredients = null };
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            Authenticate.SetUserIdClaim(user.Id, controller);
+            Authenticate.SetUserIdClaim(user.Id, _controller);
 
-            PublicItem item1 = new PublicItem() { Name = ingredient1.Name, Quantity = 3, Unit = "g" };
+            ItemDTO item = new ItemDTO { Name = "Carne", Quantity = 500, Unit = "g" };
 
-            List<PublicItem> newItems = new() { item1 };
+            var newIngredients = new List<ItemDTO> { item };
 
-            var result = await controller.Update(newItems);
+            var result = await _controller.Update(newIngredients);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
-            Assert.NotNull(items);
-            Assert.Single(items);
-            Assert.Contains(items, i => i.Name == ingredient1.Name && i.Quantity == item1.Quantity && i.Unit == item1.Unit);
+            var updatedList = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
+            Assert.NotNull(updatedList);
+            Assert.Single(updatedList);
+            Assert.Contains(updatedList, i => i.Name == item.Name && i.Quantity == item.Quantity && i.Unit == item.Unit);
         }
 
         /// <summary>
-        /// Tests that <c>Delete()</c> returns <see cref="UnauthorizedObjectResult"/> when the user ID is missing.
+        /// Tests that when a user with an empty ingredient list adds a new ingredient, 
+        /// it is successfully added to their inventory.
         /// </summary>
         [Fact]
-        public async Task Delete_WhenIdIsNull_ReturnsUnauthorized()
+        public async Task Update_WhenAddingNewIngredientAndUserAsEmptyList_AddsSuccessfully()
         {
-            // Do not set user ID in claims (simulate missing token)
-            controller.ControllerContext = new ControllerContext
+            var user = new User { Id = "EmptyUser", UserIngredients = new List<UserIngredient>() };
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            Authenticate.SetUserIdClaim(user.Id, _controller);
+
+            ItemDTO item = new ItemDTO { Name = "Carne", Quantity = 500, Unit = "g" };
+
+            var newIngredients = new List<ItemDTO> { item };
+
+            var result = await _controller.Update(newIngredients);
+
+            Assert.NotNull(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
+
+            var updatedList = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
+            Assert.NotNull(updatedList);
+            Assert.Single(updatedList);
+            Assert.Contains(updatedList, i => i.Name == item.Name && i.Quantity == item.Quantity && i.Unit == item.Unit);
+        }
+
+        /// <summary>
+        /// Tests that when a user who is not authenticated (UserId is null) attempts to delete an ingredient, 
+        /// the API returns an unauthorized response.
+        /// </summary>
+        [Fact]
+        public async Task Delete_WhenUserIdIsNull_ReturnsUnauthorized()
+        {
+            _controller.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity()) }
             };
 
-            var result = await controller.Delete([]);
+            var result = await _controller.Delete([]);
 
             Assert.IsType<UnauthorizedObjectResult>(result.Result);
         }
 
         /// <summary>
-        /// Tests that <c>Delete()</c> returns an empty list when a user with no ingredients attempts deletion.
+        /// Tests that <c>Delete()</c> removes an ingredient from the user's inventory successfully.
         /// </summary>
         [Fact]
-        public async Task Delete_WhenUserHasNoIngredients_ReturnsList()
+        public async Task Delete_WhenUserDeletesIngredient_RemovesItSuccessfully()
         {
-            User user = new User
-            {
-                Id = "Id 12",
-                UserIngredients = null
-            };
+            Authenticate.SetUserIdClaim("User1", _controller);
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            var deleteItems = new List<string> { "Batata" };
 
-            Authenticate.SetUserIdClaim(user.Id, controller);
-
-            List<string> deleteItems = new() { "Ingredient" };
-
-            var result = await controller.Delete(deleteItems);
+            var result = await _controller.Delete(deleteItems);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
-            Assert.NotNull(items);
-            Assert.Empty(items);
+            var remainingItems = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
+            Assert.NotNull(remainingItems);
+            Assert.Single(remainingItems);
+            Assert.DoesNotContain(remainingItems, i => i.Name == "Batata");
         }
 
         /// <summary>
-        /// Tests that <c>Delete()</c> returns the full ingredient list when an empty delete list is provided.
+        /// Tests that <c>Delete()</c> removes all ingredients from the user's inventory when all are selected.
         /// </summary>
         [Fact]
-        public async Task Delete_WhenUserHasDeleteListEmpty_ReturnsList()
+        public async Task Delete_WhenDeletingAllIngredients_ReturnsEmptyList()
         {
-            User user = new User
-            {
-                Id = "Id 13",
-                UserIngredients = new List<UserIngredient>()
-            };
+            Authenticate.SetUserIdClaim("User1", _controller);
 
-            Ingredient ingredient1 = new Ingredient { Id = 24, Name = "Foo" };
-            Ingredient ingredient2 = new Ingredient { Id = 25, Name = "Bar" };
+            var deleteItems = new List<string> { "Arroz", "Batata" };
 
-            UserIngredient ui1 = new UserIngredient { IngredientId = ingredient1.Id, Quantity = 1, Unit = "kg", UserId = user.Id };
-            UserIngredient ui2 = new UserIngredient { IngredientId = ingredient2.Id, Quantity = 1, Unit = "kg", UserId = user.Id };
-
-            user.UserIngredients.Add(ui1);
-            user.UserIngredients.Add(ui2);
-
-            _context.Ingredients.AddRange(ingredient1, ingredient2);
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            Authenticate.SetUserIdClaim(user.Id, controller);
-
-            var result = await controller.Delete([]);
+            var result = await _controller.Delete(deleteItems);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
-            Assert.NotNull(items);
-            Assert.Equal(2, items.Count);
-            Assert.Contains(items, i => i.Name == ingredient1.Name && i.Quantity == ui1.Quantity && i.Unit == ui1.Unit);
-            Assert.Contains(items, i => i.Name == ingredient2.Name && i.Quantity == ui2.Quantity && i.Unit == ui2.Unit);
+            var remainingItems = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
+            Assert.NotNull(remainingItems);
+            Assert.Empty(remainingItems);
         }
 
         /// <summary>
-        /// Tests that <c>Delete()</c> removes a specified ingredient from the user's inventory.
-        /// Ensures that only the requested ingredient is deleted while others remain unchanged.
+        /// Tests that calling <c>Delete()</c> with an empty list does not remove any items from the user's inventory.
         /// </summary>
         [Fact]
-        public async Task Delete_WhenIdIsValid_ReturnsList()
+        public async Task Delete_WhenUserDoesntDeleteAnIngredient_DoesntRemoveAnything()
         {
-            User user = new User
-            {
-                Id = "Id 14",
-                UserIngredients = new List<UserIngredient>()
-            };
+            Authenticate.SetUserIdClaim("User1", _controller);
 
-            Ingredient ingredient1 = new Ingredient { Id = 26, Name = "Foo" };
-            Ingredient ingredient2 = new Ingredient { Id = 27, Name = "Bar" };
+            var deleteItems = new List<string>();
 
-            UserIngredient ui1 = new UserIngredient { IngredientId = ingredient1.Id, Quantity = 1, Unit = "kg", UserId = user.Id };
-            UserIngredient ui2 = new UserIngredient { IngredientId = ingredient2.Id, Quantity = 1, Unit = "kg", UserId = user.Id };
-
-            user.UserIngredients.Add(ui1);
-            user.UserIngredients.Add(ui2);
-
-            _context.Ingredients.AddRange(ingredient1, ingredient2);
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            Authenticate.SetUserIdClaim(user.Id, controller);
-
-            List<string> deleteItems = new List<string>() { ingredient2.Name };
-
-            var result = await controller.Delete(deleteItems);
+            var result = await _controller.Delete(deleteItems);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
-            Assert.NotNull(items);
-            Assert.Single(items);
-            Assert.Contains(items, i => i.Name == ingredient1.Name && i.Quantity == ui1.Quantity && i.Unit == ui1.Unit);
-            Assert.DoesNotContain(items, i => i.Name == ingredient2.Name && i.Quantity == ui2.Quantity && i.Unit == ui2.Unit);
+            var remainingItems = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
+            Assert.NotNull(remainingItems);
+            Assert.Equal(2, remainingItems.Count);
+            Assert.Contains(remainingItems, i => i.Name == "Arroz");
+            Assert.Contains(remainingItems, i => i.Name == "Batata");
         }
 
         /// <summary>
-        /// Tests that <c>Delete()</c> removes all user ingredients when all are specified for deletion.
-        /// Ensures that an empty list is returned after deletion.
+        /// Tests that calling <c>Delete()</c> on a user with no ingredients results in an empty response.
+        /// Ensures the API correctly handles users with an empty inventory.
         /// </summary>
         [Fact]
-        public async Task Delete_WhenIdIsValidAndDeletesAllItems_ReturnsEmptyList()
+        public async Task Delete_WhenUserHasNoIngredients_ReturnsEmptyList()
         {
-            User user = new User
-            {
-                Id = "Id 15",
-                UserIngredients = new List<UserIngredient>()
-            };
-
-            Ingredient ingredient1 = new Ingredient { Id = 28, Name = "Foo" };
-            Ingredient ingredient2 = new Ingredient { Id = 29, Name = "Bar" };
-
-            UserIngredient ui1 = new UserIngredient { IngredientId = ingredient1.Id, Quantity = 1, Unit = "kg", UserId = user.Id };
-            UserIngredient ui2 = new UserIngredient { IngredientId = ingredient2.Id, Quantity = 1, Unit = "kg", UserId = user.Id };
-
-            user.UserIngredients.Add(ui1);
-            user.UserIngredients.Add(ui2);
-
-            _context.Ingredients.AddRange(ingredient1, ingredient2);
+            var user = new User { Id = "EmptyUser", UserIngredients = new List<UserIngredient>() };
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            Authenticate.SetUserIdClaim(user.Id, controller);
+            Authenticate.SetUserIdClaim(user.Id, _controller);
 
-            List<string> deleteItems = new List<string>() { ingredient1.Name, ingredient2.Name };
+            var deleteItems = new List<string>();
 
-            var result = await controller.Delete(deleteItems);
+            var result = await _controller.Delete(deleteItems);
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<List<PublicItem>>>(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
 
-            var items = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<PublicItem>;
-            Assert.NotNull(items);
-            Assert.Empty(items);
+            var remainingItems = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
+            Assert.NotNull(remainingItems);
+            Assert.Empty(remainingItems);
+        }
+
+        /// <summary>
+        /// Tests that calling <c>Delete()</c> with an ingredient the user does not own does not remove any valid ingredients.
+        /// The user’s existing inventory should remain unchanged.
+        /// </summary>
+        [Fact]
+        public async Task Delete_WhenUserDeletesIngredientHeDoesntHave_ReturnsNormalList()
+        {
+            Authenticate.SetUserIdClaim("User1", _controller);
+
+            var deleteItems = new List<string> { "Carne" };
+
+            var result = await _controller.Delete(deleteItems);
+
+            Assert.NotNull(result);
+            Assert.IsType<ActionResult<List<ItemDTO>>>(result);
+
+            var remainingItems = Assert.IsType<OkObjectResult>(result.Result)?.Value as List<ItemDTO>;
+            Assert.NotNull(remainingItems);
+            Assert.Equal(2, remainingItems.Count);
+            Assert.Contains(remainingItems, i => i.Name == "Arroz");
+            Assert.Contains(remainingItems, i => i.Name == "Batata");
         }
     }
 }

@@ -159,9 +159,9 @@ namespace backendtest
             var result = await _controller.Get("Sugar");
 
             Assert.NotNull(result);
-            Assert.IsType<ActionResult<PublicIngredient>>(result);
+            Assert.IsType<ActionResult<IngredientDTO>>(result);
 
-            var ingredientDetails = Assert.IsType<OkObjectResult>(result.Result)?.Value as PublicIngredient;
+            var ingredientDetails = Assert.IsType<OkObjectResult>(result.Result)?.Value as IngredientDTO;
             Assert.NotNull(ingredientDetails);
             Assert.Equal("Sugar", ingredientDetails.Name);
             Assert.Equal(387, ingredientDetails.Kcal);
