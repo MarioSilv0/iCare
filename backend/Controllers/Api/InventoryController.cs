@@ -5,10 +5,9 @@
 /// <author>João Morais  - 202001541</author>
 /// <author>Luís Martins - 202100239</author>
 /// <author>Mário Silva  - 202000500</author>
-/// <date>Last Modified: 2025-03-03</date>
+/// <date>Last Modified: 2025-03-04</date>
 
 using backend.Data;
-using backend.Models;
 using backend.Models.Data_Transfer_Objects;
 using backend.Models.Ingredients;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -18,6 +17,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers.Api
 {
+    /// <summary>
+    /// The <c>InventoryController</c> class provides endpoints for managing a user's ingredient inventory.
+    /// It allows authenticated users to view, update, and delete ingredients linked to their profile.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -38,10 +41,11 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
-        /// Retrieves the list of ingredients for the authenticated user.
+        /// Retrieves the list of ingredients associated with the authenticated user.
         /// </summary>
         /// <returns>
-        /// A list of <see cref="ItemDTO"/> representing the user's ingredients, or an error response if an issue occurs.
+        /// An <c>ActionResult</c> containing a list of <see cref="ItemDTO"/> objects representing the user's ingredients, 
+        /// or an error response if authentication fails.
         /// </returns>
         [HttpGet("")]
         public async Task<ActionResult<List<ItemDTO>>> Get()
@@ -67,10 +71,12 @@ namespace backend.Controllers.Api
 
         /// <summary>
         /// Adds or updates the ingredients for the authenticated user.
+        /// If an ingredient does not exist, it will be added. Otherwise, its quantity and unit will be updated.
         /// </summary>
         /// <param name="newItems">A list of <see cref="ItemDTO"/> representing the new or updated ingredients.</param>
         /// <returns>
-        /// A list of <see cref="ItemDTO"/> representing the updated ingredients, or an error response if an issue occurs.
+        /// An <c>ActionResult</c> containing a list of <see cref="ItemDTO"/> representing the updated inventory,
+        /// or an error response if an issue occurs.
         /// </returns>
         [HttpPut("")]
         public async Task<ActionResult<List<ItemDTO>>> Update([FromBody] List<ItemDTO> newItems)
@@ -131,11 +137,12 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
-        /// Deletes the specified ingredients from the authenticated user's inventory.
+        /// Deletes specific ingredients from the authenticated user's inventory.
         /// </summary>
-        /// <param name="nameOfItemsToRemove">A list of ingredient names to be removed from the user's inventory.</param>
+        /// <param name="nameOfItemsToRemove">A list of ingredient names to be removed.</param>
         /// <returns>
-        /// A list of <see cref="ItemDTO"/> representing the remaining ingredients after deletion, or an error response if an issue occurs.
+        /// An <c>ActionResult</c> containing the updated list of ingredients after deletion,
+        /// or an error response if an issue occurs.
         /// </returns>
         [HttpDelete("")]
         public async Task<ActionResult<List<ItemDTO>>> Delete([FromBody] List<string> nameOfItemsToRemove)

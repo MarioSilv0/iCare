@@ -1,5 +1,5 @@
 ﻿/// <summary>
-/// This file defines the <c>PublicUser</c> class, which represents a user's publicly
+/// This file defines the <c>UserDTO</c> class, which represents a user's publicly
 /// accessible profile, including preferences and restrictions.
 /// </summary>
 /// <author>João Morais  - 202001541</author>
@@ -10,7 +10,7 @@
 namespace backend.Models
 {
     /// <summary>
-    /// The <c>PublicUser</c> class represents a user's public profile, including personal details,
+    /// The <c>UserDTO</c> class represents a user's public profile, including personal details,
     /// preferences, and dietary restrictions. This class is used for data transfer where only
     /// publicly available user information is needed.
     /// </summary>
@@ -67,15 +67,15 @@ namespace backend.Models
         public List<string> Categories { get; set; } = new();
 
         /// <summary>
-        /// Initializes a new instance of the <c>PublicUser</c> class.
+        /// Initializes a new instance of the <c>UserDTO</c> class.
         /// </summary>
         public UserDTO() { }
 
         /// <summary>
-        /// Initializes a new instance of the <c>PublicUser</c> class with data from an existing user.
+        /// Initializes a new instance of the <c>UserDTO</c> class with data from an existing user.
         /// </summary>
         /// <param name="user">The user entity containing profile information.</param>
-        /// <param name="model">An optional existing <c>PublicUser</c> model to retrieve preferences and restrictions from.</param>
+        /// <param name="model">An optional existing <c>UserDTO</c> model to retrieve preferences and restrictions from.</param>
         /// <param name="categories">A list of available food categories.</param>
         public UserDTO(User user, UserDTO? model, List<string> categories)
         {

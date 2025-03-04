@@ -1,13 +1,30 @@
-﻿using backend.Models;
+﻿/// <summary>
+/// This file contains unit tests for the <c>RecipeDTO</c> class, ensuring correct behavior
+/// when creating recipe DTOs from recipe models.
+/// The tests cover scenarios such as calorie calculation, favorite status, and property assignments.
+/// </summary>
+/// <author>João Morais  - 202001541</author>
+/// <author>Luís Martins - 202100239</author>
+/// <author>Mário Silva  - 202000500</author>
+/// <date>Last Modified: 2025-03-04</date>
+
 using backend.Models.Data_Transfer_Objects;
 using backend.Models.Ingredients;
 using backend.Models.Recipes;
-using Xunit;
 
 namespace backendtest
 {
+    /// <summary>
+    /// This class contains unit tests for the <c>RecipeDTO</c> constructor and its behavior.
+    /// It verifies how the <c>RecipeDTO</c> handles different scenarios, including null values, 
+    /// calorie calculations, favorite status, and whether detailed information is included.
+    /// </summary>
     public class RecipeDTOTests
     {
+        /// <summary>
+        /// Tests if the constructor handles a null <c>Recipe</c> object gracefully.
+        /// It ensures that all properties are correctly initialized to null or default values.
+        /// </summary>
         [Fact]
         public void Constructor_WhenRecipeIsNull_DoesNotThrow()
         {
@@ -23,6 +40,10 @@ namespace backendtest
             Assert.Equal(0, dto.Calories);
         }
 
+        /// <summary>
+        /// Tests if the constructor correctly calculates the total calories when 
+        /// <paramref name="wantDetails"/> is set to false.
+        /// </summary>
         [Fact]
         public void Constructor_WhenWantDetailsIsFalse_CalculatesCaloriesCorrectly()
         {
@@ -50,6 +71,10 @@ namespace backendtest
             Assert.Null(dto.RecipeIngredients);
         }
 
+        /// <summary>
+        /// Tests if the constructor includes all recipe details when 
+        /// <paramref name="wantDetails"/> is set to true.
+        /// </summary>
         [Fact]
         public void Constructor_WhenWantDetailsIsTrue_IncludesDetails()
         {
@@ -86,6 +111,10 @@ namespace backendtest
             Assert.Contains(dto.RecipeIngredients, i => i.Name == ingredient2.Name);
         }
 
+        /// <summary>
+        /// Tests if the constructor correctly identifies a recipe as a favorite
+        /// when the authenticated user's ID matches one of the <c>UserRecipe</c> entries.
+        /// </summary>
         [Fact]
         public void Constructor_WhenUserIsFavorite_SetsIsFavoriteToTrue()
         {
@@ -104,6 +133,10 @@ namespace backendtest
             Assert.True(dto.IsFavorite);
         }
 
+        /// <summary>
+        /// Tests if the constructor correctly identifies a recipe as NOT a favorite
+        /// when the authenticated user's ID does not match any <c>UserRecipe</c> entries.
+        /// </summary>
         [Fact]
         public void Constructor_WhenUserIsNotFavorite_SetsIsFavoriteToFalse()
         {
