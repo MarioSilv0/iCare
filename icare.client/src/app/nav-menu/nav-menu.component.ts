@@ -67,16 +67,22 @@ export class NavMenuComponent {
       text: 'Configurações',
       path: '/settings',
     },
-  ];
-  public commandLinks = [
     {
       icon: `${this.commonPath}help${this.extension}`,
       text: 'Ajuda',
       path: '/help',
     },
+    {
+      icon: `${this.commonPath}exit${this.extension}`,
+      text: 'Sign Out',
+      path: '/',
+    },
   ];
-
-  constructor(private authService: AuthService, private menuService: MenuService) { }
+  constructor(private authService: AuthService, private menuService: MenuService) {
+    this.menuService.showNavMenu$.subscribe(showNav => {
+      this.isExpanded = showNav
+    })
+  }
 
   /**
    * Initializes the component, subscribes to authentication state changes, and retrieves user data from local storage.
@@ -104,7 +110,8 @@ export class NavMenuComponent {
    * Collapses the navigation menu.
    */
   collapse() {
-    this.isExpanded = false;
+    this.isExpanded = false
+    this.menuService.setMenuState(this.isExpanded)
   }
 
   /**
