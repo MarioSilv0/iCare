@@ -1,8 +1,8 @@
 <aside
   id="navbar"
   class="d-flex flex-column bg-bege-contrast p-2 shadow m-0"
+  [ngClass]=" isExpanded ? 'expanded' : 'collapsed'"
   style="
-    max-width: 300px;
     min-height: calc(100vh - 80px);
     position: fixed;
     top: 80px;
@@ -12,7 +12,9 @@
   <nav
     class="d-flex flex-column align-items-start justify-content-between m-0 gap-2 flex-grow-1"
   >
-    <div class="d-flex w-100 align-items-center gap-3 m-0">
+      <div class="d-flex w-100 align-items-center justify-content-center gap-3 m-0"
+     [ngClass]="!isExpanded ? 'justify-content-center' : 'justify-content-evenly'"
+     >
       <!-- profile pic -->
       <img
         [src]="picture ? picture : 'https://www.w3schools.com/howto/img_avatar.png'"
