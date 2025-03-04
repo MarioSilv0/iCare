@@ -115,7 +115,7 @@ using (var scope = app.Services.CreateScope())
         var userManager = services.GetRequiredService<UserManager<User>>();
 
         // Aplicar migrações
-        await context.Database.MigrateAsync();
+        //await context.Database.MigrateAsync();
 
         // Executar seeding
         await RoleSeeder.SeedRoles(roleManager);
