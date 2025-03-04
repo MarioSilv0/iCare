@@ -1,18 +1,17 @@
 <aside
   id="navbar"
   class="d-flex flex-column bg-bege-contrast p-2 shadow m-0"
-  style="
-    max-width: 300px;
-    min-height: calc(100vh - 80px);
-    position: fixed;
-    top: 80px;
-    z-index: 100;
-  "
+  [ngClass]=" isExpanded ? 'expanded' : 'collapsed'"
 >
+  <button class="closeButton" (click)="collapse()">
+    <img src="../../assets/svgs/close.svg" alt="close-nav-icon" style="width: 24px; height: 24px;" />
+  </button>
   <nav
     class="d-flex flex-column align-items-start justify-content-between m-0 gap-2 flex-grow-1"
   >
-    <div class="d-flex w-100 align-items-center gap-3 m-0">
+    <div class="d-flex w-100 align-items-center justify-content-center gap-3 m-0"
+     [ngClass]="!isExpanded ? 'justify-content-center' : 'justify-content-evenly'"
+     >
       <!-- profile pic -->
       <img
         [src]="picture ? picture : 'https://www.w3schools.com/howto/img_avatar.png'"
@@ -57,6 +56,7 @@
         *ngFor="let link of links"
         class="d-flex flex-row align-items-center justify-content-start gap-3 m-0 p-2 rounded"
         title="{{ link.text }}"
+        (click)="collapse()"
       >
         <!-- icon -->
         <div class="m-0">
@@ -87,52 +87,6 @@
             style="flex-wrap: wrap"
             >{{ link.text }}
           </a>
-        </span>
-      </article>
-    </div>
-
-    <div class="d-flex flex-column w-100 gap-2 m-0">
-      <!-- links -->
-      <article
-        id="nav-item"
-        *ngFor="let link of commandLinks"
-        class="d-flex flex-row align-items-center justify-content-start gap-3 m-0 p-2 rounded"
-        title="{{ link.text }}"
-      >
-        <!-- icon -->
-        <div class="m-0">
-          <a
-            *ngIf="!isExpanded"
-            [routerLink]="link.path"
-            class="text-start nav-link"
-            style="width: 100%; flex-wrap: wrap; cursor: pointer"
-          >
-            <img
-              src="{{ link.icon }}"
-              alt="{{ link.text }}"
-              style="width: 24px; height: 24px"
-            />
-          </a>
-          <img
-            *ngIf="isExpanded"
-            src="{{ link.icon }}"
-            alt="{{ link.text }}"
-            style="width: 24px; height: 24px"
-          />
-        </div>
-        <!-- actual link -->
-        <span
-          *ngIf="isExpanded"
-          class="m-0"
-          style="width: 100%; flex-grow: 1; cursor: pointer"
-        >
-          <a
-            [routerLink]="link.path"
-            class="text-start nav-link"
-            style="width: 100%; flex-grow: 1; cursor: pointer"
-          >
-            {{ link.text }}</a
-          >
         </span>
       </article>
     </div>
