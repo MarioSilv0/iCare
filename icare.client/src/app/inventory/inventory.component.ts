@@ -6,7 +6,7 @@
  * @author Luís Martins - 202100239
  * @author Mário Silva  - 202000500
  * 
- * @date Last Modified: 2025-03-01
+ * @date Last Modified: 2025-03-04
  */
 
 import { Component } from '@angular/core';
@@ -22,6 +22,10 @@ import { Item, UsersService } from '../services/users.service';
 
 declare var bootstrap: any;
 
+/**
+ * The `InventoryComponent` class is responsible for handling the user's inventory.
+ * It allows users to add, remove, update, and search inventory items dynamically.
+ */
 @Component({
   selector: 'app-inventory',
   standalone: false,
@@ -54,14 +58,16 @@ export class InventoryComponent {
   }
 
   /**
-   * Initializes the inventory component, retrieves user notification settings,
-   * and loads the current inventory.
+   * Initializes the component by loading notification preferences and retrieving inventory data.
    */
   ngOnInit() {
     this.loadNotificationPreferences();
     this.getInventory();
   }
 
+  /**
+   * Loads user notification preferences from local storage.
+   */
   private loadNotificationPreferences() {
     try {
       const storage = localStorage.getItem('user');
@@ -88,7 +94,7 @@ export class InventoryComponent {
   }
 
   /**
-   * Toggles the selection state of an item in the list.
+   * Toggles the selection state of an item in the inventory.
    * @param {string} item - The name of the item to toggle.
    */
   toggleSelection(item: string) {
@@ -99,7 +105,7 @@ export class InventoryComponent {
    * Toggles the selection state of an inventory item.
    * @param {string} item - The name of the item to toggle.
    */
-  toggleInventorySelection(item: string) {
+  InventorySelection(item: string) {
     this.selectedItemsInInventory.has(item) ? this.selectedItemsInInventory.delete(item) : this.selectedItemsInInventory.add(item);
   }
 
@@ -363,6 +369,14 @@ export class InventoryComponent {
     }
   }
 
+  /**
+ * Converts the nutritional values of an ingredient between grams (`g`) and kilograms (`kg`).
+ * Adjusts the kcal, kj, protein, carbohydrates, lipids, and fibers accordingly.
+ *
+ * @param {Ingredient} ingredient - The ingredient whose values need to be converted.
+ * @param {string} fromUnit - The original unit of measurement (`g` or `kg`).
+ * @param {string} toUnit - The target unit of measurement (`g` or `kg`).
+ */
   private convertIngredientUnits(ingredient: Ingredient, fromUnit: string, toUnit: string) {
     if (fromUnit === toUnit) return;
 
@@ -383,6 +397,15 @@ export class InventoryComponent {
     }
   }
 
+  /**
+ * Recalculates the nutritional values of an ingredient based on the new quantity.
+ * The values are proportionally adjusted according to the total reference amount.
+ *
+ * @param {Ingredient} result - The ingredient whose values need to be adjusted.
+ * @param {number} total - The total reference amount (e.g., 100g or 1kg).
+ * @param {number} newQuantity - The new quantity of the ingredient.
+ * @returns {Ingredient} A new ingredient object with recalculated nutritional values.
+ */
   private calculateIngredient(result: Ingredient, total: number, newQuantity: number): Ingredient {
     if (total === 0) return { ...result, kcal: 0, kj: 0, protein: 0, carbohydrates: 0, lipids: 0, fibers: 0 };
 
