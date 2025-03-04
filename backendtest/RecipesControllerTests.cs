@@ -1,3 +1,13 @@
+/// <summary>
+/// This file contains unit tests for the <c>RecipeController</c> class.
+/// The tests ensure that API endpoints for retrieving recipe details function correctly, 
+/// including authorization checks, retrieving recipes by name, and verifying calorie calculations.
+/// </summary>
+/// <author>João Morais  - 202001541</author>
+/// <author>Luís Martins - 202100239</author>
+/// <author>Mário Silva  - 202000500</author>
+/// <date>Last Modified: 2025-03-04</date>
+
 using backend.Controllers.Api;
 using backend.Data;
 using backend.Models;
@@ -6,17 +16,24 @@ using backend.Models.Recipes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using backend.Models.Ingredients;
 
 namespace backendtest
 {
+    /// <summary>
+    /// Unit tests for the <c>RecipeController</c> class.
+    /// These tests verify the behavior of the API endpoints for retrieving and managing recipes.
+    /// </summary>
     public class RecipeControllerTests : IClassFixture<ICareContextFixture>, IAsyncLifetime
     {
         private readonly ICareServerContext _context;
         private RecipeController _controller;
 
+        /// <summary>
+        /// Initializes the test class by setting up a fresh database context.
+        /// </summary>
+        /// <param name="fixture">Provides the in-memory database context.</param>
         public RecipeControllerTests(ICareContextFixture fixture)
         {
             _context = fixture.DbContext;
@@ -24,11 +41,15 @@ namespace backendtest
             _controller = new(_context, logger);
         }
 
+        /// <summary>
+        /// Clears the database before running each test and adds test data.
+        /// </summary>
         public async Task InitializeAsync()
         {
             _context.Recipes.RemoveRange(_context.Recipes);
             _context.Ingredients.RemoveRange(_context.Ingredients);
             _context.RecipeIngredients.RemoveRange(_context.RecipeIngredients);
+            _context.Users.RemoveRange(_context.Users);
             await _context.SaveChangesAsync();
 
             _context.Ingredients.AddRange(
@@ -37,14 +58,10 @@ namespace backendtest
                 new Ingredient { Id = 3, Name = "Carne", Kcal = 137, Category = "Carne" }
             );
 
-            await _context.SaveChangesAsync();
-
             _context.Recipes.AddRange(
                 new Recipe { Id = 1, Picture = "", Name = "Algo de Bom", Description = "Tu Consegues", Category = "Bom", Area = "Portugal", YoutubeVideo = "" },
                 new Recipe { Id = 2, Picture = "", Name = "Algo de Mau", Description = "Boa Sorte", Category = "Mau", Area = "Bugs", YoutubeVideo = "" }
             );
-
-            await _context.SaveChangesAsync();
 
             _context.RecipeIngredients.AddRange(
                 new RecipeIngredient { RecipeId = 1, IngredientId = 1, Quantity = 200 }, // 124 * 2 = 248 kcal
@@ -52,13 +69,19 @@ namespace backendtest
                 new RecipeIngredient { RecipeId = 2, IngredientId = 3, Quantity = 100 }  // 137 * 1 = 137 kcal
             );
 
-            await _context.SaveChangesAsync();
-
             _context.Users.Add(new User { Id = "ValidUserId", Email = "a@example.com" });
+
+            await _context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Cleans up any resources after the tests have completed.
+        /// </summary>
         public Task DisposeAsync() => Task.CompletedTask;
 
+        /// <summary>
+        /// Tests if the API returns unauthorized when the user ID is not provided.
+        /// </summary>
         [Fact]
         public async Task Get_WhenUserIdIsNull_ReturnsUnauthorized()
         {
@@ -72,6 +95,9 @@ namespace backendtest
             Assert.IsType<UnauthorizedObjectResult>(result.Result);
         }
 
+        /// <summary>
+        /// Tests if the API correctly retrieves a list of recipes with accurate calorie calculations.
+        /// </summary>
         [Fact]
         public async Task Get_WhenRecipesExist_ReturnsListOfRecipesWithCorrectCalories()
         {
@@ -96,6 +122,9 @@ namespace backendtest
             Assert.Equal(calories2, recipe2.Calories);
         }
 
+        /// <summary>
+        /// Tests if the API returns an empty list when there are no recipes available.
+        /// </summary>
         [Fact]
         public async Task Get_WhenNoRecipesExist_ReturnsEmptyList()
         {
@@ -114,6 +143,9 @@ namespace backendtest
             Assert.Empty(recipes);
         }
 
+        /// <summary>
+        /// Tests if the API returns unauthorized when retrieving a recipe by name without a user ID.
+        /// </summary>
         [Fact]
         public async Task GetByName_WhenUserIdIsNull_ReturnsUnauthorized()
         {
@@ -127,6 +159,9 @@ namespace backendtest
             Assert.IsType<UnauthorizedObjectResult>(result.Result);
         }
 
+        /// <summary>
+        /// Tests if the API returns not found when the requested recipe does not exist.
+        /// </summary>
         [Fact]
         public async Task GetByName_WhenRecipeDoesNotExist_ReturnsNotFound()
         {
@@ -137,6 +172,9 @@ namespace backendtest
             Assert.IsType<NotFoundObjectResult>(result.Result);
         }
 
+        /// <summary>
+        /// Tests if the API retrieves a recipe with detailed information.
+        /// </summary>
         [Fact]
         public async Task GetByName_WhenRecipeExists_ReturnsRecipeDTOWithDetails()
         {
@@ -166,20 +204,6 @@ namespace backendtest
 
             Assert.NotNull(ingredient2);
             Assert.Equal(150, ingredient2.Quantity);
-        }
-
-
-        [Fact]
-        public async Task GetByName_WhenNoRecipesExist_ReturnsNotFound()
-        {
-            _context.Recipes.RemoveRange(_context.Recipes);
-            await _context.SaveChangesAsync();
-
-            Authenticate.SetUserIdClaim("ValidUserId", _controller);
-
-            var result = await _controller.Get("Algo de Bom");
-
-            Assert.IsType<NotFoundObjectResult>(result.Result);
         }
     }
 }
