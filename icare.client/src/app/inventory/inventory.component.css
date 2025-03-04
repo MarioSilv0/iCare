@@ -35,6 +35,7 @@ progress {
   padding: 15px;
   border-radius: 8px;
   margin: 0;
+  height: 500px;
 }
 
 .search-bar {
@@ -90,16 +91,35 @@ progress {
   padding: 0;
   margin: 0;
   margin-bottom: 0.8rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 75%;
+}
+
+.item-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.item-list::-webkit-scrollbar-track {
+  background: rgba(200, 200, 200, .4);
+}
+
+.item-list::-webkit-scrollbar-thumb {
+/*  background: rgba(200, 200, 200, .4);*/
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+  cursor: pointer;
 }
 
 .item-list li {
   cursor: pointer;
   padding: 5px;
   border-radius: 5px;
+  font-size: .8rem;
 }
 
 .item-list li:hover {
-  background-color: #f0f0f0;
+  background-color: var(--bg-bege);
 }
 
 .selected {
@@ -110,6 +130,7 @@ progress {
 .inventory-table {
   width: 100%;
   margin: 0;
+  justify-self: flex-start;
 }
 
 .inventory-table table {

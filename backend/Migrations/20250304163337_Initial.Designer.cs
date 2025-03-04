@@ -12,7 +12,7 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ICareServerContext))]
-    [Migration("20250303125457_Initial")]
+    [Migration("20250304163337_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
