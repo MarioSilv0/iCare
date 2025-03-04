@@ -22,7 +22,6 @@ import { InventoryComponent } from './inventory/inventory.component';
 import { MapKeysPipe } from './pipes/map-keys-pipe';
 import { TacoApiComponent } from './taco-api/taco-api.component';
 import { TacoApiService } from './services/taco-api.service';
-import { RecipeListComponent } from './recipe-list/recipe-list.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +42,6 @@ import { RecipeListComponent } from './recipe-list/recipe-list.component';
     InventoryComponent,
     MapKeysPipe,
     TacoApiComponent,
-    RecipeListComponent,
   ],
   imports: [
     BrowserModule,

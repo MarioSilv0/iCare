@@ -320,6 +320,16 @@ namespace backend.Migrations
                     { 2, "Bugs", "Mau", "Boa Sorte", "Algo de Mau", "", "" }
                 });
 
+            migrationBuilder.InsertData(
+                table: "RecipeIngredients",
+                columns: new[] { "IngredientId", "RecipeId", "Quantity", "Unit" },
+                values: new object[,]
+                {
+                    { 1, 1, 3f, "g" },
+                    { 2, 1, 3f, "g" },
+                    { 3, 2, 3f, "kg" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",

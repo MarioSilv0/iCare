@@ -11,7 +11,7 @@
 
 import { Component } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
-import { ApiService, Ingredient } from '../services/api.service';
+import { IngredientService, Ingredient } from '../services/ingredients.service';
 import {
   addedItemNotification,
   editedItemNotification,
@@ -47,7 +47,7 @@ export class InventoryComponent {
 
   public units: string[] = ['g', 'kg'];
 
-  constructor(private service: UsersService, private api: ApiService) {
+  constructor(private service: UsersService, private api: IngredientService) {
     this.searchSubject
       .pipe(debounceTime(300))
       .subscribe(() => this.filterItems());
@@ -157,7 +157,7 @@ export class InventoryComponent {
    * Retrieves the list of all available items.
    */
   getListItems() {
-    this.api.getAllItems().subscribe(
+    this.api.getAllIngredients().subscribe(
       (result) => {
         result.forEach((itemName) => { if (!this.inventory.has(itemName)) this.listOfItems.add(itemName); });
         this.filterItems();
@@ -175,7 +175,7 @@ export class InventoryComponent {
   getItemDetails(item: string): void {
     if (this.itemDetails.has(item)) return;
 
-    this.api.getSpecificItem(item).subscribe(
+    this.api.getSpecificIngredient(item).subscribe(
       (result) => {
         let info = this.inventory.get(item) ?? { quantity: 1, unit: "g" };
         if (!info.unit) info.unit = "g";

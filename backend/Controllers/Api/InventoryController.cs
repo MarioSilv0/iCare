@@ -57,6 +57,7 @@ namespace backend.Controllers.Api
 
                 var ingredients = await _context.UserIngredients
                                                 .Where(ui => ui.UserId == id)
+                                                .Include(ui => ui.Ingredient)
                                                 .Select(ui => new ItemDTO(ui))
                                                 .ToListAsync();
 
@@ -89,6 +90,7 @@ namespace backend.Controllers.Api
                 if (newItems == null || !newItems.Any())
                 {
                     var currentItems = await _context.UserIngredients.Where(ui => ui.UserId == id)
+                                                                     .Include(ui => ui.Ingredient)
                                                                      .Select(i => new ItemDTO(i))
                                                                      .ToListAsync();
                     return Ok(currentItems);
@@ -124,6 +126,7 @@ namespace backend.Controllers.Api
                 await _context.SaveChangesAsync();
 
                 var updatedItems = await _context.UserIngredients.Where(ui => ui.UserId == id)
+                                                                 .Include(ui => ui.Ingredient)
                                                                  .Select(i => new ItemDTO(i))
                                                                  .ToListAsync();
 

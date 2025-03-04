@@ -53,8 +53,8 @@
             display: flex;
             position: relative;
           ">
-            <img src="{{ recipe.img }}"
-                 alt="{{ recipe.title }}"
+            <img src="{{ recipe.picture }}"
+                 alt="{{ recipe.name }}"
                  class="m-0 p-0 rounded"
                  style="width: 100%; min-height: 100%" />
             <button (click)="toggleFavoriteRecipe(i)"
@@ -74,9 +74,9 @@
                    src="../../assets/svgs/heart-regular.svg" />
             </button>
           </div>
-          <h4>{{ recipe.title }}</h4>
+          <h4>{{ recipe.name }}</h4>
           <p>{{ recipe.description }}</p>
-          <a [routerLink]="['/recipe/{{ i }}']"
+          <a [routerLink]="['/recipe/{{ recipe.name }}']"
              class="mx-0 nav-link bg-verde rounded"
              style="
             width: 100px;

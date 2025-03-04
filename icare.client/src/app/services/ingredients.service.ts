@@ -22,7 +22,7 @@ const INGREDIENT: string = '/api/Ingredient/';
 @Injectable({
   providedIn: 'root'
 })
-export class ApiService {
+export class IngredientService {
   constructor(private http: HttpClient) { }
 
   /**
@@ -30,7 +30,7 @@ export class ApiService {
    * 
    * @returns {Observable<string[]>} An observable containing an array of ingredient names.
    */
-  getAllItems(): Observable<string[]> {
+  getAllIngredients(): Observable<string[]> {
     return this.http.get<string[]>(INGREDIENT);
   }
 
@@ -40,7 +40,7 @@ export class ApiService {
    * @param {string} itemName - The name of the ingredient to retrieve details for.
    * @returns {Observable<Ingredient>} An observable containing the ingredient details.
    */
-  getSpecificItem(itemName: string): Observable<Ingredient> {
+  getSpecificIngredient(itemName: string): Observable<Ingredient> {
     return this.http.get<Ingredient>(INGREDIENT + itemName);
   }
 }

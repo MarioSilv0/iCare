@@ -35,7 +35,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   { path: 'recipes', component: RecipesComponent, canActivate: [AuthGuard] },
-  { path: 'recipe/:id', component: RecipeComponent, canActivate: [AuthGuard] },
+  { path: 'recipe/:name', component: RecipeComponent, canActivate: [AuthGuard] },
   { path: 'inventory', component: InventoryComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: 'home' },
 ];

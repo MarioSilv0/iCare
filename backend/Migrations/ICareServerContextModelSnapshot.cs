@@ -250,6 +250,29 @@ namespace backend.Migrations
                     b.HasIndex("IngredientId");
 
                     b.ToTable("RecipeIngredients");
+
+                    b.HasData(
+                        new
+                        {
+                            RecipeId = 1,
+                            IngredientId = 1,
+                            Quantity = 3f,
+                            Unit = "g"
+                        },
+                        new
+                        {
+                            RecipeId = 1,
+                            IngredientId = 2,
+                            Quantity = 3f,
+                            Unit = "g"
+                        },
+                        new
+                        {
+                            RecipeId = 2,
+                            IngredientId = 3,
+                            Quantity = 3f,
+                            Unit = "kg"
+                        });
                 });
 
             modelBuilder.Entity("backend.Models.Ingredients.UserIngredient", b =>

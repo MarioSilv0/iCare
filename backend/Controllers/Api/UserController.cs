@@ -18,7 +18,7 @@ using Microsoft.EntityFrameworkCore;
 namespace backend.Controllers.Api
 {
     /// <summary>
-    /// Controller <c>PublicUserController</c> manages the public profiles of authenticated users.
+    /// Controller <c>UserController</c> manages the public profiles of authenticated users.
     /// It allows users to retrieve and update their public profile information.
     /// </summary>
     [Route("api/[controller]")]
@@ -30,7 +30,7 @@ namespace backend.Controllers.Api
         private readonly ILogger<UserController> _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <c>PublicUserController</c> class.
+        /// Initializes a new instance of the <c>UserController</c> class.
         /// </summary>
         /// <param name="context">The database context for accessing user data.</param>
         /// <param name="logger">The logger instance for logging application activity.</param>
