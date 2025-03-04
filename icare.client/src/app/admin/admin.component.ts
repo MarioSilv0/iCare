@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RecipeComponent } from '../recipe/recipe.component';
 import { TacoApiService } from '../services/taco-api.service';
-import { ApiService, Ingredient } from '../services/api.service';
+import { IngredientService, Ingredient } from '../services/ingredients.service';
 
 @Component({
   selector: 'app-admin',
@@ -10,7 +10,7 @@ import { ApiService, Ingredient } from '../services/api.service';
 })
 export class AdminComponent {
 
-  constructor(private foodService: ApiService, private taco: TacoApiService) { }
+  constructor(private foodService: IngredientService, private taco: TacoApiService) { }
 
   updateIngredientDb() {
     this.taco.getAllFood().subscribe(

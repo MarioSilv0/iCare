@@ -31,4 +31,11 @@ export class HomeComponent {
       }
     );
   }
+
+  /**
+   * Logs out the user and redirects to the login page.
+   */
+  test() {
+    this.authService.logout();
+  }
 }

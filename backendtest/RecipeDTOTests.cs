@@ -35,7 +35,7 @@ namespace backendtest
             Assert.Null(dto.Category);
             Assert.Null(dto.Area);
             Assert.Null(dto.YoutubeVideo);
-            Assert.Null(dto.RecipeIngredients);
+            Assert.Null(dto.Ingredients);
             Assert.False(dto.IsFavorite);
             Assert.Equal(0, dto.Calories);
         }
@@ -68,7 +68,7 @@ namespace backendtest
             Assert.Null(dto.Category);
             Assert.Null(dto.Area);
             Assert.Null(dto.YoutubeVideo);
-            Assert.Null(dto.RecipeIngredients);
+            Assert.Null(dto.Ingredients);
         }
 
         /// <summary>
@@ -105,10 +105,10 @@ namespace backendtest
             Assert.Equal("Bom", dto.Category);
             Assert.Equal("Portugal", dto.Area);
             Assert.Equal("https://youtube.com", dto.YoutubeVideo);
-            Assert.NotNull(dto.RecipeIngredients);
-            Assert.Equal(2, dto.RecipeIngredients.Count());
-            Assert.Contains(dto.RecipeIngredients, i => i.Name == ingredient1.Name);
-            Assert.Contains(dto.RecipeIngredients, i => i.Name == ingredient2.Name);
+            Assert.NotNull(dto.Ingredients);
+            Assert.Equal(2, dto.Ingredients.Count());
+            Assert.Contains(dto.Ingredients, i => i.Name == ingredient1.Name);
+            Assert.Contains(dto.Ingredients, i => i.Name == ingredient2.Name);
         }
 
         /// <summary>

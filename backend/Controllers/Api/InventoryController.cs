@@ -110,7 +110,7 @@ namespace backend.Controllers.Api
                     {
                         if (!ingredients.TryGetValue(item.Name, out var ingredient)) continue;
 
-                        var ui = new UserIngredient { IngredientId = ingredient.Id, Quantity = item.Quantity, Unit = item.Unit, UserId = id };
+                        var ui = new UserIngredient { IngredientId = ingredient.Id, Ingredient = ingredient, Quantity = item.Quantity, Unit = item.Unit, UserId = id };
                         _context.UserIngredients.Add(ui);
                         userIngredients.Add(item.Name, ui);
                         _logger.LogInformation("Ingredient {IngredientName} has been added to user {UserId}.", item.Name, id);

@@ -12,11 +12,7 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ICareServerContext))]
-<<<<<<<< HEAD:backend/Migrations/20250304163337_Initial.Designer.cs
-    [Migration("20250304163337_Initial")]
-========
-    [Migration("20250304181152_Initial")]
->>>>>>>> Recipes:backend/Migrations/20250304181152_Initial.Designer.cs
+    [Migration("20250304210248_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

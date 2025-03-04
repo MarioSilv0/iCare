@@ -193,11 +193,11 @@ namespace backendtest
             Assert.Equal("Portugal", recipe.Area);
             Assert.Equal("", recipe.YoutubeVideo);
             Assert.Equal(0, recipe.Calories);
-            Assert.NotNull(recipe.RecipeIngredients);
-            Assert.Equal(2, recipe.RecipeIngredients.Count());
+            Assert.NotNull(recipe.Ingredients);
+            Assert.Equal(2, recipe.Ingredients.Count());
 
-            var ingredient1 = recipe.RecipeIngredients.FirstOrDefault(i => i.Name == "Arroz");
-            var ingredient2 = recipe.RecipeIngredients.FirstOrDefault(i => i.Name == "Batata");
+            var ingredient1 = recipe.Ingredients.FirstOrDefault(i => i.Name == "Arroz");
+            var ingredient2 = recipe.Ingredients.FirstOrDefault(i => i.Name == "Batata");
 
             Assert.NotNull(ingredient1);
             Assert.Equal(200, ingredient1.Quantity);

@@ -102,7 +102,7 @@ namespace backend.Controllers.Api
         /// <returns>An <c>ActionResult</c> indicating success or failure.</returns>
         /// <author> Mário </author>
         [HttpPost("update")]
-        public async Task<ActionResult> UpdateDB([FromBody] List<PublicIngredient> ingredients)
+        public async Task<ActionResult> UpdateDB([FromBody] List<IngredientDTO> ingredients)
         {
             try
             {
