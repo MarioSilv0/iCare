@@ -105,7 +105,7 @@ export class InventoryComponent {
    * Toggles the selection state of an inventory item.
    * @param {string} item - The name of the item to toggle.
    */
-  InventorySelection(item: string) {
+  toggleInventorySelection(item: string) {
     this.selectedItemsInInventory.has(item) ? this.selectedItemsInInventory.delete(item) : this.selectedItemsInInventory.add(item);
   }
 

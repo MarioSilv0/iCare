@@ -52,7 +52,7 @@ namespace backend.Models.Data_Transfer_Objects
         /// <summary>
         /// Gets or sets the list of ingredients used in the recipe.
         /// </summary>
-        public IEnumerable<ItemDTO>? RecipeIngredients { get; set; }
+        public IEnumerable<ItemDTO>? Ingredients { get; set; }
 
         /// <summary>
         /// Indicates whether the recipe is marked as a favorite by the authenticated user.
@@ -89,7 +89,7 @@ namespace backend.Models.Data_Transfer_Objects
             Category = recipe.Category;
             Area = recipe.Area;
             YoutubeVideo = recipe.YoutubeVideo;
-            RecipeIngredients = recipe.RecipeIngredients.Select(i => new ItemDTO(i));
+            Ingredients = recipe.RecipeIngredients.Select(i => new ItemDTO(i));
         }
     }
 }

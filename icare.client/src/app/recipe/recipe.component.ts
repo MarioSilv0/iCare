@@ -30,7 +30,7 @@ export class RecipeComponent {
     this.api.getSpecificRecipe(name).subscribe(
       (result) => {
         console.log(result)
-        this.recipe = { ...result, ingredients: result.recipeIngredients};
+        this.recipe = { ...result, ingredients: result.ingredients};
       },
       (error) => {
         console.error(error);

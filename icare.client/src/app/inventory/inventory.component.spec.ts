@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { InventoryComponent } from './inventory.component';
 import { UsersService } from '../services/users.service';
-import { ApiService } from '../services/api.service';
+import { IngredientService } from '../services/ingredients.service';
 import { NotificationService } from '../services/notifications.service';
 import { of } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -25,7 +25,7 @@ describe('InventoryComponent', () => {
       imports: [HttpClientTestingModule], // Simulate HTTP requests
       providers: [
         { provide: UsersService, useValue: usersServiceMock },
-        { provide: ApiService, useValue: apiServiceMock },
+        { provide: IngredientService, useValue: apiServiceMock },
         { provide: NotificationService, useValue: notificationServiceMock }
       ]
     }).compileComponents();
