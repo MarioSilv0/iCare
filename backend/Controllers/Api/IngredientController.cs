@@ -9,6 +9,7 @@
 
 using backend.Data;
 using backend.Models.Data_Transfer_Objects;
+using backend.Models.Ingredients;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -103,5 +104,66 @@ namespace backend.Controllers.Api
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
+
+        /// <summary>
+        /// Updates the database with missing ingredients based on the provided list.
+        /// </summary>
+        /// <param name="ingredients">An array of ingredient objects to update the database.</param>
+        /// <returns>An <c>ActionResult</c> indicating success or failure.</returns>
+        /// <author> Mário </author>
+        [HttpPost("update")]
+        public async Task<ActionResult> UpdateDB([FromBody] List<PublicIngredient> ingredients)
+        {
+            try
+            {
+                var id = User.FindFirst("UserId")?.Value;
+                if (id == null) return Unauthorized("User ID not found in token.");
+
+                if (ingredients == null || ingredients.Count == 0)
+                    return BadRequest("Ingredient list cannot be empty.");
+
+                foreach (var ingredient in ingredients)
+                {
+                    if (string.IsNullOrEmpty(ingredient.Name) || ingredient.Kcal < 0 || ingredient.KJ < 0 || ingredient.Protein < 0 ||
+                        ingredient.Carbohydrates < 0 || ingredient.Lipids < 0 || ingredient.Fibers < 0)
+                    {
+                        return BadRequest($"Invalid data for ingredient: {ingredient.Name}");
+                    }
+                }
+
+                var existingIngredients = await _context.Ingredients
+                    .ToDictionaryAsync(i => i.Name, i => i);
+
+                var newIngredients = ingredients
+                    .Where(ing => !existingIngredients.ContainsKey(ing.Name))
+                    .Select(ing => new Ingredient
+                    {
+                        Name = ing.Name,
+                        Kcal = ing.Kcal,
+                        KJ = ing.KJ,
+                        Protein = ing.Protein,
+                        Carbohydrates = ing.Carbohydrates,
+                        Lipids = ing.Lipids,
+                        Fibers = ing.Fibers,
+                        Category = ing.Category
+                    })
+                    .ToList();
+
+                if (newIngredients.Count > 0)
+                {
+                    await _context.Ingredients.AddRangeAsync(newIngredients);
+                    await _context.SaveChangesAsync();
+                }
+
+                return Ok(new { Message = $"{newIngredients.Count} new ingredients added.", Ingredients = newIngredients });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating ingredients database");
+                return StatusCode(500, "An error occurred while updating the database.");
+            }
+        }
+
+
     }
 }

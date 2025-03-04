@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { RecipeComponent } from '../recipe/recipe.component';
+import { TacoApiService } from '../services/taco-api.service';
+import { ApiService, Ingredient } from '../services/api.service';
 
 @Component({
   selector: 'app-admin',
@@ -8,7 +10,23 @@ import { RecipeComponent } from '../recipe/recipe.component';
 })
 export class AdminComponent {
 
-  constructor() { }
+  constructor(private foodService: ApiService, private taco: TacoApiService) { }
+
+  updateIngredientDb() {
+    this.taco.getAllFood().subscribe(
+      (ingredients: Ingredient[]) => {
+        this.foodService.updateDB(ingredients).subscribe(
+          () => {
+            console.log('Database updated successfully!')
+            alert('Database updated successfully')
+          },
+          (error) => console.error('Error updating database:', error)
+        );
+      },
+      (error) => console.error('Error fetching ingredients:', error)
+    );
+  }
+
 
 
 }

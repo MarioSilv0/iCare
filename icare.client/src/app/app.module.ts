@@ -20,7 +20,6 @@ import { RecipesComponent } from './recipes/recipes.component';
 import { RecipeComponent } from './recipe/recipe.component';
 import { InventoryComponent } from './inventory/inventory.component';
 import { MapKeysPipe } from './pipes/map-keys-pipe';
-import { TacoApiComponent } from './taco-api/taco-api.component';
 import { TacoApiService } from './services/taco-api.service';
 import { RecipeListComponent } from './recipe-list/recipe-list.component';
 
@@ -42,7 +41,6 @@ import { RecipeListComponent } from './recipe-list/recipe-list.component';
     RecipeComponent,
     InventoryComponent,
     MapKeysPipe,
-    TacoApiComponent,
     RecipeListComponent,
   ],
   imports: [
@@ -54,7 +52,6 @@ import { RecipeListComponent } from './recipe-list/recipe-list.component';
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    TacoApiService
   ],
   bootstrap: [AppComponent, NavMenuComponent],
   exports: [

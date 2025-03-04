@@ -11,7 +11,7 @@
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 
 const INGREDIENT: string = '/api/Ingredient/';
 
@@ -43,6 +43,20 @@ export class ApiService {
   getSpecificItem(itemName: string): Observable<Ingredient> {
     return this.http.get<Ingredient>(INGREDIENT + itemName);
   }
+
+  /**
+   * Updates the database with missing ingredients from the external TACO API.
+   * 
+   * @param {Ingredient[]} ingredients - The list of ingredients to update.
+   * @returns {Observable<any>} An observable with the API response.
+   */
+  updateDB(ingredients: Ingredient[]): Observable<any> {
+    return this.http.post<{ message: string }>(INGREDIENT + 'update', ingredients, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    });
+  }
+
+
 }
 
 export interface Ingredient {
