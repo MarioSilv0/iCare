@@ -6,7 +6,7 @@
  * @author Luís Martins - 202100239
  * @author Mário Silva  - 202000500
  * 
- * @date Last Modified: 2025-03-01
+ * @date Last Modified: 2025-03-05
  */
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
