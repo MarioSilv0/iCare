@@ -13,6 +13,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { MenuService } from '../services/menu.service';
+import { UsersService, User } from '../services/users.service';
 
 @Component({
   selector: 'app-nav-menu',
@@ -67,16 +68,22 @@ export class NavMenuComponent {
       text: 'Configurações',
       path: '/settings',
     },
-  ];
-  public commandLinks = [
     {
       icon: `${this.commonPath}help${this.extension}`,
       text: 'Ajuda',
       path: '/help',
     },
+    {
+      icon: `${this.commonPath}exit${this.extension}`,
+      text: 'Sign Out',
+      path: '/',
+    },
   ];
-
-  constructor(private authService: AuthService, private menuService: MenuService) { }
+  constructor(private authService: AuthService, private menuService: MenuService, private userService: UsersService) {
+    this.menuService.showNavMenu$.subscribe(showNav => {
+      this.isExpanded = showNav
+    })
+  }
 
   /**
    * Initializes the component, subscribes to authentication state changes, and retrieves user data from local storage.
@@ -86,25 +93,29 @@ export class NavMenuComponent {
       this.isLoggedIn = state;
     });
 
-    const defaultData = { picture: '', name: 'Error' };
-    let data = defaultData;
+    this.getInfo();
+  }
 
-    try {
-      const storage = localStorage.getItem('user');
-      if (storage) data = { ...defaultData, ...JSON.parse(storage) };
-    } catch (error) {
-      console.error('Failed to parse user data from localStorage:', error);
-    }
+  getInfo() {
+    this.userService.getUser().subscribe(user => {
+      this.username = user.name;
+      this.picture = user.picture;
+    });
 
-    this.username = data.name;
-    this.picture = data.picture;
+    this.userService.user$.subscribe(user => {
+      if (user === null) return;
+
+      this.username = user.name;
+      this.picture = user.picture;
+    });
   }
 
   /**
    * Collapses the navigation menu.
    */
   collapse() {
-    this.isExpanded = false;
+    this.isExpanded = false
+    this.menuService.setMenuState(this.isExpanded)
   }
 
   /**

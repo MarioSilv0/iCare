@@ -6,14 +6,16 @@
  * @author Luís Martins - 202100239
  * @author Mário Silva  - 202000500
  * 
- * @date Last Modified: 2025-03-01
+ * @date Last Modified: 2025-03-05
  */
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { StorageUtil } from '../utils/StorageUtil';
 
-const PROFILE: string = '/api/PublicUser';
+const PROFILE: string = '/api/User';
 const INVENTORY: string = '/api/Inventory';
 
 /**
@@ -24,6 +26,9 @@ const INVENTORY: string = '/api/Inventory';
   providedIn: 'root'
 })
 export class UsersService {
+  private userSubject = new BehaviorSubject< { picture: string, name: string } | null>(null);
+  // Observable for components to listen for user updates
+  public user$ = this.userSubject.asObservable();
   constructor(private http: HttpClient) { }
 
   /**
@@ -45,7 +50,10 @@ export class UsersService {
   updateUser(user: User): Observable<User> {
     const u = { ...user, preferences: Array.from(user.preferences), restrictions: Array.from(user.restrictions), categories: Array.from(user.categories) }
 
-    return this.http.put<User>(PROFILE, u);
+    return this.http.put<User>(PROFILE, u).pipe(
+      // Notify components about the update
+      tap(updatedUser => this.userSubject.next({ name: updatedUser.name, picture: updatedUser.picture }))
+    );
   }
 
   /**
@@ -76,6 +84,22 @@ export class UsersService {
   removeInventory(items: string[]): Observable<Item[]> {
     return this.http.delete<Item[]>(INVENTORY, { body: items });
   }
+
+  getPermissions(): Permissions | null {
+    return StorageUtil.getFromStorage<Permissions>('permissions');
+  }
+
+  fetchPermissions(): Observable<boolean> {
+    return this.http.get<boolean>(PROFILE + '/permissions').pipe(
+      tap(permissions => StorageUtil.saveToStorage('permissions', permissions))
+    );
+  }
+}
+
+export interface Permissions {
+  notifications: boolean;
+  preferences: boolean;
+  restrictions: boolean;
 }
 
 export interface Item {

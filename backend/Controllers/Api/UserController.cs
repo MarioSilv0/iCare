@@ -9,6 +9,7 @@
 
 using backend.Data;
 using backend.Models;
+using backend.Models.Data_Transfer_Objects;
 using backend.Models.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -18,23 +19,23 @@ using Microsoft.EntityFrameworkCore;
 namespace backend.Controllers.Api
 {
     /// <summary>
-    /// Controller <c>PublicUserController</c> manages the public profiles of authenticated users.
+    /// Controller <c>UserController</c> manages the public profiles of authenticated users.
     /// It allows users to retrieve and update their public profile information.
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class PublicUserController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly ICareServerContext _context;
-        private readonly ILogger<PublicUserController> _logger;
+        private readonly ILogger<UserController> _logger;
 
         /// <summary>
-        /// Initializes a new instance of the <c>PublicUserController</c> class.
+        /// Initializes a new instance of the <c>UserController</c> class.
         /// </summary>
         /// <param name="context">The database context for accessing user data.</param>
         /// <param name="logger">The logger instance for logging application activity.</param>
-        public PublicUserController(ICareServerContext context, ILogger<PublicUserController> logger)
+        public UserController(ICareServerContext context, ILogger<UserController> logger)
         {
             _context = context;
             _logger = logger;
@@ -47,7 +48,7 @@ namespace backend.Controllers.Api
         /// An <c>ActionResult</c> containing the <c>PublicUser</c> object if found, or an error response otherwise.
         /// </returns>
         [HttpGet("")]
-        public async Task<ActionResult<PublicUser>> Get()
+        public async Task<ActionResult<UserDTO>> Get()
         {
             try
             {
@@ -63,9 +64,36 @@ namespace backend.Controllers.Api
                                                        .AsNoTracking()
                                                        .ToListAsync();
 
-                return Ok(new PublicUser(user, null, categories));
+                return Ok(new UserDTO(user, null, categories));
             }
             catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error retrieving user");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
+        [HttpGet("permissions")]
+        public async Task<ActionResult<PermissionsDTO>> GetPermissions()
+        {
+            try
+            {
+                var id = User.FindFirst("UserId")?.Value;
+                if (id == null) return Unauthorized("User ID not found in token.");
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+                if (user == null) return NotFound();
+
+                var permissions = new PermissionsDTO
+                {
+                    Notications = user.Notifications,
+                    Preferences = user.Preferences?.Any() ?? false,
+                    Restrictions = user.Restrictions?.Any() ?? false,
+                };
+
+                return Ok(permissions);
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving user");
                 return StatusCode(500, "An error occurred while processing your request.");
@@ -80,7 +108,7 @@ namespace backend.Controllers.Api
         /// An <c>ActionResult</c> containing the updated <c>PublicUser</c> object if successful, or an error response otherwise.
         /// </returns>
         [HttpPut("")]
-        public async Task<ActionResult<PublicUser>> Edit([FromBody] PublicUser model)
+        public async Task<ActionResult<UserDTO>> Edit([FromBody] UserDTO model)
         {
             if (model == null) return BadRequest("Invalid data provided.");
 
@@ -113,7 +141,7 @@ namespace backend.Controllers.Api
 
                 _logger.LogInformation("User {UserId} updated their information.", user.Id);
 
-                return Ok(new PublicUser(user, model, categories));
+                return Ok(new UserDTO(user, model, categories));
             }
             catch (Exception ex)
             {

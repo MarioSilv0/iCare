@@ -1,3 +1,67 @@
 a.nav-link.text-dark {
   cursor: pointer;
 }
+
+aside {
+    position: fixed;
+    top: 80px;
+    z-index: 1000;
+    height: 100vh;
+}
+
+.closeButton {
+    display: none;
+}
+
+@media (max-width: 500px) {
+  aside {
+    top: 0;
+    min-width: 100vw !important;
+    transition: left .3s linear;
+    border: none !important;
+    outline: none !important;
+  }
+
+  .closeButton {
+    display: block;
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    background: none;
+    outline: none;
+    border: none;
+  }
+
+  .collapsed {
+    left: -1000px;    
+  }
+
+  .expanded {
+    left: 0;
+  }
+
+  nav {
+      padding: 40px 20px;
+  }
+
+    .expanded nav div {
+      margin: auto;
+    }
+
+  .expanded nav div:nth-child(1) {
+      height: 40px;
+  }
+
+  .expanded nav div:nth-child(2) {
+      display: none !important;
+  }
+
+  .expanded nav:nth-child(3) {
+    display: hidden;
+    border: 1px solid blue;
+  }
+
+  .expanded nav div:nth-child(3) {
+      justify-content: space-evenly;
+  }
+}

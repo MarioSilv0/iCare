@@ -5,7 +5,7 @@
 /// <author>João Morais  - 202001541</author>
 /// <author>Luís Martins - 202100239</author>
 /// <author>Mário Silva  - 202000500</author>
-/// <date>Last Modified: 2025-03-01</date>
+/// <date>Last Modified: 2025-03-04</date>
 
 using backend.Data;
 using backend.Models.Data_Transfer_Objects;
@@ -17,6 +17,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers.Api
 {
+    /// <summary>
+    /// The <c>InventoryController</c> class provides endpoints for managing a user's ingredient inventory.
+    /// It allows authenticated users to view, update, and delete ingredients linked to their profile.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -37,13 +41,14 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
-        /// Retrieves the list of ingredients for the authenticated user.
+        /// Retrieves the list of ingredients associated with the authenticated user.
         /// </summary>
         /// <returns>
-        /// A list of <see cref="PublicItem"/> representing the user's ingredients, or an error response if an issue occurs.
+        /// An <c>ActionResult</c> containing a list of <see cref="ItemDTO"/> objects representing the user's ingredients, 
+        /// or an error response if authentication fails.
         /// </returns>
         [HttpGet("")]
-        public async Task<ActionResult<List<PublicItem>>> Get()
+        public async Task<ActionResult<List<ItemDTO>>> Get()
         {
             try
             {
@@ -52,12 +57,8 @@ namespace backend.Controllers.Api
 
                 var ingredients = await _context.UserIngredients
                                                 .Where(ui => ui.UserId == id)
-                                                .Select(ui => new PublicItem
-                                                {
-                                                    Name = ui.Ingredient.Name,
-                                                    Quantity = ui.Quantity,
-                                                    Unit = ui.Unit
-                                                })
+                                                .Include(ui => ui.Ingredient)
+                                                .Select(ui => new ItemDTO(ui))
                                                 .ToListAsync();
 
                 return Ok(ingredients);
@@ -71,13 +72,15 @@ namespace backend.Controllers.Api
 
         /// <summary>
         /// Adds or updates the ingredients for the authenticated user.
+        /// If an ingredient does not exist, it will be added. Otherwise, its quantity and unit will be updated.
         /// </summary>
-        /// <param name="newItems">A list of <see cref="PublicItem"/> representing the new or updated ingredients.</param>
+        /// <param name="newItems">A list of <see cref="ItemDTO"/> representing the new or updated ingredients.</param>
         /// <returns>
-        /// A list of <see cref="PublicItem"/> representing the updated ingredients, or an error response if an issue occurs.
+        /// An <c>ActionResult</c> containing a list of <see cref="ItemDTO"/> representing the updated inventory,
+        /// or an error response if an issue occurs.
         /// </returns>
         [HttpPut("")]
-        public async Task<ActionResult<List<PublicItem>>> Update([FromBody] List<PublicItem> newItems)
+        public async Task<ActionResult<List<ItemDTO>>> Update([FromBody] List<ItemDTO> newItems)
         {
             try
             {
@@ -87,7 +90,8 @@ namespace backend.Controllers.Api
                 if (newItems == null || !newItems.Any())
                 {
                     var currentItems = await _context.UserIngredients.Where(ui => ui.UserId == id)
-                                                                     .Select(i => new PublicItem { Name = i.Ingredient.Name, Quantity = i.Quantity, Unit = i.Unit })
+                                                                     .Include(ui => ui.Ingredient)
+                                                                     .Select(i => new ItemDTO(i))
                                                                      .ToListAsync();
                     return Ok(currentItems);
                 }
@@ -99,28 +103,31 @@ namespace backend.Controllers.Api
 
                 var ingredients = await _context.Ingredients.ToDictionaryAsync(i => i.Name);
 
-                foreach (PublicItem item in newItems)
+                foreach (ItemDTO item in newItems)
                 {
                     // Add Item
                     if (!userIngredients.TryGetValue(item.Name, out var existingIngredient))
                     {
                         if (!ingredients.TryGetValue(item.Name, out var ingredient)) continue;
 
-                        var ui = new UserIngredient { IngredientId = ingredient.Id, Quantity = item.Quantity, Unit = item.Unit, UserId = id };
+                        var ui = new UserIngredient { IngredientId = ingredient.Id, Ingredient = ingredient, Quantity = item.Quantity, Unit = item.Unit, UserId = id };
                         _context.UserIngredients.Add(ui);
                         userIngredients.Add(item.Name, ui);
+                        _logger.LogInformation("Ingredient {IngredientName} has been added to user {UserId}.", item.Name, id);
 
                     }
                     else //Edit Item
                     {
                         existingIngredient.Quantity = item.Quantity;
                         existingIngredient.Unit = item.Unit;
+                        _logger.LogInformation("Ingredient {IngredientName} has been eddited to quantity: {Quantity}; unit: {Unit}; for user {UserId}.", item.Name, item.Quantity, item.Unit, id);
                     }
                 }
                 await _context.SaveChangesAsync();
 
                 var updatedItems = await _context.UserIngredients.Where(ui => ui.UserId == id)
-                                                                 .Select(i => new PublicItem { Name = i.Ingredient.Name, Quantity = i.Quantity, Unit = i.Unit })
+                                                                 .Include(ui => ui.Ingredient)
+                                                                 .Select(i => new ItemDTO(i))
                                                                  .ToListAsync();
 
                 return Ok(updatedItems);
@@ -133,14 +140,15 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
-        /// Deletes the specified ingredients from the authenticated user's inventory.
+        /// Deletes specific ingredients from the authenticated user's inventory.
         /// </summary>
-        /// <param name="nameOfItemsToRemove">A list of ingredient names to be removed from the user's inventory.</param>
+        /// <param name="nameOfItemsToRemove">A list of ingredient names to be removed.</param>
         /// <returns>
-        /// A list of <see cref="PublicItem"/> representing the remaining ingredients after deletion, or an error response if an issue occurs.
+        /// An <c>ActionResult</c> containing the updated list of ingredients after deletion,
+        /// or an error response if an issue occurs.
         /// </returns>
         [HttpDelete("")]
-        public async Task<ActionResult<List<PublicItem>>> Delete([FromBody] List<string> nameOfItemsToRemove)
+        public async Task<ActionResult<List<ItemDTO>>> Delete([FromBody] List<string> nameOfItemsToRemove)
         {
             try
             {
@@ -150,7 +158,7 @@ namespace backend.Controllers.Api
                 if (nameOfItemsToRemove == null || !nameOfItemsToRemove.Any()) {
                     var currentItems = await _context.UserIngredients.Where(ui => ui.UserId == id)
                                                                      .Include(ui => ui.Ingredient)
-                                                                     .Select(ui => new PublicItem { Name = ui.Ingredient.Name, Quantity = ui.Quantity, Unit = ui.Unit })
+                                                                     .Select(ui => new ItemDTO(ui))
                                                                      .ToListAsync();
                     return Ok(currentItems);
                 }
@@ -171,9 +179,10 @@ namespace backend.Controllers.Api
 
                 var updatedItems = await _context.UserIngredients.Where(ui => ui.UserId == id)
                                                                  .Include(ui => ui.Ingredient)
-                                                                 .Select(ui => new PublicItem { Name = ui.Ingredient.Name, Quantity = ui.Quantity, Unit = ui.Unit })
+                                                                 .Select(ui => new ItemDTO(ui))
                                                                  .ToListAsync();
 
+                _logger.LogInformation("Ingredients {IngredientsName} have been deleted.", nameOfItemsToRemove.ToString());
                 return Ok(updatedItems);
             }
             catch (Exception ex)

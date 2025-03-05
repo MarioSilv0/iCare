@@ -2,9 +2,9 @@
 
 <div *ngIf="recipe" class="mx-0 d-flex flex-column p-5">
   <div class="d-flex w-100 align-items-center justify-content-between">
-    <h1 class="m-0 p-0 my-2">{{ recipe.title }}</h1>
+    <h1 class="m-0 p-0 my-2">{{ recipe.name }}</h1>
     <span class="m-0 justify-self-end">
-      <!--svg-->
+      svg
       <img
         *ngIf="!recipe.isFavorite"
         src="../../assets/svgs/heart-regular.svg"
@@ -27,18 +27,18 @@
   >
     <h2 class="mx-0 align-self-start">Instruções</h2>
     <p>
-      {{ recipe.instructions }}
+      {{ recipe.description }}
     </p>
   </div>
-  <!-- TODO -->
-  <!-- <div>
+   TODO 
+   <div>
     <h2>Informações Nutricionais</h2>
     <ul>
       <li>v1</li>
       <li>v2</li>
       <li>v3</li>
     </ul>
-  </div> -->
+  </div> 
   <hr />
   <h2 class="mx-0 align-self-start">Ingredientes</h2>
   <div class="d-flex flex-md-row w-100 justify-content-around flex-sm-column">
@@ -60,14 +60,14 @@
               style="max-width: 50%; flex-wrap: wrap"
               >{{ ingredient.name }}</span
             >
-            <span class="mx-0 justify-self-end">{{ ingredient.measure }}</span>
+            <span class="mx-0 justify-self-end">{{ ingredient.quantity }} {{ ingredient.unit }}</span>
           </div>
         </li>
       </ul>
     </div>
-    <!--imagem receita-->
+    imagem receita
     <img
-      src="{{ recipe.thumb }}"
+      src="{{ recipe.picture }}"
       alt="Imagem da receita"
       class="mx-0 shadow rounded"
       style="width: 25%; max-height: fit-content"

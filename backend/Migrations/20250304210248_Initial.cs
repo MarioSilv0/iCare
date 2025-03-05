@@ -256,7 +256,9 @@ namespace backend.Migrations
                 columns: table => new
                 {
                     IngredientId = table.Column<int>(type: "int", nullable: false),
-                    RecipeId = table.Column<int>(type: "int", nullable: false)
+                    RecipeId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<float>(type: "real", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -316,6 +318,16 @@ namespace backend.Migrations
                 {
                     { 1, "Portugal", "Bom", "Tu Consegues", "Algo de Bom", "", "" },
                     { 2, "Bugs", "Mau", "Boa Sorte", "Algo de Mau", "", "" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "RecipeIngredients",
+                columns: new[] { "IngredientId", "RecipeId", "Quantity", "Unit" },
+                values: new object[,]
+                {
+                    { 1, 1, 3f, "g" },
+                    { 2, 1, 3f, "g" },
+                    { 3, 2, 3f, "kg" }
                 });
 
             migrationBuilder.CreateIndex(

@@ -112,6 +112,11 @@ namespace backend.Data
                 new Recipe { Id = 1, Picture = "", Name = "Algo de Bom", Description = "Tu Consegues", Category = "Bom", Area = "Portugal", YoutubeVideo = "" },
                 new Recipe { Id = 2, Picture = "", Name = "Algo de Mau", Description = "Boa Sorte", Category = "Mau", Area = "Bugs", YoutubeVideo = "" }
             );
+            modelBuilder.Entity<RecipeIngredient>().HasData(
+                new RecipeIngredient { RecipeId = 1, Quantity = 3, Unit = "g", IngredientId = 1 },
+                new RecipeIngredient { RecipeId = 1, Quantity = 3, Unit = "g", IngredientId = 2 },
+                new RecipeIngredient { RecipeId = 2, Quantity = 3, Unit = "kg", IngredientId = 3 }
+            );
         }
     }
 }

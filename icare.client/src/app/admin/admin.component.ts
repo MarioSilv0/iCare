@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RecipeComponent } from '../recipe/recipe.component';
-import { ApiService, Ingredient } from '../services/api.service';
+import { IngredientService, Ingredient } from '../services/api.service';
 import { MealDbService, TacoApiService, TranslateService } from '../services/apis';
 import { Recipe } from '../../models/recipe';
 
@@ -15,7 +15,7 @@ export class AdminComponent {
   loading: boolean = false;
   errorMessage: string = '';
 
-  constructor(private foodService: ApiService, private taco: TacoApiService, private mealDb: MealDbService, private translate: TranslateService) { }
+    constructor(private foodService: IngredientService, private taco: TacoApiService, private mealDb: MealDbService, private translate: TranslateService) { }
 
 
   fetchRecipes() {

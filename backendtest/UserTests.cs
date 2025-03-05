@@ -20,11 +20,11 @@ namespace backendtest
     public class UserTests
     {
         private readonly User user;
-        private readonly PublicUser pu;
+        private readonly UserDTO pu;
 
         /// <summary>
         /// Initializes a new instance of the <c>UserTests</c> class.
-        /// Creates instances of <see cref="User"/> and <see cref="PublicUser"/> 
+        /// Creates instances of <see cref="User"/> and <see cref="UserDTO"/> 
         /// for testing property updates.
         /// </summary>
         public UserTests()
@@ -42,7 +42,7 @@ namespace backendtest
                 Restrictions = new List<string>()
             };
 
-            pu = new PublicUser
+            pu = new UserDTO
             {
                 Name = "Public User",
                 Picture = "Public User Picture",

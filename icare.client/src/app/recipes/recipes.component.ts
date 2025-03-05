@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { RecipeService, Recipe } from '../services/recipes.service';
+import { StorageUtil } from '../utils/StorageUtil';
+import { Permissions } from '../services/users.service';
 
 @Component({
   selector: 'app-recipes',
@@ -13,97 +16,24 @@ export class RecipesComponent {
     'Preferências Alimentares',
     'Favoritos',
   ];
-  public recipes: {
-    img: string;
-    title: string;
-    description: string;
-    isFavorite: boolean;
-  }[] = [
-    {
-      img: '',
-      title: 'titulo da receita',
-      description: 'calorias: 700 kcal',
-      isFavorite: false,
-    },
-    {
-      img: '',
-      title: 'titulo da receita2',
-      description: 'calorias: 760 kcal',
-      isFavorite: true,
-    },
-    {
-      img: '',
-      title: 'titulo da receita2',
-      description: 'calorias: 760 kcal',
-      isFavorite: true,
-    },
-    {
-      img: '',
-      title: 'titulo da receita2',
-      description: 'calorias: 760 kcal',
-      isFavorite: true,
-    },
-    {
-      img: '',
-      title: 'titulo da receita2',
-      description: 'calorias: 760 kcal',
-      isFavorite: true,
-    },
-    {
-      img: '',
-      title: 'titulo da receita2',
-      description: 'calorias: 760 kcal',
-      isFavorite: true,
-    },
-    {
-      img: '',
-      title: 'titulo da receita2',
-      description: 'calorias: 760 kcal',
-      isFavorite: true,
-    },
-    {
-      img: '',
-      title: 'titulo da receita2',
-      description: 'calorias: 760 kcal',
-      isFavorite: true,
-    },
-    {
-      img: '',
-      title: 'titulo da receita2',
-      description: 'calorias: 760 kcal',
-      isFavorite: true,
-    },
-    {
-      img: '',
-      title: 'titulo da receita2',
-      description: 'calorias: 760 kcal',
-      isFavorite: true,
-    },
-    {
-      img: '',
-      title: 'titulo da receita2',
-      description: 'calorias: 760 kcal',
-      isFavorite: true,
-    },
-    {
-      img: '',
-      title: 'titulo da receita2',
-      description: 'calorias: 760 kcal',
-      isFavorite: true,
-    },
-    {
-      img: '',
-      title: 'titulo da receita2',
-      description: 'calorias: 760 kcal',
-      isFavorite: true,
-    },
-  ];
+  public recipes: Recipe[] = [];
   public searchTerm: string = '';
 
-  constructor() {}
+  public objectivesFilter: boolean = false;
+  public preferencesFilter: boolean = false;
+  public restrictionsFilter: boolean = false;
+
+  constructor(private api: RecipeService) { }
 
   ngOnInit() {
-    
+    this.getPermissions();
+    this.getRecipes();
+  }
+
+  getPermissions() {
+    const permissions: Permissions | null = StorageUtil.getFromStorage('permissions');
+    this.preferencesFilter = permissions?.preferences ?? false;
+    this.restrictionsFilter = permissions?.restrictions ?? false;
   }
 
   toggleFavoriteRecipe(id: number) {
@@ -112,10 +42,21 @@ export class RecipesComponent {
 
   searchRecipes(searchTerm: string) {
     const filteredRecipes = this.recipes.forEach((r) => {
-      r.title.includes(searchTerm) || r.description.includes(searchTerm);
+      r.name.includes(searchTerm) || r.description.includes(searchTerm);
     });
     console.log(filteredRecipes);
     // renderizar a nova lista
     // guardar a antiga lista de receitas
+  }
+
+  getRecipes() {
+    this.api.getAllRecipes().subscribe(
+      (result) => {
+        this.recipes = result;
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   }
 }

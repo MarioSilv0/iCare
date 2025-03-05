@@ -10,10 +10,11 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { UsersService, User } from '../services/users.service';
+import { UsersService, User, Permissions } from '../services/users.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { NotificationService, updatedUserNotification, failedToEditEmailUserNotification } from '../services/notifications.service';
+import { StorageUtil } from '../utils/StorageUtil';
 
 @Component({
   selector: 'app-profile',
@@ -125,20 +126,16 @@ export class ProfileComponent implements OnInit {
     this.service.updateUser(this.user).subscribe(
       (result) => {
         NotificationService.showNotification(this.user.notifications, updatedUserNotification);
-
         if (result.email !== this.user.email) NotificationService.showNotification(this.user.notifications, failedToEditEmailUserNotification);
 
-        try {
-          const storedUser = localStorage.getItem('user');
-          const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+        const permissions: Permissions | null = StorageUtil.getFromStorage('permissions');
+        const preferences = Array.from(result.preferences);
+        const restrictions = Array.from(result.restrictions);
 
-          const updatedUser = { name: result.name, picture: result.picture, notifications: result.notifications };
+        const updatedUser = { notifications: result.notifications, preferences: preferences.length > 0, restrictions: restrictions.length > 0 };
 
-          if (!parsedUser || parsedUser.name !== updatedUser.name || parsedUser.picture !== updatedUser.picture || parsedUser.notifications !== updatedUser.notifications) {
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-          }
-        } catch (e) {
-          console.error('Failed to update user data in localStorage:', e);
+        if (!permissions || permissions.notifications !== updatedUser.notifications || permissions.preferences !== updatedUser.preferences || permissions.restrictions !== updatedUser.restrictions) {
+          StorageUtil.saveToStorage('permissions', updatedUser);
         }
         
         this.router.navigate(['/']);

@@ -1,0 +1,15 @@
+.burger-icon {
+    display: none !important;
+}
+
+.burger-icon button {
+  background: none;
+  outline: none;
+  border: none;
+}
+
+@media (max-width: 500px) {
+  .burger-icon {
+    display: block !important;
+  }
+}
