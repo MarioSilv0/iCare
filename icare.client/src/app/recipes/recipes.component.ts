@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { RecipeService, Recipe } from '../services/recipes.service';
+import { StorageUtil } from '../utils/StorageUtil';
+import { Permissions } from '../services/users.service';
 
 @Component({
   selector: 'app-recipes',
@@ -17,10 +19,22 @@ export class RecipesComponent {
   public recipes: Recipe[] = [];
   public searchTerm: string = '';
 
+  public preferencesFilter: boolean = false;
+  public restrictionsFilter: boolean = false;
+
   constructor(private api: RecipeService) { }
 
   ngOnInit() {
+    this.getPermissions();
     this.getRecipes();
+  }
+
+  getPermissions() {
+    const permissions: Permissions | null = StorageUtil.getFromStorage('permissions');
+    this.preferencesFilter = permissions?.preferences ?? false;
+    this.restrictionsFilter = permissions?.restrictions ?? false;
+
+    console.log(this.preferencesFilter, this.restrictionsFilter)
   }
 
   toggleFavoriteRecipe(id: number) {
