@@ -11,7 +11,8 @@
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 const PROFILE: string = '/api/User';
 const INVENTORY: string = '/api/Inventory';
@@ -24,6 +25,9 @@ const INVENTORY: string = '/api/Inventory';
   providedIn: 'root'
 })
 export class UsersService {
+  private userSubject = new BehaviorSubject<User | null>(null);
+  // Observable for components to listen for user updates
+  public user$ = this.userSubject.asObservable();
   constructor(private http: HttpClient) { }
 
   /**
@@ -45,7 +49,10 @@ export class UsersService {
   updateUser(user: User): Observable<User> {
     const u = { ...user, preferences: Array.from(user.preferences), restrictions: Array.from(user.restrictions), categories: Array.from(user.categories) }
 
-    return this.http.put<User>(PROFILE, u);
+    return this.http.put<User>(PROFILE, u).pipe(
+      // Notify components about the update
+      tap(updatedUser => this.userSubject.next(updatedUser))
+    );
   }
 
   /**

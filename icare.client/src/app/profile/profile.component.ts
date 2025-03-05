@@ -128,18 +128,18 @@ export class ProfileComponent implements OnInit {
 
         if (result.email !== this.user.email) NotificationService.showNotification(this.user.notifications, failedToEditEmailUserNotification);
 
-        try {
-          const storedUser = localStorage.getItem('user');
-          const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+        //try {
+        //  const storedUser = localStorage.getItem('permissions');
+        //  const parsedUser = storedUser ? JSON.parse(storedUser) : null;
 
-          const updatedUser = { name: result.name, picture: result.picture, notifications: result.notifications };
+        //  const updatedUser = { name: result.name, picture: result.picture, notifications: result.notifications };
 
-          if (!parsedUser || parsedUser.name !== updatedUser.name || parsedUser.picture !== updatedUser.picture || parsedUser.notifications !== updatedUser.notifications) {
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-          }
-        } catch (e) {
-          console.error('Failed to update user data in localStorage:', e);
-        }
+        //  if (!parsedUser || parsedUser.name !== updatedUser.name || parsedUser.picture !== updatedUser.picture || parsedUser.notifications !== updatedUser.notifications) {
+        //    localStorage.setItem('user', JSON.stringify(updatedUser));
+        //  }
+        //} catch (e) {
+        //  console.error('Failed to update user data in localStorage:', e);
+        //}
         
         this.router.navigate(['/']);
       },
