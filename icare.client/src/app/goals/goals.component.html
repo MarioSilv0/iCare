@@ -10,20 +10,20 @@
 
   <div style="border: 1px solid cyan">
     <h2>Informações Necessárias</h2>
-    <form action="">
-      <div>
+    <form action="" class="info-form shadow">
+      <div class="info-inputs-container">
         <label for="ipt-data-nascimento">Data de nascimento</label>
         <input id="ipt-data-nascimento" type="date" />
       </div>
-      <div>
+      <div class="info-inputs-container">
         <label for="ipt-altura">Altura</label>
         <input id="ipt-altura" type="number" min="0" value="0" max="3" />
       </div>
-      <div>
+      <div class="info-inputs-container">
         <label for="ipt-peso">Peso</label>
         <input id="ipt-peso" type="number" min="0" value="0" max="700" />
       </div>
-      <div>
+      <div class="info-inputs-container">
         <label for="ipt-genero">Genero</label>
         <select name="ipt-genero" id="ipt-genero">
           <option value="" selected disabled>-- selecione uma opção --</option>
@@ -31,7 +31,7 @@
           <option value="F">Feminino</option>
         </select>
       </div>
-      <div>
+      <div class="info-inputs-container">
         <label for="ipt-atividade-fisica">Nivel de atividade fisica</label>
         <select name="ipt-atividade-fisica" id="ipt-atividade-fisica">
           <option value="" selected disabled>-- selecione uma opção --</option>
@@ -40,7 +40,7 @@
           <option value="low">Baixa</option>
         </select>
       </div>
-      <div>
+      <div class="info-inputs-container">
         <button class="bt-clear-info" type="reset">Cancelar</button>
         <button class="bt-confirm-info" type="submit">Confirmar</button>
       </div>
