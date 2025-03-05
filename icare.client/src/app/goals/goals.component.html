@@ -1,4 +1,4 @@
-<div>
+<div class="goals">
   <div style="border: 1px solid green">
     <h1>Meta Alimentar</h1>
     <p>
@@ -13,28 +13,42 @@
     <form action="" class="info-form shadow">
       <div class="info-inputs-container">
         <label for="ipt-data-nascimento">Data de nascimento</label>
-        <input id="ipt-data-nascimento" type="date" />
+        <input id="ipt-data-nascimento" type="date" required />
       </div>
       <div class="info-inputs-container">
         <label for="ipt-altura">Altura</label>
-        <input id="ipt-altura" type="number" min="0" value="0" max="3" />
+        <input
+          id="ipt-altura"
+          type="number"
+          min="0"
+          value="0"
+          max="3"
+          required
+        />
       </div>
       <div class="info-inputs-container">
         <label for="ipt-peso">Peso</label>
-        <input id="ipt-peso" type="number" min="0" value="0" max="700" />
+        <input
+          id="ipt-peso"
+          type="number"
+          min="0"
+          value="0"
+          max="700"
+          required
+        />
       </div>
       <div class="info-inputs-container">
         <label for="ipt-genero">Genero</label>
-        <select name="ipt-genero" id="ipt-genero">
-          <option value="" selected disabled>-- selecione uma opção --</option>
+        <select name="ipt-genero" id="ipt-genero" required>
+          <option value="" disabled>-- selecione uma opção --</option>
           <option value="M">Masculino</option>
           <option value="F">Feminino</option>
         </select>
       </div>
       <div class="info-inputs-container">
         <label for="ipt-atividade-fisica">Nivel de atividade fisica</label>
-        <select name="ipt-atividade-fisica" id="ipt-atividade-fisica">
-          <option value="" selected disabled>-- selecione uma opção --</option>
+        <select name="ipt-atividade-fisica" id="ipt-atividade-fisica" required>
+          <option value="" disabled>-- selecione uma opção --</option>
           <option value="high">Alta</option>
           <option value="medium">Média</option>
           <option value="low">Baixa</option>
@@ -66,9 +80,9 @@
           (click)="toggleGoalType()"
         />
       </div>
-      <form action="" style="border: 1px solid pink">
+      <form action="" class="goal-form shadow">
         <div *ngIf="goalType === 'Automática'">
-          <div *ngFor="let goal of goals">
+          <div *ngFor="let goal of goals" class="goals-container">
             <label for="ipt-goal-{{ goal.name.replace(' ', '-') }}">
               {{ goal.name }}
             </label>
@@ -80,13 +94,25 @@
           </div>
         </div>
         <div *ngIf="goalType === 'Manual'">
-          <div>
+          <div class="goals-inputs-container">
             <label for="ipt-calorias-diarias">Calorias diárias (kcal)</label>
-            <input id="ipt-calorias-diarias" type="number" min="0" value="0" />
+            <input
+              id="ipt-calorias-diarias"
+              type="number"
+              min="0"
+              value="0"
+              required
+            />
           </div>
-          <div>
+          <div class="goals-inputs-container">
             <label for="ipt-goal-duracao">Duração (dias)</label>
-            <input id="ipt-goal-duracao" type="number" min="0" value="0" />
+            <input
+              id="ipt-goal-duracao"
+              type="number"
+              min="0"
+              value="0"
+              required
+            />
           </div>
         </div>
         <button class="bt-add-goal" type="submit">Adicionar meta</button>

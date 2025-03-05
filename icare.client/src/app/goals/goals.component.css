@@ -1,3 +1,7 @@
+.goals {
+  min-height: 100vh;
+}
+
 .goal-type-container {
   max-width: fit-content;
   position: relative;
@@ -97,7 +101,8 @@ select {
   border-radius: 5px;
 }
 
-.info-form {
+.info-form,
+.goal-form {
   background-color: var(--bg-bege-contrast);
   padding: 20px 10px;
   display: flex;
@@ -106,7 +111,14 @@ select {
   justify-content: center;
   gap: 0.7rem;
   border-radius: 8px;
+}
+
+.info-form {
   max-width: 600px;
+}
+
+.goal-form {
+  max-width: 300px;
 }
 
 .info-inputs-container {
@@ -132,4 +144,37 @@ select {
 
 .info-form .info-inputs-container:last-child {
   width: 35%;
+}
+
+.goal-form {
+  margin-top: 1rem;
+}
+
+.goals-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.goals-container input {
+  width: 16px;
+  cursor: pointer;
+}
+
+.goals-inputs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.goals-inputs-container label {
+  margin: 0;
+}
+
+.goals-inputs-container input {
+  width: 100%;
+  padding: 0 10px;
 }
