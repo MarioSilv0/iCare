@@ -93,6 +93,7 @@
               <select
                 name="unitsSelect"
                 id="unitsSelect"
+                [ngModel]="getUnit(item)"
                 (input)="updateUnit(item, $event)"
               >
                 <option value=""></option>

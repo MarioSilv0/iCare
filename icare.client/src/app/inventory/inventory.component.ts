@@ -145,7 +145,9 @@ export class InventoryComponent {
   getInventory() {
     this.service.getInventory().subscribe(
       (result) => {
+        console.log("Result: ", result);
         result.forEach((i) => this.inventory.set(i.name, { quantity: i.quantity, unit: i.unit }));
+        console.log("Inventory: ", this.inventory)
         this.getListItems();
       },
       (error) => {
@@ -216,6 +218,10 @@ export class InventoryComponent {
 
     if (this.itemDetails.has(item)) this.itemDetails.set(item, this.calculateIngredient(this.itemDetails.get(item)!, previousQuantity, newValue));
     else this.getItemDetails(item);
+  }
+
+  getUnit(item: string): string {
+    return this.inventory.get(item)?.unit || '';
   }
 
   /**
