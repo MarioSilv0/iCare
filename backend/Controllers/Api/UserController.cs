@@ -9,6 +9,7 @@
 
 using backend.Data;
 using backend.Models;
+using backend.Models.Data_Transfer_Objects;
 using backend.Models.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -66,6 +67,33 @@ namespace backend.Controllers.Api
                 return Ok(new UserDTO(user, null, categories));
             }
             catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error retrieving user");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
+        [HttpGet("permissions")]
+        public async Task<ActionResult<PermissionsDTO>> GetPermissions()
+        {
+            try
+            {
+                var id = User.FindFirst("UserId")?.Value;
+                if (id == null) return Unauthorized("User ID not found in token.");
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+                if (user == null) return NotFound();
+
+                var permissions = new PermissionsDTO
+                {
+                    Notications = user.Notifications,
+                    Preferences = user.Preferences?.Any() ?? false,
+                    Restrictions = user.Restrictions?.Any() ?? false,
+                };
+
+                return Ok(permissions);
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving user");
                 return StatusCode(500, "An error occurred while processing your request.");

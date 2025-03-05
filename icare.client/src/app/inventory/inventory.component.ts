@@ -18,7 +18,8 @@ import {
   NotificationService,
   removedItemNotification,
 } from '../services/notifications.service';
-import { Item, UsersService } from '../services/users.service';
+import { Item, UsersService, Permissions } from '../services/users.service';
+import { StorageUtil } from '../utils/StorageUtil';
 
 declare var bootstrap: any;
 
@@ -69,14 +70,8 @@ export class InventoryComponent {
    * Loads user notification preferences from local storage.
    */
   private loadNotificationPreferences() {
-    try {
-      const storage = localStorage.getItem('user');
-      if (storage) {
-        this.notificationsPermission = JSON.parse(storage).notifications ?? true;
-      }
-    } catch (e) {
-      console.error('Failed to get user data in localStorage:', e);
-    }
+    const permissions: Permissions | null = StorageUtil.getFromStorage('permissions');
+    this.notificationsPermission = permissions?.notifications ?? false;
   }
 
   /**
