@@ -152,7 +152,7 @@
                       <progress
                         class="pg-protaina"
                         value="{{ itemDetails.get(item)?.protein }}"
-                        max="100"
+                        max="{{ getProgress(item) }}"
                       ></progress>
                     </li>
                     <li
@@ -182,7 +182,7 @@
                       <progress
                         class="pg-hidratos"
                         value="{{ itemDetails.get(item)?.carbohydrates }}"
-                        max="100"
+                        max="{{ getProgress(item) }}"
                       ></progress>
                     </li>
                     <li
@@ -212,7 +212,7 @@
                       <progress
                         class="pg-lipidos"
                         value="{{ itemDetails.get(item)?.lipids }}"
-                        max="100"
+                        max="{{ getProgress(item) }}"
                       ></progress>
                     </li>
                     <li
@@ -242,7 +242,7 @@
                       <progress
                         class="pg-fibras"
                         value="{{ itemDetails.get(item)?.fibers }}"
-                        max="100"
+                        max="{{ getProgress(item) }}"
                       ></progress>
                     </li>
                   </ul>

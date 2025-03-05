@@ -145,9 +145,7 @@ export class InventoryComponent {
   getInventory() {
     this.service.getInventory().subscribe(
       (result) => {
-        console.log("Result: ", result);
         result.forEach((i) => this.inventory.set(i.name, { quantity: i.quantity, unit: i.unit }));
-        console.log("Inventory: ", this.inventory)
         this.getListItems();
       },
       (error) => {
@@ -222,6 +220,13 @@ export class InventoryComponent {
 
   getUnit(item: string): string {
     return this.inventory.get(item)?.unit || '';
+  }
+
+  getProgress(item: string): number {
+    const i = this.inventory.get(item);
+    if (!i) return 100;
+
+    return (i.unit === "g") ? i.quantity : i.quantity * 1000;
   }
 
   /**
@@ -346,6 +351,8 @@ export class InventoryComponent {
         for (let name of deletedItems) {
           this.listOfItems.add(name);
           this.inventory.delete(name);
+          this.itemDetails.delete(name);
+          this.expandedItems.delete(name);
         }
 
         if (!itemsToDelete) this.selectedItemsInInventory.clear();
