@@ -1,0 +1,96 @@
+<div>
+  <div style="border: 1px solid green">
+    <h1>Meta Alimentar</h1>
+    <p>
+      Informações necessárias para definir meta alimentar estão incompletas.
+      Preencha os campos obrigatórios.
+    </p>
+    <p>Nenhuma meta alimentar definida. É necessário definir uma meta.</p>
+  </div>
+
+  <div style="border: 1px solid cyan">
+    <h2>Informações Necessárias</h2>
+    <form action="">
+      <div>
+        <label for="ipt-data-nascimento">Data de nascimento</label>
+        <input id="ipt-data-nascimento" type="date" />
+      </div>
+      <div>
+        <label for="ipt-altura">Altura</label>
+        <input id="ipt-altura" type="number" min="0" value="0" max="3" />
+      </div>
+      <div>
+        <label for="ipt-peso">Peso</label>
+        <input id="ipt-peso" type="number" min="0" value="0" max="700" />
+      </div>
+      <div>
+        <label for="ipt-genero">Genero</label>
+        <select name="ipt-genero" id="ipt-genero">
+          <option value="" selected disabled>-- selecione uma opção --</option>
+          <option value="M">Masculino</option>
+          <option value="F">Feminino</option>
+        </select>
+      </div>
+      <div>
+        <label for="ipt-atividade-fisica">Nivel de atividade fisica</label>
+        <select name="ipt-atividade-fisica" id="ipt-atividade-fisica">
+          <option value="" selected disabled>-- selecione uma opção --</option>
+          <option value="high">Alta</option>
+          <option value="medium">Média</option>
+          <option value="low">Baixa</option>
+        </select>
+      </div>
+      <div>
+        <button class="bt-clear-info" type="reset">Cancelar</button>
+        <button class="bt-confirm-info" type="submit">Confirmar</button>
+      </div>
+    </form>
+  </div>
+
+  <div style="border: 1px solid red">
+    <h2>Definir Meta Alimentar</h2>
+    <p>
+      Preencha o tipo de meta desejada, selecione os dias que quer fugir à meta
+      e confirme a meta preenchida.
+    </p>
+    <div>
+      <div class="goal-type-container">
+        <label class="goal-type-label {{ goalType }}" for="ipt-goal-type">
+          Meta Alimentar {{ goalType }}
+        </label>
+        <input
+          class="goal-type-input"
+          type="checkbox"
+          name="ipt-goal-type"
+          id="ipt-goal-type"
+          (click)="toggleGoalType()"
+        />
+      </div>
+      <form action="" style="border: 1px solid pink">
+        <div *ngIf="goalType === 'Automática'">
+          <div *ngFor="let goal of goals">
+            <label for="ipt-goal-{{ goal.name.replace(' ', '-') }}">
+              {{ goal.name }}
+            </label>
+            <input
+              type="checkbox"
+              name="ipt-goal-{{ goal.name.replace(' ', '-') }}"
+              id="ipt-goal-{{ goal.name.replace(' ', '-') }}"
+            />
+          </div>
+        </div>
+        <div *ngIf="goalType === 'Manual'">
+          <div>
+            <label for="ipt-calorias-diarias">Calorias diárias (kcal)</label>
+            <input id="ipt-calorias-diarias" type="number" min="0" value="0" />
+          </div>
+          <div>
+            <label for="ipt-goal-duracao">Duração (dias)</label>
+            <input id="ipt-goal-duracao" type="number" min="0" value="0" />
+          </div>
+        </div>
+        <button class="bt-add-goal" type="submit">Adicionar meta</button>
+      </form>
+    </div>
+  </div>
+</div>
