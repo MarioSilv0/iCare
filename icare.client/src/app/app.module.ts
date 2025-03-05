@@ -20,7 +20,6 @@ import { RecipesComponent } from './recipes/recipes.component';
 import { RecipeComponent } from './recipe/recipe.component';
 import { InventoryComponent } from './inventory/inventory.component';
 import { MapKeysPipe } from './pipes/map-keys-pipe';
-import { TacoApiService } from './services/taco-api.service';
 import { RecipeListComponent } from './recipe-list/recipe-list.component';
 
 @NgModule({

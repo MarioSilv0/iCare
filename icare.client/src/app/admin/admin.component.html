@@ -2,15 +2,73 @@
 <div class="container m-5">
   <h1>Área Administrativa!</h1>
 
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <button class="btn btn-secondary" (click)="updateIngredientDb()">
-            🔄 Atualizar Ingredientes
-          </button>
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <button class="btn btn-secondary" (click)="updateIngredientDb()">
+          🔄 Atualizar Ingredientes
+        </button>
 
-        </div>
       </div>
     </div>
-
   </div>
+
+  <div class="container">
+    <div>
+      <h2>Teste de Tradução de Receitas</h2>
+      <button class="btn btn-secondary" (click)="fetchRecipes()" [disabled]="loading">
+        {{ loading ? 'Carregando...' : 'Buscar Receita' }}
+      </button>
+
+      <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+      <!-- Receita Original -->
+      <div *ngIf="originalRecipe">
+        <h3>Receita Original</h3>
+        <p><strong>{{ originalRecipe.title }}</strong></p>
+        <p><strong>Instruções:</strong> {{ originalRecipe.instructions }}</p>
+        <ul>
+          <li *ngFor="let ing of originalRecipe.ingredients">
+            <strong>{{ ing.name }}</strong> - {{ ing.measure }}
+            <span *ngIf="ing.grams">({{ ing.grams }} g)</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Receita Traduzida -->
+      <div *ngIf="translatedRecipe">
+        <h3>Receita Traduzida</h3>
+        <p><strong>{{ translatedRecipe.title }}</strong></p>
+        <p><strong>Instruções:</strong> {{ translatedRecipe.instructions }}</p>
+        <ul>
+          <li *ngFor="let ing of translatedRecipe.ingredients">
+            <strong>{{ ing.name }}</strong> - {{ ing.measure }}
+            <span *ngIf="ing.grams">({{ ing.grams }} g)</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!--<ul *ngIf="mealsList">
+    <li *ngFor="let meal of mealsList">
+      <img [src]="meal.strMealThumb" [alt]="meal.strMeal">
+      <h3>{{ meal.strMeal }}</h3>
+      <p><strong>Categoria:</strong> {{ meal.strCategory }}</p>
+      <p><strong>Área:</strong> {{ meal.strArea }}</p>
+      <a *ngIf="meal.strYoutube" [href]="meal.strYoutube" target="_blank">Ver no YouTube</a>
+
+      <h4>Ingredientes:</h4>
+      <ul>
+        <li *ngFor="let item of getIngredients(meal)">
+          {{ item.measure }} {{ item.ingredient }}
+        </li>
+      </ul>
+
+      <h4>Instruções:</h4>
+      <p>{{ meal.strInstructions }}</p>
+    </li>
+  </ul>-->
+</div>
