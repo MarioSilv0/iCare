@@ -11,22 +11,36 @@
       <h1 class="m-0 align-self-center py-1 fs-5">Filtros</h1>
       <!-- lista de filtros -->
       <div class="m-0 d-flex flex-wrap align-items-center justify-content-between gap-2 py-2 me-2">
-      <span *ngFor="let filter of filters" class="d-flex gap-1 bg-bege-contrast p-1 rounded">
+        <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
           <input type="checkbox"
-                 name=""
-                 id=""
-                 style="width: 20px; height: 20px; cursor: pointer" />
-          <p class="m-0 p-0"
-             style="
-              font-size: .75rem;
-              display: flex;
-              text-wrap-mode: nowrap;
-              text-overflow: clip !important;
-          ">
-            {{ filter }}
+                 style="width: 20px; height: 20px; cursor: pointer"
+                 [disabled]="!restrictionsFilter" />
+          <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
+            Restrições
           </p>
-      </span>
-
+        </div>
+        <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
+          <input type="checkbox"
+                 style="width: 20px; height: 20px; cursor: pointer"
+                 [disabled]="!preferencesFilter" />
+          <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
+            Preferências
+          </p>
+        </div>
+        <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
+          <input type="checkbox"
+                 style="width: 20px; height: 20px; cursor: pointer"
+                 [disabled]="!objectivesFilter" />
+          <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
+            Metas
+          </p>
+        </div>
+        <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
+          <input type="checkbox" name="" id="" style="width: 20px; height: 20px; cursor: pointer" />
+          <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
+            Inventário
+          </p>
+        </div>
       </div>
     </div>
 

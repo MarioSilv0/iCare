@@ -19,6 +19,7 @@ export class RecipesComponent {
   public recipes: Recipe[] = [];
   public searchTerm: string = '';
 
+  public objectivesFilter: boolean = false;
   public preferencesFilter: boolean = false;
   public restrictionsFilter: boolean = false;
 
@@ -33,8 +34,6 @@ export class RecipesComponent {
     const permissions: Permissions | null = StorageUtil.getFromStorage('permissions');
     this.preferencesFilter = permissions?.preferences ?? false;
     this.restrictionsFilter = permissions?.restrictions ?? false;
-
-    console.log(this.preferencesFilter, this.restrictionsFilter)
   }
 
   toggleFavoriteRecipe(id: number) {
