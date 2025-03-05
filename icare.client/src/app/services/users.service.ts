@@ -19,8 +19,7 @@ const PROFILE: string = '/api/User';
 const INVENTORY: string = '/api/Inventory';
 
 /**
- * The `UsersService` class provides methods for interacting with the user profile and inventory.
- * It allows retrieving, updating, and managing user details and inventory items.
+ * The `UsersService` class provides methods for interacting with the user profile, inventory, etc.
  */
 @Injectable({
   providedIn: 'root'
@@ -42,17 +41,23 @@ export class UsersService {
 
   /**
    * Updates the user's profile data on the API.
-   * Converts `Set` properties (preferences, restrictions, categories) into arrays for proper serialization.
    * 
-   * @param {User} user - The updated user object.
-   * @returns {Observable<User>} An observable containing the updated user data.
+   * This method ensures that `Set` properties (`preferences`, `restrictions`, `categories`) are converted into arrays 
+   * for proper serialization before sending the data to the server. Additionally, it emits an update notification 
+   * through `userSubject`, allowing other components to react to changes in the user's name and profile picture.
+   * 
+   * @param {User} user - The updated user object containing new profile details.
+   * @returns {Observable<User>} An observable that emits the updated user data upon successful API response.
    */
   updateUser(user: User): Observable<User> {
     const u = { ...user, preferences: Array.from(user.preferences), restrictions: Array.from(user.restrictions), categories: Array.from(user.categories) }
 
     return this.http.put<User>(PROFILE, u).pipe(
-      // Notify components about the update
-      tap(updatedUser => this.userSubject.next({ name: updatedUser.name, picture: updatedUser.picture }))
+      tap(updatedUser => {
+        const currentUser = this.userSubject.value;
+        if (!currentUser || currentUser.name !== updatedUser.name || currentUser.picture !== updatedUser.picture)
+          this.userSubject.next({ name: updatedUser.name, picture: updatedUser.picture });
+      })
     );
   }
 
@@ -85,10 +90,20 @@ export class UsersService {
     return this.http.delete<Item[]>(INVENTORY, { body: items });
   }
 
+  /**
+   * Retrieves the user's permissions from `localStorage`.
+   * 
+   * @returns {Permissions | null} The stored permissions if available, otherwise `null`.
+   */
   getPermissions(): Permissions | null {
     return StorageUtil.getFromStorage<Permissions>('permissions');
   }
 
+  /**
+   * Fetches the user's permissions from the API and stores them in `localStorage`.
+   * 
+   * @returns {Observable<boolean>} An observable that emits the retrieved permission status.
+   */
   fetchPermissions(): Observable<boolean> {
     return this.http.get<boolean>(PROFILE + '/permissions').pipe(
       tap(permissions => StorageUtil.saveToStorage('permissions', permissions))

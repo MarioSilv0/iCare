@@ -6,7 +6,7 @@
  * @author Luís Martins - 202100239
  * @author Mário Silva  - 202000500
  * 
- * @date Last Modified: 2025-03-04
+ * @date Last Modified: 2025-03-05
  */
 
 import { Component } from '@angular/core';
@@ -218,10 +218,26 @@ export class InventoryComponent {
     else this.getItemDetails(item);
   }
 
+  /**
+   * Retrieves the unit of measurement for a given inventory item.
+   * If the item is not found in the inventory, it returns an empty string.
+   *
+   * @param {string} item - The name of the item.
+   * @returns {string} The unit of measurement for the specified item.
+   */
   getUnit(item: string): string {
     return this.inventory.get(item)?.unit || '';
   }
 
+  /**
+   * Calculates the progress or quantity representation of an inventory item.
+   * If the item is measured in grams (`g`), it returns the quantity as is.
+   * If the item is measured in kilograms (`kg`), it converts it to grams by multiplying by 1000.
+   * If the item is not found in the inventory, it defaults to 100 (assuming full progress).
+   *
+   * @param {string} item - The name of the inventory item.
+   * @returns {number} The adjusted quantity based on the unit of measurement.
+   */
   getProgress(item: string): number {
     const i = this.inventory.get(item);
     if (!i) return 100;

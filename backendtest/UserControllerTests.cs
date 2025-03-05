@@ -6,7 +6,7 @@
 /// <author>João Morais  - 202001541</author>
 /// <author>Luís Martins - 202100239</author>
 /// <author>Mário Silva  - 202000500</author>
-/// <date>Last Modified: 2025-03-01</date>
+/// <date>Last Modified: 2025-03-05</date>
 
 using backend.Controllers.Api;
 using backend.Data;
@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Security.Claims;
 using backend.Models.Recipes;
+using backend.Models.Data_Transfer_Objects;
 
 namespace backendtest
 {
@@ -23,7 +24,7 @@ namespace backendtest
     /// The <c>PublicUserControllerTests</c> class contains unit tests for the <see cref="UserController"/> API.
     /// It verifies that user profile retrieval and updates work correctly, including authentication handling.
     /// </summary>
-    public class UserDTOControllerTests : IClassFixture<ICareContextFixture>, IAsyncLifetime
+    public class UserControllerTests : IClassFixture<ICareContextFixture>, IAsyncLifetime
     {
         private readonly ICareServerContext _context;
         private UserController _controller;
@@ -33,7 +34,7 @@ namespace backendtest
         /// Sets up the database context and controller for testing.
         /// </summary>
         /// <param name="fixture">The test fixture that provides an in-memory database context.</param>
-        public UserDTOControllerTests(ICareContextFixture fixture)
+        public UserControllerTests(ICareContextFixture fixture)
         {
             _context = fixture.DbContext;
             var logger = NullLogger<UserController>.Instance;
@@ -118,6 +119,85 @@ namespace backendtest
             Assert.Equal(2, publicUser.Categories.Count);
             Assert.Contains(publicUser.Categories, p => p == recipe1.Category);
             Assert.Contains(publicUser.Categories, p => p == recipe2.Category);
+        }
+
+        /// <summary>
+        /// Tests the <c>GetPermissions</c> method to ensure it returns an unauthorized response when the user ID is null.
+        /// </summary>
+        [Fact]
+        public async Task GetPermissions_WhenUserIdIsNull_ReturnsUnauthorized()
+        {
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity()) }
+            };
+
+            var result = await _controller.GetPermissions();
+
+            Assert.IsType<UnauthorizedObjectResult>(result.Result);
+        }
+
+        /// <summary>
+        /// Tests the <c>GetPermissions</c> method to ensure it returns a not found response when the user does not exist.
+        /// </summary>
+        [Fact]
+        public async Task GetPermissions_WhenUserDoesNotExist_ReturnsNotFound()
+        {
+            Authenticate.SetUserIdClaim("NonExistingUser", _controller);
+
+            var result = await _controller.GetPermissions();
+
+            Assert.IsType<NotFoundResult>(result.Result);
+        }
+
+        /// <summary>
+        /// Tests the <c>GetPermissions</c> method to ensure it correctly returns permissions
+        /// when the user has preferences and restrictions.
+        /// </summary>
+        [Fact]
+        public async Task GetPermissions_WhenUserHasPreferencesAndRestrictions_ReturnsCorrectPermissions()
+        {
+            _context.Users.Add(new User { Id = "User", Notifications = true, Preferences = new List<string> { "Vegan" }, Restrictions = new List<string> { "Gluten-Free" } });
+
+            await _context.SaveChangesAsync();
+
+            Authenticate.SetUserIdClaim("User", _controller);
+
+            var result = await _controller.GetPermissions();
+
+            Assert.NotNull(result);
+            Assert.IsType<ActionResult<PermissionsDTO>>(result);
+
+            var permissions = Assert.IsType<OkObjectResult>(result.Result)?.Value as PermissionsDTO;
+            Assert.NotNull(permissions);
+            Assert.True(permissions.Notications);
+            Assert.True(permissions.Preferences);
+            Assert.True(permissions.Restrictions);
+        }
+
+        /// <summary>
+        /// Tests the <c>GetPermissions</c> method to ensure it correctly returns permissions
+        /// when the user has no preferences or restrictions.
+        /// </summary>
+        [Fact]
+        public async Task GetPermissions_WhenUserHasNoPreferencesOrRestrictions_ReturnsCorrectPermissions()
+        {
+            _context.Users.AddRange(new User { Id = "User", Notifications = false, Preferences = new List<string>(), Restrictions = new List<string>() });
+
+            await _context.SaveChangesAsync();
+
+            Authenticate.SetUserIdClaim("User", _controller);
+
+            var result = await _controller.GetPermissions();
+
+            Assert.NotNull(result);
+            Assert.IsType<ActionResult<PermissionsDTO>>(result);
+
+            var permissions = Assert.IsType<OkObjectResult>(result.Result)?.Value as PermissionsDTO;
+            Assert.NotNull(permissions);
+            Assert.False(permissions.Notications);
+            Assert.False(permissions.Preferences);
+            Assert.False(permissions.Restrictions);
         }
 
         /// <summary>

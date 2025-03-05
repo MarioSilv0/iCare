@@ -5,7 +5,7 @@
 /// <author>João Morais  - 202001541</author>
 /// <author>Luís Martins - 202100239</author>
 /// <author>Mário Silva  - 202000500</author>
-/// <date>Last Modified: 2025-03-01</date>
+/// <date>Last Modified: 2025-03-05</date>
 
 using backend.Data;
 using backend.Models;
@@ -73,6 +73,13 @@ namespace backend.Controllers.Api
             }
         }
 
+        /// <summary>
+        /// Retrieves the permissions associated with the authenticated user.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="ActionResult{T}"/> containing a <see cref="PermissionsDTO"/> with the user's permissions,
+        /// or an error response if the request fails.
+        /// </returns>
         [HttpGet("permissions")]
         public async Task<ActionResult<PermissionsDTO>> GetPermissions()
         {
