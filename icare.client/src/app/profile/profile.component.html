@@ -88,18 +88,21 @@
   </section>
   <section>
     <p>Preferências</p>
-    <select (change)="addPreference($event)">
-      <option value="" disabled selected>Seleciona uma Preferência</option>
-      <option *ngFor="let p of availablePreferences" [value]="p">
-        {{ p }}
-      </option>
-    </select>
+    <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
+      <input list="preferencesList"
+             class="form-control"
+             placeholder="Search preferences..."
+             (change)="addPreference($event)" />
+      <datalist id="preferencesList">
+        <option *ngFor="let p of user.categories" [value]="p">
+          {{ p }}
+        </option>
+      </datalist>
+    </div>
     <div class="selected-items">
-      <button
-        (click)="removePreference(p)"
-        *ngFor="let p of user.preferences"
-        class="selected-item shadow"
-      >
+      <button (click)="removePreference(p)"
+              *ngFor="let p of user.preferences"
+              class="selected-item shadow">
         {{ p }}
       </button>
     </div>
@@ -107,18 +110,21 @@
 
   <section>
     <p>Restrições</p>
-    <select (change)="addRestriction($event)">
-      <option value="" disabled selected>Seleciona uma Restrição</option>
-      <option *ngFor="let r of availableRestrictions" [value]="r">
-        {{ r }}
-      </option>
-    </select>
+    <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
+      <input list="restrictionsList"
+             class="form-control"
+             placeholder="Search restrictions..."
+             (change)="addRestriction($event)" />
+      <datalist id="restrictionsList">
+        <option *ngFor="let r of user.categories" [value]="r">
+          {{ r }}
+        </option>
+      </datalist>
+    </div>
     <div class="selected-items">
-      <button
-        (click)="removeRestriction(r)"
-        *ngFor="let r of user.restrictions"
-        class="selected-item"
-      >
+      <button *ngFor="let r of user.restrictions"
+              (click)="removeRestriction(r)"
+              class="selected-item">
         {{ r }}
       </button>
     </div>
