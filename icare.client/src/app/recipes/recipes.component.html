@@ -90,6 +90,7 @@
           </div>
           <h4>{{ recipe.name }}</h4>
           <p>{{ recipe.description }}</p>
+          <p>Calorias: {{ recipe.calories }}</p>
           <a [routerLink]="['/recipe', recipe.name]"
              class="mx-0 nav-link bg-verde rounded"
              style="

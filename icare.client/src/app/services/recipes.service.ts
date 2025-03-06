@@ -56,7 +56,7 @@ export interface Recipe {
   description: string;
   category: string;
   area: string;
-  urlVideo: string;
+  youtubeVideo: string;
   ingredients: Ingredient[];
   isFavorite: boolean;
   calories: number;

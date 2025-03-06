@@ -333,20 +333,30 @@ namespace backend.Migrations
                             Id = 1,
                             Area = "Portugal",
                             Category = "Bom",
-                            Description = "Tu Consegues",
-                            Name = "Algo de Bom",
-                            Picture = "",
-                            YoutubeVideo = ""
+                            Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                            Name = "Receita 1 Categoria Bom",
+                            Picture = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTx2qcKAz_hqMRda9TnCrnA1uZEmbAc6vLVQA&s",
+                            YoutubeVideo = "https://www.youtube.com/watch?v=Yd7vDterctQ"
                         },
                         new
                         {
                             Id = 2,
-                            Area = "Bugs",
+                            Area = "Espanha",
                             Category = "Mau",
-                            Description = "Boa Sorte",
-                            Name = "Algo de Mau",
-                            Picture = "",
-                            YoutubeVideo = ""
+                            Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                            Name = "Receita 1 Categoria Mau",
+                            Picture = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-Z4cICBVzRCk4Kc6Lpusdu5GZf0ahzSrLAQ&s",
+                            YoutubeVideo = "https://www.youtube.com/watch?v=Yd7vDterctQ"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Area = "Inglaterra",
+                            Category = "Bom",
+                            Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                            Name = "Receita 2 Categoria Bom",
+                            Picture = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrgfinblYO5lA19bqCuTTNxm3JbQyJcrHgjA&s",
+                            YoutubeVideo = "https://www.youtube.com/watch?v=Yd7vDterctQ"
                         });
                 });
 
