@@ -45,7 +45,7 @@
     </div>
 
     <div class="w-100 pt-4" style="max-width: 500px;">
-      <input class="w-100" style="height: 30px;" type="text" (change)="searchRecipes(searchTerm)" />
+      <input class="w-100" style="height: 30px;" type="text" placeholder="Pesquisar" [(ngModel)]="searchTerm" (input)="onSearchChange()" />
     </div>
 
     <!-- lista de receitas -->
@@ -55,7 +55,7 @@
       </article>
     </div>
       <div *ngIf="recipes.length > 0" class="pt-4 pe-4 d-flex flex-md-row flex-wrap flex-sm-column mx-0 align-items-center justify-content-evenly gap-4 pt-2">
-        <article *ngFor="let recipe of recipes; index as i"
+        <article *ngFor="let recipe of filteredRecipes; index as i"
                  class="m-0 p-2 rounded bg-bege-contrast shadow"
                  style="min-width: 300px">
           <div class="m-0 p-0 bg-cinzento rounded"
@@ -90,7 +90,7 @@
           </div>
           <h4>{{ recipe.name }}</h4>
           <p>{{ recipe.description }}</p>
-          <p>Calorias: {{ recipe.calories }}</p>
+          <p>Calorias: {{ recipe.calories }} kcal</p>
           <a [routerLink]="['/recipe', recipe.name]"
              class="mx-0 nav-link bg-verde rounded"
              style="

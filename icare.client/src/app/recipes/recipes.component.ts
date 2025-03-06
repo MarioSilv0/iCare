@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { debounceTime, Subject } from 'rxjs';
 import { RecipeService, Recipe } from '../services/recipes.service';
 import { StorageUtil } from '../utils/StorageUtil';
 import { Permissions } from '../services/users.service';
@@ -18,12 +19,22 @@ export class RecipesComponent {
   ];
   public recipes: Recipe[] = [];
   public searchTerm: string = '';
+  public searchSubject = new Subject<void>();
 
   public objectivesFilter: boolean = false;
   public preferencesFilter: boolean = false;
   public restrictionsFilter: boolean = false;
 
-  constructor(private api: RecipeService) { }
+  public filteredRecipes: Recipe[] = [];
+
+  private restrictions: string[] = [];
+  private preferences: string[] = [];
+
+  constructor(private api: RecipeService) {
+    this.searchSubject
+      .pipe(debounceTime(300))
+      .subscribe(() => this.filterRecipes());
+  }
 
   ngOnInit() {
     this.getPermissions();
@@ -40,23 +51,24 @@ export class RecipesComponent {
     this.recipes[id].isFavorite = !this.recipes[id].isFavorite;
   }
 
-  searchRecipes(searchTerm: string) {
-    const filteredRecipes = this.recipes.forEach((r) => {
-      r.name.includes(searchTerm) || r.description.includes(searchTerm);
-    });
-    console.log(filteredRecipes);
-    // renderizar a nova lista
-    // guardar a antiga lista de receitas
-  }
-
   getRecipes() {
     this.api.getAllRecipes().subscribe(
       (result) => {
         this.recipes = result;
+        this.filteredRecipes = result;
       },
       (error) => {
         console.error(error);
       }
     );
+  }
+
+  filterRecipes() {
+    const query = this.searchTerm.toLowerCase().trim();
+    this.filteredRecipes = this.recipes.filter(r => r.name.toLowerCase().includes(query));
+  }
+
+  onSearchChange() {
+    this.searchSubject.next();
   }
 }

@@ -37,7 +37,7 @@ declare var bootstrap: any;
 export class InventoryComponent {
   public notificationsPermission: boolean = true;
   public searchTerm: string = '';
-  public searchSubject = new Subject<string>();
+  public searchSubject = new Subject<void>();
 
   public inventory: Map<string, { quantity: number; unit: string }> = new Map();
   public listOfItems: Set<string> = new Set();
@@ -128,7 +128,7 @@ export class InventoryComponent {
    * Handles search input changes and triggers filtering.
    */
   onSearchChange() {
-    this.searchSubject.next(this.searchTerm);
+    this.searchSubject.next();
   }
 
   /**

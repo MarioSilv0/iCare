@@ -107,6 +107,50 @@ namespace backend.Controllers.Api
             }
         }
 
+        [HttpGet("preferences")]
+        public async Task<ActionResult<PermissionsDTO>> GetPreferences()
+        {
+            try
+            {
+                var id = User.FindFirst("UserId")?.Value;
+                if (id == null) return Unauthorized("User ID not found in token.");
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+                if (user == null) return NotFound();
+
+                var preferences = user.Preferences;
+
+                return Ok(preferences);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user's preferences");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
+        [HttpGet("restrictions")]
+        public async Task<ActionResult<PermissionsDTO>> GetRestrictions()
+        {
+            try
+            {
+                var id = User.FindFirst("UserId")?.Value;
+                if (id == null) return Unauthorized("User ID not found in token.");
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+                if (user == null) return NotFound();
+
+                var restrictions = user.Restrictions;
+
+                return Ok(restrictions);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user's restrictions");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
         /// <summary>
         /// Updates the public profile of the authenticated user.
         /// </summary>
