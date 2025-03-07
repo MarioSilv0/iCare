@@ -76,6 +76,7 @@ namespace backend.Models.Data_Transfer_Objects
 
             Picture = recipe.Picture ?? "";
             Name = recipe.Name;
+            Category = recipe.Category;
             IsFavorite = recipe?.UserRecipes?.Any(ur => ur.UserId == userId) ?? false;
 
             if(!wantDetails)
@@ -86,7 +87,6 @@ namespace backend.Models.Data_Transfer_Objects
             }
 
             Description = recipe!.Description;
-            Category = recipe.Category;
             Area = recipe.Area;
             YoutubeVideo = recipe.YoutubeVideo;
             Ingredients = recipe.RecipeIngredients.Select(i => new ItemDTO(i));

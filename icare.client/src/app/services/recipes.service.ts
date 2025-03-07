@@ -13,7 +13,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-const RECIPE: string = '/api/Recipe/';
+const RECIPE: string = '/api/Recipe';
 
 /**
  * The `RecipeService` class provides methods for fetching recipe data from the backend API.
@@ -40,7 +40,7 @@ export class RecipeService {
    * @returns {Observable<Recipe>} An observable containing the recipe details.
    */
   getSpecificRecipe(recipeName: string): Observable<Recipe> {
-    return this.http.get<Recipe>(RECIPE + recipeName);
+    return this.http.get<Recipe>(`${RECIPE}/${recipeName}`);
   }
 }
 

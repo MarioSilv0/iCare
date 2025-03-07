@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
 import { RecipeService, Recipe } from '../services/recipes.service';
 import { StorageUtil } from '../utils/StorageUtil';
-import { Permissions } from '../services/users.service';
+import { UsersService, Permissions } from '../services/users.service';
 
 @Component({
   selector: 'app-recipes',
@@ -21,19 +21,20 @@ export class RecipesComponent {
   public searchTerm: string = '';
   public searchSubject = new Subject<void>();
 
+  public preferencesPermission: boolean = false;
+  public restrictionPermission: boolean = false;
+
   public objectivesFilter: boolean = false;
   public preferencesFilter: boolean = false;
   public restrictionsFilter: boolean = false;
 
   public filteredRecipes: Recipe[] = [];
 
-  private restrictions: string[] = [];
-  private preferences: string[] = [];
+  private restrictions: Set<string> | null = null;
+  private preferences: Set<string> | null = null;
 
-  constructor(private api: RecipeService) {
-    this.searchSubject
-      .pipe(debounceTime(300))
-      .subscribe(() => this.filterRecipes());
+  constructor(private api: RecipeService, private user: UsersService) {
+    this.searchSubject.pipe(debounceTime(300)).subscribe(() => this.filterRecipes());
   }
 
   ngOnInit() {
@@ -42,9 +43,9 @@ export class RecipesComponent {
   }
 
   getPermissions() {
-    const permissions: Permissions | null = StorageUtil.getFromStorage('permissions');
-    this.preferencesFilter = permissions?.preferences ?? false;
-    this.restrictionsFilter = permissions?.restrictions ?? false;
+    const permissions: Permissions | null = this.user.getPermissions();
+    this.preferencesPermission = permissions?.preferences ?? false;
+    this.restrictionPermission = permissions?.restrictions ?? false;
   }
 
   toggleFavoriteRecipe(id: number) {
@@ -54,8 +55,37 @@ export class RecipesComponent {
   getRecipes() {
     this.api.getAllRecipes().subscribe(
       (result) => {
-        this.recipes = result;
-        this.filteredRecipes = result;
+        this.recipes = this.filteredRecipes = result;
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
+  getPreferences() {
+    if (this.preferences) return;
+    this.preferences = new Set();
+
+    this.user.getPreferences().subscribe(
+      (result) => {
+        this.preferences = new Set(result);
+        if (this.preferencesFilter) this.filterRecipes();
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
+  getRestrictions() {
+    if (this.restrictions) return;
+    this.restrictions = new Set();
+
+    this.user.getRestrictions().subscribe(
+      (result) => {
+        this.restrictions = new Set(result);
+        if (this.restrictionsFilter) this.filterRecipes();
       },
       (error) => {
         console.error(error);
@@ -66,6 +96,19 @@ export class RecipesComponent {
   filterRecipes() {
     const query = this.searchTerm.toLowerCase().trim();
     this.filteredRecipes = this.recipes.filter(r => r.name.toLowerCase().includes(query));
+
+    if (this.preferencesFilter) this.filterPreferences();
+    if (this.restrictionsFilter) this.filterRestrictions();
+  }
+
+  filterPreferences() {
+    this.getPreferences();
+    this.filteredRecipes = this.filteredRecipes.filter(r => this.preferences!.has(r.category));
+  }
+
+  filterRestrictions() {
+    this.getRestrictions();
+    this.filteredRecipes = this.filteredRecipes.filter(r => !this.restrictions!.has(r.category));
   }
 
   onSearchChange() {

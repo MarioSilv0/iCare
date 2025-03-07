@@ -105,9 +105,17 @@ export class UsersService {
    * @returns {Observable<boolean>} An observable that emits the retrieved permission status.
    */
   fetchPermissions(): Observable<boolean> {
-    return this.http.get<boolean>(PROFILE + '/permissions').pipe(
+    return this.http.get<boolean>(`${PROFILE}/permissions`).pipe(
       tap(permissions => StorageUtil.saveToStorage('permissions', permissions))
     );
+  }
+
+  getPreferences(): Observable<string[]> {
+    return this.http.get<string[]>(`${PROFILE}/preferences`);
+  }
+
+  getRestrictions(): Observable<string[]> {
+    return this.http.get<string[]>(`${PROFILE}/restrictions`);
   }
 }
 

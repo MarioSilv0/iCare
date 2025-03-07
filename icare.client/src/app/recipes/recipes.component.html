@@ -14,7 +14,9 @@
         <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
           <input type="checkbox"
                  style="width: 20px; height: 20px; cursor: pointer"
-                 [disabled]="!restrictionsFilter" />
+                 [disabled]="!restrictionPermission"
+                 [(ngModel)]="restrictionsFilter"
+                 (change)="filterRecipes()" />
           <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
             Restrições
           </p>
@@ -22,7 +24,9 @@
         <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
           <input type="checkbox"
                  style="width: 20px; height: 20px; cursor: pointer"
-                 [disabled]="!preferencesFilter" />
+                 [disabled]="!preferencesPermission"
+                 [(ngModel)]="preferencesFilter"
+                 (change)="filterRecipes()" />
           <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
             Preferências
           </p>
