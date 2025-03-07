@@ -31,7 +31,7 @@ export class NavMenuComponent {
   public picture: string | null = null;
   public commonPath: string = '../../assets/svgs/';
   public extension: string = '.svg';
-  public links = [
+  public links: Link[] = [
     {
       icon: `${this.commonPath}home${this.extension}`,
       text: 'Página Principal',
@@ -75,7 +75,8 @@ export class NavMenuComponent {
     {
       icon: `${this.commonPath}exit${this.extension}`,
       text: 'Sign Out',
-      path: '/',
+      path: '/login',
+      action: () => this.logout(),
     },
   ];
   constructor(private authService: AuthService, private menuService: MenuService) {
@@ -130,4 +131,11 @@ export class NavMenuComponent {
       this.authService.logout();
     }
   }
+}
+
+interface Link {
+  icon: string;
+  text: string;
+  path: string;
+  action?: () => void;
 }
