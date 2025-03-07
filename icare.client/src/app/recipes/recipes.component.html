@@ -16,14 +16,14 @@
                  name=""
                  id=""
                  style="width: 20px; height: 20px; cursor: pointer" />
-          <p class="m-0 p-0"
+          <span class="m-0 p-0"
              style="
               font-size: .75rem;
               display: flex;
               text-overflow: clip !important;
           ">
             {{ filter }}
-          </p>
+          </span>
       </span>
 
       </div>
@@ -40,8 +40,6 @@
       </article>
     </div>
       <div *ngIf="recipes.length > 0" class="pt-4 pe-4 d-flex flex-md-row flex-wrap flex-sm-column mx-0 align-items-center justify-content-evenly gap-4 pt-2">
-
-
 
         <article *ngFor="let recipe of recipes; index as i"
                  class="m-0 p-2 rounded d-flex flex-column bg-bege-contrast shadow"
@@ -78,8 +76,8 @@
                    src="../../assets/svgs/heart-regular.svg" />
             </button>
           </div>
-          <h4 class="m-0">{{ recipe.name }}</h4>
-          <span class="m-0">{{ recipe.description }}</span>
+          <h4 class="m-0" style="font-size: 1.2rem;">{{ recipe.name }}</h4>
+          <span class="m-0">{{ recipe.description || "sem descrição..." }}</span>
           <a [routerLink]="['/recipe', recipe.name]"
              class="mx-0 nav-link bg-verde rounded"
              style="
@@ -93,8 +91,6 @@
             Ver Detalhes
           </a>
         </article>
-
-
 
       </div>
     </div>
