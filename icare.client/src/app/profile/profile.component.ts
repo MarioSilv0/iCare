@@ -133,7 +133,6 @@ export class ProfileComponent implements OnInit {
         const restrictions = Array.from(result.restrictions);
 
         const updatedUser = { notifications: result.notifications, preferences: preferences.length > 0, restrictions: restrictions.length > 0 };
-
         if (!permissions || permissions.notifications !== updatedUser.notifications || permissions.preferences !== updatedUser.preferences || permissions.restrictions !== updatedUser.restrictions) {
           this.service.setPermissions(updatedUser);
         }

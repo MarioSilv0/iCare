@@ -31,8 +31,6 @@ export class RecipeComponent {
 
     this.api.getSpecificRecipe(name).subscribe(
       (result) => {
-        console.log("Recipe Data:", result);
-
         this.recipe = { ...result, ingredients: result.ingredients };
         this.safeVideoUrl = this.getEmbeddedVideoUrl(this.recipe.youtubeVideo);
       },

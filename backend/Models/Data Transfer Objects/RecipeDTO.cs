@@ -78,8 +78,9 @@ namespace backend.Models.Data_Transfer_Objects
             Name = recipe.Name;
             Category = recipe.Category;
             IsFavorite = recipe?.UserRecipes?.Any(ur => ur.UserId == userId) ?? false;
+            Ingredients = recipe!.RecipeIngredients.Select(i => new ItemDTO(i));
 
-            if(!wantDetails)
+            if (!wantDetails)
             {
                 // Divide by 100, because the ingredient are stored with the value for 100g proportions
                 Calories = recipe!.RecipeIngredients.Sum(i => (i.Ingredient.Kcal * i.Quantity) / 100);
@@ -89,7 +90,6 @@ namespace backend.Models.Data_Transfer_Objects
             Description = recipe!.Description;
             Area = recipe.Area;
             YoutubeVideo = recipe.YoutubeVideo;
-            Ingredients = recipe.RecipeIngredients.Select(i => new ItemDTO(i));
         }
     }
 }

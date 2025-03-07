@@ -97,9 +97,20 @@ export class RecipesComponent {
     );
   }
 
-  // TODO
   getInventory() {
-    return;
+    if (this.inventory) return;
+    this.inventory = new Map();
+
+    this.user.getInventory().subscribe(
+      (result) => {
+        for (const item of result) {
+          const quantity = item.unit === "kg" ? item.quantity / 1000 : item.quantity;
+          this.inventory!.set(item.name, quantity);
+          if (this.inventoryFilter) this.filterRecipes();
+        }
+      },
+      (error) => console.error(error)
+    );
   }
 
   filterRecipes() {
@@ -108,6 +119,7 @@ export class RecipesComponent {
 
     if (this.preferencesFilter) this.filterPreferences();
     if (this.restrictionsFilter) this.filterRestrictions();
+    if (this.inventoryFilter) this.filterInventory();
   }
 
   filterPreferences() {
@@ -118,6 +130,18 @@ export class RecipesComponent {
   filterRestrictions() {
     this.getRestrictions();
     this.filteredRecipes = this.filteredRecipes.filter(r => !this.restrictions!.has(r.category));
+  }
+
+  filterInventory() {
+    this.getInventory();
+    this.filteredRecipes = this.filteredRecipes.filter(r => {
+      for (const ingredient of r.ingredients) {
+        const quantity = this.inventory!.get(ingredient.name) || -1 ;
+        if (!this.inventory!.has(ingredient.name) ||  quantity < ingredient.quantity) return false;
+      }
+
+      return true;
+    })
   }
 
   onSearchChange() {
