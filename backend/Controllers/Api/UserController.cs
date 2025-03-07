@@ -77,7 +77,7 @@ namespace backend.Controllers.Api
         /// Retrieves the permissions associated with the authenticated user.
         /// </summary>
         /// <returns>
-        /// An <see cref="ActionResult{T}"/> containing a <see cref="PermissionsDTO"/> with the user's permissions,
+        /// An <see cref="ActionResult"/> containing a <see cref="PermissionsDTO"/> with the user's permissions,
         /// or an error response if the request fails.
         /// </returns>
         [HttpGet("permissions")]
@@ -93,9 +93,10 @@ namespace backend.Controllers.Api
 
                 var permissions = new PermissionsDTO
                 {
-                    Notications = user.Notifications,
+                    Notifications = user.Notifications,
                     Preferences = user.Preferences?.Any() ?? false,
                     Restrictions = user.Restrictions?.Any() ?? false,
+                    Inventory = user.UserIngredients?.Any() ?? false,
                 };
 
                 return Ok(permissions);

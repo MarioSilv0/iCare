@@ -104,10 +104,17 @@ export class UsersService {
    * 
    * @returns {Observable<boolean>} An observable that emits the retrieved permission status.
    */
-  fetchPermissions(): Observable<boolean> {
-    return this.http.get<boolean>(`${PROFILE}/permissions`).pipe(
-      tap(permissions => StorageUtil.saveToStorage('permissions', permissions))
+  fetchPermissions(): Observable<Permissions> {
+    return this.http.get<Permissions>(`${PROFILE}/permissions`).pipe(
+      tap(permissions => this.setPermissions(permissions))
     );
+  }
+
+  setPermissions(updatedPermissions: Partial<Permissions>): void {
+    const current = this.getPermissions();
+    const newPermissions = { ...current, ...updatedPermissions };
+
+    StorageUtil.saveToStorage('permissions', newPermissions);
   }
 
   getPreferences(): Observable<string[]> {
@@ -123,6 +130,7 @@ export interface Permissions {
   notifications: boolean;
   preferences: boolean;
   restrictions: boolean;
+  inventory: boolean;
 }
 
 export interface Item {
@@ -136,7 +144,7 @@ export interface User {
   name: string;
   email: string;
   birthdate: string;
-  notifications: Boolean;
+  notifications: boolean;
   height: number;
   weight: number;
   preferences: Set<string>;

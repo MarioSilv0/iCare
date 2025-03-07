@@ -36,6 +36,7 @@ declare var bootstrap: any;
 })
 export class InventoryComponent {
   public notificationsPermission: boolean = true;
+  public inventoryPermission: boolean = false;
   public searchTerm: string = '';
   public searchSubject = new Subject<void>();
 
@@ -62,16 +63,17 @@ export class InventoryComponent {
    * Initializes the component by loading notification preferences and retrieving inventory data.
    */
   ngOnInit() {
-    this.loadNotificationPreferences();
+    this.loadPermissions();
     this.getInventory();
   }
 
   /**
    * Loads user notification preferences from local storage.
    */
-  private loadNotificationPreferences() {
+  private loadPermissions() {
     const permissions: Permissions | null = StorageUtil.getFromStorage('permissions');
     this.notificationsPermission = permissions?.notifications ?? false;
+    this.inventoryPermission = permissions?.inventory ?? false;
   }
 
   /**
@@ -286,7 +288,9 @@ export class InventoryComponent {
 
         this.selectedItems.clear();
         this.filterItems();
+
         NotificationService.showNotification(this.notificationsPermission, addedItemNotification);
+        if (!this.inventoryPermission) this.changePermission();
       },
       (error) => {
         console.error(error);
@@ -373,12 +377,19 @@ export class InventoryComponent {
 
         if (!itemsToDelete) this.selectedItemsInInventory.clear();
         this.filterItems();
+
         NotificationService.showNotification(this.notificationsPermission, removedItemNotification);
+        if (this.inventoryPermission && this.inventory.size === 0) this.changePermission();
       },
       (error) => {
         console.error(error);
       }
     );
+  }
+
+  changePermission() {
+    this.inventoryPermission = !this.inventoryPermission;
+    this.service.setPermissions({ inventory: this.inventoryPermission });
   }
 
   /**

@@ -40,7 +40,11 @@
           </p>
         </div>
         <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
-          <input type="checkbox" name="" id="" style="width: 20px; height: 20px; cursor: pointer" />
+          <input type="checkbox"
+                 name="" id="" style="width: 20px; height: 20px; cursor: pointer"
+                 [disabled]="!inventoryPermission"
+                 [(ngModel)]="inventoryFilter"
+                 (change)="filterRecipes()" />
           <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
             Inventário
           </p>

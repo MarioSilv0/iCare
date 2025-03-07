@@ -23,15 +23,18 @@ export class RecipesComponent {
 
   public preferencesPermission: boolean = false;
   public restrictionPermission: boolean = false;
+  public inventoryPermission: boolean = false;
 
   public objectivesFilter: boolean = false;
   public preferencesFilter: boolean = false;
   public restrictionsFilter: boolean = false;
+  public inventoryFilter: boolean = false;
 
   public filteredRecipes: Recipe[] = [];
 
   private restrictions: Set<string> | null = null;
   private preferences: Set<string> | null = null;
+  private inventory: Map<string, number> | null = null;
 
   constructor(private api: RecipeService, private user: UsersService) {
     this.searchSubject.pipe(debounceTime(300)).subscribe(() => this.filterRecipes());
@@ -46,6 +49,7 @@ export class RecipesComponent {
     const permissions: Permissions | null = this.user.getPermissions();
     this.preferencesPermission = permissions?.preferences ?? false;
     this.restrictionPermission = permissions?.restrictions ?? false;
+    this.inventoryPermission = permissions?.inventory ?? false;
   }
 
   toggleFavoriteRecipe(id: number) {
@@ -91,6 +95,11 @@ export class RecipesComponent {
         console.error(error);
       }
     );
+  }
+
+  // TODO
+  getInventory() {
+    return;
   }
 
   filterRecipes() {

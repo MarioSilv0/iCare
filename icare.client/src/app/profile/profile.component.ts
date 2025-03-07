@@ -135,7 +135,7 @@ export class ProfileComponent implements OnInit {
         const updatedUser = { notifications: result.notifications, preferences: preferences.length > 0, restrictions: restrictions.length > 0 };
 
         if (!permissions || permissions.notifications !== updatedUser.notifications || permissions.preferences !== updatedUser.preferences || permissions.restrictions !== updatedUser.restrictions) {
-          StorageUtil.saveToStorage('permissions', updatedUser);
+          this.service.setPermissions(updatedUser);
         }
         
         this.router.navigate(['/']);
