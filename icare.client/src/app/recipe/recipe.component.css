@@ -1,0 +1,9 @@
+.ingredient-container {
+    flex-direction: row;
+}
+
+@media (max-width: 625px) {
+  .ingredient-container{
+      flex-direction: column;
+  }
+}

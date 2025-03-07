@@ -16,15 +16,14 @@
                  name=""
                  id=""
                  style="width: 20px; height: 20px; cursor: pointer" />
-          <p class="m-0 p-0"
+          <span class="m-0 p-0"
              style="
               font-size: .75rem;
               display: flex;
-              text-wrap-mode: nowrap;
               text-overflow: clip !important;
           ">
             {{ filter }}
-          </p>
+          </span>
       </span>
 
       </div>
@@ -41,22 +40,25 @@
       </article>
     </div>
       <div *ngIf="recipes.length > 0" class="pt-4 pe-4 d-flex flex-md-row flex-wrap flex-sm-column mx-0 align-items-center justify-content-evenly gap-4 pt-2">
+
         <article *ngFor="let recipe of recipes; index as i"
-                 class="m-0 p-2 rounded bg-bege-contrast shadow"
+                 class="m-0 p-2 rounded d-flex flex-column bg-bege-contrast shadow"
                  style="min-width: 300px">
           <div class="m-0 p-0 bg-cinzento rounded"
                style="
             max-width: 300px;
             max-height: 200px;
-            min-width: 200px;
             min-height: 100px;
+            min-width: 100%;
             display: flex;
             position: relative;
+            justify-self: center !important;
           ">
             <img src="{{ recipe.picture }}"
                  alt="{{ recipe.name }}"
+                 loading="lazy"
                  class="m-0 p-0 rounded"
-                 style="width: 100%; min-height: 100%" />
+                 style="min-width: 100%; min-height: 100%" />
             <button (click)="toggleFavoriteRecipe(i)"
                     class="d-flex bg-transparent"
                     style="
@@ -74,8 +76,8 @@
                    src="../../assets/svgs/heart-regular.svg" />
             </button>
           </div>
-          <h4>{{ recipe.name }}</h4>
-          <p>{{ recipe.description }}</p>
+          <h4 class="m-0" style="font-size: 1.2rem;">{{ recipe.name }}</h4>
+          <span class="m-0">{{ recipe.description || "sem descrição..." }}</span>
           <a [routerLink]="['/recipe', recipe.name]"
              class="mx-0 nav-link bg-verde rounded"
              style="
@@ -89,6 +91,7 @@
             Ver Detalhes
           </a>
         </article>
+
       </div>
     </div>
 </div>
