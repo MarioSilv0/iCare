@@ -85,7 +85,9 @@
             [routerLink]="link.path"
             class="text-start nav-link"
             style="flex-wrap: wrap"
-            >{{ link.text }}
+            (click)="link.action && link.action()"
+             >
+            {{ link.text }}
           </a>
         </span>
       </article>
