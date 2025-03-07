@@ -18,8 +18,20 @@ export class RecipeComponent {
   }
 
   toggleFavorite() {
-    if (this.recipe) {
+    if(!this.recipe) return
+
+    let old = this.recipe.isFavorite;
+
+    try {
+      let url = ''
+      this.http.post(url, {
+        recipe: this.recipe,
+        isFavorite: this.recipe.isFavorite ? 1 : 0
+      })
       this.recipe.isFavorite = !this.recipe.isFavorite;
+    } catch (e) {
+      console.error(e);
+      this.recipe.isFavorite = old
     }
   }
 
