@@ -264,7 +264,7 @@
       <button class="update-button" (click)="checkForEmptyItems()">
         Atualizar Inventário
       </button>
-      <button class="delete-button" (click)="openModal('deleteModal')">
+      <button class="delete-button" (click)="openModal('deleteModal')" [disabled]="selectedItemsInInventory.size === 0">
         Excluir <span class="trash-icon">🗑️</span>
       </button>
     </div>
