@@ -13,8 +13,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-const PROFILE: string = '/api/User';
-const INVENTORY: string = '/api/Inventory';
+export const PROFILE: string = '/api/User';
+export const INVENTORY: string = '/api/Inventory';
+
 
 /**
  * The `UsersService` class provides methods for interacting with the user profile and inventory.

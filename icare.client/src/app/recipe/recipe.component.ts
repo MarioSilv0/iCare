@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { RecipeService, Recipe } from '../services/recipes.service';
 import { ActivatedRoute } from '@angular/router';
+import { PROFILE } from '../services/users.service'
 
 @Component({
   selector: 'app-recipe',
@@ -23,11 +24,9 @@ export class RecipeComponent {
     let old = this.recipe.isFavorite;
 
     try {
-      let url = ''
-      this.http.post(url, {
-        recipe: this.recipe,
-        isFavorite: this.recipe.isFavorite ? 1 : 0
-      })
+
+      let url = `${PROFILE}/Recipe/${this.recipe.name}`
+      this.http.put(url, {}).subscribe()
       this.recipe.isFavorite = !this.recipe.isFavorite;
     } catch (e) {
       console.error(e);

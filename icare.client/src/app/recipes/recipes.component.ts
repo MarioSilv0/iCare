@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { RecipeService, Recipe } from '../services/recipes.service';
+import { PROFILE } from '../services/users.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-recipes',
@@ -16,14 +18,31 @@ export class RecipesComponent {
   ];
   public recipes: Recipe[] = [];
   public searchTerm: string = '';
-
-  constructor(private api: RecipeService) { }
+    recipe: any;
+  constructor(private api: RecipeService, private http: HttpClient) { }
 
   ngOnInit() {
     this.getRecipes();
   }
 
   toggleFavoriteRecipe(id: number) {
+    let recipe = this.recipes[id]
+    let old = recipe.isFavorite;
+
+    try {
+      let url = `${PROFILE}/Recipe/${recipe.name}`
+     
+      this.http.put(url, {}).subscribe()
+
+      recipe.isFavorite = !recipe.isFavorite;
+
+      this.recipes[id].isFavorite = !this.recipes[id].isFavorite;
+    } catch (e) {
+
+
+      console.error(e);
+      this.recipe.isFavorite = old
+    }
     this.recipes[id].isFavorite = !this.recipes[id].isFavorite;
   }
 
