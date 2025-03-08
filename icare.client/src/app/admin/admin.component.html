@@ -13,6 +13,9 @@
     </div>
   </div>
 
+
+
+
   <div class="container">
     <div>
       <h2>Teste de Tradução de Receitas</h2>
@@ -25,8 +28,13 @@
       <!-- Receita Original -->
       <div *ngIf="originalRecipe">
         <h3>Receita Original</h3>
-        <p><strong>{{ originalRecipe.title }}</strong></p>
-        <p><strong>Instruções:</strong> {{ originalRecipe.instructions }}</p>
+        <p><strong>{{ originalRecipe.name }}</strong></p>
+
+        <p><strong>Instruções:</strong></p>
+        <ul>
+          <li *ngFor="let step of originalRecipe.instructions">{{ step }}</li>
+        </ul>
+
         <ul>
           <li *ngFor="let ing of originalRecipe.ingredients">
             <strong>{{ ing.name }}</strong> - {{ ing.measure }}
@@ -38,8 +46,13 @@
       <!-- Receita Traduzida -->
       <div *ngIf="translatedRecipe">
         <h3>Receita Traduzida</h3>
-        <p><strong>{{ translatedRecipe.title }}</strong></p>
-        <p><strong>Instruções:</strong> {{ translatedRecipe.instructions }}</p>
+        <p><strong>{{ translatedRecipe.name }}</strong></p>
+
+        <p><strong>Instruções:</strong></p>
+        <ul>
+          <li *ngFor="let step of translatedRecipe.instructions">{{ step }}</li>
+        </ul>
+
         <ul>
           <li *ngFor="let ing of translatedRecipe.ingredients">
             <strong>{{ ing.name }}</strong> - {{ ing.measure }}
@@ -49,6 +62,7 @@
       </div>
     </div>
   </div>
+
 
 
 

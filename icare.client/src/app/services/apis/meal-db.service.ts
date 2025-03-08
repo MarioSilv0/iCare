@@ -1,31 +1,67 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, forkJoin, map, switchMap } from 'rxjs';
+import { Observable, forkJoin, lastValueFrom, map, of, switchMap } from 'rxjs';
 import { env } from '../../../environments/env';
 import { IngredientRecipe, Recipe } from '../../../models/recipe';
 import { TranslateService } from './translate.service';
 import { MeasureConversionService } from '../measure-conversion.service';
+import { RecipeService } from '../recipes.service';
 
 @Injectable({
   providedIn: 'root'
 })
 
+/**
+  * MealDbService - Service for fetching, processing, and translating meal data from TheMealDB API.
+  *
+  * Author: Mário
+  *
+  * This service provides methods to retrieve meal categories, meals by category, 
+  * meal details, and translated meal information. It also processes ingredients, 
+  * formats instructions, and updates a local meal database.
+  */
 export class MealDbService {
   private categoryListUrl = `${env.mealDbApiUrl}/categories.php`;
   private mealsByCategoryUrl = `${env.mealDbApiUrl}/filter.php?c=`;
   private mealByIdUrl = `${env.mealDbApiUrl}/lookup.php?i=`;
 
   public mealsList: Recipe[] = [];
-  constructor(private http: HttpClient, private translateService: TranslateService, private measureConversionService: MeasureConversionService) { }
+  constructor(
+    private http: HttpClient,
+    private translateService: TranslateService,
+    private measureConversionService: MeasureConversionService,
+    private recipeService: RecipeService
+  ) { }
 
+  //getCategoriesTranslated(): Observable<any> {
+  //  return this.http.get<any>(this.categoryListUrl);
+  //}
+
+  /**
+   * Fetches meal categories from the MealDb API.
+   *
+   * @returns An Observable with the categories data.
+   */
   getCategories(): Observable<any> {
     return this.http.get<any>(this.categoryListUrl);
   }
 
+  /**
+   * Fetches meals by category from the MealDb API.
+   *
+   * @param category - The category name.
+   * @returns An Observable with the meals data.
+   */
   getMealsByCategory(category: string): Observable<any> {
     return this.http.get<any>(`${this.mealsByCategoryUrl}${category}`);
   }
 
+  /**
+   * Fetches detailed meal data by ID and returns a Recipe object.
+   *
+   * @param id - The meal ID.
+   * @returns An Observable with the Recipe.
+   */
   getMealById(id: string): Observable<Recipe> {
     return this.http.get<any>(`${this.mealByIdUrl}${id}`).pipe(
       map(response => {
@@ -37,10 +73,12 @@ export class MealDbService {
 
         return {
           id: meal.idMeal,
-          title: meal.strMeal,
-          instructions: meal.strInstructions,
-          thumb: meal.strMealThumb,
-          video: meal.strYoutube || '',
+          picture: meal.strMealThumb,
+          name: meal.strMeal,
+          category: meal.strCategory,
+          area: meal.strArea,
+          urlVideo: meal.strYoutube || '',
+          instructions: this.formatInstructions(meal.strInstructions),
           ingredients: this.extractIngredients(meal),
           isFavorite: false
         };
@@ -48,6 +86,12 @@ export class MealDbService {
     );
   }
 
+  /**
+   * Extracts ingredients from the meal data.
+   *
+   * @param meal - The meal data object.
+   * @returns An array of IngredientRecipe objects.
+   */
   private extractIngredients(meal: any): IngredientRecipe[] {
     let ingredients: IngredientRecipe[] = [];
 
@@ -56,16 +100,20 @@ export class MealDbService {
       const measure = meal[`strMeasure${i}`];
 
       if (ingredient && ingredient.trim() !== '') {
-        ingredients.push({ name: ingredient, measure: measure, grams : "" || '' });
+        ingredients.push({ name: ingredient, measure: measure, grams : 0 });
       }
     }
 
     return ingredients;
   }
 
-
-
-  getMealByIdTranslated(id: string): Observable<any> {
+  /**
+   * Fetches a meal by ID, translates its details, and returns the translated meal data.
+   *
+   * @param id - The meal ID.
+   * @returns An Observable with the translated meal data.
+   */
+  getMealByIdTranslated(id: string): Observable<Recipe> {
     return this.http.get<any>(`${this.mealByIdUrl}${id}`).pipe(
       switchMap((mealData) => {
         if (!mealData?.meals?.length) {
@@ -73,25 +121,50 @@ export class MealDbService {
         }
 
         const meal = mealData.meals[0];
+        const instructionsList = this.formatInstructions(meal.strInstructions);
 
         return forkJoin({
-          title: this.translateText(meal.strMeal),
-          instructions: this.translateText(meal.strInstructions),
+          name: this.translateText(meal.strMeal),
+          category: this.translateText(meal.strCategory),
+          area: this.translateText(meal.strArea),
+          urlVideo: of(meal.strYoutube),
+          picture: of(meal.strMealThumb),
+          instructions: forkJoin(instructionsList.map(line => this.translateText(line))),
           ingredients: this.processIngredients(meal)
         }).pipe(
-          map(({ title, instructions, ingredients }) => ({
+          map(({ name, category, area, urlVideo, picture, instructions, ingredients }) => ({
             id: Number(meal.idMeal),
-            title,
+            name,
+            category,
+            area,
+            urlVideo,
+            picture,
             instructions,
-            thumb: meal.strMealThumb,
-            video: meal.strYoutube,
-            isFavorite: false,
-            ingredients
-          }))
+            ingredients,
+            isFavorite: false
+          }) as Recipe)
         );
       })
     );
   }
+
+  /**
+   * Splits the instruction string into an array of non-empty lines.
+   *
+   * This function splits the string on newline characters (\n, \r\n, or \r),
+   * trims each line, and removes any empty lines.
+   *
+   * @param instructions - The instruction string to split.
+   * @returns An array of instruction lines.
+   */
+  formatInstructions(instructions: string): string[] {
+    return instructions
+      .split(/\r\n|\r|\n/)
+      .map(line => line.trim())
+      .filter(line => line !== '');
+  }
+
+
 
   /**
    * Traduz um texto do inglês para português.
@@ -134,32 +207,48 @@ export class MealDbService {
 
 
 
-  //formatInstructions(instructions: string): string[] {
-  //return instructions.split(/\r\n|\r|\n/).filter(line => line.trim() !== '');
-  //} 
+  ///**
+  //* Updates the database by fetching categories and meals,
+  //* then processes and stores the translated recipes.
+  //*/
+  //async updateDatabase() {
+  //  try {
+  //    const categoriesResponse = await lastValueFrom(this.http.get<any>(this.categoryListUrl));
+  //    const categories = categoriesResponse.categories;
+
+  //    for (const category of categories) {
+  //      await this.delay(500);
+  //      const mealsResponse = await lastValueFrom(this.http.get<any>(this.mealsByCategoryUrl + category.strCategory));
+  //      const meals = mealsResponse.meals;
+
+  //      for (const meal of meals) {
+  //        await this.delay(500);
+  //        const mealDetailsResponse = await lastValueFrom(this.getMealByIdTranslated(meal.id));
+  //        this.mealsList.push(mealDetailsResponse);
+  //      }
+  //    }
+
+  //    if (this.mealsList.length > 0) {
+  //      // Fazer um único request para enviar todas as receitas ao backend
+  //      this.recipeService.addMultipleRecipes(this.mealsList).subscribe({
+  //        next: () => console.log(`Successfully added ${this.mealsList.length} recipes.`),
+  //        error: (err) => {
+  //            return console.error(`Failed to add recipes: ${err}`);
+  //        }
+  //      });
+  //    }
+  //  } catch (error) {
+  //    console.error('Error updating the database:', error);
+  //  }
+  //}
 
 
-  async updateDatabase() {
-    try {
-      const categoriesResponse = await this.http.get<any>(this.categoryListUrl).toPromise();
-      const categories = categoriesResponse.categories
-
-      for (const category of categories) {
-        await this.delay(500);
-        const mealsResponse = await this.http.get<any>(this.mealsByCategoryUrl + category.strCategory).toPromise();
-        const meals = mealsResponse.meals;
-
-        for (const meal of meals) {
-          await this.delay(500);
-          const mealDetailsResponse = await this.getMealByIdTranslated(meal.id);
-          //this.mealsList.push(mealDetailsResponse);
-        }
-      }
-    } catch (error) {
-      console.error('Erro ao atualizar a base de dados:', error);
-    }
-  }
-
+  /**
+   * Returns a promise that resolves after a specified delay.
+   *
+   * @param ms - The delay in milliseconds.
+   * @returns A promise that resolves after the delay.
+   */
   private delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }

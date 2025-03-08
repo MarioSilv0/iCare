@@ -2,16 +2,18 @@ export { Recipe, IngredientRecipe }
 
 interface Recipe {
   id: number;
-  title: string;
-  instructions: [];
-  thumb: string;
-  video: string;
+  picture: string;
+  name: string;
+  category: string,
+  area: string,
+  instructions: string[];
   ingredients: IngredientRecipe[];
-  isFavorite: boolean; //não faz sentido
+  urlVideo: string;
+  isFavorite: boolean; 
 }
 
 interface IngredientRecipe {
   name: string;
   measure: string;
-  grams: string;
+  grams: number;
 }

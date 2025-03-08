@@ -10,9 +10,9 @@
     "prestart": "node aspnetcore-https",
     "start-taco-api": "cd ../taco-api && bun run dev --filter=taco-api",
     "start-translate-api": "cd ../LibreTranslate-main && libretranslate --load-only en,pt",
-    "start-apis": "start cmd /c \"npm run start-taco-api\" && start cmd /c \"npm run start-translate-api\"",
-    "start:windows": "npm run start-apis && ng serve --ssl --ssl-cert \"%APPDATA%\\ASP.NET\\https\\%npm_package_name%.pem\" --ssl-key \"%APPDATA%\\ASP.NET\\https\\%npm_package_name%.key\" --host=127.0.0.1",
-    "start:default": "npm run start-apis && ng serve --ssl --ssl-cert \"$HOME/.aspnet/https/${npm_package_name}.pem\" --ssl-key \"$HOME/.aspnet/https/${npm_package_name}.key\" --host=127.0.0.1"
+    "start-angular": "ng serve --ssl --ssl-cert \"%APPDATA%\\ASP.NET\\https\\%npm_package_name%.pem\" --ssl-key \"%APPDATA%\\ASP.NET\\https\\%npm_package_name%.key\" --host=127.0.0.1",
+    "start:windows": "concurrently \"npm run start-angular\" \"npm run start-taco-api\" \"npm run start-translate-api\"",
+    "start:default": "concurrently \"npm run start-angular\" \"npm run start-taco-api\" \"npm run start-translate-api\""
   },
   "private": true,
   "dependencies": {
