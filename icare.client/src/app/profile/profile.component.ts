@@ -10,6 +10,7 @@
  */
 
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { UsersService, User } from '../services/users.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
@@ -35,7 +36,7 @@ export class ProfileComponent implements OnInit {
   public availablePreferences: Set<string> = new Set();
   public availableRestrictions: Set<string> = new Set();
 
-  constructor(private router: Router, private service: UsersService) {
+  constructor(private router: Router, private service: UsersService, private snack: MatSnackBar) {
     this.todayDate = new Date().toISOString().split('T')[0];
   }
 
@@ -57,6 +58,7 @@ export class ProfileComponent implements OnInit {
 
     this.user.preferences.add(preference);
     this.availablePreferences.delete(preference);
+    this.showToast("Preferência adicionada com sucesso!", 2000, undefined)
 
     target.value = "";
   }
@@ -68,6 +70,7 @@ export class ProfileComponent implements OnInit {
   removePreference(preference: string) {
     this.user.preferences.delete(preference);
     this.availablePreferences.add(preference);
+    this.showToast("Preferência removida com sucesso!", 2000, undefined)
   }
 
   /**
@@ -81,6 +84,7 @@ export class ProfileComponent implements OnInit {
 
     this.user.restrictions.add(restriction);
     this.availableRestrictions.delete(restriction);
+    this.showToast("Restrição adicionada com sucesso!", 2000, undefined)
 
     target.value = "";
   }
@@ -92,6 +96,7 @@ export class ProfileComponent implements OnInit {
   removeRestriction(restriction: string) {
     this.user.restrictions.delete(restriction);
     this.availableRestrictions.add(restriction);
+    this.showToast("Restrição removida com sucesso!", 2000, undefined)
   }
 
   /**
@@ -136,9 +141,11 @@ export class ProfileComponent implements OnInit {
 
           if (!parsedUser || parsedUser.name !== updatedUser.name || parsedUser.picture !== updatedUser.picture || parsedUser.notifications !== updatedUser.notifications) {
             localStorage.setItem('user', JSON.stringify(updatedUser));
+            this.showToast("Dados atualizados com sucesso!", 2000, undefined)
           }
         } catch (e) {
           console.error('Failed to update user data in localStorage:', e);
+          this.showToast("Erro ao atualizar dados!", 2000, undefined, "fail-snackbar")
         }
         
         this.router.navigate(['/']);
@@ -167,7 +174,10 @@ export class ProfileComponent implements OnInit {
       reader.readAsDataURL(file);
 
       reader.onload = () => {
-        if (typeof reader.result === 'string') this.user.picture = reader.result;
+        if (typeof reader.result === 'string') {
+          this.user.picture = reader.result
+          this.showToast("Alterou a imagem com sucesso!", 2000, undefined)
+        };
       }
     }
   }
@@ -177,5 +187,15 @@ export class ProfileComponent implements OnInit {
    */
   changePassword(): void {
     this.router.navigate(['/change-password']);
+  }
+
+  showToast(message: string, duration: 2000, action: string | undefined, ownClass?: string) {
+    let classToUse = ownClass ? ownClass : 'success-snackbar';
+    setTimeout(() => {
+      this.snack.open(message, action, {
+        duration: duration,
+        panelClass: [classToUse]
+      })
+    }, duration)
   }
 }
