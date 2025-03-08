@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TacoApiService } from './taco-api.service';
-import { env } from '../../environments/env';
-import { Ingredient } from './ingredients.service';
+import { env } from '../../../environments/env';
+import { Ingredient } from '../ingredients.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 describe('TacoApiService', () => {
