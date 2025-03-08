@@ -18,7 +18,7 @@ export class HomeComponent {
   }
 
   getPermissions() {
-    if (!this.userService.getPermissions()) {
+    if (this.authService.isLogged() && !this.userService.getPermissions()) {
       this.userService.fetchPermissions().subscribe();
     }
   }
