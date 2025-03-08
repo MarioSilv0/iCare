@@ -107,6 +107,8 @@ export class NavMenuComponent {
    * This ensures that the component always has the most up-to-date user information.
    */
   getInfo() {
+    if (!this.authService.isLogged()) return;
+
     this.userService.getUser().subscribe(user => {
       this.username = user.name;
       this.picture = user.picture;
