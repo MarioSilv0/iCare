@@ -37,7 +37,7 @@ export class RecipesComponent {
   private inventory: Map<string, number> | null = null;
 
   constructor(private api: RecipeService, private user: UsersService) {
-    this.searchSubject.pipe(debounceTime(300)).subscribe(() => this.filterRecipes());
+    this.searchSubject.pipe(debounceTime(300)).subscribe(() => this.filterRecipes(''));
   }
 
   ngOnInit() {
@@ -74,7 +74,7 @@ export class RecipesComponent {
     this.user.getPreferences().subscribe(
       (result) => {
         this.preferences = new Set(result);
-        if (this.preferencesFilter) this.filterRecipes();
+        if (this.preferencesFilter) this.filterRecipes('');
       },
       (error) => {
         console.error(error);
@@ -89,7 +89,7 @@ export class RecipesComponent {
     this.user.getRestrictions().subscribe(
       (result) => {
         this.restrictions = new Set(result);
-        if (this.restrictionsFilter) this.filterRecipes();
+        if (this.restrictionsFilter) this.filterRecipes('');
       },
       (error) => {
         console.error(error);
@@ -106,19 +106,19 @@ export class RecipesComponent {
         for (const item of result) {
           const quantity = item.unit === "kg" ? item.quantity / 1000 : item.quantity;
           this.inventory!.set(item.name, quantity);
-          if (this.inventoryFilter) this.filterRecipes();
+          if (this.inventoryFilter) this.filterRecipes('');
         }
       },
       (error) => console.error(error)
     );
   }
 
-  filterRecipes() {
+  filterRecipes(newQuery: string) {
     const normalize = (str: string): string => str.normalize('NFD')
                                                   .replace(/[\u0300-\u036f]/g, '')
                                                   .replace(/[^a-zA-Z0-9]/g, '')
                                                   .toLowerCase();
-    const query = normalize(this.searchTerm);
+    const query = normalize(newQuery);
 
     this.filteredRecipes = this.recipes.filter(r => normalize(r.name).includes(query));
 

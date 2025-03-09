@@ -1,4 +1,4 @@
-<div class="custom-input-container">
+<div class="custom-input-container" [ngStyle]="containerStyles">
   <label *ngIf="name" [for]="id">{{ name }}</label>
   <input [type]="type"
          [id]="id"
@@ -6,5 +6,6 @@
          [placeholder]="placeholder"
          [value]="value"
          [disabled]="disabled"
-         (input)="onInputChange($event)" />
+         (input)="onInputChange($event)"
+         [ngStyle]="inputStyles" />
 </div>

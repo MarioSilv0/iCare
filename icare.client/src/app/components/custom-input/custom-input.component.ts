@@ -6,6 +6,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./custom-input.component.css']
 })
 export class CustomInputComponent {
+  @Input() containerStyles: { [key: string]: string } = {};
+  @Input() inputStyles: { [key: string]: string } = {};
   @Input() type: string = 'text';
   @Input() placeholder: string = '';
   @Input() value: string | number = '';

@@ -16,7 +16,7 @@
                  style="width: 20px; height: 20px; cursor: pointer"
                  [disabled]="!restrictionPermission"
                  [(ngModel)]="restrictionsFilter"
-                 (change)="filterRecipes()" />
+                 (change)="filterRecipes('')" />
           <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
             Restrições
           </p>
@@ -26,7 +26,7 @@
                  style="width: 20px; height: 20px; cursor: pointer"
                  [disabled]="!preferencesPermission"
                  [(ngModel)]="preferencesFilter"
-                 (change)="filterRecipes()" />
+                 (change)="filterRecipes('')" />
           <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
             Preferências
           </p>
@@ -44,7 +44,7 @@
                  name="" id="" style="width: 20px; height: 20px; cursor: pointer"
                  [disabled]="!inventoryPermission"
                  [(ngModel)]="inventoryFilter"
-                 (change)="filterRecipes()" />
+                 (change)="filterRecipes('')" />
           <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
             Inventário
           </p>
@@ -52,16 +52,22 @@
       </div>
     </div>
 
-    <div class="w-100 pt-4" style="max-width: 500px;">
-      <input class="w-100" style="height: 30px;" type="text" placeholder="Pesquisar" [(ngModel)]="searchTerm" (input)="onSearchChange()" />
+    <div class="w-100 pt-4" style='{ max-width: 500px, width: 100%, padding-top: 4px }' >
+      <input class="w-100" style='{ height: 30px }' type="text" placeholder="Pesquisar" [(ngModel)]="searchTerm" (input)="onSearchChange()" />
     </div>
+    <search-bar placeholder="Procure receitas..."
+                id="recipesSearch"
+                [containerStyles]="{ 'max-width': '500px', 'width': '100%', 'padding-top': '4px' }"
+                [searchBarStyles]="{ 'height': '30px' }"
+                [normalize]="true"
+                (query)="filterRecipes($event)" />
 
-    <!-- lista de receitas -->
-    <div *ngIf="recipes.length === 0" class="pt-4 pe-4 d-flex flex-md-row flex-wrap flex-sm-column mx-0 align-items-center justify-content-evenly gap-4 pt-2">
-      <article>
-        No recipes available..
-      </article>
-    </div>
+      <!-- lista de receitas -->
+      <div *ngIf="recipes.length === 0" class="pt-4 pe-4 d-flex flex-md-row flex-wrap flex-sm-column mx-0 align-items-center justify-content-evenly gap-4 pt-2">
+        <article>
+          No recipes available..
+        </article>
+      </div>
       <div *ngIf="recipes.length > 0" class="pt-4 pe-4 d-flex flex-md-row flex-wrap flex-sm-column mx-0 align-items-center justify-content-evenly gap-4 pt-2">
         <article *ngFor="let recipe of filteredRecipes; index as i"
                  class="m-0 p-2 rounded bg-bege-contrast shadow"
@@ -113,5 +119,5 @@
           </a>
         </article>
       </div>
-    </div>
+</div>
 </div>
