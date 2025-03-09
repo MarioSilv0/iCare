@@ -25,6 +25,7 @@ import { ContainerComponent } from './components/container/container.component';
 import { ProfileImageComponent } from './components/profile-image/profile-image.component';
 import { CustomInputComponent } from './components/custom-input/custom-input.component';
 import { CustomCheckboxComponent } from './components/custom-checkbox/custom-checkbox.component';
+import { CategorySelectorComponent } from './components/category-selector/category-selector.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { CustomCheckboxComponent } from './components/custom-checkbox/custom-che
     ProfileImageComponent,
     CustomInputComponent,
     CustomCheckboxComponent,
+    CategorySelectorComponent,
   ],
   imports: [
     BrowserModule,

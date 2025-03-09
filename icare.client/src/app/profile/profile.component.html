@@ -54,7 +54,28 @@
                      id="notifications" />
     <br />
   </container>
+
+  <!-- Profile Preferences -->
+  <!--<container class="m-0">
+    <p>Preferências</p>
+    <category-selector listId="preferencesList"
+                       placeholder="Procure as suas preferências..."
+                       [options]="Array.from(user.categories)"
+                       [selectedItems]="Array.from(user.preferences)"
+                       (addItem)="addPreference($event)"
+                       (onRemove)="removePreference($event)" />
+  </container>
   <container class="m-0">
+    <p>Restrições</p>
+    <category-selector listId="restrictionsList"
+                       placeholder="Procure as suas restrições..."
+                       [options]="Array.from(user.categories)"
+                       [selectedItems]="Array.from(user.restrictions)"
+                       (addItem)="addRestriction($event)"
+                       (onRemove)="removeRestriction($event)" />
+  </container>-->
+
+  <container class="m-0" customClass="custom-style">
     <p>Preferências</p>
     <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
       <input list="preferencesList"
@@ -96,6 +117,7 @@
       </button>
     </div>
   </container>
+
   <div class="m-0 buttons">
     <input class="change-password rounded"
            type="button"
