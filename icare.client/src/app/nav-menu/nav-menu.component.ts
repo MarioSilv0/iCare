@@ -29,7 +29,7 @@ export class NavMenuComponent {
   public isExpanded: boolean = false;
   public isLoggedIn: boolean = false;
   public username: string | null = null;
-  public picture: string | null = null;
+  public picture: string = '';
   public commonPath: string = '../../assets/svgs/';
   public extension: string = '.svg';
   public links = [

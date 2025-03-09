@@ -1,0 +1,38 @@
+.profile-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-image-container img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: filter 0.3s ease-in-out;
+}
+
+.hoverable {
+  position: relative;
+  cursor: pointer;
+}
+
+.hoverable:hover img {
+  filter: brightness(60%);
+}
+
+.hoverable div {
+  display: none;
+  position: absolute;
+  font-size: 0.8rem;
+  color: white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100px;
+}
+
+.hoverable:hover div {
+  display: block;
+}

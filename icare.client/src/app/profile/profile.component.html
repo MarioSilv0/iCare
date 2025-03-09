@@ -1,20 +1,18 @@
 <p *ngIf="!user"><em>Loading...</em></p>
 
+<container customClass="custom-style">
+  <form>
+    <!-- Profile Image -->
+    <profile-image [imageUrl]="user.picture" [editable]="true" (imageChange)="changePicture($event)" />
+
+    <!-- Profile Name -->
+
+  </form>
+</container>
+
 <form *ngIf="user" (ngSubmit)="updateUser()">
   <section id="userData">
-    <label id="profile-image-container" class="hoverable" for="fileInput">
-      <img
-        id="profileImage"
-        [src]="
-          user.picture
-            ? user.picture
-            : 'https://www.w3schools.com/howto/img_avatar.png'
-        "
-      />
-      <div>adicionar imagem</div>
-    </label>
-    <br />
-    <input id="fileInput" type="file" (change)="onSelectFile($event)" />
+    
     <div>
       <label for="userName">Nome</label>
       <input

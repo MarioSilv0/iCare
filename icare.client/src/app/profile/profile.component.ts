@@ -145,26 +145,13 @@ export class ProfileComponent implements OnInit {
     );
   }
 
-  /**
-   * Handles profile picture selection and updates the `user.picture` property.
-   * Ensures only image files are accepted.
-   * @param {Event | null} event - The file input change event.
-   */
-  onSelectFile(event: Event | null): void {
-    if (!event) return;
+  changePicture(file: File): void {
+    console.log(file)
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
 
-    const input = event.target as HTMLInputElement;
-
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      if (!file.type.startsWith('image/')) return;
-
-      var reader = new FileReader();
-      reader.readAsDataURL(file);
-
-      reader.onload = () => {
-        if (typeof reader.result === 'string') this.user.picture = reader.result;
-      }
+    reader.onload = () => {
+      if (typeof reader.result === 'string') this.user.picture = reader.result;
     }
   }
 
