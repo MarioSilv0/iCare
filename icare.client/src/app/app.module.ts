@@ -22,6 +22,13 @@ import { InventoryComponent } from './inventory/inventory.component';
 import { MapKeysPipe } from './pipes/map-keys-pipe';
 import { TacoApiService } from './services/taco-api.service';
 import { GoalsComponent } from './goals/goals.component';
+import { CalendarComponent } from './calendar/calendar.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
+
 
 @NgModule({
   declarations: [
@@ -42,6 +49,7 @@ import { GoalsComponent } from './goals/goals.component';
     InventoryComponent,
     MapKeysPipe,
     GoalsComponent,
+    CalendarComponent,
   ],
   imports: [
     BrowserModule,
@@ -49,6 +57,14 @@ import { GoalsComponent } from './goals/goals.component';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    BrowserModule,
+    BrowserAnimationsModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatNativeDateModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
