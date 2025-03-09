@@ -1,4 +1,4 @@
-export { Recipe, IngredientRecipe }
+export { Recipe, RecipeIngredient }
 
 interface Recipe {
   id: number;
@@ -6,13 +6,14 @@ interface Recipe {
   name: string;
   category: string,
   area: string,
-  instructions: string[];
-  ingredients: IngredientRecipe[];
+  instructions: string;
+  ingredients: RecipeIngredient[];
   urlVideo: string;
-  isFavorite: boolean; 
+  isFavorite: boolean;
+  calories: number;
 }
 
-interface IngredientRecipe {
+interface RecipeIngredient {
   name: string;
   measure: string;
   grams: number;

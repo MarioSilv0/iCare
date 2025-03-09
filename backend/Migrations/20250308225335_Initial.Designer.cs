@@ -12,7 +12,7 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ICareServerContext))]
-    [Migration("20250304210248_Initial")]
+    [Migration("20250308225335_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -242,10 +242,10 @@ namespace backend.Migrations
                     b.Property<int>("IngredientId")
                         .HasColumnType("int");
 
-                    b.Property<float>("Quantity")
+                    b.Property<float?>("Grams")
                         .HasColumnType("real");
 
-                    b.Property<string>("Unit")
+                    b.Property<string>("Measure")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("RecipeId", "IngredientId");
@@ -259,22 +259,22 @@ namespace backend.Migrations
                         {
                             RecipeId = 1,
                             IngredientId = 1,
-                            Quantity = 3f,
-                            Unit = "g"
+                            Grams = 20f,
+                            Measure = "1 xícara"
                         },
                         new
                         {
                             RecipeId = 1,
                             IngredientId = 2,
-                            Quantity = 3f,
-                            Unit = "g"
+                            Grams = 40f,
+                            Measure = "2 xícara"
                         },
                         new
                         {
                             RecipeId = 2,
                             IngredientId = 3,
-                            Quantity = 3f,
-                            Unit = "kg"
+                            Grams = 100f,
+                            Measure = "5 xícara"
                         });
                 });
 
@@ -310,20 +310,22 @@ namespace backend.Migrations
                     b.Property<string>("Area")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<float>("Calories")
+                        .HasColumnType("real");
+
                     b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Instructions")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Picture")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("YoutubeVideo")
+                    b.Property<string>("UrlVideo")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -335,21 +337,23 @@ namespace backend.Migrations
                         {
                             Id = 1,
                             Area = "Portugal",
+                            Calories = 0f,
                             Category = "Bom",
-                            Description = "Tu Consegues",
+                            Instructions = "Tu Consegues",
                             Name = "Algo de Bom",
                             Picture = "",
-                            YoutubeVideo = ""
+                            UrlVideo = ""
                         },
                         new
                         {
                             Id = 2,
                             Area = "Bugs",
+                            Calories = 0f,
                             Category = "Mau",
-                            Description = "Boa Sorte",
+                            Instructions = "Boa Sorte",
                             Name = "Algo de Mau",
                             Picture = "",
-                            YoutubeVideo = ""
+                            UrlVideo = ""
                         });
                 });
 
@@ -540,7 +544,7 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.Ingredients.RecipeIngredient", b =>
                 {
                     b.HasOne("backend.Models.Ingredients.Ingredient", "Ingredient")
-                        .WithMany("RecipeIngredients")
+                        .WithMany("IngredientRecipes")
                         .HasForeignKey("IngredientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -605,7 +609,7 @@ namespace backend.Migrations
 
             modelBuilder.Entity("backend.Models.Ingredients.Ingredient", b =>
                 {
-                    b.Navigation("RecipeIngredients");
+                    b.Navigation("IngredientRecipes");
 
                     b.Navigation("UserIngredients");
                 });

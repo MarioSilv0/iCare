@@ -27,7 +27,7 @@
   >
     <h2 class="mx-0 align-self-start">Instruções</h2>
     <p>
-      {{ recipe.description }}
+      {{ recipe.instructions }}
     </p>
   </div>
    TODO 
@@ -60,7 +60,7 @@
               style="max-width: 50%; flex-wrap: wrap"
               >{{ ingredient.name }}</span
             >
-            <span class="mx-0 justify-self-end">{{ ingredient.quantity }} {{ ingredient.unit }}</span>
+            <span class="mx-0 justify-self-end">{{ ingredient.measure }}</span>
           </div>
         </li>
       </ul>

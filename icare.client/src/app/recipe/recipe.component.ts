@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { RecipeService, Recipe } from '../services/recipes.service';
+import { RecipeService } from '../services/recipes.service';
 import { ActivatedRoute } from '@angular/router';
+import { Recipe } from '../../models/recipe';
 
 @Component({
   selector: 'app-recipe',
@@ -9,7 +10,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './recipe.component.css',
 })
 export class RecipeComponent {
-  public recipe: Recipe = { picture: '', name: 'loading...', description: 'Please wait some minutes...', category: '', area: '', urlVideo: '', ingredients: [], isFavorite: false, calories: 0 }
+  recipe: Recipe = {id: 100, picture: '', name: 'loading...', instructions: 'Please wait some minutes...', category: '', area: '', urlVideo: '', ingredients: [], isFavorite: false, calories: 0 }
 
   constructor(private http: HttpClient, private route: ActivatedRoute, private api: RecipeService) { }
 

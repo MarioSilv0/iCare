@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { RecipeService, Recipe } from '../services/recipes.service';
+import { RecipeService } from '../services/recipes.service';
 import { StorageUtil } from '../utils/StorageUtil';
 import { Permissions } from '../services/users.service';
+import { Recipe } from '../../models/recipe';
 
 @Component({
   selector: 'app-recipes',
@@ -42,7 +43,7 @@ export class RecipesComponent {
 
   searchRecipes(searchTerm: string) {
     const filteredRecipes = this.recipes.forEach((r) => {
-      r.name.includes(searchTerm) || r.description.includes(searchTerm);
+      r.name.includes(searchTerm) || r.category.includes(searchTerm) || r.area.includes(searchTerm)
     });
     console.log(filteredRecipes);
     // renderizar a nova lista
@@ -52,10 +53,12 @@ export class RecipesComponent {
   getRecipes() {
     this.api.getAllRecipes().subscribe(
       (result) => {
+        console.log("aa",result)
         this.recipes = result;
       },
       (error) => {
         console.error(error);
+        console.error(error.message);
       }
     );
   }

@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Security.Claims;
 using backend.Models.Ingredients;
+using Microsoft.EntityFrameworkCore;
 
 namespace backendtest
 {
@@ -59,14 +60,14 @@ namespace backendtest
             );
 
             _context.Recipes.AddRange(
-                new Recipe { Id = 1, Picture = "", Name = "Algo de Bom", Description = "Tu Consegues", Category = "Bom", Area = "Portugal", YoutubeVideo = "" },
-                new Recipe { Id = 2, Picture = "", Name = "Algo de Mau", Description = "Boa Sorte", Category = "Mau", Area = "Bugs", YoutubeVideo = "" }
+                new Recipe { Id = 1, Picture = "", Name = "Algo de Bom", Category = "Bom", Area = "Portugal", UrlVideo = "", Instructions = "Tu Consegues" },
+                new Recipe { Id = 2, Picture = "", Name = "Algo de Mau", Category = "Mau", Area = "Bugs", UrlVideo = "", Instructions = "Boa Sorte" }
             );
 
             _context.RecipeIngredients.AddRange(
-                new RecipeIngredient { RecipeId = 1, IngredientId = 1, Quantity = 200 }, // 124 * 2 = 248 kcal
-                new RecipeIngredient { RecipeId = 1, IngredientId = 2, Quantity = 150 }, // 137 * 1.5 = 205.5 kcal
-                new RecipeIngredient { RecipeId = 2, IngredientId = 3, Quantity = 100 }  // 137 * 1 = 137 kcal
+                new RecipeIngredient { RecipeId = 1, IngredientId = 1, Measure = "medida", Grams = 200 }, // 124 * 2 = 248 kcal
+                new RecipeIngredient { RecipeId = 1, IngredientId = 2, Measure = "medida", Grams = 150 }, // 137 * 1.5 = 205.5 kcal
+                new RecipeIngredient { RecipeId = 2, IngredientId = 3, Measure = "medida", Grams = 100 }  // 137 * 1 = 137 kcal
             );
 
             _context.Users.Add(new User { Id = "ValidUserId", Email = "a@example.com" });
@@ -188,10 +189,10 @@ namespace backendtest
             var recipe = Assert.IsType<OkObjectResult>(result.Result)?.Value as RecipeDTO;
             Assert.NotNull(recipe);
             Assert.Equal("Algo de Bom", recipe.Name);
-            Assert.Equal("Tu Consegues", recipe.Description);
+            Assert.Equal("Tu Consegues", recipe.Instructions);
             Assert.Equal("Bom", recipe.Category);
             Assert.Equal("Portugal", recipe.Area);
-            Assert.Equal("", recipe.YoutubeVideo);
+            Assert.Equal("", recipe.UrlVideo);
             Assert.Equal(0, recipe.Calories);
             Assert.NotNull(recipe.Ingredients);
             Assert.Equal(2, recipe.Ingredients.Count());
@@ -200,10 +201,10 @@ namespace backendtest
             var ingredient2 = recipe.Ingredients.FirstOrDefault(i => i.Name == "Batata");
 
             Assert.NotNull(ingredient1);
-            Assert.Equal(200, ingredient1.Quantity);
+            Assert.Equal(200, ingredient1.Grams);
 
             Assert.NotNull(ingredient2);
-            Assert.Equal(150, ingredient2.Quantity);
+            Assert.Equal(150, ingredient2.Grams);
         }
     }
 }

@@ -87,11 +87,12 @@ namespace backend.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Picture = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Category = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Area = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    YoutubeVideo = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    UrlVideo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Instructions = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Calories = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -257,8 +258,8 @@ namespace backend.Migrations
                 {
                     IngredientId = table.Column<int>(type: "int", nullable: false),
                     RecipeId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<float>(type: "real", nullable: false),
-                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Measure = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Grams = table.Column<float>(type: "real", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -313,21 +314,21 @@ namespace backend.Migrations
 
             migrationBuilder.InsertData(
                 table: "Recipes",
-                columns: new[] { "Id", "Area", "Category", "Description", "Name", "Picture", "YoutubeVideo" },
+                columns: new[] { "Id", "Area", "Calories", "Category", "Instructions", "Name", "Picture", "UrlVideo" },
                 values: new object[,]
                 {
-                    { 1, "Portugal", "Bom", "Tu Consegues", "Algo de Bom", "", "" },
-                    { 2, "Bugs", "Mau", "Boa Sorte", "Algo de Mau", "", "" }
+                    { 1, "Portugal", 0f, "Bom", "Tu Consegues", "Algo de Bom", "", "" },
+                    { 2, "Bugs", 0f, "Mau", "Boa Sorte", "Algo de Mau", "", "" }
                 });
 
             migrationBuilder.InsertData(
                 table: "RecipeIngredients",
-                columns: new[] { "IngredientId", "RecipeId", "Quantity", "Unit" },
+                columns: new[] { "IngredientId", "RecipeId", "Grams", "Measure" },
                 values: new object[,]
                 {
-                    { 1, 1, 3f, "g" },
-                    { 2, 1, 3f, "g" },
-                    { 3, 2, 3f, "kg" }
+                    { 1, 1, 20f, "1 xícara" },
+                    { 2, 1, 40f, "2 xícara" },
+                    { 3, 2, 100f, "5 xícara" }
                 });
 
             migrationBuilder.CreateIndex(

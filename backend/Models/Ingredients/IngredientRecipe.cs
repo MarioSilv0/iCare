@@ -26,17 +26,7 @@ namespace backend.Models.Ingredients
         /// <summary>
         /// Gets or sets the ingredient entity associated with this recipe.
         /// </summary>
-        public Ingredient Ingredient { get; set; }
-
-        /// <summary>
-        /// Gets or sets the quantity of the ingredient that the recipe needs.
-        /// </summary>
-        public float Quantity { get; set; }
-
-        /// <summary>
-        /// Gets or sets the unit of measurement for the ingredient quantity.
-        /// </summary>
-        public string? Unit { get; set; }
+        public Ingredient? Ingredient { get; set; }
 
         /// <summary>
         /// Gets or sets the unique identifier of the recipe associated with this ingredient.
@@ -46,6 +36,16 @@ namespace backend.Models.Ingredients
         /// <summary>
         /// Gets or sets the recipe entity associated with this ingredient.
         /// </summary>
-        public Recipe Recipe { get; set; }
+        public Recipe? Recipe { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the measure of the ingredient.
+        /// </summary>
+        public string? Measure { get; set; }
+
+        /// <summary>
+        /// Gets or sets the grams of the ingredient.
+        /// </summary>
+        public float? Grams { get; set; }
     }
 }
