@@ -35,10 +35,10 @@ export class TacoApiService {
     };
     return this.http.post<{ data: { getAllFood: any[] } }>(this.tacoApi, graphqlQuery).pipe(
       map(response => {
-        const foodList = response?.data?.getAllFood ?? []; // Se for null, substitui por []
+        const foodList = response?.data?.getAllFood ?? [];
         return foodList.map(food => ({
           name: food.name,
-          category: food.category?.name ?? 'Unknown', // Evita erro se category for null
+          category: food.category?.name ?? 'Unknown',
           kj: food.nutrients?.kJ ?? 0,
           protein: food.nutrients?.protein ?? 0,
           lipids: food.nutrients?.lipids ?? 0,

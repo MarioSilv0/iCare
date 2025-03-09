@@ -97,6 +97,7 @@ export class NavMenuComponent {
   }
 
   getInfo() {
+    if (!this.authService.isLogged()) return;
     this.userService.getUser().subscribe(user => {
       this.username = user.name;
       this.picture = user.picture;

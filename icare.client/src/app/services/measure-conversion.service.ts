@@ -25,17 +25,14 @@ export class MeasureConversionService {
    */
   private normalizeUnitFirst(unit: string): string {
     const parts = unit.split(" ");
-    console.log(parts);
     const firstWord = parts[0];
-    console.log(firstWord);
-
+     
     if (firstWord.endsWith('s')) {
       if (firstWord.endsWith('colheres'))
         parts[0] = firstWord.slice(0, -2);
       else
         parts[0] = firstWord.slice(0, -1);
     }
-    console.log(parts[0]);
 
     return parts.join(" "); // Reconstruindo a unidade
   }

@@ -3,6 +3,7 @@ import { RecipeComponent } from '../recipe/recipe.component';
 import { IngredientService, Ingredient } from '../services/ingredients.service';
 import { MealDbService, TacoApiService, TranslateService } from '../services/apis';
 import { Recipe } from '../../models/recipe';
+import { RecipeService } from '../services/recipes.service';
 
 @Component({
   selector: 'app-admin',
@@ -18,34 +19,34 @@ export class AdminComponent {
     constructor(private foodService: IngredientService, private taco: TacoApiService, private mealDb: MealDbService, private translate: TranslateService) { }
 
 
-  fetchRecipes() {
-    this.loading = true;
-    this.errorMessage = '';
+  //fetchRecipes() {
+  //  this.loading = true;
+  //  this.errorMessage = '';
 
-    const mealId = '52772'; // ID de teste
+  //  const mealId = '52772'; // ID de teste
 
-    this.mealDb.getMealById(mealId).subscribe({
-      next: (recipe) => {
-        this.originalRecipe = recipe;
-      },
-      error: (error) => {
-        console.error('Erro ao obter receita original:', error);
-        this.errorMessage = 'Erro ao carregar receita original.';
-      }
-    });
+  //  this.mealDb.getMealById(mealId).subscribe({
+  //    next: (recipe) => {
+  //      this.originalRecipe = recipe;
+  //    },
+  //    error: (error) => {
+  //      console.error('Erro ao obter receita original:', error);
+  //      this.errorMessage = 'Erro ao carregar receita original.';
+  //    }
+  //  });
 
-    this.mealDb.getMealByIdTranslated(mealId).subscribe({
-      next: (recipe) => {
-        this.translatedRecipe = recipe;
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error('Erro ao obter receita traduzida:', error);
-        this.errorMessage = 'Erro ao carregar receita traduzida.';
-        this.loading = false;
-      }
-    });
-  }
+  //  this.mealDb.getMealByIdTranslated(mealId).then({
+  //    next: (recipe) => {
+  //      this.translatedRecipe = recipe;
+  //      this.loading = false;
+  //    },
+  //    error: (error) => {
+  //      console.error('Erro ao obter receita traduzida:', error);
+  //      this.errorMessage = 'Erro ao carregar receita traduzida.';
+  //      this.loading = false;
+  //    }
+  //  });
+  //}
 
 
   updateIngredientDb() {
@@ -63,8 +64,6 @@ export class AdminComponent {
     );
   }
 
-
-
   getIngredients(meal: any): { ingredient: string, measure: string }[] {
     let ingredients: { ingredient: string, measure: string }[] = [];
 
@@ -79,5 +78,15 @@ export class AdminComponent {
 
     return ingredients;
   }
+
+  updateRecipeDb() {
+    this.mealDb.updateRecipeDB();
+  }
+
+
+
+
+
+
 }
 

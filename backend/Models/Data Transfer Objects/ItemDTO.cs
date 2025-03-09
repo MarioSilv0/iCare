@@ -60,16 +60,5 @@ namespace backend.Models.Data_Transfer_Objects
             Unit = ui.Unit;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <c>ItemDTO</c> class using a <c>RecipeIngredient</c>.
-        /// This constructor extracts relevant properties from the <c>RecipeIngredient</c> object.
-        /// </summary>
-        /// <param name="ui">The <c>RecipeIngredient</c> instance containing the item's data.</param>
-        public ItemDTO(RecipeIngredient ui)
-        {
-            Name = ui.Ingredient.Name;
-            Quantity = ui.Quantity;
-            Unit = ui.Unit;
-        }
     }
 }

@@ -2,7 +2,7 @@
   "scripts": {
     "deploy-taco-api": "cd taco-api && bun run start --filter=taco-api",
     "deploy-translate-api": "cd LibreTranslate-main && libretranslate --load-only en,pt",
-    "deploy-apis": "concurrently \"npm run start-taco-api\"  \"npm run start-translate-api\"",
+    "deploy-apis": "cmd /c concurrently \"npm run start-taco-api\"  \"npm run start-translate-api\"",
 
     "start:taco-api": "cd taco-api && bun run dev --filter=taco-api",
     "start:translate-api": "cd LibreTranslate-main && libretranslate --load-only en,pt",
@@ -10,6 +10,6 @@
 
     "start:backend": "dotnet run --project ./backend",
     "start:angular": "npm run start --prefix ./icare.client",
-    "start": "concurrently \"npm run start:backend\" \"npm run start:angular\""
+    "start-off": "start cmd /c concurrently \"npm run start:backend\" \"npm run start:angular\""
   }
 }

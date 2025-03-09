@@ -11,9 +11,11 @@
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Recipe } from '../../models/recipe';
+import { catchError, map } from 'rxjs/operators';
+import { throwError, Observable } from 'rxjs';
 
-const RECIPE: string = '/api/Recipe/';
+const RECIPE: string = '/api/Recipe';
 
 
 @Injectable({
@@ -31,22 +33,17 @@ export class RecipeService {
   getSpecificRecipe(recipeName: string): Observable<Recipe> {
     return this.http.get<Recipe>(RECIPE + recipeName);
   }
+
+  /**
+   * Sends multiple recipes to the backend in a single request.
+   * @param recipes The array of recipes to be added.
+   * @returns An Observable with the result of the HTTP request.
+   */
+  updateRecipeDB(recipes: Recipe[]): Observable<any> {
+    return this.http.put<any>(`${RECIPE}/update`, recipes);
+  }
+
+
+
 }
 
-interface Ingredient {
-  name: string;
-  quantity: number;
-  unit: string;
-}
-
-export interface Recipe {
-  picture: string;
-  name: string;
-  description: string;
-  category: string;
-  area: string;
-  urlVideo: string;
-  ingredients: Ingredient[];
-  isFavorite: boolean;
-  calories: number;
-}

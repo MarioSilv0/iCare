@@ -31,12 +31,7 @@ namespace backend.Models.Recipes
         /// <summary>
         /// Gets or sets the name of the recipe.
         /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets a description of the recipe.
-        /// </summary>
-        public string? Description { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the category of the recipe.
@@ -51,12 +46,22 @@ namespace backend.Models.Recipes
         /// <summary>
         /// Gets or sets the URL of the recipe's YouTube video (if available).
         /// </summary>
-        public string? YoutubeVideo { get; set; }
+        public string? UrlVideo { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of instructions of the recipe.
+        /// </summary>
+        public string? Instructions { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total calorie count of the recipe.
+        /// </summary>
+        public float Calories { get; set; }
 
         /// <summary>
         /// Gets or sets the collection of ingredients associated with the recipe.
         /// </summary>
-        public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
+        public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new HashSet<RecipeIngredient>();
 
         /// <summary>
         /// Gets or sets the collection of user interactions with this recipe, such as favorites.

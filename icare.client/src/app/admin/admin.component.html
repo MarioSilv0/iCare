@@ -9,6 +9,9 @@
           🔄 Atualizar Ingredientes
         </button>
 
+        <button class="btn btn-secondary" (click)="updateRecipeDb()">
+          🔄 Atualizar Receitas
+        </button>
       </div>
     </div>
   </div>
@@ -16,17 +19,17 @@
 
 
 
-  <div class="container">
+  <!--<div class="container">
     <div>
       <h2>Teste de Tradução de Receitas</h2>
       <button class="btn btn-secondary" (click)="fetchRecipes()" [disabled]="loading">
         {{ loading ? 'Carregando...' : 'Buscar Receita' }}
       </button>
 
-      <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+      <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>-->
 
       <!-- Receita Original -->
-      <div *ngIf="originalRecipe">
+      <!--<div *ngIf="originalRecipe">
         <h3>Receita Original</h3>
         <p><strong>{{ originalRecipe.name }}</strong></p>
 
@@ -41,10 +44,10 @@
             <span *ngIf="ing.grams">({{ ing.grams }} g)</span>
           </li>
         </ul>
-      </div>
+      </div>-->
 
       <!-- Receita Traduzida -->
-      <div *ngIf="translatedRecipe">
+      <!--<div *ngIf="translatedRecipe">
         <h3>Receita Traduzida</h3>
         <p><strong>{{ translatedRecipe.name }}</strong></p>
 
@@ -61,7 +64,7 @@
         </ul>
       </div>
     </div>
-  </div>
+  </div>-->
 
 
 
