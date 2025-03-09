@@ -44,6 +44,45 @@ export class ProfileComponent implements OnInit {
     this.getUser();
   }
 
+  changePicture(file: File): void {
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = () => {
+      if (typeof reader.result === 'string') this.user.picture = reader.result;
+    }
+  }
+
+  changeName(newName: string | number) {
+    if (typeof newName !== 'string' || newName.trim() === '' || newName === this.user.name) return;
+
+    this.user.name = newName;
+  }
+
+  changeEmail(newEmail: string | number) {
+    if (typeof newEmail !== 'string' || newEmail.trim() === '' || newEmail === this.user.email) return;
+
+    this.user.email = newEmail;
+  }
+
+  changeBirthdate(newBirthdate: string | number) {
+    if (typeof newBirthdate !== 'string' || newBirthdate.trim() === '' || newBirthdate === this.user.birthdate) return;
+
+    this.user.birthdate = newBirthdate;
+  }
+
+  changeHeight(newHeight: string | number) {
+    if (typeof newHeight !== 'number') return;
+
+    this.user.height = newHeight;
+  }
+
+  changeWeight(newWeight: string | number) {
+    if (typeof newWeight !== 'number') return;
+
+    this.user.weight = newWeight;
+  }
+
   /**
    * Adds a new preference to the user's profile and removes it from the categories list.
    * @param {Event} event - The event triggered when selecting a preference.
@@ -51,7 +90,7 @@ export class ProfileComponent implements OnInit {
   addPreference(event: Event) {
     const target = event.target as HTMLSelectElement;
     const preference = target.value;
-    if (!preference || this.user.preferences.has(preference)) {
+    if (!preference || this.user.preferences.has(preference) || !this.user.categories.has(preference)) {
       target.value = '';
       return;
     }
@@ -77,7 +116,7 @@ export class ProfileComponent implements OnInit {
   addRestriction(event: Event) {
     const target = event.target as HTMLSelectElement;
     const restriction = target.value;
-    if (!restriction || this.user.restrictions.has(restriction)) {
+    if (!restriction || this.user.restrictions.has(restriction) || !this.user.categories.has(restriction)) {
       target.value = "";
       return;
     }
@@ -143,16 +182,6 @@ export class ProfileComponent implements OnInit {
         console.error(error);
       }
     );
-  }
-
-  changePicture(file: File): void {
-    console.log(file)
-    var reader = new FileReader();
-    reader.readAsDataURL(file);
-
-    reader.onload = () => {
-      if (typeof reader.result === 'string') this.user.picture = reader.result;
-    }
   }
 
   /**

@@ -13,9 +13,11 @@
 }
 
 .hoverable {
-  position: relative;
+  display: inline-block;
   cursor: pointer;
+  position: relative;
 }
+
 
 .hoverable:hover img {
   filter: brightness(60%);

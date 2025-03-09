@@ -1,0 +1,26 @@
+.custom-input-container {
+  gap: 5px;
+  width: 100%;
+}
+
+.custom-input-container label {
+  color: black;
+  margin-bottom: 5px;
+}
+
+.custom-input-container input {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  color: black;
+  outline: none;
+}
+
+.custom-input-container input::placeholder {
+  color: gray;
+}
+
+.custom-input-container input:focus {
+  border: 3px solid lightblue;
+}

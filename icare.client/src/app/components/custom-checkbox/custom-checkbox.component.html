@@ -1,0 +1,7 @@
+<div class="custom-checkbox-container">
+  <label *ngIf="label" [for]="id">{{ label }}</label>
+  <input type="checkbox"
+         [id]="id"
+         [checked]="checked"
+         (change)="onToggle($event)" />
+</div>
