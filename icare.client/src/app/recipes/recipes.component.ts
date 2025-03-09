@@ -114,8 +114,13 @@ export class RecipesComponent {
   }
 
   filterRecipes() {
-    const query = this.searchTerm.toLowerCase().trim();
-    this.filteredRecipes = this.recipes.filter(r => r.name.toLowerCase().includes(query));
+    const normalize = (str: string): string => str.normalize('NFD')
+                                                  .replace(/[\u0300-\u036f]/g, '')
+                                                  .replace(/[^a-zA-Z0-9]/g, '')
+                                                  .toLowerCase();
+    const query = normalize(this.searchTerm);
+
+    this.filteredRecipes = this.recipes.filter(r => normalize(r.name).includes(query));
 
     if (this.preferencesFilter) this.filterPreferences();
     if (this.restrictionsFilter) this.filterRestrictions();

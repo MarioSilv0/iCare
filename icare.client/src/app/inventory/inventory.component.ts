@@ -137,8 +137,12 @@ export class InventoryComponent {
    * Filters available items based on the search term.
    */
   filterItems() {
-    const query = this.searchTerm.toLowerCase().trim();
-    this.filteredItems = Array.from(this.listOfItems).filter((n) => n.toLowerCase().includes(query));
+    const normalize = (str: string): string => str.normalize('NFD')
+                                                  .replace(/[\u0300-\u036f]/g, '')
+                                                  .replace(/[^a-zA-Z0-9]/g, '')
+                                                  .toLowerCase();
+    const query = normalize(this.searchTerm);
+    this.filteredItems = Array.from(this.listOfItems).filter(item => normalize(item).includes(query));
   }
 
   /**
@@ -163,6 +167,7 @@ export class InventoryComponent {
     this.api.getAllIngredients().subscribe(
       (result) => {
         result.forEach((itemName) => { if (!this.inventory.has(itemName)) this.listOfItems.add(itemName); });
+        this.listOfItems.add("café, acordião  !")
         this.filterItems();
       },
       (error) => {
