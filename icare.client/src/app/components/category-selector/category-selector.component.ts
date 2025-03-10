@@ -9,7 +9,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 export class CategorySelectorComponent {
   @Input() listId: string = '';
   @Input() placeholder: string = "";
-  @Input() options: string[] = [];
+  @Input() options: Set<string> = new Set();
   @Input() selectedItems: Set<string> = new Set();
   @Output() addItem = new EventEmitter<string>();
   @Output() removeItem = new EventEmitter<string>();

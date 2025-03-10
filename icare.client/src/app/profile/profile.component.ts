@@ -10,9 +10,10 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { UsersService, User, Permissions } from '../services/users.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
+import { UsersService, User, Permissions } from '../services/users.service';
 import { NotificationService, updatedUserNotification, failedToEditEmailUserNotification } from '../services/notifications.service';
 import { StorageUtil } from '../utils/StorageUtil';
 
@@ -29,23 +30,25 @@ import { StorageUtil } from '../utils/StorageUtil';
   * manage dietary preferences and restrictions, and change their profile picture.
   */
 export class ProfileComponent implements OnInit {
-  public user: User = {
-    picture: '', name: 'Loading', email: '...', birthdate: "2000-01-01", notifications: true, height: 0, weight: 0, preferences: new Set(), restrictions: new Set(), categories: new Set() };
+
+  public profileForm!: FormGroup;
   public todayDate: string;
 
-  constructor(private router: Router, private service: UsersService) {
+  public categories: Set<string> = new Set<string>();
+  public preferences: Set<string> = new Set<string>();
+  public restrictions: Set<string> = new Set<string>();
+
+  constructor(private router: Router, private fb: FormBuilder, private service: UsersService) {
     this.todayDate = new Date().toISOString().split('T')[0];
   }
 
-  /**
-   * Initializes the component and retrieves user data.
-   */
   ngOnInit() {
+    this.setupForm();
     this.getUser();
   }
 
-  get categories() {
-    return Array.from(this.user.categories);
+  get getCategories() {
+    return Array.from(this.categories);
   }
 
   changePicture(file: File): void {
@@ -53,77 +56,66 @@ export class ProfileComponent implements OnInit {
     reader.readAsDataURL(file);
 
     reader.onload = () => {
-      if (typeof reader.result === 'string') this.user.picture = reader.result;
+      if (typeof reader.result === 'string') this.profileForm.patchValue({ picture: reader.result });
     }
   }
 
-  changeName(newName: string | number) {
-    if (typeof newName !== 'string' || newName.trim() === '' || newName === this.user.name) return;
-
-    this.user.name = newName;
-  }
-
-  changeEmail(newEmail: string | number) {
-    if (typeof newEmail !== 'string' || newEmail.trim() === '' || newEmail === this.user.email) return;
-
-    this.user.email = newEmail;
-  }
-
-  changeBirthdate(newBirthdate: string | number) {
-    if (typeof newBirthdate !== 'string' || newBirthdate.trim() === '' || newBirthdate === this.user.birthdate) return;
-
-    this.user.birthdate = newBirthdate;
-  }
-
-  changeHeight(newHeight: string | number) {
-    if (typeof newHeight !== 'number') return;
-
-    this.user.height = newHeight;
-  }
-
-  changeWeight(newWeight: string | number) {
-    if (typeof newWeight !== 'number') return;
-
-    this.user.weight = newWeight;
-  }
-
   addPreference(preference: string) {
-    if (!preference || this.user.preferences.has(preference) || !this.user.categories.has(preference)) return;
+    if (!preference || this.preferences.has(preference) || !this.categories.has(preference)) return;
 
-    this.user.preferences.add(preference);
-    this.user.categories.delete(preference);
+    this.preferences.add(preference);
+    this.categories.delete(preference);
   }
 
   removePreference(preference: string) {
-    this.user.preferences.delete(preference);
-    this.user.categories.add(preference);
+    this.preferences.delete(preference);
+    this.categories.add(preference);
   }
 
   addRestriction(restriction: string) {
-    if (!restriction || this.user.restrictions.has(restriction) || !this.user.categories.has(restriction)) return;
+    if (!restriction || this.restrictions.has(restriction) || !this.categories.has(restriction)) return;
 
-    this.user.restrictions.add(restriction);
-    this.user.categories.delete(restriction);
+    this.restrictions.add(restriction);
+    this.categories.delete(restriction);
   }
 
   removeRestriction(restriction: string) {
-    this.user.restrictions.delete(restriction);
-    this.user.categories.add(restriction);
+    this.restrictions.delete(restriction);
+    this.categories.add(restriction);
   }
 
-  /**
-   * Retrieves the user's profile data from the backend service.
-   * If the birthdate is missing, it defaults to `"2000-01-01"`.
-   * It also populates the preferences and restrictions.
-   */
+  setupForm() {
+    this.profileForm = this.fb.group({
+      picture: [''],
+      name: ['', [Validators.required, Validators.minLength(1)]],
+      email: ['', [Validators.required, Validators.email]],
+      birthdate: ['', Validators.required],
+      height: [0, [Validators.required, Validators.min(0), Validators.max(3)]],
+      weight: [0, [Validators.required, Validators.min(0), Validators.max(700)]],
+      notifications: [true]
+    });
+  }
+
   getUser() {
     this.service.getUser().subscribe(
-      (result) => {
-        let birthdate = (!result.birthdate || result.birthdate === '0001-01-01') ? this.user.birthdate : result.birthdate;
-        this.user = { ...result, birthdate, categories: new Set(result.categories), preferences: new Set(result.preferences), restrictions: new Set(result.restrictions) };
+      (user) => {
+        const defaultBirthdate = "2000-01-01";
+        const birthdate = (!user.birthdate || user.birthdate === '0001-01-01') ? defaultBirthdate : user.birthdate;
 
-        for (const c of this.user.categories) {
-          if (this.user.preferences.has(c) || this.user.restrictions.has(c)) this.user.categories.delete(c);
+        this.profileForm.patchValue({
+          name: user.name,
+          email: user.email,
+          birthdate: user.birthdate,
+          height: user.height,
+          weight: user.weight,
+          notifications: user.notifications,
+        });
+
+        this.preferences = new Set(user.preferences);
+        this.restrictions = new Set(user.restrictions);
+
+        for (const c of user.categories) {
+          if (this.preferences.has(c) || this.restrictions.has(c)) this.categories.delete(c);
         }
       },
       (error) => {
@@ -132,26 +124,32 @@ export class ProfileComponent implements OnInit {
     );
   }
 
-  /**
-   * Updates the user's profile data and displays notifications based on the result.
-   * If the email update fails, an additional notification is shown.
-   * Updates local storage if there are changes.
-   */
   updateUser() {
-    this.service.updateUser(this.user).subscribe(
-      (result) => {
-        NotificationService.showNotification(this.user.notifications, updatedUserNotification);
-        if (result.email !== this.user.email) NotificationService.showNotification(this.user.notifications, failedToEditEmailUserNotification);
+    if (this.profileForm.invalid) {
+      console.error("Invalid inputs!"); // Toast
+      return;
+    }
+
+    const updatedUser = {
+      ...this.profileForm.value,
+      preferences: Array.from(this.preferences),
+      restrictions: Array.from(this.restrictions)
+    };
+
+    this.service.updateUser(updatedUser).subscribe(
+      (user) => {
+        NotificationService.showNotification(user.notifications, updatedUserNotification);
+        if (user.email !== this.profileForm.value.email) NotificationService.showNotification(user.notifications, failedToEditEmailUserNotification); // Toast
 
         const permissions: Permissions | null = StorageUtil.getFromStorage('permissions');
-        const preferences = Array.from(result.preferences);
-        const restrictions = Array.from(result.restrictions);
+        const preferences: boolean = Array.from(user.preferences).length > 0;
+        const restrictions: boolean = Array.from(user.restrictions).length > 0;
 
-        const updatedUser = { notifications: result.notifications, preferences: preferences.length > 0, restrictions: restrictions.length > 0 };
-        if (!permissions || permissions.notifications !== updatedUser.notifications || permissions.preferences !== updatedUser.preferences || permissions.restrictions !== updatedUser.restrictions) {
-          this.service.setPermissions(updatedUser);
+        const updatedPermissions = { notifications: user.notifications, preferences, restrictions };
+        if (!permissions || permissions.notifications !== updatedPermissions.notifications || permissions.preferences !== updatedPermissions.preferences || permissions.restrictions !== updatedPermissions.restrictions) {
+          this.service.setPermissions(updatedPermissions);
         }
-        
+
         this.router.navigate(['/']);
       },
       (error) => {

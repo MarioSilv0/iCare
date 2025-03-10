@@ -87,3 +87,62 @@
            class="submit-btn rounded" />
   </div>
 </form>
+
+   
+<form class="m-0"
+      [formGroup]="profileForm"
+      (ngSubmit)="updateUser()"
+      (keydown.enter)="$event.preventDefault()">
+
+  <container class="m-0">
+    <!-- Profile Image -->
+    <div class="image-wrapper">
+      <profile-image id="image" [imageUrl]="profileForm.get('picture')?.value" [editable]="true" (imageChange)="changePicture($event)" />
+    </div>
+    <br />
+    <!-- Profile Name -->
+    <custom-input type="text"
+                  placeholder="Insira o seu nome"
+                  id="name"
+                  name="Nome:"
+                  [value]="user.name"
+                  (valueChange)="changeName($event)" />
+    <custom-input type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Nome"
+                  formControlName="name" />
+    <small *ngIf="profileForm.get('name')?.invalid && profileForm.get('name')?.touched" class="text-danger">
+      Nome inválido.
+    </small>
+
+    <custom-input id="email"
+                  name="email"
+                  placeholder="Email"
+                  type="email"
+                  formControlName="email"></custom-input>
+    <small *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched" class="text-danger">
+      Email inválido.
+    </small>
+
+    <custom-input id="birthdate"
+                  name="birthdate"
+                  type="date"
+                  formControlName="birthdate"></custom-input>
+
+    <custom-input id="height"
+                  name="height"
+                  type="number"
+                  formControlName="height"></custom-input>
+
+    <custom-input id="weight"
+                  name="weight"
+                  type="number"
+                  formControlName="weight"></custom-input>
+
+    <custom-checkbox label="Receber Notificações"
+                     formControlName="notifications"></custom-checkbox>
+  </container>
+
+  <button type="submit" [disabled]="profileForm.invalid">Salvar</button>
+</form>
