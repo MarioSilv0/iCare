@@ -1,6 +1,6 @@
 <p *ngIf="!user"><em>Loading...</em></p>
 
-<form *ngIf="user" (ngSubmit)="updateUser()" class="m-0">
+<form *ngIf="user" (ngSubmit)="updateUser()" (keydown.enter)="$event.preventDefault()" class="m-0">
   <container class="m-0">
     <!-- Profile Image -->
     <div class="image-wrapper">
@@ -56,66 +56,25 @@
   </container>
 
   <!-- Profile Preferences -->
-  <!--<container class="m-0">
+  <container class="m-0">
     <p>Preferências</p>
     <category-selector listId="preferencesList"
                        placeholder="Procure as suas preferências..."
-                       [options]="Array.from(user.categories)"
-                       [selectedItems]="Array.from(user.preferences)"
+                       [options]="categories"
+                       [selectedItems]="this.user.preferences"
                        (addItem)="addPreference($event)"
-                       (onRemove)="removePreference($event)" />
+                       (removeItem)="removePreference($event)" />
   </container>
+
+  <!-- Profile Restrictions -->
   <container class="m-0">
     <p>Restrições</p>
     <category-selector listId="restrictionsList"
                        placeholder="Procure as suas restrições..."
-                       [options]="Array.from(user.categories)"
-                       [selectedItems]="Array.from(user.restrictions)"
+                       [options]="categories"
+                       [selectedItems]="this.user.restrictions"
                        (addItem)="addRestriction($event)"
-                       (onRemove)="removeRestriction($event)" />
-  </container>-->
-
-  <container class="m-0" customClass="custom-style">
-    <p>Preferências</p>
-    <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
-      <input list="preferencesList"
-             class="form-control"
-             placeholder="Search preferences..."
-             (change)="addPreference($event)" />
-      <datalist id="preferencesList">
-        <option *ngFor="let p of user.categories" [value]="p">
-          {{ p }}
-        </option>
-      </datalist>
-    </div>
-    <div class="selected-items">
-      <button (click)="removePreference(p)"
-              *ngFor="let p of user.preferences"
-              class="selected-item shadow">
-        {{ p }}
-      </button>
-    </div>
-  </container>
-  <container class="m-0" customClass="custom-style">
-    <p>Restrições</p>
-    <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
-      <input list="restrictionsList"
-             class="form-control"
-             placeholder="Search restrictions..."
-             (change)="addRestriction($event)" />
-      <datalist id="restrictionsList">
-        <option *ngFor="let r of user.categories" [value]="r">
-          {{ r }}
-        </option>
-      </datalist>
-    </div>
-    <div class="selected-items">
-      <button *ngFor="let r of user.restrictions"
-              (click)="removeRestriction(r)"
-              class="selected-item">
-        {{ r }}
-      </button>
-    </div>
+                       (removeItem)="removeRestriction($event)" />
   </container>
 
   <div class="m-0 buttons">

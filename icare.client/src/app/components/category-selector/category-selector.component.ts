@@ -16,7 +16,7 @@ export class CategorySelectorComponent {
 
   onAdd(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const value = input.value.trim();
+    const value = input.value.trim() as string;
     if (value) {
       this.addItem.emit(value);
       input.value = '';

@@ -44,6 +44,10 @@ export class ProfileComponent implements OnInit {
     this.getUser();
   }
 
+  get categories() {
+    return Array.from(this.user.categories);
+  }
+
   changePicture(file: File): void {
     var reader = new FileReader();
     reader.readAsDataURL(file);
@@ -83,53 +87,25 @@ export class ProfileComponent implements OnInit {
     this.user.weight = newWeight;
   }
 
-  /**
-   * Adds a new preference to the user's profile and removes it from the categories list.
-   * @param {Event} event - The event triggered when selecting a preference.
-   */
-  addPreference(event: Event) {
-    const target = event.target as HTMLSelectElement;
-    const preference = target.value;
-    if (!preference || this.user.preferences.has(preference) || !this.user.categories.has(preference)) {
-      target.value = '';
-      return;
-    }
+  addPreference(preference: string) {
+    if (!preference || this.user.preferences.has(preference) || !this.user.categories.has(preference)) return;
 
     this.user.preferences.add(preference);
     this.user.categories.delete(preference);
-    target.value = "";
   }
 
-  /**
-   * Removes a preference from the user's profile and adds it back to the categories list.
-   * @param {string} preference - The preference to remove.
-   */
   removePreference(preference: string) {
     this.user.preferences.delete(preference);
     this.user.categories.add(preference);
   }
 
-  /**
-   * Adds a new dietary restriction to the user's profile and removes it from the categories list.
-   * @param {Event} event - The event triggered when selecting a restriction.
-   */
-  addRestriction(event: Event) {
-    const target = event.target as HTMLSelectElement;
-    const restriction = target.value;
-    if (!restriction || this.user.restrictions.has(restriction) || !this.user.categories.has(restriction)) {
-      target.value = "";
-      return;
-    }
+  addRestriction(restriction: string) {
+    if (!restriction || this.user.restrictions.has(restriction) || !this.user.categories.has(restriction)) return;
 
     this.user.restrictions.add(restriction);
     this.user.categories.delete(restriction);
-    target.value = "";
   }
 
-  /**
-   * Removes a dietary restriction from the user's profile and adds it back to the categories list.
-   * @param {string} restriction - The restriction to remove.
-   */
   removeRestriction(restriction: string) {
     this.user.restrictions.delete(restriction);
     this.user.categories.add(restriction);
@@ -182,6 +158,10 @@ export class ProfileComponent implements OnInit {
         console.error(error);
       }
     );
+  }
+
+  preventSubmit(event: Event) {
+    event.preventDefault();
   }
 
   /**
