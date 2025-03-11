@@ -5,40 +5,34 @@
     <h1 class="m-0 p-0 my-2">{{ recipe.name }}</h1>
     <span class="m-0 justify-self-end">
       svg
-      <img
-        *ngIf="!recipe.isFavorite"
-        src="../../assets/svgs/heart-regular.svg"
-        alt="Imagem de coração"
-        style="width: 40px; cursor: pointer"
-        (click)="toggleFavorite()"
-      />
-      <img
-        *ngIf="recipe.isFavorite"
-        src="../../assets/svgs/heart-solid.svg"
-        alt="Imagem de coração"
-        style="width: 40px; cursor: pointer"
-        (click)="toggleFavorite()"
-      />
+      <img *ngIf="!recipe.isFavorite"
+           src="../../assets/svgs/heart-regular.svg"
+           alt="Imagem de coração"
+           style="width: 40px; cursor: pointer"
+           (click)="toggleFavorite()" />
+      <img *ngIf="recipe.isFavorite"
+           src="../../assets/svgs/heart-solid.svg"
+           alt="Imagem de coração"
+           style="width: 40px; cursor: pointer"
+           (click)="toggleFavorite()" />
     </span>
   </div>
   <hr />
-  <div
-    class="d-flex flex-column w-100 align-items-center justify-content-between"
-  >
+  <div class="d-flex flex-column w-100 align-items-center justify-content-between">
     <h2 class="mx-0 align-self-start">Instruções</h2>
     <p>
       {{ recipe.instructions }}
     </p>
   </div>
-   TODO 
-   <div>
+  TODO
+  <div>
     <h2>Informações Nutricionais</h2>
     <ul>
       <li>v1</li>
       <li>v2</li>
       <li>v3</li>
     </ul>
-  </div> 
+  </div>
   <hr />
   <h2 class="mx-0 align-self-start">Ingredientes</h2>
   <div class="d-flex flex-md-row w-100 justify-content-around flex-sm-column">
@@ -66,11 +60,18 @@
       </ul>
     </div>
     imagem receita
-    <img
-      src="{{ recipe.picture }}"
-      alt="Imagem da receita"
-      class="mx-0 shadow rounded"
-      style="width: 25%; max-height: fit-content"
-    />
+    <img src="{{ recipe.picture }}"
+         alt="Imagem da receita"
+         class="mx-0 shadow rounded"
+         style="width: 25%; max-height: fit-content" />
   </div>
+  <iframe *ngIf="safeVideoUrl"
+          width="640" height="360"
+          [src]="safeVideoUrl"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+  </iframe>
+  <h4>Categoria:</h4>
+  <p>{{ recipe.category }}</p>
 </div>

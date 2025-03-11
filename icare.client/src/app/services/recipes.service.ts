@@ -1,11 +1,11 @@
 /**
- * @file Defines the `ApiService` class, responsible for handling HTTP requests 
+ * @file Defines the `RecipeService` class, responsible for handling HTTP requests 
  * to fetch recipe-related data from the backend API.
  * 
  * @author João Morais  - 202001541
  * @author Luís Martins - 202100239
  * 
- * @date Last Modified: 2025-03-04
+ * @date Last Modified: 2025-03-05
  */
 
 import { HttpClient } from '@angular/common/http';
@@ -16,29 +16,32 @@ import { throwError, Observable } from 'rxjs';
 
 const RECIPE: string = '/api/Recipe';
 
-
+/**
+ * The `RecipeService` class provides methods for fetching recipe data from the backend API.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class RecipeService {
   constructor(private http: HttpClient) { }
 
-
   /**
-   * Fetches all recipes from the API.
-   * @returns An Observable containing an array of recipes.
+   * Retrieves a list of all available recipes from the backend.
+   * 
+   * @returns {Observable<Recipe[]>} An observable containing an array of recipes.
    */
   getAllRecipes(): Observable<Recipe[]> {
     return this.http.get<Recipe[]>(RECIPE);
   }
 
   /**
-   * Fetches a specific recipe by name.
-   * @param recipeName The name of the recipe.
-   * @returns An Observable containing the recipe details.
+   * Fetches the details of a specific recipe based on its name.
+   * 
+   * @param {string} recipeName - The name of the recipe to retrieve.
+   * @returns {Observable<Recipe>} An observable containing the recipe details.
    */
   getSpecificRecipe(recipeName: string): Observable<Recipe> {
-    return this.http.get<Recipe>(RECIPE + recipeName);
+    return this.http.get<Recipe>(`${RECIPE}/${recipeName}`);
   }
 
   /**
@@ -56,9 +59,6 @@ export class RecipeService {
       })
     );
   }
-
-
-
 
 }
 

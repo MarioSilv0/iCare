@@ -10,11 +10,13 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { UsersService, User, Permissions } from '../services/users.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
+import { UsersService, User, Permissions } from '../services/users.service';
 import { NotificationService, updatedUserNotification, failedToEditEmailUserNotification } from '../services/notifications.service';
 import { StorageUtil } from '../utils/StorageUtil';
+import { birthdateValidator } from '../utils/Validators';
 
 @Component({
   selector: 'app-profile',
@@ -29,86 +31,98 @@ import { StorageUtil } from '../utils/StorageUtil';
   * manage dietary preferences and restrictions, and change their profile picture.
   */
 export class ProfileComponent implements OnInit {
-  public user: User = {
-    picture: '', name: 'Loading', email: '...', birthdate: "2000-01-01", notifications: true, height: 0, weight: 0, preferences: new Set(), restrictions: new Set(), categories: new Set() };
+
+  public profileForm!: FormGroup;
   public todayDate: string;
 
-  public availablePreferences: Set<string> = new Set();
-  public availableRestrictions: Set<string> = new Set();
+  public categories: Set<string> = new Set<string>();
+  public preferences: Set<string> = new Set<string>();
+  public restrictions: Set<string> = new Set<string>();
 
-  constructor(private router: Router, private service: UsersService) {
+  constructor(private router: Router, private fb: FormBuilder, private service: UsersService) {
     this.todayDate = new Date().toISOString().split('T')[0];
   }
 
-  /**
-   * Initializes the component and retrieves user data.
-   */
   ngOnInit() {
+    this.setupForm();
     this.getUser();
   }
 
-  /**
-   * Adds a new preference to the user's profile and removes it from the available preferences list.
-   * @param {Event} event - The event triggered when selecting a preference.
-   */
-  addPreference(event: Event) {
-    const target = event.target as HTMLSelectElement;
-    const preference = target.value;
-    if (!preference) return;
-
-    this.user.preferences.add(preference);
-    this.availablePreferences.delete(preference);
-
-    target.value = "";
+  get getCategories() {
+    return Array.from(this.categories);
   }
 
-  /**
-   * Removes a preference from the user's profile and adds it back to the available preferences list.
-   * @param {string} preference - The preference to remove.
-   */
+  changePicture(file: File): void {
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = () => {
+      if (typeof reader.result === 'string') this.profileForm.patchValue({ picture: reader.result });
+    }
+  }
+
+  changeNotifications(value: boolean) {
+    this.profileForm.patchValue({ notifications: value });
+  }
+
+  addPreference(preference: string) {
+    if (!preference || this.preferences.has(preference) || !this.categories.has(preference)) return;
+
+    this.preferences.add(preference);
+    this.categories.delete(preference);
+  }
+
   removePreference(preference: string) {
-    this.user.preferences.delete(preference);
-    this.availablePreferences.add(preference);
+    this.preferences.delete(preference);
+    this.categories.add(preference);
   }
 
-  /**
-   * Adds a new dietary restriction to the user's profile and removes it from the available restrictions list.
-   * @param {Event} event - The event triggered when selecting a restriction.
-   */
-  addRestriction(event: Event) {
-    const target = event.target as HTMLSelectElement;
-    const restriction = target.value;
-    if (!restriction) return;
+  addRestriction(restriction: string) {
+    if (!restriction || this.restrictions.has(restriction) || !this.categories.has(restriction)) return;
 
-    this.user.restrictions.add(restriction);
-    this.availableRestrictions.delete(restriction);
-
-    target.value = "";
+    this.restrictions.add(restriction);
+    this.categories.delete(restriction);
   }
 
-  /**
-   * Removes a dietary restriction from the user's profile and adds it back to the available restrictions list.
-   * @param {string} restriction - The restriction to remove.
-   */
   removeRestriction(restriction: string) {
-    this.user.restrictions.delete(restriction);
-    this.availableRestrictions.add(restriction);
+    this.restrictions.delete(restriction);
+    this.categories.add(restriction);
   }
 
-  /**
-   * Retrieves the user's profile data from the backend service.
-   * If the birthdate is missing, it defaults to `"2000-01-01"`.
-   * It also populates the available preferences and restrictions.
-   */
+  setupForm() {
+    this.profileForm = this.fb.group({
+      picture: [''],
+      name: ['', [Validators.required, Validators.minLength(1)]],
+      email: ['', [Validators.required, Validators.email]],
+      birthdate: ['', [Validators.required, birthdateValidator]],
+      height: [0, [Validators.required, Validators.min(0.1), Validators.max(3)]],
+      weight: [0, [Validators.required, Validators.min(0.1), Validators.max(700)]],
+      notifications: [true]
+    });
+  }
+
   getUser() {
     this.service.getUser().subscribe(
-      (result) => {
-        let birthdate = (!result.birthdate || result.birthdate === '0001-01-01') ? this.user.birthdate : result.birthdate;
-        this.user = { ...result, birthdate, categories: new Set(result.categories), preferences: new Set(result.preferences), restrictions: new Set(result.restrictions) };
+      (user) => {
+        const defaultBirthdate = "2000-01-01";
+        const birthdate = (!user.birthdate || user.birthdate === '0001-01-01') ? defaultBirthdate : user.birthdate;
 
-        for (const c of this.user.categories) {
-          if (!this.user.preferences.has(c)) this.availablePreferences.add(c);
-          if (!this.user.restrictions.has(c)) this.availableRestrictions.add(c);
+        this.profileForm.patchValue({
+          picture: user.picture,
+          name: user.name,
+          email: user.email,
+          birthdate: user.birthdate,
+          height: user.height,
+          weight: user.weight,
+          notifications: user.notifications,
+        });
+
+        this.preferences = new Set(user.preferences);
+        this.restrictions = new Set(user.restrictions);
+        this.categories = new Set(user.categories);
+
+        for (const c of user.categories) {
+          if (this.preferences.has(c) || this.restrictions.has(c)) this.categories.delete(c);
         }
       },
       (error) => {
@@ -117,27 +131,33 @@ export class ProfileComponent implements OnInit {
     );
   }
 
-  /**
-   * Updates the user's profile data and displays notifications based on the result.
-   * If the email update fails, an additional notification is shown.
-   * Updates local storage if there are changes.
-   */
   updateUser() {
-    this.service.updateUser(this.user).subscribe(
-      (result) => {
-        NotificationService.showNotification(this.user.notifications, updatedUserNotification);
-        if (result.email !== this.user.email) NotificationService.showNotification(this.user.notifications, failedToEditEmailUserNotification);
+    if (this.profileForm.invalid) {
+      console.error("Invalid inputs!"); // Toast
+      return;
+    }
+
+    const updatedUser = {
+      ...this.profileForm.value,
+      preferences: Array.from(this.preferences),
+      restrictions: Array.from(this.restrictions),
+      categories: Array.from(this.categories)
+    };
+    
+    this.service.updateUser(updatedUser).subscribe(
+      (user) => {
+        NotificationService.showNotification(user.notifications, updatedUserNotification);
+        if (user.email !== this.profileForm.value.email) NotificationService.showNotification(user.notifications, failedToEditEmailUserNotification); // Toast
 
         const permissions: Permissions | null = StorageUtil.getFromStorage('permissions');
-        const preferences = Array.from(result.preferences);
-        const restrictions = Array.from(result.restrictions);
+        const preferences: boolean = Array.from(user.preferences).length > 0;
+        const restrictions: boolean = Array.from(user.restrictions).length > 0;
 
-        const updatedUser = { notifications: result.notifications, preferences: preferences.length > 0, restrictions: restrictions.length > 0 };
-
-        if (!permissions || permissions.notifications !== updatedUser.notifications || permissions.preferences !== updatedUser.preferences || permissions.restrictions !== updatedUser.restrictions) {
-          StorageUtil.saveToStorage('permissions', updatedUser);
+        const updatedPermissions = { notifications: user.notifications, preferences, restrictions };
+        if (!permissions || permissions.notifications !== updatedPermissions.notifications || permissions.preferences !== updatedPermissions.preferences || permissions.restrictions !== updatedPermissions.restrictions) {
+          this.service.setPermissions(updatedPermissions);
         }
-        
+
         this.router.navigate(['/']);
       },
       (error) => {
@@ -146,27 +166,8 @@ export class ProfileComponent implements OnInit {
     );
   }
 
-  /**
-   * Handles profile picture selection and updates the `user.picture` property.
-   * Ensures only image files are accepted.
-   * @param {Event | null} event - The file input change event.
-   */
-  onSelectFile(event: Event | null): void {
-    if (!event) return;
-
-    const input = event.target as HTMLInputElement;
-
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      if (!file.type.startsWith('image/')) return;
-
-      var reader = new FileReader();
-      reader.readAsDataURL(file);
-
-      reader.onload = () => {
-        if (typeof reader.result === 'string') this.user.picture = reader.result;
-      }
-    }
+  preventSubmit(event: Event) {
+    event.preventDefault();
   }
 
   /**

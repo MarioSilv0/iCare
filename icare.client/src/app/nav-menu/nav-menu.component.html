@@ -13,12 +13,7 @@
      [ngClass]="!isExpanded ? 'justify-content-center' : 'justify-content-evenly'"
      >
       <!-- profile pic -->
-      <img
-        [src]="picture ? picture : 'https://www.w3schools.com/howto/img_avatar.png'"
-        alt="user-profile-image"
-        style="width: 24px; height: 24px; border-radius: 100%"
-        class="m-0"
-      />
+      <profile-image class="m-0" [imageUrl]="picture" [editable]="false" [imageStyles]="{ 'width': '24px', 'height': '24px', 'border-radius': '100%' }" />
       <p *ngIf="isExpanded" class="m-0" style="flex-wrap: wrap">
         <!-- user name/email -->
         {{ this?.username ?? "User" }}

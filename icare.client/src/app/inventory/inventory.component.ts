@@ -6,7 +6,7 @@
  * @author Luís Martins - 202100239
  * @author Mário Silva  - 202000500
  * 
- * @date Last Modified: 2025-03-04
+ * @date Last Modified: 2025-03-05
  */
 
 import { Component } from '@angular/core';
@@ -36,8 +36,9 @@ declare var bootstrap: any;
 })
 export class InventoryComponent {
   public notificationsPermission: boolean = true;
+  public inventoryPermission: boolean = false;
   public searchTerm: string = '';
-  public searchSubject = new Subject<string>();
+  public searchSubject = new Subject<void>();
 
   public inventory: Map<string, { quantity: number; unit: string }> = new Map();
   public listOfItems: Set<string> = new Set();
@@ -62,16 +63,17 @@ export class InventoryComponent {
    * Initializes the component by loading notification preferences and retrieving inventory data.
    */
   ngOnInit() {
-    this.loadNotificationPreferences();
+    this.loadPermissions();
     this.getInventory();
   }
 
   /**
    * Loads user notification preferences from local storage.
    */
-  private loadNotificationPreferences() {
+  private loadPermissions() {
     const permissions: Permissions | null = StorageUtil.getFromStorage('permissions');
     this.notificationsPermission = permissions?.notifications ?? false;
+    this.inventoryPermission = permissions?.inventory ?? false;
   }
 
   /**
@@ -128,15 +130,19 @@ export class InventoryComponent {
    * Handles search input changes and triggers filtering.
    */
   onSearchChange() {
-    this.searchSubject.next(this.searchTerm);
+    this.searchSubject.next();
   }
 
   /**
    * Filters available items based on the search term.
    */
   filterItems() {
-    const query = this.searchTerm.toLowerCase().trim();
-    this.filteredItems = Array.from(this.listOfItems).filter((n) => n.toLowerCase().includes(query));
+    const normalize = (str: string): string => str.normalize('NFD')
+                                                  .replace(/[\u0300-\u036f]/g, '')
+                                                  .replace(/[^a-zA-Z0-9]/g, '')
+                                                  .toLowerCase();
+    const query = normalize(this.searchTerm);
+    this.filteredItems = Array.from(this.listOfItems).filter(item => normalize(item).includes(query));
   }
 
   /**
@@ -161,6 +167,7 @@ export class InventoryComponent {
     this.api.getAllIngredients().subscribe(
       (result) => {
         result.forEach((itemName) => { if (!this.inventory.has(itemName)) this.listOfItems.add(itemName); });
+        this.listOfItems.add("café, acordião  !")
         this.filterItems();
       },
       (error) => {
@@ -219,6 +226,33 @@ export class InventoryComponent {
   }
 
   /**
+   * Retrieves the unit of measurement for a given inventory item.
+   * If the item is not found in the inventory, it returns an empty string.
+   *
+   * @param {string} item - The name of the item.
+   * @returns {string} The unit of measurement for the specified item.
+   */
+  getUnit(item: string): string {
+    return this.inventory.get(item)?.unit || '';
+  }
+
+  /**
+   * Calculates the progress or quantity representation of an inventory item.
+   * If the item is measured in grams (`g`), it returns the quantity as is.
+   * If the item is measured in kilograms (`kg`), it converts it to grams by multiplying by 1000.
+   * If the item is not found in the inventory, it defaults to 100 (assuming full progress).
+   *
+   * @param {string} item - The name of the inventory item.
+   * @returns {number} The adjusted quantity based on the unit of measurement.
+   */
+  getProgress(item: string): number {
+    const i = this.inventory.get(item);
+    if (!i) return 100;
+
+    return (i.unit === "g") ? i.quantity : i.quantity * 1000;
+  }
+
+  /**
    * Updates the unit of measurement for an inventory item.
    * @param {string} item - The name of the item.
    * @param {Event} event - The event from the input field.
@@ -259,7 +293,9 @@ export class InventoryComponent {
 
         this.selectedItems.clear();
         this.filterItems();
+
         NotificationService.showNotification(this.notificationsPermission, addedItemNotification);
+        if (!this.inventoryPermission) this.changePermission();
       },
       (error) => {
         console.error(error);
@@ -340,16 +376,25 @@ export class InventoryComponent {
         for (let name of deletedItems) {
           this.listOfItems.add(name);
           this.inventory.delete(name);
+          this.itemDetails.delete(name);
+          this.expandedItems.delete(name);
         }
 
         if (!itemsToDelete) this.selectedItemsInInventory.clear();
         this.filterItems();
+
         NotificationService.showNotification(this.notificationsPermission, removedItemNotification);
+        if (this.inventoryPermission && this.inventory.size === 0) this.changePermission();
       },
       (error) => {
         console.error(error);
       }
     );
+  }
+
+  changePermission() {
+    this.inventoryPermission = !this.inventoryPermission;
+    this.service.setPermissions({ inventory: this.inventoryPermission });
   }
 
   /**

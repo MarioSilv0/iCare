@@ -29,7 +29,7 @@ export class NavMenuComponent {
   public isExpanded: boolean = false;
   public isLoggedIn: boolean = false;
   public username: string | null = null;
-  public picture: string | null = null;
+  public picture: string = '';
   public commonPath: string = '../../assets/svgs/';
   public extension: string = '.svg';
   public links = [
@@ -96,8 +96,19 @@ export class NavMenuComponent {
     this.getInfo();
   }
 
+  /**
+   * Retrieves and updates the user's information (name and profile picture).
+   * 
+   * This method fetches user data from two sources:
+   * 1. **Initial API call (`getUser()`)** → Retrieves the latest user data from the backend.
+   * 2. **Real-time updates (`user$` observable)** → Listens for any changes in user data 
+   *    (e.g., after a profile update) and updates the UI accordingly.
+   * 
+   * This ensures that the component always has the most up-to-date user information.
+   */
   getInfo() {
     if (!this.authService.isLogged()) return;
+
     this.userService.getUser().subscribe(user => {
       this.username = user.name;
       this.picture = user.picture;

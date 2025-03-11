@@ -14,7 +14,9 @@
         <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
           <input type="checkbox"
                  style="width: 20px; height: 20px; cursor: pointer"
-                 [disabled]="!restrictionsFilter" />
+                 [disabled]="!restrictionPermission"
+                 [(ngModel)]="restrictionsFilter"
+                 (change)="filterRecipes('')" />
           <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
             Restrições
           </p>
@@ -22,7 +24,9 @@
         <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
           <input type="checkbox"
                  style="width: 20px; height: 20px; cursor: pointer"
-                 [disabled]="!preferencesFilter" />
+                 [disabled]="!preferencesPermission"
+                 [(ngModel)]="preferencesFilter"
+                 (change)="filterRecipes('')" />
           <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
             Preferências
           </p>
@@ -36,7 +40,11 @@
           </p>
         </div>
         <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
-          <input type="checkbox" name="" id="" style="width: 20px; height: 20px; cursor: pointer" />
+          <input type="checkbox"
+                 name="" id="" style="width: 20px; height: 20px; cursor: pointer"
+                 [disabled]="!inventoryPermission"
+                 [(ngModel)]="inventoryFilter"
+                 (change)="filterRecipes('')" />
           <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
             Inventário
           </p>
@@ -44,18 +52,24 @@
       </div>
     </div>
 
-    <div class="w-100 pt-4" style="max-width: 500px;">
-      <input class="w-100" style="height: 30px;" type="text" (change)="searchRecipes(searchTerm)" />
+    <div class="w-100 pt-4" style='{ max-width: 500px, width: 100%, padding-top: 4px }' >
+      <input class="w-100" style='{ height: 30px }' type="text" placeholder="Pesquisar" [(ngModel)]="searchTerm" (input)="onSearchChange()" />
     </div>
+    <search-bar placeholder="Procure receitas..."
+                id="recipesSearch"
+                [containerStyles]="{ 'max-width': '500px', 'width': '100%', 'padding-top': '4px' }"
+                [searchBarStyles]="{ 'height': '30px' }"
+                [normalize]="true"
+                (query)="filterRecipes($event)" />
 
-    <!-- lista de receitas -->
-    <div *ngIf="recipes.length === 0" class="pt-4 pe-4 d-flex flex-md-row flex-wrap flex-sm-column mx-0 align-items-center justify-content-evenly gap-4 pt-2">
-      <article>
-        No recipes available..
-      </article>
-    </div>
+      <!-- lista de receitas -->
+      <div *ngIf="recipes.length === 0" class="pt-4 pe-4 d-flex flex-md-row flex-wrap flex-sm-column mx-0 align-items-center justify-content-evenly gap-4 pt-2">
+        <article>
+          No recipes available..
+        </article>
+      </div>
       <div *ngIf="recipes.length > 0" class="pt-4 pe-4 d-flex flex-md-row flex-wrap flex-sm-column mx-0 align-items-center justify-content-evenly gap-4 pt-2">
-        <article *ngFor="let recipe of recipes; index as i"
+        <article *ngFor="let recipe of filteredRecipes; index as i"
                  class="m-0 p-2 rounded bg-bege-contrast shadow"
                  style="min-width: 300px">
           <div class="m-0 p-0 bg-cinzento rounded"
@@ -89,7 +103,7 @@
             </button>
           </div>
           <h4>{{ recipe.name }}</h4>
-          <p>{{ recipe.instructions }}</p>
+          <p>Calorias: {{ recipe.calories }} kcal</p>
           <a [routerLink]="['/recipe', recipe.name]"
              class="mx-0 nav-link bg-verde rounded"
              style="
@@ -104,5 +118,5 @@
           </a>
         </article>
       </div>
-    </div>
+</div>
 </div>
