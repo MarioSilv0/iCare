@@ -4,9 +4,13 @@ import { env } from '../../../environments/env';
 import { Observable, map, firstValueFrom } from 'rxjs';
 
 /**
- * Serviço para realizar traduções entre diferentes idiomas.
- * Utiliza a API de tradução para converter textos de um idioma para outro.
+ * @file Defines the `TranslateService` class, responsible for handling text translations 
+ * between different languages using an external translation API.
+ *
+ * @author Mário Silva  - 202000500
+ * @date Last Modified: 2025-03-11
  */
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,32 +20,32 @@ export class TranslateService {
   constructor(private http: HttpClient) { }
 
   /**
-   * Traduz um texto do inglês para o português.
+   * Translates a given text from English to Portuguese.
    * 
-   * @param text Texto a ser traduzido.
-   * @returns Uma promessa que resolve com o texto traduzido em português.
+   * @param text The text to be translated.
+   * @returns A promise resolving to the translated text in Portuguese.
    */
   async translateENPT(text: string): Promise<string> {
     return this.translateAPI(text, "en", "pt");
   }
 
   /**
-   * Traduz um texto do português para o inglês.
+   * Translates a given text from Portuguese to English.
    * 
-   * @param text Texto a ser traduzido.
-   * @returns Uma promessa que resolve com o texto traduzido em inglês.
+   * @param text The text to be translated.
+   * @returns A promise resolving to the translated text in English.
    */
   async translatePTEN(text: string): Promise<string> {
     return this.translateAPI(text, "pt", "en");
   }
 
   /**
-   * Realiza a tradução de um texto usando a API de tradução.
+   * Performs the actual translation request to the external API.
    * 
-   * @param text Texto a ser traduzido.
-   * @param from Idioma de origem.
-   * @param to Idioma de destino.
-   * @returns Uma promessa que resolve com o texto traduzido.
+   * @param text The text to be translated.
+   * @param from The source language code (e.g., "en" for English).
+   * @param to The target language code (e.g., "pt" for Portuguese).
+   * @returns A promise resolving to the translated text.
    */
   private translateAPI(text: string, from: string, to: string): Promise<string> {
     const translation$ = this.http.post<any>(this.translateUrl, {

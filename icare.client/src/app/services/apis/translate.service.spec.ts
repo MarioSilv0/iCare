@@ -5,9 +5,13 @@ import { env } from '../../../environments/env';
 import { HttpErrorResponse } from '@angular/common/http';
 
 /**
- * Testes unitários para o serviço TranslateService.
- * Verifica o comportamento de tradução de textos entre inglês e português.
+ * @file Unit tests for the `TranslateService`.
+ * Ensures the correct behavior of text translation between English and Portuguese.
+ * 
+ * @author Mário Silva  - 202000500
+ * @date Last Modified: 2025-03-11
  */
+
 describe('TranslateService', () => {
   let service: TranslateService;
   let httpMock: HttpTestingController;
@@ -27,16 +31,14 @@ describe('TranslateService', () => {
   });
 
   /**
-   * Teste para traduzir texto do inglês para português.
-   * Verifica se a tradução funciona corretamente e a requisição é feita para a URL correta.
+   * Tests translating text from English to Portuguese.
+   * Verifies if the translation is performed correctly and the request is made to the correct URL.
    */
   it('should translate text from English to Portuguese', async () => {
     const mockResponse = { translatedText: 'Olá' };
     const textToTranslate = 'Hello';
 
-    const translatedText = await service.translateENPT(textToTranslate);
-    expect(translatedText).toBe('Olá');
-
+    const translatePromise = service.translateENPT(textToTranslate);
     const req = httpMock.expectOne(env.translateUrl);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({
@@ -44,21 +46,21 @@ describe('TranslateService', () => {
       source: 'en',
       target: 'pt'
     });
-
     req.flush(mockResponse);
+
+    const translatedText = await translatePromise;
+    expect(translatedText).toBe('Olá');
   });
 
   /**
-   * Teste para traduzir texto do português para inglês.
-   * Verifica se a tradução funciona corretamente e a requisição é feita para a URL correta.
+   * Tests translating text from Portuguese to English.
+   * Verifies if the translation is performed correctly and the request is made to the correct URL.
    */
   it('should translate text from Portuguese to English', async () => {
     const mockResponse = { translatedText: 'Hello' };
     const textToTranslate = 'Olá';
 
-    const translatedText = await service.translatePTEN(textToTranslate);
-    expect(translatedText).toBe('Hello');
-
+    const translatePromise = service.translatePTEN(textToTranslate);
     const req = httpMock.expectOne(env.translateUrl);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({
@@ -66,31 +68,23 @@ describe('TranslateService', () => {
       source: 'pt',
       target: 'en'
     });
-
     req.flush(mockResponse);
+
+    const translatedText = await translatePromise;
+    expect(translatedText).toBe('Hello');
   });
 
   /**
-   * Teste para verificar o tratamento de erros da API de tradução.
-   * Simula um erro na API e verifica se o serviço lida com o erro corretamente.
+   * Tests error handling when the translation API fails.
+   * Simulates an API error and verifies if the service handles it correctly.
    */
   it('should handle translation API errors gracefully', async () => {
     const textToTranslate = 'Error test';
-
-    try {
-      await service.translateENPT(textToTranslate);
-      fail('Expected an error, but got a response');
-    } catch (error) {
-      if (error instanceof HttpErrorResponse) {
-        expect(error.status).toBe(500);
-        expect(error.statusText).toBe('Internal Server Error');
-      } else {
-        fail('Expected an HttpErrorResponse, but got an unknown error');
-      }
-    }
+    const translatePromise = service.translateENPT(textToTranslate);
 
     const req = httpMock.expectOne(env.translateUrl);
     req.flush('Internal Server Error', { status: 500, statusText: 'Internal Server Error' });
-  });
 
+    await expectAsync(translatePromise).toBeRejectedWith(jasmine.any(HttpErrorResponse));
+  });
 });

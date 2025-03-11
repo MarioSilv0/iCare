@@ -4,14 +4,27 @@ import { Observable, map } from 'rxjs';
 import { env } from '../../../environments/env';
 import { Ingredient } from '../ingredients.service';
 
+/**
+ * @file Service for retrieving food ingredient data from the TACO API.
+ * Fetches food items along with their nutritional values.
+ * 
+ * @author Mário Silva  - 202000500
+ * @date Last Modified: 2025-03-11
+ */
+
 @Injectable({
   providedIn: 'root'
 })
 export class TacoApiService {
-  tacoApi = env.tacoApiUrl;
+  private tacoApi = env.tacoApiUrl;
 
   constructor(private http: HttpClient) { }
 
+  /**
+   * Fetches all available food ingredients from the TACO API.
+   * 
+   * @returns An observable containing an array of `Ingredient` objects.
+   */
   getAllFood(): Observable < Ingredient[] > {
     const graphqlQuery = {
       query: `
