@@ -16,6 +16,7 @@ import { AuthService } from '../auth/auth.service';
 import { UsersService, User, Permissions } from '../services/users.service';
 import { NotificationService, updatedUserNotification, failedToEditEmailUserNotification } from '../services/notifications.service';
 import { StorageUtil } from '../utils/StorageUtil';
+import { birthdateValidator } from '../utils/Validators';
 
 @Component({
   selector: 'app-profile',
@@ -60,6 +61,10 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  changeNotifications(value: boolean) {
+    this.profileForm.patchValue({ notifications: value });
+  }
+
   addPreference(preference: string) {
     if (!preference || this.preferences.has(preference) || !this.categories.has(preference)) return;
 
@@ -89,9 +94,9 @@ export class ProfileComponent implements OnInit {
       picture: [''],
       name: ['', [Validators.required, Validators.minLength(1)]],
       email: ['', [Validators.required, Validators.email]],
-      birthdate: ['', Validators.required],
-      height: [0, [Validators.required, Validators.min(0), Validators.max(3)]],
-      weight: [0, [Validators.required, Validators.min(0), Validators.max(700)]],
+      birthdate: ['', [Validators.required, birthdateValidator]],
+      height: [0, [Validators.required, Validators.min(0.1), Validators.max(3)]],
+      weight: [0, [Validators.required, Validators.min(0.1), Validators.max(700)]],
       notifications: [true]
     });
   }
@@ -103,6 +108,7 @@ export class ProfileComponent implements OnInit {
         const birthdate = (!user.birthdate || user.birthdate === '0001-01-01') ? defaultBirthdate : user.birthdate;
 
         this.profileForm.patchValue({
+          picture: user.picture,
           name: user.name,
           email: user.email,
           birthdate: user.birthdate,
@@ -113,6 +119,7 @@ export class ProfileComponent implements OnInit {
 
         this.preferences = new Set(user.preferences);
         this.restrictions = new Set(user.restrictions);
+        this.categories = new Set(user.categories);
 
         for (const c of user.categories) {
           if (this.preferences.has(c) || this.restrictions.has(c)) this.categories.delete(c);
@@ -133,9 +140,10 @@ export class ProfileComponent implements OnInit {
     const updatedUser = {
       ...this.profileForm.value,
       preferences: Array.from(this.preferences),
-      restrictions: Array.from(this.restrictions)
+      restrictions: Array.from(this.restrictions),
+      categories: Array.from(this.categories)
     };
-
+    
     this.service.updateUser(updatedUser).subscribe(
       (user) => {
         NotificationService.showNotification(user.notifications, updatedUserNotification);
