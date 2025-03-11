@@ -5,6 +5,14 @@ import { env } from '../../../environments/env';
 import { Ingredient } from '../ingredients.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
+/**
+ * @file Unit tests for TacoApiService.
+ * Ensures proper API communication and data formatting for food ingredients.
+ * 
+ * @author Mário Silva - 202000500
+ * @date Last Modified: 2025-03-11
+ */
+
 describe('TacoApiService', () => {
   let service: TacoApiService;
   let httpMock: HttpTestingController;
@@ -20,9 +28,13 @@ describe('TacoApiService', () => {
   });
 
   afterEach(() => {
-    httpMock.verify(); // Garante que todas as chamadas HTTP foram verificadas
+    httpMock.verify(); // Ensures all HTTP requests are verified
   });
 
+  /**
+   * Test: Should call the correct API endpoint and return formatted ingredients.
+   * Ensures API response is mapped correctly to the `Ingredient` model.
+   */
   it('should call the correct API endpoint and return formatted ingredients', () => {
     const mockResponse = {
       data: {
@@ -90,12 +102,12 @@ describe('TacoApiService', () => {
     req.flush(mockResponse);
   });
 
+  /**
+   * Test: Should return an empty array when API response is empty.
+   * Ensures the service correctly handles an empty response from the API.
+   */
   it('should return an empty array when API response is empty', () => {
-    const mockResponse = {
-      data: {
-        getAllFood: []
-      }
-    };
+    const mockResponse = { data: { getAllFood: [] } };
 
     service.getAllFood().subscribe(ingredients => {
       expect(ingredients).toEqual([]);
@@ -107,6 +119,10 @@ describe('TacoApiService', () => {
     req.flush(mockResponse);
   });
 
+  /**
+   * Test: Should handle an error response gracefully.
+   * Simulates a server error and verifies proper error handling.
+   */
   it('should handle an error response gracefully', () => {
     const errorMessage = 'Failed to load data';
 
@@ -123,16 +139,19 @@ describe('TacoApiService', () => {
     req.flush(errorMessage, { status: 500, statusText: 'Server Error' });
   });
 
+  /**
+   * Test: Should handle an invalid API response.
+   * Ensures the service does not crash when receiving an unexpected API format.
+   */
   it('should handle invalid API response', () => {
     const invalidResponse = { data: { getAllFood: null } };
 
     service.getAllFood().subscribe(ingredients => {
-      expect(ingredients).toEqual([]); 
+      expect(ingredients).toEqual([]);
     });
 
     const req = httpMock.expectOne(env.tacoApiUrl);
     expect(req.request.method).toBe('POST');
     req.flush(invalidResponse);
   });
-
 });

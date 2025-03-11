@@ -12,14 +12,15 @@ import { RecipeService } from '../recipes.service';
 })
 
 /**
-  * MealDbService - Service for fetching, processing, and translating meal data from TheMealDB API.
-  *
-  * Author: Mário
-  *
-  * This service provides methods to retrieve meal categories, meals by category, 
-  * meal details, and translated meal information. It also processes ingredients, 
-  * formats instructions, and updates a local meal database.
-  */
+ * Service for fetching, processing, and translating meal data from TheMealDB API.
+ * 
+ * This service provides methods to retrieve meal categories, meals by category, 
+ * meal details, and translated meal information. It also processes ingredients, 
+ * formats instructions, and updates a local meal database.
+ * 
+ * @author Mário Silva - 202000500
+ * @date Last Modified: 2025-03-11
+ */
 export class MealDbService {
   private categoryListUrl = `${env.mealDbApiUrl}/categories.php`;
   private mealsByCategoryUrl = `${env.mealDbApiUrl}/filter.php?c=`;
@@ -34,7 +35,7 @@ export class MealDbService {
 
   /**
    * Fetches meal categories from the MealDb API.
-   *
+   * 
    * @returns An Observable with the categories data.
    */
   getCategories(): Observable<any> {
@@ -43,8 +44,8 @@ export class MealDbService {
 
   /**
    * Fetches meals by category from the MealDb API.
-   *
-   * @param category - The category name.
+   * 
+   * @param category The category name.
    * @returns An Observable with the meals data.
    */
   getMealsByCategory(category: string): Observable<any> {
@@ -53,9 +54,9 @@ export class MealDbService {
 
   /**
    * Fetches detailed meal data by ID and returns a Recipe object.
-   *
-   * @param id - The meal ID.
-   * @returns An Observable with the Recipe.
+   * 
+   * @param id The meal ID.
+   * @returns An Observable with the Recipe object.
    */
   getMealById(id: number): Observable<Recipe> {
     return this.http.get<any>(`${this.mealByIdUrl}${id}`).pipe(
@@ -84,8 +85,8 @@ export class MealDbService {
 
   /**
    * Extracts ingredients from the meal data.
-   *
-   * @param meal - The meal data object.
+   * 
+   * @param meal The meal data object.
    * @returns An array of RecipeIngredient objects.
    */
   private extractIngredients(meal: any): RecipeIngredient[] {
@@ -105,8 +106,8 @@ export class MealDbService {
 
   /**
    * Fetches a meal by ID, translates its details, and returns the translated meal data.
-   *
-   * @param id - The meal ID.
+   * 
+   * @param id The meal ID.
    * @returns An Observable with the translated meal data.
    */
   getMealByIdTranslated(id: number): Observable<Recipe | null> {
@@ -118,7 +119,7 @@ export class MealDbService {
 
         const meal = mealData.meals[0];
 
-        // Faz o forkJoin para traduzir os campos
+        // ForkJoin to translate fields
         return forkJoin({
           name: this.translateText(meal.strMeal),
           area: this.translateText(meal.strArea),
@@ -151,8 +152,8 @@ export class MealDbService {
 
   /**
    * Splits the instruction string into an array of non-empty lines.
-   *
-   * @param instructions - The instruction string to split.
+   * 
+   * @param instructions The instruction string to split.
    * @returns An array of instruction lines.
    */
   formatInstructions(instructions: string): string[] {
@@ -160,14 +161,20 @@ export class MealDbService {
   }
 
   /**
-   * Traduz um texto do inglês para português.
+   * Translates text from English to Portuguese.
+   * 
+   * @param text The text to translate.
+   * @returns A Promise that resolves with the translated text.
    */
   private translateText(text: string): Promise<string> {
     return this.translateService.translateENPT(text);
   }
 
   /**
-   * Processa os ingredientes, incluindo tradução e conversão para gramas.
+   * Processes ingredients, including translation and conversion to grams.
+   * 
+   * @param meal The meal data object containing ingredients.
+   * @returns An Observable with the processed ingredients.
    */
   private processIngredients(meal: any): Observable<{ name: string; measure: string; grams: number }[]> {
     const ingredientObservables: Promise<string>[] = [];
@@ -199,9 +206,9 @@ export class MealDbService {
   }
 
   /**
- * Atualiza o banco de dados de receitas, obtendo as categorias e refeições,
- * traduzindo os dados e armazenando as receitas processadas.
- */
+   * Updates the recipe database by fetching categories and meals, 
+   * translating the data and storing the processed recipes.
+   */
   async updateRecipeDB() {
     try {
       const mealsList: Recipe[] = [];
@@ -210,14 +217,14 @@ export class MealDbService {
       const categoriesResponse = await this.getCategories().toPromise();
       const categories: [{ strCategory: string }] = categoriesResponse.categories ?? [];
 
-      // Processa cada categoria
+      // Process each category
       for (let ic = 0; ic < categories.length; ic++) {
         const category = categories[ic];
         console.log(`categories: (${ic + 1}/${categories.length})`);
         const translatedCategory = await this.processCategory(category.strCategory);
         categoriesList.push(translatedCategory);
 
-        // Obtém as refeições da categoria e processa
+        // Get meals from the category and process
         const meals = await this.getMealsByCategoryAndTranslate(category.strCategory);
         mealsList.push(...meals);
       }
@@ -226,7 +233,7 @@ export class MealDbService {
         this.recipeService.updateRecipeDB(mealsList).subscribe(
           (response => {
             console.log('✅ Receita(s) atualizada(s) com sucesso:', response);
-            return response; // Podes transformar a resposta se necessário
+            return response;
           }));
       }
     } catch (error) {
@@ -235,20 +242,20 @@ export class MealDbService {
   }
 
   /**
-   * Traduz o nome de uma categoria.
-   *
-   * @param categoryName - O nome da categoria a ser traduzido.
-   * @returns O nome traduzido da categoria.
+   * Translates a category name.
+   * 
+   * @param categoryName The category name to translate.
+   * @returns The translated category name.
    */
   private async processCategory(categoryName: string): Promise<string> {
     return await this.translateText(categoryName);
   }
 
   /**
-   * Obtém as refeições de uma categoria e as traduz.
-   *
-   * @param categoryName - O nome da categoria para buscar as refeições.
-   * @returns Uma lista de receitas traduzidas.
+   * Gets meals from a category and translates them.
+   * 
+   * @param categoryName The category name to get meals from.
+   * @returns A list of translated Recipe objects.
    */
   private async getMealsByCategoryAndTranslate(categoryName: string): Promise<Recipe[]> {
     const mealsResponse = await this.getMealsByCategory(categoryName).toPromise();
@@ -272,11 +279,10 @@ export class MealDbService {
     return translatedMeals;
   }
 
-
   /**
    * Returns a promise that resolves after a specified delay.
-   *
-   * @param ms - The delay in milliseconds.
+   * 
+   * @param ms The delay in milliseconds.
    * @returns A promise that resolves after the delay.
    */
   private delay(ms: number) {
