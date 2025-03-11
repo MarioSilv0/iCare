@@ -167,7 +167,6 @@ export class InventoryComponent {
     this.api.getAllIngredients().subscribe(
       (result) => {
         result.forEach((itemName) => { if (!this.inventory.has(itemName)) this.listOfItems.add(itemName); });
-        this.listOfItems.add("café, acordião  !")
         this.filterItems();
       },
       (error) => {

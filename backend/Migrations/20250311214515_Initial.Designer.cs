@@ -12,7 +12,7 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ICareServerContext))]
-    [Migration("20250306215839_Initial")]
+    [Migration("20250311214515_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -185,7 +185,6 @@ namespace backend.Migrations
                         .HasColumnType("real");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<float>("Protein")
@@ -242,10 +241,10 @@ namespace backend.Migrations
                     b.Property<int>("IngredientId")
                         .HasColumnType("int");
 
-                    b.Property<float>("Quantity")
+                    b.Property<float?>("Grams")
                         .HasColumnType("real");
 
-                    b.Property<string>("Unit")
+                    b.Property<string>("Measure")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("RecipeId", "IngredientId");
@@ -259,22 +258,22 @@ namespace backend.Migrations
                         {
                             RecipeId = 1,
                             IngredientId = 1,
-                            Quantity = 3f,
-                            Unit = "g"
+                            Grams = 20f,
+                            Measure = "1 xícara"
                         },
                         new
                         {
                             RecipeId = 1,
                             IngredientId = 2,
-                            Quantity = 3f,
-                            Unit = "g"
+                            Grams = 40f,
+                            Measure = "2 xícara"
                         },
                         new
                         {
                             RecipeId = 2,
                             IngredientId = 3,
-                            Quantity = 3f,
-                            Unit = "kg"
+                            Grams = 100f,
+                            Measure = "5 xícara"
                         });
                 });
 
@@ -310,20 +309,22 @@ namespace backend.Migrations
                     b.Property<string>("Area")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<float>("Calories")
+                        .HasColumnType("real");
+
                     b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Instructions")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Picture")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("YoutubeVideo")
+                    b.Property<string>("UrlVideo")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -335,31 +336,23 @@ namespace backend.Migrations
                         {
                             Id = 1,
                             Area = "Portugal",
+                            Calories = 0f,
                             Category = "Bom",
-                            Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                            Name = "Receita 1 Categoria Bom",
-                            Picture = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTx2qcKAz_hqMRda9TnCrnA1uZEmbAc6vLVQA&s",
-                            YoutubeVideo = "https://www.youtube.com/watch?v=Yd7vDterctQ"
+                            Instructions = "Tu Consegues",
+                            Name = "Algo de Bom",
+                            Picture = "",
+                            UrlVideo = ""
                         },
                         new
                         {
                             Id = 2,
-                            Area = "Espanha",
+                            Area = "Bugs",
+                            Calories = 0f,
                             Category = "Mau",
-                            Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                            Name = "Receita 1 Categoria Mau",
-                            Picture = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-Z4cICBVzRCk4Kc6Lpusdu5GZf0ahzSrLAQ&s",
-                            YoutubeVideo = "https://www.youtube.com/watch?v=Yd7vDterctQ"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Area = "Inglaterra",
-                            Category = "Bom",
-                            Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                            Name = "Receita 2 Categoria Bom",
-                            Picture = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrgfinblYO5lA19bqCuTTNxm3JbQyJcrHgjA&s",
-                            YoutubeVideo = "https://www.youtube.com/watch?v=Yd7vDterctQ"
+                            Instructions = "Boa Sorte",
+                            Name = "Algo de Mau",
+                            Picture = "",
+                            UrlVideo = ""
                         });
                 });
 
@@ -550,7 +543,7 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.Ingredients.RecipeIngredient", b =>
                 {
                     b.HasOne("backend.Models.Ingredients.Ingredient", "Ingredient")
-                        .WithMany("RecipeIngredients")
+                        .WithMany("IngredientRecipes")
                         .HasForeignKey("IngredientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -615,7 +608,7 @@ namespace backend.Migrations
 
             modelBuilder.Entity("backend.Models.Ingredients.Ingredient", b =>
                 {
-                    b.Navigation("RecipeIngredients");
+                    b.Navigation("IngredientRecipes");
 
                     b.Navigation("UserIngredients");
                 });

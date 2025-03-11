@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
-import { RecipeService, Recipe } from '../services/recipes.service';
+import { RecipeService } from '../services/recipes.service';
 import { StorageUtil } from '../utils/StorageUtil';
 import { UsersService, Permissions } from '../services/users.service';
 import { Recipe } from '../../models/recipe';
@@ -143,7 +143,7 @@ export class RecipesComponent {
     this.filteredRecipes = this.filteredRecipes.filter(r => {
       for (const ingredient of r.ingredients) {
         const quantity = this.inventory!.get(ingredient.name) || -1 ;
-        if (!this.inventory!.has(ingredient.name) ||  quantity < ingredient.quantity) return false;
+        if (!this.inventory!.has(ingredient.name) ||  quantity < 0) return false;
       }
 
       return true;

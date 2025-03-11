@@ -66,7 +66,7 @@ namespace backend.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Kcal = table.Column<float>(type: "real", nullable: false),
                     KJ = table.Column<float>(type: "real", nullable: false),
                     Protein = table.Column<float>(type: "real", nullable: false),

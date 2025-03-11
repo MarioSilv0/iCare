@@ -107,11 +107,13 @@ export class ProfileComponent implements OnInit {
         const defaultBirthdate = "2000-01-01";
         const birthdate = (!user.birthdate || user.birthdate === '0001-01-01') ? defaultBirthdate : user.birthdate;
 
+        console.log(user.notifications)
+
         this.profileForm.patchValue({
           picture: user.picture,
           name: user.name,
           email: user.email,
-          birthdate: user.birthdate,
+          birthdate: birthdate,
           height: user.height,
           weight: user.weight,
           notifications: user.notifications,
