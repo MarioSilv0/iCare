@@ -3,6 +3,7 @@ import { debounceTime, Subject } from 'rxjs';
 import { RecipeService, Recipe } from '../services/recipes.service';
 import { StorageUtil } from '../utils/StorageUtil';
 import { UsersService, Permissions } from '../services/users.service';
+import { Recipe } from '../../models/recipe';
 
 @Component({
   selector: 'app-recipes',

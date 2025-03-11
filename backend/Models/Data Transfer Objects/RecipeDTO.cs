@@ -15,7 +15,7 @@ namespace backend.Models.Data_Transfer_Objects
 {
     /// <summary>
     /// Represents a Data Transfer Object (DTO) for recipes, containing relevant details
-    /// such as name, category, ingredients, and nutritional information.
+    /// such as name, category, area, instructions, ingredients, and nutritional information.
     /// </summary>
     public class RecipeDTO
     {
@@ -30,11 +30,6 @@ namespace backend.Models.Data_Transfer_Objects
         public string? Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the description of the recipe.
-        /// </summary>
-        public string? Description { get; set; }
-
-        /// <summary>
         /// Gets or sets the category of the recipe (e.g., "Dessert", "Vegan").
         /// </summary>
         public string? Category { get; set; }
@@ -47,17 +42,17 @@ namespace backend.Models.Data_Transfer_Objects
         /// <summary>
         /// Gets or sets the URL to a YouTube video for the recipe.
         /// </summary>
-        public string? YoutubeVideo { get; set; }
+        public string? UrlVideo { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of instructions of the recipe.
+        /// </summary>
+        public string? Instructions { get; set; }
 
         /// <summary>
         /// Gets or sets the list of ingredients used in the recipe.
         /// </summary>
-        public IEnumerable<ItemDTO>? Ingredients { get; set; }
-
-        /// <summary>
-        /// Indicates whether the recipe is marked as a favorite by the authenticated user.
-        /// </summary>
-        public bool IsFavorite { get; set; }
+        public IEnumerable<RecipeIngredientDTO>? Ingredients { get; set; }
 
         /// <summary>
         /// Gets or sets the total calorie count of the recipe.
@@ -65,31 +60,36 @@ namespace backend.Models.Data_Transfer_Objects
         public float Calories { get; set; }
 
         /// <summary>
+        /// Indicates whether the recipe is marked as a favorite by the authenticated user.
+        /// </summary>
+        public bool IsFavorite { get; set; }
+
+        /// <summary>
+        /// Default constructor for the <c>RecipeDTO</c> class.
+        /// </summary>
+        public RecipeDTO() { }
+
+        /// <summary>
         /// Initializes a new instance of the <c>RecipeDTO</c> class based on a given <c>Recipe</c> object.
         /// </summary>
         /// <param name="recipe">The recipe from which to create the DTO.</param>
-        /// <param name="wantDetails">Indicates whether to include full recipe details.</param>
         /// <param name="userId">The ID of the user to check for favorite status.</param>
-        public RecipeDTO(Recipe recipe, bool wantDetails, string userId)
+        public RecipeDTO(Recipe recipe, string userId)
         {
             if (recipe == null) return;
 
             Picture = recipe.Picture ?? "";
             Name = recipe.Name;
             Category = recipe.Category;
-            IsFavorite = recipe?.UserRecipes?.Any(ur => ur.UserId == userId) ?? false;
-            Ingredients = recipe!.RecipeIngredients.Select(i => new ItemDTO(i));
-
-            if (!wantDetails)
-            {
-                // Divide by 100, because the ingredient are stored with the value for 100g proportions
-                Calories = recipe!.RecipeIngredients.Sum(i => (i.Ingredient.Kcal * i.Quantity) / 100);
-                return;
-            }
-
-            Description = recipe!.Description;
             Area = recipe.Area;
-            YoutubeVideo = recipe.YoutubeVideo;
+            //if (!wantDetails)
+            if (false)
+                return;
+            UrlVideo = recipe.UrlVideo;
+            Instructions = recipe.Instructions;
+            Ingredients = recipe.RecipeIngredients.Select(i => new RecipeIngredientDTO(i));
+            Calories = recipe.Calories;
+            IsFavorite = recipe?.UserRecipes?.Any(ur => ur.UserId == userId) ?? false;
         }
     }
 }

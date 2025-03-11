@@ -23,7 +23,7 @@ namespace backend.Models.Ingredients
         /// <summary>
         /// Gets or sets the name of the ingredient.
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the caloric content of the ingredient in kilocalories (kcal).
@@ -68,6 +68,6 @@ namespace backend.Models.Ingredients
         /// <summary>
         /// Gets or sets the collection of recipe ingredient entries related to this ingredient.
         /// </summary>
-        public ICollection<RecipeIngredient>? RecipeIngredients { get; set; }
+        public ICollection<RecipeIngredient>? IngredientRecipes { get; set; }
     }
 }

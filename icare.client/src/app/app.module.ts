@@ -20,7 +20,6 @@ import { RecipesComponent } from './recipes/recipes.component';
 import { RecipeComponent } from './recipe/recipe.component';
 import { InventoryComponent } from './inventory/inventory.component';
 import { MapKeysPipe } from './pipes/map-keys-pipe';
-import { TacoApiService } from './services/taco-api.service';
 import { ContainerComponent } from './components/container/container.component';
 import { ProfileImageComponent } from './components/profile-image/profile-image.component';
 import { CustomInputComponent } from './components/custom-input/custom-input.component';

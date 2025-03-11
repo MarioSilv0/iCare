@@ -28,13 +28,13 @@ namespace backendtest
         [Fact]
         public void Constructor_WhenRecipeIsNull_DoesNotThrow()
         {
-            var dto = new RecipeDTO(null, true, "UserId");
+            var dto = new RecipeDTO(null, "UserId");
 
             Assert.Null(dto.Name);
-            Assert.Null(dto.Description);
             Assert.Null(dto.Category);
             Assert.Null(dto.Area);
-            Assert.Null(dto.YoutubeVideo);
+            Assert.Null(dto.UrlVideo);
+            Assert.Null(dto.Instructions);
             Assert.Null(dto.Ingredients);
             Assert.False(dto.IsFavorite);
             Assert.Equal(0, dto.Calories);
@@ -53,21 +53,21 @@ namespace backendtest
                 Name = "Test Recipe",
                 RecipeIngredients = new List<RecipeIngredient>
                 {
-                    new RecipeIngredient { Ingredient = new Ingredient { Name = "Arroz", Kcal = 124 }, Quantity = 200 }, // (124 * 200) / 100 = 248
-                    new RecipeIngredient { Ingredient = new Ingredient { Name = "Batata", Kcal = 137 }, Quantity = 150 }  // (137 * 150) / 100 = 205.5
+                    new RecipeIngredient { Ingredient = new Ingredient { Name = "Arroz", Kcal = 124 }, Measure = "medida", Grams = 200 }, // (124 * 200) / 100 = 248
+                    new RecipeIngredient { Ingredient = new Ingredient { Name = "Batata", Kcal = 137 }, Measure = "medida", Grams = 150 }  // (137 * 150) / 100 = 205.5
                 }
             };
             float totalCalories = 453.5f;// 248 + 205.5
 
-            var dto = new RecipeDTO(recipe, false, "UserId");
+            var dto = new RecipeDTO(recipe, "UserId");
 
             Assert.Equal("Test Recipe", dto.Name);
             Assert.Equal(totalCalories, dto.Calories);
             Assert.False(dto.IsFavorite);
-            Assert.Null(dto.Description);
             Assert.Null(dto.Category);
             Assert.Null(dto.Area);
-            Assert.Null(dto.YoutubeVideo);
+            Assert.Null(dto.UrlVideo);
+            Assert.Null(dto.Instructions);
             Assert.Null(dto.Ingredients);
         }
 
@@ -85,26 +85,26 @@ namespace backendtest
             {
                 Id = 1,
                 Name = "Algo de Bom",
-                Description = "Tu Consegues",
                 Category = "Bom",
                 Area = "Portugal",
-                YoutubeVideo = "https://youtube.com",
+                UrlVideo = "https://youtube.com",
+                Instructions = "Tu Consegues",
                 RecipeIngredients = new List<RecipeIngredient>
                 {
-                    new RecipeIngredient { Ingredient = ingredient1, Quantity = 200 },
-                    new RecipeIngredient { Ingredient = ingredient2, Quantity = 150 },
+                    new RecipeIngredient { Ingredient = ingredient1, Measure = "medida", Grams = 200 },
+                    new RecipeIngredient { Ingredient = ingredient2, Measure = "medida", Grams = 150 },
                 }
             };
 
-            var dto = new RecipeDTO(recipe, true, "UserId");
+            var dto = new RecipeDTO(recipe, "UserId");
 
             Assert.Equal("Algo de Bom", dto.Name);
             Assert.Equal(0, dto.Calories);
             Assert.False(dto.IsFavorite);
-            Assert.Equal("Tu Consegues", dto.Description);
+            Assert.Equal("Tu Consegues", dto.Instructions);
             Assert.Equal("Bom", dto.Category);
             Assert.Equal("Portugal", dto.Area);
-            Assert.Equal("https://youtube.com", dto.YoutubeVideo);
+            Assert.Equal("https://youtube.com", dto.UrlVideo);
             Assert.NotNull(dto.Ingredients);
             Assert.Equal(2, dto.Ingredients.Count());
             Assert.Contains(dto.Ingredients, i => i.Name == ingredient1.Name);
@@ -128,7 +128,7 @@ namespace backendtest
                 }
             };
 
-            var dto = new RecipeDTO(recipe, false, "UserId");
+            var dto = new RecipeDTO(recipe, "UserId");
 
             Assert.True(dto.IsFavorite);
         }
@@ -150,7 +150,7 @@ namespace backendtest
                 }
             };
 
-            var dto = new RecipeDTO(recipe, false, "UserId");
+            var dto = new RecipeDTO(recipe, "UserId");
 
             Assert.False(dto.IsFavorite);
         }

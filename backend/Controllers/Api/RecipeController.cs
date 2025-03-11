@@ -9,6 +9,8 @@
 
 using backend.Data;
 using backend.Models.Data_Transfer_Objects;
+using backend.Models.Ingredients;
+using backend.Models.Recipes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,7 +48,7 @@ namespace backend.Controllers.Api
         /// An <c>ActionResult</c> containing a list of <c>RecipeDTO</c> objects 
         /// if recipes are found, or an error response otherwise.
         /// </returns>
-        [HttpGet("")]
+        [HttpGet]
         public async Task<ActionResult<List<RecipeDTO>>> Get()
         {
             try
@@ -57,9 +59,8 @@ namespace backend.Controllers.Api
                 var recipes = await _context.Recipes.AsNoTracking()
                                                     .Include(r => r.RecipeIngredients)
                                                     .ThenInclude(ri => ri.Ingredient)
-                                                    .Select(r => new RecipeDTO(r, false, id))
+                                                    .Select(r => new RecipeDTO(r, id))
                                                     .ToListAsync();
-
                 return Ok(recipes);
             }
             catch (Exception ex)
@@ -91,7 +92,7 @@ namespace backend.Controllers.Api
                                                    .FirstOrDefaultAsync(r => r.Name == recipeName);
                 if (recipe == null) return NotFound($"Recipe '{recipe}' not found.");
 
-                var publicRecipe = new RecipeDTO(recipe!, true, id);
+                var publicRecipe = new RecipeDTO(recipe!, id);
 
                 return Ok(publicRecipe);
             }
@@ -99,6 +100,89 @@ namespace backend.Controllers.Api
             {
                 _logger.LogError(ex, "Error retrieving recipe {RecipeName}", recipeName);
                 return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
+        /// <summary>
+        /// Updates the list of recipes in the database, linking them with existing ingredients.
+        /// </summary>
+        /// <param name="recipes">The list of recipes to update.</param>
+        /// <returns>An HTTP response indicating success or failure.</returns>
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateRecipes([FromBody] List<RecipeDTO> recipes)
+        {
+            if (recipes == null || recipes.Count == 0)
+                return BadRequest("No recipes provided.");
+
+            try
+            {
+                var existingIngredients = await _context.Ingredients.ToListAsync();
+                var existingRecipes = await _context.Recipes.Include(r => r.RecipeIngredients).ToListAsync();
+
+                foreach (var recipeDto in recipes)
+                {
+                    if (recipeDto == null) continue;
+
+                    var existingRecipe = existingRecipes.FirstOrDefault(r => r.Name == recipeDto.Name);
+
+                    if (existingRecipe == null)
+                    {
+                        var newRecipe = new Recipe
+                        {
+                            Name = recipeDto.Name,
+                            Category = recipeDto.Category,
+                            Area = recipeDto.Area,
+                            Picture = recipeDto.Picture,
+                            UrlVideo = recipeDto.UrlVideo,
+                            Instructions = recipeDto.Instructions,
+                            RecipeIngredients = new List<RecipeIngredient>(),
+                            Calories = 0
+                        };
+
+                        foreach (var ingredientDto in recipeDto.Ingredients)
+                            ProcessIngredient(existingIngredients, newRecipe, ingredientDto);
+                        _context.Recipes.Add(newRecipe);
+                    }
+                    else
+                    {
+                        existingRecipe.Category = recipeDto.Category;
+                        existingRecipe.Area = recipeDto.Area;
+                        existingRecipe.Picture = recipeDto.Picture;
+                        existingRecipe.UrlVideo = recipeDto.UrlVideo;
+                        existingRecipe.Instructions = recipeDto.Instructions;
+                        existingRecipe.Calories = recipeDto.Calories;
+
+                        existingRecipe.RecipeIngredients.Clear();
+                        foreach (var ingredientDto in recipeDto.Ingredients)
+                            ProcessIngredient(existingIngredients, existingRecipe, ingredientDto);
+                        _context.Recipes.Update(existingRecipe);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                return Ok("Recipes updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating recipes.");
+                return StatusCode(500, "An error occurred while updating the recipes.");
+            }
+        }
+
+        private static void ProcessIngredient(List<Ingredient> existingIngredients, Recipe recipe, RecipeIngredientDTO ingredientDto)
+        {
+            var existingIngredient = existingIngredients.FirstOrDefault(i => i.Name == ingredientDto.Name);
+            if (existingIngredient != null)
+            {
+                var recipeIngredient = new RecipeIngredient
+                {
+                    Recipe = recipe,
+                    Ingredient = existingIngredient,
+                    Measure = ingredientDto.Measure,
+                    Grams = ingredientDto.Grams
+                };
+
+                recipe.RecipeIngredients.Add(recipeIngredient);
             }
         }
     }

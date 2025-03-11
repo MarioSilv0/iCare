@@ -1,5 +1,6 @@
 export const env = {
   production: false,
   tacoApiUrl: "/taco",
-  mealDbApiUrl: "/themealdb"
+  mealDbApiUrl: "/themealdb",
+  translateUrl: "/translate"
 };

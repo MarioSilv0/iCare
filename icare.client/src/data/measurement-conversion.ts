@@ -1,0 +1,20 @@
+export const MEASUREMENT_CONVERSION: Record<string, number> = {
+  "xícara": 240,
+  "xícara (líquido)": 240,
+  "xícara (seca)": 200,
+  "colher de sopa": 15,
+  "colher de sopa (seca)": 10,
+  "colher de chá": 5,
+  "colher de chá (seca)": 3,
+  "copo": 200,
+  "ml": 1,
+  "litro": 1000,
+  "onça": 28.35,
+  "onça líquida": 29.57,
+  "galão": 3840,
+  "grama": 1,
+  "kg": 1000,
+  "pitada": 0.5,
+  "punhado": 10,
+  "fatias": 30
+};

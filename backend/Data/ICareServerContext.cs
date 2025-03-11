@@ -95,7 +95,7 @@ namespace backend.Data
                 .HasForeignKey(ui => ui.IngredientId);
             modelBuilder.Entity<RecipeIngredient>()
                 .HasOne(ri => ri.Ingredient)
-                .WithMany(i => i.RecipeIngredients)
+                .WithMany(i => i.IngredientRecipes)
                 .HasForeignKey(ri => ri.IngredientId);
             modelBuilder.Entity<UserRecipe>()
                 .HasOne(ur => ur.Recipe)
@@ -109,14 +109,13 @@ namespace backend.Data
                 new Ingredient { Id = 3, Name = "Carne", Kcal = 137, KJ = 175, Protein = 1.6f, Carbohydrates = 35.4f, Lipids = 2, Fibers = 103, Category = "Carne" }
             );
             modelBuilder.Entity<Recipe>().HasData(
-                new Recipe { Id = 1, Picture = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTx2qcKAz_hqMRda9TnCrnA1uZEmbAc6vLVQA&s", Name = "Receita 1 Categoria Bom", Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", Category = "Bom", Area = "Portugal", YoutubeVideo = "https://www.youtube.com/watch?v=Yd7vDterctQ" },
-                new Recipe { Id = 2, Picture = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-Z4cICBVzRCk4Kc6Lpusdu5GZf0ahzSrLAQ&s", Name = "Receita 1 Categoria Mau", Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", Category = "Mau", Area = "Espanha", YoutubeVideo = "https://www.youtube.com/watch?v=Yd7vDterctQ" },
-                new Recipe { Id = 3, Picture = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrgfinblYO5lA19bqCuTTNxm3JbQyJcrHgjA&s", Name = "Receita 2 Categoria Bom", Description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", Category = "Bom", Area = "Inglaterra", YoutubeVideo = "https://www.youtube.com/watch?v=Yd7vDterctQ" }
+                new Recipe { Id = 1, Picture = "", Name = "Algo de Bom", Instructions = "Tu Consegues", Category = "Bom", Area = "Portugal", UrlVideo = "" },
+                new Recipe { Id = 2, Picture = "", Name = "Algo de Mau", Instructions = "Boa Sorte", Category = "Mau", Area = "Bugs", UrlVideo = "" }
             );
             modelBuilder.Entity<RecipeIngredient>().HasData(
-                new RecipeIngredient { RecipeId = 1, Quantity = 3, Unit = "g", IngredientId = 1 },
-                new RecipeIngredient { RecipeId = 1, Quantity = 3, Unit = "g", IngredientId = 2 },
-                new RecipeIngredient { RecipeId = 2, Quantity = 3, Unit = "kg", IngredientId = 3 }
+                new RecipeIngredient { RecipeId = 1, Measure = "1 xícara", Grams = 20, IngredientId = 1 },
+                new RecipeIngredient { RecipeId = 1, Measure = "2 xícara", Grams = 40, IngredientId = 2 },
+                new RecipeIngredient { RecipeId = 2, Measure = "5 xícara", Grams = 100, IngredientId = 3 }
             );
         }
     }
