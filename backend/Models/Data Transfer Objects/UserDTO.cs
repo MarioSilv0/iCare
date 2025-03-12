@@ -34,7 +34,7 @@ namespace backend.Models
         /// <summary>
         /// Gets or sets the user's birthdate.
         /// </summary>
-        public DateOnly Birthdate { get; set; }
+        public DateTime Birthdate { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the user has notifications enabled.

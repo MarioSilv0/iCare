@@ -11,7 +11,6 @@
 using backend.Models.Ingredients;
 using backend.Models.Recipes;
 using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations;
 
 namespace backend.Models
 {
@@ -36,7 +35,7 @@ namespace backend.Models
         /// <summary>
         /// Gets or sets the user's birthdate.
         /// </summary>
-        public DateOnly Birthdate { get; set; } = new DateOnly();
+        public DateTime Birthdate { get; set; } = new DateTime().Date.AddYears(-10);
 
         /// <summary>
         /// Indicates whether the user has enabled notifications.
@@ -46,7 +45,7 @@ namespace backend.Models
         /// <summary>
         /// Gets or sets the user's height in meters.
         /// </summary>
-        public float Height { get; set; } = 0;
+        public float Height { get; set; } = 0f;
 
         /// <summary>
         /// Gets or sets the user's weight in kilograms.
@@ -71,7 +70,7 @@ namespace backend.Models
         /// <summary>
         /// Gets or sets the user's favorite recipes.
         /// </summary>
-        public ICollection<UserRecipe>? favoriteRecipes { get; set; }
+        public ICollection<UserRecipe>? FavoriteRecipes { get; set; }
 
         /// <summary>
         /// Gets or sets the logs associated with the user.
@@ -84,13 +83,13 @@ namespace backend.Models
         /// <param name="model">The public user model containing updated user data.</param>
         public void UpdateFromModel(UserDTO model)
         {
-            if(Picture != model.Picture && !string.IsNullOrWhiteSpace(model.Picture))
+            if (Picture != model.Picture && !string.IsNullOrWhiteSpace(model.Picture))
                 Picture = model.Picture;
 
-            if(Name != model.Name && !string.IsNullOrWhiteSpace(model.Name))
+            if (Name != model.Name && !string.IsNullOrWhiteSpace(model.Name))
                 Name = model.Name;
 
-            if(Email != model.Email && !string.IsNullOrWhiteSpace(model.Email) && this.IsValidEmail(model.Email))
+            if (Email != model.Email && !string.IsNullOrWhiteSpace(model.Email) && this.IsValidEmail(model.Email))
                 Email = model.Email;
 
             if (Birthdate != model.Birthdate)
@@ -102,15 +101,15 @@ namespace backend.Models
 
             Notifications = model.Notifications;
 
-            float roundedHeight = (float) Math.Round(model.Height, 1);
+            float roundedHeight = (float)Math.Round(model.Height, 1);
             if (Height != roundedHeight && roundedHeight > 0 && roundedHeight < 3)
                 Height = roundedHeight;
 
-            float roundedWeight = (float) Math.Round(model.Weight, 1);
+            float roundedWeight = (float)Math.Round(model.Weight, 1);
             if (Weight != roundedWeight && roundedWeight > 0 && roundedWeight < 700)
                 Weight = roundedWeight;
 
-            if(model.Preferences != Preferences)
+            if (model.Preferences != Preferences)
                 Preferences = model.Preferences;
 
             if (model.Restrictions != Restrictions)
@@ -122,7 +121,7 @@ namespace backend.Models
         /// </summary>
         /// <param name="birthdate">The user's birthdate.</param>
         /// <returns>The calculated age of the user.</returns>
-        private int CaculateAge(DateOnly birthdate)
+        private int CaculateAge(DateTime birthdate)
         {
             int age = DateTime.Today.Year - birthdate.Year;
 

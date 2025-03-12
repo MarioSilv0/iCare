@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using backend.Models;
 using backend.Models.Ingredients;
 using backend.Models.Recipes;
+using backend.Models.Goals;
 
 namespace backend.Data
 {
@@ -60,6 +61,11 @@ namespace backend.Data
         public DbSet<UserRecipe> UserRecipes { get; set; } = default!;
 
         /// <summary>
+        /// Represents the collection of user-specific goals in the database.
+        /// </summary>
+        public DbSet<Goal> Goals { get; set; }
+
+        /// <summary>
         /// Configures the model, including relationships, composite keys, and initial data seeding.
         /// </summary>
         /// <param name="modelBuilder">The model builder to configure the model.</param>
@@ -86,7 +92,7 @@ namespace backend.Data
                 .HasForeignKey(ri => ri.RecipeId);
             modelBuilder.Entity<UserRecipe>()
                 .HasOne(ur => ur.User)
-                .WithMany(u => u.favoriteRecipes)
+                .WithMany(u => u.FavoriteRecipes)
                 .HasForeignKey(uf => uf.UserId);
 
             modelBuilder.Entity<UserIngredient>()
