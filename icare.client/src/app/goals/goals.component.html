@@ -74,56 +74,43 @@
                id="ipt-goal-type"
                (click)="toggleGoalType()" />
       </div>
-      <form action="" class="goal-form shadow">
+      
         <div *ngIf="goalType === 'Automática'">
 
 
+          <form class="goal-form shadow">
 
-          <div *ngFor="let goal of goals" class="goals-container">
-
-
-            <label for="ipt-goal-{{ goal.name.replace(' ', '-') }}">
-              {{ goal.name }}
-            </label>
-
-
-            <input
-               type="radio"
-               [(ngModel)]="selectedGoal"
-               name="ipt-goal-group"  
-               id="ipt-goal-{{ goal.name.replace(' ', '-') }}"
-               [value]="goal.name"
-            />
-          </div>
-
-
-
-
+            <div *ngFor="let goal of goals" class="goals-container">
+              <label for="ipt-goal-{{ goal.name.replace(' ', '-') }}">
+                {{ goal.name }}
+              </label>
+              <input type="radio"
+                     [(ngModel)]="selectedGoal"
+                     name="ipt-goal-group"
+                     id="ipt-goal-{{ goal.name.replace(' ', '-') }}"
+                     [value]="goal.name" required />
+            </div>
+            <button class="bt-add-goal" (click)="addGoal()" type="submit">Adicionar meta</button>
+          </form>
         </div>
+        
         <div *ngIf="goalType === 'Manual'">
-          <div class="goals-inputs-container">
-            <label for="ipt-calorias-diarias">Calorias diárias (kcal)</label>
-            <input id="ipt-calorias-diarias"
-                   type="number"
-                   min="0"
-                   [(ngModel)]="calorias"
-                   value="0"
-                   required />
-          </div>
-          <!--<div class="goals-inputs-container">
-      <label for="ipt-goal-duracao">Duração (dias)</label>
-      <input id="ipt-goal-duracao"
-             type="number"
-             min="0"
-             value="0"
-             required />
-    </div>-->
-          <div>
-            <app-calendar (dates)="receiveData($event)"></app-calendar>
-          </div>
+          <form class="goal-form shadow">
+            <div class="mx-0 goals-inputs-container">
+              <label for="ipt-calorias-diarias">Calorias diárias (kcal)</label>
+              <input id="ipt-calorias-diarias"
+                     type="number"
+                     min="0"
+                     [(ngModel)]="calories"
+                     value="{{calories}}"
+                     required />
+              <div class="mx-0 w-100">
+                <app-calendar (dates)="receiveData($event)"></app-calendar>
+              </div>
+            </div>
+            <button class="bt-add-goal" (click)="addGoal()" type="submit">Adicionar meta</button>
+          </form> 
         </div>
-        <button class="bt-add-goal" (click)="addGoal()">Adicionar meta</button>
-      </form>
     </div>
   </div>
   

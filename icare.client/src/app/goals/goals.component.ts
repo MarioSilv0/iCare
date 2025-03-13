@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-goals',
@@ -8,7 +9,6 @@ import { Component } from '@angular/core';
 })
 export class GoalsComponent {
   goalType: string;
-  calorias: number = 0
   userGoals?: Goal[]
   goals: Goal[] = [
     { name: 'Perder Peso' },
@@ -16,9 +16,10 @@ export class GoalsComponent {
     { name: 'Ganhar Peso' },
   ]; // ler da base de dados
   selectedGoal: string = ''
+  calories: number = 0
   startDate: string = ''
   endDate: string = ''
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private snack: MatSnackBar) {
     this.goalType = 'Manual';
   }
 
@@ -45,11 +46,31 @@ export class GoalsComponent {
       if (!this.selectedGoal) return
       meta["goal"] = this.selectedGoal.replace(" ","-")
     } else {
-      meta["calories"] = this.calorias
+      meta["calories"] = this.calories
       meta["start"] = this.startDate
       meta["end"] = this.endDate
     }
-    alert(`meta adicionada ${JSON.stringify(meta)}`)
+
+    try {
+      let url = '' // discutir endpoint
+      this.http.post(url, meta)
+      console.log(meta)
+      this.snack.open("Meta criada com sucesso.", undefined, {
+        duration: 2000,
+        panelClass: ['success-snackbar']
+      })
+    } catch (e) {
+      this.snack.open("Erro ao tentar criar meta.", undefined, {
+        duration: 2000,
+        panelClass: ['fail-snackbar']
+      })
+    } finally {
+      this.selectedGoal = ''
+      this.calories = 0
+      this.startDate = ''
+      this.endDate = ''
+    }
+
   }
 
   receiveData(data: DatesEmiter) {
