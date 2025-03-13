@@ -11,20 +11,24 @@
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { StorageUtil } from '../utils/StorageUtil';
 
 export const PROFILE: string = '/api/User';
 export const INVENTORY: string = '/api/Inventory';
 
 
 /**
- * The `UsersService` class provides methods for interacting with the user profile and inventory.
- * It allows retrieving, updating, and managing user details and inventory items.
+ * The `UsersService` class provides methods for interacting with the user profile, inventory, etc.
  */
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService {
+  private userSubject = new BehaviorSubject< { picture: string, name: string } | null>(null);
+  // Observable for components to listen for user updates
+  public user$ = this.userSubject.asObservable();
   constructor(private http: HttpClient) { }
 
   /**
@@ -38,15 +42,24 @@ export class UsersService {
 
   /**
    * Updates the user's profile data on the API.
-   * Converts `Set` properties (preferences, restrictions, categories) into arrays for proper serialization.
    * 
-   * @param {User} user - The updated user object.
-   * @returns {Observable<User>} An observable containing the updated user data.
+   * This method ensures that `Set` properties (`preferences`, `restrictions`, `categories`) are converted into arrays 
+   * for proper serialization before sending the data to the server. Additionally, it emits an update notification 
+   * through `userSubject`, allowing other components to react to changes in the user's name and profile picture.
+   * 
+   * @param {User} user - The updated user object containing new profile details.
+   * @returns {Observable<User>} An observable that emits the updated user data upon successful API response.
    */
   updateUser(user: User): Observable<User> {
     const u = { ...user, preferences: Array.from(user.preferences), restrictions: Array.from(user.restrictions), categories: Array.from(user.categories) }
 
-    return this.http.put<User>(PROFILE, u);
+    return this.http.put<User>(PROFILE, u).pipe(
+      tap(updatedUser => {
+        const currentUser = this.userSubject.value;
+        if (!currentUser || currentUser.name !== updatedUser.name || currentUser.picture !== updatedUser.picture)
+          this.userSubject.next({ name: updatedUser.name, picture: updatedUser.picture });
+      })
+    );
   }
 
   /**
@@ -77,6 +90,48 @@ export class UsersService {
   removeInventory(items: string[]): Observable<Item[]> {
     return this.http.delete<Item[]>(INVENTORY, { body: items });
   }
+
+  /**
+   * Retrieves the user's permissions from `localStorage`.
+   * 
+   * @returns {Permissions | null} The stored permissions if available, otherwise `null`.
+   */
+  getPermissions(): Permissions | null {
+    return StorageUtil.getFromStorage<Permissions>('permissions');
+  }
+
+  /**
+   * Fetches the user's permissions from the API and stores them in `localStorage`.
+   * 
+   * @returns {Observable<boolean>} An observable that emits the retrieved permission status.
+   */
+  fetchPermissions(): Observable<Permissions> {
+    return this.http.get<Permissions>(`${PROFILE}/permissions`).pipe(
+      tap(permissions => this.setPermissions(permissions))
+    );
+  }
+
+  setPermissions(updatedPermissions: Partial<Permissions>): void {
+    const current = this.getPermissions();
+    const newPermissions = { ...current, ...updatedPermissions };
+
+    StorageUtil.saveToStorage('permissions', newPermissions);
+  }
+
+  getPreferences(): Observable<string[]> {
+    return this.http.get<string[]>(`${PROFILE}/preferences`);
+  }
+
+  getRestrictions(): Observable<string[]> {
+    return this.http.get<string[]>(`${PROFILE}/restrictions`);
+  }
+}
+
+export interface Permissions {
+  notifications: boolean;
+  preferences: boolean;
+  restrictions: boolean;
+  inventory: boolean;
 }
 
 export interface Item {
@@ -90,7 +145,7 @@ export interface User {
   name: string;
   email: string;
   birthdate: string;
-  notifications: Boolean;
+  notifications: boolean;
   height: number;
   weight: number;
   preferences: Set<string>;

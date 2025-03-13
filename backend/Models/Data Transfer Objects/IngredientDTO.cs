@@ -61,6 +61,11 @@ namespace backend.Models.Data_Transfer_Objects
         public string? Category { get; set; }
 
         /// <summary>
+        /// Default constructor for the <c>IngredientDTO</c> class.
+        /// </summary>
+        public IngredientDTO() { }
+
+        /// <summary>
         /// Initializes a new instance of the <c>IngredientDTO</c> class using an <see cref="Ingredient"/> object.
         /// This constructor extracts relevant ingredient details for data transfer.
         /// </summary>

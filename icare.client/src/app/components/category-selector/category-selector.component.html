@@ -1,0 +1,21 @@
+<div class="category-selector-wrapper">
+  <div class="input-line d-flex gap-1 bg-bege-contrast p-1 rounded">
+    <input class="form-control"
+           [attr.list]="listId"
+           [placeholder]="placeholder"
+           (change)="onAdd($event)"
+           (keydown.enter)="onAdd($event)" />
+    <datalist [id]="listId">
+      <option *ngFor="let o of options" [value]="o">{{ o }}</option>
+    </datalist>
+  </div>
+
+  <div class="selected-items">
+    <button type="button"
+            *ngFor="let s of selectedItems"
+            (click)="onRemove(s)"
+            class="selected-item shadow">
+      {{ s }}
+    </button>
+  </div>
+</div>

@@ -95,7 +95,7 @@ namespace backend.Data
                 .HasForeignKey(ui => ui.IngredientId);
             modelBuilder.Entity<RecipeIngredient>()
                 .HasOne(ri => ri.Ingredient)
-                .WithMany(i => i.RecipeIngredients)
+                .WithMany(i => i.IngredientRecipes)
                 .HasForeignKey(ri => ri.IngredientId);
             modelBuilder.Entity<UserRecipe>()
                 .HasOne(ur => ur.Recipe)
@@ -109,13 +109,13 @@ namespace backend.Data
                 new Ingredient { Id = 3, Name = "Carne", Kcal = 137, KJ = 175, Protein = 1.6f, Carbohydrates = 35.4f, Lipids = 2, Fibers = 103, Category = "Carne" }
             );
             modelBuilder.Entity<Recipe>().HasData(
-                new Recipe { Id = 1, Picture = "", Name = "Algo de Bom", Description = "Tu Consegues", Category = "Bom", Area = "Portugal", YoutubeVideo = "" },
-                new Recipe { Id = 2, Picture = "", Name = "Algo de Mau", Description = "Boa Sorte", Category = "Mau", Area = "Bugs", YoutubeVideo = "" }
+                new Recipe { Id = 1, Picture = "", Name = "Algo de Bom", Instructions = "Tu Consegues", Category = "Bom", Area = "Portugal", UrlVideo = "" },
+                new Recipe { Id = 2, Picture = "", Name = "Algo de Mau", Instructions = "Boa Sorte", Category = "Mau", Area = "Bugs", UrlVideo = "" }
             );
             modelBuilder.Entity<RecipeIngredient>().HasData(
-                new RecipeIngredient { RecipeId = 1, Quantity = 3, Unit = "g", IngredientId = 1 },
-                new RecipeIngredient { RecipeId = 1, Quantity = 3, Unit = "g", IngredientId = 2 },
-                new RecipeIngredient { RecipeId = 2, Quantity = 3, Unit = "kg", IngredientId = 3 }
+                new RecipeIngredient { RecipeId = 1, Measure = "1 xícara", Grams = 20, IngredientId = 1 },
+                new RecipeIngredient { RecipeId = 1, Measure = "2 xícara", Grams = 40, IngredientId = 2 },
+                new RecipeIngredient { RecipeId = 2, Measure = "5 xícara", Grams = 100, IngredientId = 3 }
             );
         }
     }

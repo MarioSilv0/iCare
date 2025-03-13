@@ -5,10 +5,11 @@
 /// <author>João Morais  - 202001541</author>
 /// <author>Luís Martins - 202100239</author>
 /// <author>Mário Silva  - 202000500</author>
-/// <date>Last Modified: 2025-03-01</date>
+/// <date>Last Modified: 2025-03-05</date>
 
 using backend.Data;
 using backend.Models;
+using backend.Models.Data_Transfer_Objects;
 using backend.Models.Extensions;
 using backend.Models.Recipes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -69,6 +70,85 @@ namespace backend.Controllers.Api
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving user");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the permissions associated with the authenticated user.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="ActionResult"/> containing a <see cref="PermissionsDTO"/> with the user's permissions,
+        /// or an error response if the request fails.
+        /// </returns>
+        [HttpGet("permissions")]
+        public async Task<ActionResult<PermissionsDTO>> GetPermissions()
+        {
+            try
+            {
+                var id = User.FindFirst("UserId")?.Value;
+                if (id == null) return Unauthorized("User ID not found in token.");
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+                if (user == null) return NotFound();
+
+                var permissions = new PermissionsDTO
+                {
+                    Notifications = user.Notifications,
+                    Preferences = user.Preferences?.Any() ?? false,
+                    Restrictions = user.Restrictions?.Any() ?? false,
+                    Inventory = user.UserIngredients?.Any() ?? false,
+                };
+
+                return Ok(permissions);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
+        [HttpGet("preferences")]
+        public async Task<ActionResult<PermissionsDTO>> GetPreferences()
+        {
+            try
+            {
+                var id = User.FindFirst("UserId")?.Value;
+                if (id == null) return Unauthorized("User ID not found in token.");
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+                if (user == null) return NotFound();
+
+                var preferences = user.Preferences;
+
+                return Ok(preferences);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user's preferences");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
+        [HttpGet("restrictions")]
+        public async Task<ActionResult<PermissionsDTO>> GetRestrictions()
+        {
+            try
+            {
+                var id = User.FindFirst("UserId")?.Value;
+                if (id == null) return Unauthorized("User ID not found in token.");
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+                if (user == null) return NotFound();
+
+                var restrictions = user.Restrictions;
+
+                return Ok(restrictions);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user's restrictions");
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }

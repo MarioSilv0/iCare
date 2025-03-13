@@ -16,7 +16,7 @@ import { Observable, catchError, throwError } from 'rxjs';
 const INGREDIENT: string = '/api/Ingredient/';
 
 /**
- * The `ApiService` class provides methods for fetching ingredient data from the backend API.
+ * The `IngredientService` class provides methods for fetching ingredient data from the backend API.
  * It allows retrieval of all ingredient names as well as detailed information for specific ingredients.
  */
 @Injectable({

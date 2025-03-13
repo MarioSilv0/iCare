@@ -1,0 +1,10 @@
+<div class="custom-input-container" [ngStyle]="containerStyles">
+  <label *ngIf="name">{{ name }}</label>
+  <input [type]="type"
+         [id]="id"
+         [value]="value"
+         [placeholder]="placeholder"
+         [disabled]="disabled"
+         (input)="onInputChange($event)"
+         [ngStyle]="inputStyles" />
+</div>

@@ -336,6 +336,13 @@ td input[type="checkbox"] {
   background-color: var(--bg-vermelho-contrast);
 }
 
+.delete-button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 .trash-icon {
   margin-left: auto;
 }
