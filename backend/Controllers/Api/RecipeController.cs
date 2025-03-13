@@ -59,7 +59,8 @@ namespace backend.Controllers.Api
                 var recipes = await _context.Recipes.AsNoTracking()
                                                     .Include(r => r.RecipeIngredients)
                                                     .ThenInclude(ri => ri.Ingredient)
-                                                    .Select(r => new RecipeDTO(r, id))
+                                                    .Include(r => r.UserRecipes)
+                                                    .Select(r => new RecipeDTO(r, false, id))
                                                     .ToListAsync();
                 return Ok(recipes);
             }

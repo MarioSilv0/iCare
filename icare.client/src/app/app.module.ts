@@ -20,12 +20,15 @@ import { RecipesComponent } from './recipes/recipes.component';
 import { RecipeComponent } from './recipe/recipe.component';
 import { InventoryComponent } from './inventory/inventory.component';
 import { MapKeysPipe } from './pipes/map-keys-pipe';
-import { ContainerComponent } from './components/container/container.component';
-import { ProfileImageComponent } from './components/profile-image/profile-image.component';
-import { CustomInputComponent } from './components/custom-input/custom-input.component';
-import { CustomCheckboxComponent } from './components/custom-checkbox/custom-checkbox.component';
-import { CategorySelectorComponent } from './components/category-selector/category-selector.component';
-import { SearchBarComponent } from './components/search-bar/search-bar.component';
+import { TacoApiService } from './services/taco-api.service';
+import { GoalsComponent } from './goals/goals.component';
+import { CalendarComponent } from './calendar/calendar.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
+
 
 @NgModule({
   declarations: [
@@ -45,12 +48,8 @@ import { SearchBarComponent } from './components/search-bar/search-bar.component
     RecipeComponent,
     InventoryComponent,
     MapKeysPipe,
-    ContainerComponent,
-    ProfileImageComponent,
-    CustomInputComponent,
-    CustomCheckboxComponent,
-    CategorySelectorComponent,
-    SearchBarComponent,
+    GoalsComponent,
+    CalendarComponent,
   ],
   imports: [
     BrowserModule,
@@ -58,6 +57,14 @@ import { SearchBarComponent } from './components/search-bar/search-bar.component
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    BrowserModule,
+    BrowserAnimationsModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatNativeDateModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

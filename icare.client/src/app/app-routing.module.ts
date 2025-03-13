@@ -8,15 +8,20 @@ import { LoginComponent } from './auth/login/login.component';
 import { RecoverPasswordComponent } from './auth/recover-password/recover-password.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
+import { GoalsComponent } from './goals/goals.component';
 import { HomeComponent } from './home/home.component';
-import { ProfileComponent } from './profile/profile.component';
-import { RecipesComponent } from './recipes/recipes.component';
-import { RecipeComponent } from './recipe/recipe.component';
 import { InventoryComponent } from './inventory/inventory.component';
-
+import { ProfileComponent } from './profile/profile.component';
+import { RecipeComponent } from './recipe/recipe.component';
+import { RecipesComponent } from './recipes/recipes.component';
 
 const routes: Routes = [
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuard], pathMatch: 'full' },
+  {
+    path: 'home',
+    component: HomeComponent,
+    canActivate: [AuthGuard],
+    pathMatch: 'full',
+  },
   {
     path: 'admin',
     component: AdminComponent,
@@ -35,8 +40,17 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   { path: 'recipes', component: RecipesComponent, canActivate: [AuthGuard] },
-  { path: 'recipe/:name', component: RecipeComponent, canActivate: [AuthGuard] },
-  { path: 'inventory', component: InventoryComponent, canActivate: [AuthGuard] },
+  {
+    path: 'recipe/:name',
+    component: RecipeComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'inventory',
+    component: InventoryComponent,
+    canActivate: [AuthGuard],
+  },
+  { path: 'goal', component: GoalsComponent },
   { path: '**', redirectTo: 'home' },
 ];
 

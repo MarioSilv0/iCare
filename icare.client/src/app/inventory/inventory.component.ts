@@ -10,6 +10,7 @@
  */
 
 import { Component } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { debounceTime, Subject } from 'rxjs';
 import { IngredientService, Ingredient } from '../services/ingredients.service';
 import {
@@ -53,7 +54,7 @@ export class InventoryComponent {
 
   public units: string[] = ['g', 'kg'];
 
-  constructor(private service: UsersService, private api: IngredientService) {
+  constructor(private service: UsersService, private api: IngredientService, private snackbar: MatSnackBar) {
     this.searchSubject
       .pipe(debounceTime(300))
       .subscribe(() => this.filterItems());
@@ -290,6 +291,8 @@ export class InventoryComponent {
           this.listOfItems.delete(name);
         }
 
+        this.createToast(addedItems, `Adicionou # com sucesso!`, undefined, 2000, 'success-snackbar')
+
         this.selectedItems.clear();
         this.filterItems();
 
@@ -379,6 +382,8 @@ export class InventoryComponent {
           this.expandedItems.delete(name);
         }
 
+        this.createToast(deletedItems, `Removeu # com sucesso!`, undefined, 2000, 'success-snackbar')
+
         if (!itemsToDelete) this.selectedItemsInInventory.clear();
         this.filterItems();
 
@@ -406,6 +411,25 @@ export class InventoryComponent {
       const modal = new bootstrap.Modal(modalElement);
       modal.show();
     }
+  }
+
+  /**
+   * Opens a Material ToastBar
+   * @param arr elements to show on the toast notification
+   * @param message message to show on the toastbar, use '#' as a placeholder for the items
+   * @param action action in the toastbar, use undefined if none is defined
+   * @param duration duration in miliseconds
+   * @param ownClass styling class
+   */
+  createToast(arr: any[], message: string, action: "Close" | undefined, duration: number, ownClass: string) {
+    arr.forEach((item, i) => {
+      setTimeout(() => {
+        this.snackbar.open(message.replace("#", `${item.name || item}`), action, {
+          duration,
+          panelClass: [ownClass],
+        })
+      }, i * duration)
+    })
   }
 
   /**

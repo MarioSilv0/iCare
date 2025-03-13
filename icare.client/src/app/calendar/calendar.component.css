@@ -1,0 +1,20 @@
+
+.date-picker-container {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.date-picker-container label{
+    margin: 0;
+    align-self: flex-start;
+}
+
+.date-picker-container input[type="date"]{
+    padding: 0 5px;
+    border: none;
+    outline: none;
+    background-color: var(--bg-bege);
+    cursor: pointer;
+    height: 30px;
+}

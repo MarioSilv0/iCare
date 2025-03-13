@@ -35,7 +35,8 @@ progress {
   padding: 15px;
   border-radius: 8px;
   margin: 0;
-  height: 500px;
+  min-height: fit-content;
+  max-height: 500px;
 }
 
 .search-bar {

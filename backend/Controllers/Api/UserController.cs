@@ -11,6 +11,7 @@ using backend.Data;
 using backend.Models;
 using backend.Models.Data_Transfer_Objects;
 using backend.Models.Extensions;
+using backend.Models.Recipes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -66,7 +67,7 @@ namespace backend.Controllers.Api
 
                 return Ok(new UserDTO(user, null, categories));
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving user");
                 return StatusCode(500, "An error occurred while processing your request.");
@@ -214,6 +215,41 @@ namespace backend.Controllers.Api
             if (email == null) return false;
 
             return !await _context.Users.AnyAsync(u => u.Email == email);
+        }
+
+
+        [HttpPut("Recipe/{recipeName}")]
+        public async Task<ActionResult> ToggleFavoriteRecipe(string recipeName)
+        {
+            var id = User.FindFirst("UserId")?.Value;
+            if (id == null) return Unauthorized("User ID not found in token.");
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null) return NotFound();
+
+            try
+            {
+                var recipe = _context.Recipes.FirstOrDefault(r => r.Name == recipeName);
+
+                if (recipe == null)
+                {
+                    return NotFound("Recipe not found");
+                }
+
+                var r = _context.UserRecipes
+                    .FirstOrDefault(ur => ur.UserId == id && ur.Recipe.Id == recipe.Id);
+
+                if (r == null) _context.UserRecipes.Add(new UserRecipe { UserId = id, RecipeId = recipe.Id });
+                else _context.UserRecipes.Remove(r);
+
+                _context.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error updating user");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+            return Ok("very nice!");
         }
     }
 }

@@ -1,0 +1,117 @@
+<div class="goals">
+  <div style="border: 1px solid green">
+    <h1>Meta Alimentar</h1>
+    <p *ngIf="false">
+      Informações necessárias para definir meta alimentar estão incompletas.
+      Preencha os campos obrigatórios.
+    </p>
+    <p *ngIf="!userGoals || userGoals.length == 0">Nenhuma meta alimentar definida. É necessário definir uma meta.</p>
+  </div>
+
+  <div style="border: 1px solid cyan" *ngIf="false">
+    <h2>Informações Necessárias</h2>
+    <form action="" class="info-form shadow">
+      <div class="info-inputs-container">
+        <label for="ipt-data-nascimento">Data de nascimento</label>
+        <input id="ipt-data-nascimento" type="date" required />
+      </div>
+      <div class="info-inputs-container">
+        <label for="ipt-altura">Altura</label>
+        <input id="ipt-altura"
+               type="number"
+               min="0"
+               value="0"
+               max="3"
+               required />
+      </div>
+      <div class="info-inputs-container">
+        <label for="ipt-peso">Peso</label>
+        <input id="ipt-peso"
+               type="number"
+               min="0"
+               value="0"
+               max="700"
+               required />
+      </div>
+      <div class="info-inputs-container">
+        <label for="ipt-genero">Genero</label>
+        <select name="ipt-genero" id="ipt-genero" required>
+          <option value="" disabled>-- selecione uma opção --</option>
+          <option value="M">Masculino</option>
+          <option value="F">Feminino</option>
+        </select>
+      </div>
+      <div class="info-inputs-container">
+        <label for="ipt-atividade-fisica">Nivel de atividade fisica</label>
+        <select name="ipt-atividade-fisica" id="ipt-atividade-fisica" required>
+          <option value="" disabled>-- selecione uma opção --</option>
+          <option value="high">Alta</option>
+          <option value="medium">Média</option>
+          <option value="low">Baixa</option>
+        </select>
+      </div>
+      <div class="info-inputs-container">
+        <button class="bt-clear-info" type="reset">Cancelar</button>
+        <button class="bt-confirm-info" type="submit">Confirmar</button>
+      </div>
+    </form>
+  </div>
+
+  <div style="border: 1px solid red">
+    <h2>Definir Meta Alimentar</h2>
+    <p>
+      Preencha o tipo de meta desejada, selecione os dias que quer fugir à meta
+      e confirme a meta preenchida.
+    </p>
+    <div>
+      <div class="goal-type-container">
+        <label class="goal-type-label {{ goalType }}" for="ipt-goal-type">
+          Meta Alimentar {{ goalType }}
+        </label>
+        <input class="goal-type-input"
+               type="checkbox"
+               name="ipt-goal-type"
+               id="ipt-goal-type"
+               (click)="toggleGoalType()" />
+      </div>
+      
+        <div *ngIf="goalType === 'Automática'">
+
+
+          <form class="goal-form shadow">
+
+            <div *ngFor="let goal of goals" class="goals-container">
+              <label for="ipt-goal-{{ goal.name.replace(' ', '-') }}">
+                {{ goal.name }}
+              </label>
+              <input type="radio"
+                     [(ngModel)]="selectedGoal"
+                     name="ipt-goal-group"
+                     id="ipt-goal-{{ goal.name.replace(' ', '-') }}"
+                     [value]="goal.name" required />
+            </div>
+            <button class="bt-add-goal" (click)="addGoal()" type="submit">Adicionar meta</button>
+          </form>
+        </div>
+        
+        <div *ngIf="goalType === 'Manual'">
+          <form class="goal-form shadow">
+            <div class="mx-0 goals-inputs-container">
+              <label for="ipt-calorias-diarias">Calorias diárias (kcal)</label>
+              <input id="ipt-calorias-diarias"
+                     type="number"
+                     min="0"
+                     [(ngModel)]="calories"
+                     value="{{calories}}"
+                     required />
+              <div class="mx-0 w-100">
+                <app-calendar (dates)="receiveData($event)"></app-calendar>
+              </div>
+            </div>
+            <button class="bt-add-goal" (click)="addGoal()" type="submit">Adicionar meta</button>
+          </form> 
+        </div>
+    </div>
+  </div>
+  
+</div>

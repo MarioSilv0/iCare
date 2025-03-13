@@ -10,7 +10,7 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { UsersService, User, Permissions } from '../services/users.service';
@@ -39,7 +39,7 @@ export class ProfileComponent implements OnInit {
   public preferences: Set<string> = new Set<string>();
   public restrictions: Set<string> = new Set<string>();
 
-  constructor(private router: Router, private fb: FormBuilder, private service: UsersService) {
+  constructor(private router: Router, private fb: FormBuilder, private service: UsersService, private snack: MatSnackBar) {
     this.todayDate = new Date().toISOString().split('T')[0];
   }
 
@@ -68,9 +68,9 @@ export class ProfileComponent implements OnInit {
   addPreference(preference: string) {
     if (!preference || this.preferences.has(preference) || !this.categories.has(preference)) return;
 
-    this.preferences.add(preference);
-    this.categories.delete(preference);
-  }
+    this.user.restrictions.add(restriction);
+    this.availableRestrictions.delete(restriction);
+    this.showToast("Restrição adicionada com sucesso!", 2000, undefined)
 
   removePreference(preference: string) {
     this.preferences.delete(preference);
@@ -82,11 +82,15 @@ export class ProfileComponent implements OnInit {
 
     this.restrictions.add(restriction);
     this.categories.delete(restriction);
+    this.showToast("Restrição adicionada com sucesso!", 2000, undefined)
+
+    target.value = "";
   }
 
   removeRestriction(restriction: string) {
     this.restrictions.delete(restriction);
     this.categories.add(restriction);
+    this.showToast("Restrição removida com sucesso!", 2000, undefined)
   }
 
   setupForm() {
@@ -168,6 +172,30 @@ export class ProfileComponent implements OnInit {
     );
   }
 
+  /**
+   * Handles profile picture selection and updates the `user.picture` property.
+   * Ensures only image files are accepted.
+   * @param {Event | null} event - The file input change event.
+   */
+  onSelectFile(event: Event | null): void {
+    if (!event) return;
+
+    const input = event.target as HTMLInputElement;
+
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      if (!file.type.startsWith('image/')) return;
+
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          this.user.picture = reader.result
+          this.showToast("Alterou a imagem com sucesso!", 2000, undefined)
+        };
+      }
+    }
   preventSubmit(event: Event) {
     event.preventDefault();
   }
@@ -177,5 +205,15 @@ export class ProfileComponent implements OnInit {
    */
   changePassword(): void {
     this.router.navigate(['/change-password']);
+  }
+
+  showToast(message: string, duration: 2000, action: string | undefined, ownClass?: string) {
+    let classToUse = ownClass ? ownClass : 'success-snackbar';
+    setTimeout(() => {
+      this.snack.open(message, action, {
+        duration: duration,
+        panelClass: [classToUse]
+      })
+    }, duration)
   }
 }

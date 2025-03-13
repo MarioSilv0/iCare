@@ -46,15 +46,32 @@ export class RecipesComponent {
     this.getRecipes();
   }
 
+  toggleFavoriteRecipe(id: number) {
+    let recipe = this.recipes[id]
+    let old = recipe.isFavorite;
+
+    try {
+      let url = `${PROFILE}/Recipe/${recipe.name}`
+     
+      this.http.put(url, {}).subscribe()
+
+      recipe.isFavorite = !recipe.isFavorite;
+
+      this.recipes[id].isFavorite = !this.recipes[id].isFavorite;
+    } catch (e) {
+
+
+      console.error(e);
+      this.recipe.isFavorite = old
+    }
+    this.recipes[id].isFavorite = !this.recipes[id].isFavorite;
+  }
+  
   getPermissions() {
     const permissions: Permissions | null = this.user.getPermissions();
     this.preferencesPermission = permissions?.preferences ?? false;
     this.restrictionPermission = permissions?.restrictions ?? false;
     this.inventoryPermission = permissions?.inventory ?? false;
-  }
-
-  toggleFavoriteRecipe(id: number) {
-    this.recipes[id].isFavorite = !this.recipes[id].isFavorite;
   }
 
   getRecipes() {

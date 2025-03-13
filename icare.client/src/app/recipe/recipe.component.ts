@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { RecipeService } from '../services/recipes.service';
 import { ActivatedRoute } from '@angular/router';
+import { PROFILE } from '../services/users.service'
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Recipe } from '../../models/recipe';
 
@@ -22,8 +23,18 @@ export class RecipeComponent {
   }
 
   toggleFavorite() {
-    if (this.recipe) {
+    if(!this.recipe) return
+
+    let old = this.recipe.isFavorite;
+
+    try {
+
+      let url = `${PROFILE}/Recipe/${this.recipe.name}`
+      this.http.put(url, {}).subscribe()
       this.recipe.isFavorite = !this.recipe.isFavorite;
+    } catch (e) {
+      console.error(e);
+      this.recipe.isFavorite = old
     }
   }
 

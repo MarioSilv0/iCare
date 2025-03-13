@@ -142,3 +142,14 @@ input[type="password"] {
         overflow-x: hidden;
     }
 }
+
+.success-snackbar {
+    color: var(--bg-branco);
+    background-color: var(--bg-verde);
+    border-radius: 5px;
+}
+.fail-snackbar{
+    color: var(--bg-branco);
+    background-color: var(--bg-vermelho);
+    border-radius: 5px;
+}

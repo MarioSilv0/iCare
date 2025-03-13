@@ -15,8 +15,9 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { StorageUtil } from '../utils/StorageUtil';
 
-const PROFILE: string = '/api/User';
-const INVENTORY: string = '/api/Inventory';
+export const PROFILE: string = '/api/User';
+export const INVENTORY: string = '/api/Inventory';
+
 
 /**
  * The `UsersService` class provides methods for interacting with the user profile, inventory, etc.
