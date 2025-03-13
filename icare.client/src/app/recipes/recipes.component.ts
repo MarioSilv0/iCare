@@ -50,20 +50,6 @@ export class RecipesComponent {
     let recipe = this.recipes[id]
     let old = recipe.isFavorite;
 
-    try {
-      let url = `${PROFILE}/Recipe/${recipe.name}`
-     
-      this.http.put(url, {}).subscribe()
-
-      recipe.isFavorite = !recipe.isFavorite;
-
-      this.recipes[id].isFavorite = !this.recipes[id].isFavorite;
-    } catch (e) {
-
-
-      console.error(e);
-      this.recipe.isFavorite = old
-    }
     this.recipes[id].isFavorite = !this.recipes[id].isFavorite;
   }
   

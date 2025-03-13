@@ -60,7 +60,7 @@ namespace backend.Controllers.Api
                                                     .Include(r => r.RecipeIngredients)
                                                     .ThenInclude(ri => ri.Ingredient)
                                                     .Include(r => r.UserRecipes)
-                                                    .Select(r => new RecipeDTO(r, false, id))
+                                                    .Select(r => new RecipeDTO(r, id))
                                                     .ToListAsync();
                 return Ok(recipes);
             }

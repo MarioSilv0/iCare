@@ -9,7 +9,7 @@
  * @date Last Modified: 2025-03-01
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, input } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
@@ -17,6 +17,7 @@ import { UsersService, User, Permissions } from '../services/users.service';
 import { NotificationService, updatedUserNotification, failedToEditEmailUserNotification } from '../services/notifications.service';
 import { StorageUtil } from '../utils/StorageUtil';
 import { birthdateValidator } from '../utils/Validators';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-profile',
@@ -68,9 +69,10 @@ export class ProfileComponent implements OnInit {
   addPreference(preference: string) {
     if (!preference || this.preferences.has(preference) || !this.categories.has(preference)) return;
 
-    this.user.restrictions.add(restriction);
-    this.availableRestrictions.delete(restriction);
+    this.preferences.add(preference);
+    this.categories.delete(preference);
     this.showToast("Restrição adicionada com sucesso!", 2000, undefined)
+  }
 
   removePreference(preference: string) {
     this.preferences.delete(preference);
@@ -84,7 +86,6 @@ export class ProfileComponent implements OnInit {
     this.categories.delete(restriction);
     this.showToast("Restrição adicionada com sucesso!", 2000, undefined)
 
-    target.value = "";
   }
 
   removeRestriction(restriction: string) {
@@ -117,7 +118,7 @@ export class ProfileComponent implements OnInit {
           picture: user.picture,
           name: user.name,
           email: user.email,
-          birthdate: birthdate,
+          birthdate,
           height: user.height,
           weight: user.weight,
           notifications: user.notifications,
@@ -177,25 +178,29 @@ export class ProfileComponent implements OnInit {
    * Ensures only image files are accepted.
    * @param {Event | null} event - The file input change event.
    */
-  onSelectFile(event: Event | null): void {
-    if (!event) return;
+  //onSelectFile(event: Event | null): void {
+  //  if (!event) return;
 
-    const input = event.target as HTMLInputElement;
+  //  const input = event.target as HTMLInputElement;
 
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      if (!file.type.startsWith('image/')) return;
+  //  if (input.files && input.files[0]) {
+  //    const file = input.files[0];
+  //    if (!file.type.startsWith('image/')) return;
 
-      var reader = new FileReader();
-      reader.readAsDataURL(file);
+  //    var reader = new FileReader();
+  //    reader.readAsDataURL(file);
 
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          this.user.picture = reader.result
-          this.showToast("Alterou a imagem com sucesso!", 2000, undefined)
-        };
-      }
-    }
+  //    reader.onload = () => {
+  //      if (typeof reader.result === 'string') {
+  //        this.user.picture = reader.result
+  //        this.showToast("Alterou a imagem com sucesso!", 2000, undefined)
+  //      };
+  //    }
+  //  }
+  //}
+
+
+
   preventSubmit(event: Event) {
     event.preventDefault();
   }

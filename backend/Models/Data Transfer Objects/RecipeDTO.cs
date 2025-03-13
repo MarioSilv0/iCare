@@ -83,8 +83,7 @@ namespace backend.Models.Data_Transfer_Objects
             Category = recipe.Category;
             Area = recipe.Area;
             //if (!wantDetails)
-            if (false)
-                return;
+            if (false) return;
             UrlVideo = recipe.UrlVideo;
             Instructions = recipe.Instructions;
             Ingredients = recipe.RecipeIngredients.Select(i => new RecipeIngredientDTO(i));
