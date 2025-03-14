@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
-import { UsersService } from '../services/users.service';
+import { PermissionsService } from '../services/permissions.service';
 
 @Component({
   selector: 'app-home',
@@ -9,7 +9,7 @@ import { UsersService } from '../services/users.service';
 })
 export class HomeComponent {
   public isAdmin: boolean = false;
-  constructor(private authService: AuthService, private userService: UsersService) { }
+  constructor(private authService: AuthService, private permissionsService: PermissionsService) { }
 
   ngOnInit() {
     this.isAdmin = this.authService.userHasRole('Admin'); // Checa se o usuário é admin
@@ -18,8 +18,8 @@ export class HomeComponent {
   }
 
   getPermissions() {
-    if (!this.userService.getPermissions()) {
-      this.userService.fetchPermissions().subscribe();
+    if (!this.permissionsService.getPermissions()) {
+      this.permissionsService.fetchPermissions().subscribe();
     }
   }
 

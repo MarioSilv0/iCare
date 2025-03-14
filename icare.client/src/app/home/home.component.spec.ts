@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HomeComponent } from './home.component';
 import { AuthService } from '../auth/auth.service';
-import { User, UsersService } from '../services/users.service';
+import { UsersService } from '../services/users.service';
+import { User } from '../../models'
 import { of, throwError } from 'rxjs';
 
 describe('HomeComponent', () => {

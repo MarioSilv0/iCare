@@ -9,9 +9,10 @@
  * @date Last Modified: 2025-03-01
  */
 
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
+import { Ingredient } from '../../models'
 
 const INGREDIENT: string = '/api/Ingredient/';
 
@@ -51,8 +52,6 @@ export class IngredientService {
    * @returns {Observable<any>} An observable with the API response.
    */
   updateDB(ingredients: Ingredient[]): Observable<any> {
-    return this.http.post<{ message: string }>(INGREDIENT + 'update', ingredients, {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-    });
+    return this.http.post<{ message: string }>(INGREDIENT + 'update', ingredients);
   }
 }

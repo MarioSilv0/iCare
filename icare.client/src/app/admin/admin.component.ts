@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RecipeComponent } from '../recipe/recipe.component';
-import { IngredientService, Ingredient } from '../services/ingredients.service';
+import { IngredientService } from '../services/ingredients.service';
+import { Ingredient } from '../../models'
 import { MealDbService, TacoApiService, TranslateService } from '../services/apis';
 import { Recipe } from '../../models/recipe';
 import { RecipeService } from '../services/recipes.service';

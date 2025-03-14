@@ -69,12 +69,7 @@ namespace backend.Models.Data_Transfer_Objects
         /// </summary>
         public RecipeDTO() { }
 
-        /// <summary>
-        /// Initializes a new instance of the <c>RecipeDTO</c> class based on a given <c>Recipe</c> object.
-        /// </summary>
-        /// <param name="recipe">The recipe from which to create the DTO.</param>
-        /// <param name="userId">The ID of the user to check for favorite status.</param>
-        public RecipeDTO(Recipe recipe, string userId)
+        public RecipeDTO(Recipe recipe, string userId, bool wantDetails)
         {
             if (recipe == null) return;
 
@@ -82,11 +77,12 @@ namespace backend.Models.Data_Transfer_Objects
             Name = recipe.Name;
             Category = recipe.Category;
             Area = recipe.Area;
-            //if (!wantDetails)
-            if (false) return;
+            Ingredients = recipe.RecipeIngredients.Select(i => new RecipeIngredientDTO(i));
+            
+            if (!wantDetails) return;
+
             UrlVideo = recipe.UrlVideo;
             Instructions = recipe.Instructions;
-            Ingredients = recipe.RecipeIngredients.Select(i => new RecipeIngredientDTO(i));
             Calories = recipe.Calories;
             IsFavorite = recipe?.UserRecipes?.Any(ur => ur.UserId == userId) ?? false;
         }

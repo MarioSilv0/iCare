@@ -9,7 +9,7 @@
  * @date Last Modified: 2025-03-01
  */
 
-import { Norification } from '../../models'
+import { Notification } from '../../models'
 
 /**
  * The `NotificationService` class provides static methods for handling browser notifications.

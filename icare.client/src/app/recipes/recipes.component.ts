@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
 import { RecipeService } from '../services/recipes.service';
-import { UsersService, Permissions } from '../services/users.service';
-import { Recipe } from '../../models/recipe';
+import { UsersService } from '../services/users.service';
+import { InventoryService } from '../services/inventory.service';
+import { PermissionsService } from '../services/permissions.service';
+import { Recipe, Permissions } from '../../models';
 import { normalize } from '../utils/Normalize';
 import { memoize } from '../utils/Memoization';
 import { StorageUtil } from '../utils/StorageUtil';
@@ -40,7 +42,7 @@ export class RecipesComponent {
   private inventory: Map<string, number> | null = null;
   private normalizeMemoized = memoize(normalize);
 
-  constructor(private api: RecipeService, private user: UsersService) {
+  constructor(private recipesService: RecipeService, private userService: UsersService, private inventoryService: InventoryService, private permissionsService: PermissionsService) {
     this.searchSubject.pipe(debounceTime(300)).subscribe(() => this.filterRecipes(''));
   }
 
@@ -57,15 +59,16 @@ export class RecipesComponent {
   }
   
   getPermissions() {
-    const permissions: Permissions | null = this.user.getPermissions();
+    const permissions: Permissions | null = this.permissionsService.getPermissions();
     this.preferencesPermission = permissions?.preferences ?? false;
     this.restrictionPermission = permissions?.restrictions ?? false;
     this.inventoryPermission = permissions?.inventory ?? false;
   }
 
   getRecipes() {
-    this.api.getAllRecipes().subscribe(
+    this.recipesService.getAllRecipes().subscribe(
       (result) => {
+        console.log(result)
         this.recipes = this.filteredRecipes = result;
       },
       (error) => {
@@ -78,7 +81,7 @@ export class RecipesComponent {
     if (this.preferences) return;
     this.preferences = new Set();
 
-    this.user.getPreferences().subscribe(
+    this.userService.getPreferences().subscribe(
       (result) => {
         this.preferences = new Set(result);
         if (this.preferencesFilter) this.filterRecipes('');
@@ -93,7 +96,7 @@ export class RecipesComponent {
     if (this.restrictions) return;
     this.restrictions = new Set();
 
-    this.user.getRestrictions().subscribe(
+    this.userService.getRestrictions().subscribe(
       (result) => {
         this.restrictions = new Set(result);
         if (this.restrictionsFilter) this.filterRecipes('');
@@ -108,10 +111,10 @@ export class RecipesComponent {
     if (this.inventory) return;
     this.inventory = new Map();
 
-    this.user.getInventory().subscribe(
+    this.inventoryService.getInventory().subscribe(
       (result) => {
         for (const item of result) {
-          const quantity = item.unit === "kg" ? item.quantity / 1000 : item.quantity;
+          const quantity = item.unit === "kg" ? item.quantity * 1000 : item.quantity;
           this.inventory!.set(item.name, quantity);
         }
 

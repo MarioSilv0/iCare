@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { StorageUtil } from '../utils/StorageUtil';
 import { PROFILE } from './users.service';
+import { Permissions } from '../../models'
 
 
 @Injectable({

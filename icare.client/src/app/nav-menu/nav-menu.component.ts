@@ -13,7 +13,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { MenuService } from '../services/menu.service';
-import { UsersService, User } from '../services/users.service';
+import { UsersService } from '../services/users.service';
+import { User } from '../../models';
 
 @Component({
   selector: 'app-nav-menu',

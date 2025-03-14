@@ -13,8 +13,10 @@ import { Component, OnInit, input } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
-import { UsersService, User, Permissions } from '../services/users.service';
-import { NotificationService, updatedUserNotification, failedToEditEmailUserNotification } from '../services/notifications.service';
+import { UsersService } from '../services/users.service';
+import { PermissionsService } from '../services/permissions.service';
+import { NotificationService } from '../services/notifications.service'
+import { Permissions, updatedUserNotification, failedToEditEmailUserNotification } from '../../models';
 import { StorageUtil } from '../utils/StorageUtil';
 import { birthdateValidator } from '../utils/Validators';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -40,7 +42,7 @@ export class ProfileComponent implements OnInit {
   public preferences: Set<string> = new Set<string>();
   public restrictions: Set<string> = new Set<string>();
 
-  constructor(private router: Router, private fb: FormBuilder, private service: UsersService, private snack: MatSnackBar) {
+  constructor(private router: Router, private fb: FormBuilder, private userService: UsersService, private permissionsService: PermissionsService, private snack: MatSnackBar) {
     this.todayDate = new Date().toISOString().split('T')[0];
   }
 
@@ -107,7 +109,7 @@ export class ProfileComponent implements OnInit {
   }
 
   getUser() {
-    this.service.getUser().subscribe(
+    this.userService.getUser().subscribe(
       (user) => {
         const defaultBirthdate = "2000-01-01";
         const birthdate = (!user.birthdate || user.birthdate === '0001-01-01') ? defaultBirthdate : user.birthdate;
@@ -149,7 +151,7 @@ export class ProfileComponent implements OnInit {
       categories: Array.from(this.categories)
     };
     
-    this.service.updateUser(updatedUser).subscribe(
+    this.userService.updateUser(updatedUser).subscribe(
       (user) => {
         NotificationService.showNotification(user.notifications, updatedUserNotification);
         if (user.email !== this.profileForm.value.email) NotificationService.showNotification(user.notifications, failedToEditEmailUserNotification); // Toast
@@ -160,7 +162,7 @@ export class ProfileComponent implements OnInit {
 
         const updatedPermissions = { notifications: user.notifications, preferences, restrictions };
         if (!permissions || permissions.notifications !== updatedPermissions.notifications || permissions.preferences !== updatedPermissions.preferences || permissions.restrictions !== updatedPermissions.restrictions) {
-          this.service.setPermissions(updatedPermissions);
+          this.permissionsService.setPermissions(updatedPermissions);
         }
 
         this.router.navigate(['/']);
