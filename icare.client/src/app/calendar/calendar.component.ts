@@ -7,14 +7,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrl: './calendar.component.css'
 })
 export class CalendarComponent {
-
   @Output() dates = new EventEmitter<DatesEmiter>();
 
   startDate: string = '';
   endDate: string = '';
-
-
-
   constructor(private snackBar: MatSnackBar) { }
 
   validateDate() {
