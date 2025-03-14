@@ -35,7 +35,6 @@ import { CustomCheckboxComponent } from './components/custom-checkbox/custom-che
 import { CategorySelectorComponent } from './components/category-selector/category-selector.component';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 
-
 @NgModule({
   declarations: [
     AppComponent,

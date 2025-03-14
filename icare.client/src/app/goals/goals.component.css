@@ -45,6 +45,11 @@
   color: var(--bg-branco);
 }
 
+.bt-add-goal:disabled:hover {
+    cursor: not-allowed;
+    background-color: var(--bg-vermelho);
+}
+
 .bt-confirm-info {
   background-color: var(--bg-verde);
 }

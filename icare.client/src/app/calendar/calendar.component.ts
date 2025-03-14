@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -9,27 +10,29 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class CalendarComponent {
   @Output() dates = new EventEmitter<DatesEmiter>();
 
-  startDate: string = '';
-  endDate: string = '';
+  dateForm = new FormGroup({
+    startDate: new FormControl(''),
+    endDate: new FormControl('')
+  })
   constructor(private snackBar: MatSnackBar) { }
 
   validateDate() {
-    if (!this.startDate || !this.endDate) return;
+    if (!this.dateForm.value.startDate || !this.dateForm.value.endDate) return;
 
-    const start = new Date(this.startDate);
-    const end = new Date(this.endDate);
-
+    const start = new Date(this.dateForm.value.startDate);
+    const end = new Date(this.dateForm.value.endDate);
+    console.log({start, end})
     if (end < start) {
-      this.startDate = '';
-      this.endDate = '';
+      this.dateForm.reset()
       this.snackBar.open('A data final deve ser maior que a data inicial.', '', {
         duration: 2000,
         panelClass: ["fail-snackbar"]
       });
     }
+
     this.dates.emit({
-      startDate: this.startDate,
-      endDate: this.endDate
+      startDate: this.dateForm.value.startDate,
+      endDate: this.dateForm.value.endDate
     })
   }
 
