@@ -374,7 +374,6 @@ namespace backend.Controllers.Api
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
         {
             var userClaims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
-            userClaims.ForEach(c => Console.WriteLine($"{c.Type}: {c.Value}"));
 
             var userId = User.FindFirst("UserId")?.Value;
 

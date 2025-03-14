@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using backend.Services;
 using backend.Models.Data_Transfer_Objects;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Security.Claims;
 
 /// <summary>
 /// This file defines the <c>GoalController</c> class, responsible for managing user goals.
@@ -19,36 +20,41 @@ namespace backend.Controllers.Api
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class GoalController : ControllerBase
     {
-        private readonly GoalService _goalService;
+        private readonly IGoalService _goalService;
         private readonly ILogger<GoalController> _logger;
 
-        public GoalController(GoalService goalService, ILogger<GoalController> logger)
+        public GoalController(IGoalService goalService, ILogger<GoalController> logger)
         {
             _goalService = goalService;
             _logger = logger;
         }
 
         /// <summary>
-        /// Retrieves a goal by its unique identifier.
+        /// Retrieves the latest goal for a user by their user ID.
         /// </summary>
-        /// <param name="id">The ID of the goal.</param>
-        /// <returns>The goal if found; otherwise, NotFound.</returns>
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetGoalById(int id)
+        /// <param name="userId">The ID of the user.</param>
+        /// <returns>The latest goal if found; otherwise, NotFound.</returns>
+        [HttpGet("current")]
+        public async Task<IActionResult> GetCurrentGoalByUserId()
         {
+
+            var userId = User.FindFirst("UserId")?.Value;
+            if (userId == null) return Unauthorized("User ID not found in token.");
             try
             {
-                var goal = await _goalService.GetGoalByIdAsync(id);
+                var goal = await _goalService.GetLatestGoalByUserIdAsync(userId);
+
                 if (goal == null)
                 {
                     return NotFound("Meta não encontrada.");
                 }
+
                 return Ok(goal);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao recuperar a meta.");
-                return StatusCode(500, "Erro ao recuperar a meta.");
+                _logger.LogError(ex, "Erro ao acessar a meta.");
+                return StatusCode(500, "Erro ao acessar a meta.");
             }
         }
 
@@ -65,7 +71,7 @@ namespace backend.Controllers.Api
             try
             {
                 var createdGoal = await _goalService.CreateGoalAsync(userId, goalDto);
-                return CreatedAtAction(nameof(GetGoalById), new { id = createdGoal.Id }, createdGoal);
+                return CreatedAtAction(nameof(GetCurrentGoalByUserId), new { id = createdGoal.Id }, createdGoal);
             }
             catch (Exception ex)
             {

@@ -8,6 +8,11 @@ namespace backend.Models.Goals
     public class GoalLog
     {
         /// <summary>
+        /// The unique identifier of the goal log.
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
         /// The unique identifier of the goal associated with the log entry.
         /// </summary>
         public int GoalId { get; set; }
