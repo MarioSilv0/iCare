@@ -100,8 +100,8 @@ export class ProfileComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(1)]],
       email: ['', [Validators.required, Validators.email]],
       birthdate: ['', [Validators.required, birthdateValidator]],
-      height: [0, [Validators.required, Validators.min(0.1), Validators.max(3)]],
-      weight: [0, [Validators.required, Validators.min(0.1), Validators.max(700)]],
+      height: ['', [Validators.required, Validators.min(0.1), Validators.max(3), Validators.pattern(/^\d*\.?\d+$/)]],
+      weight: ['', [Validators.required, Validators.min(0.1), Validators.max(700), Validators.pattern(/^\d*\.?\d+$/)]],
       notifications: [true]
     });
   }
@@ -111,8 +111,6 @@ export class ProfileComponent implements OnInit {
       (user) => {
         const defaultBirthdate = "2000-01-01";
         const birthdate = (!user.birthdate || user.birthdate === '0001-01-01') ? defaultBirthdate : user.birthdate;
-
-        console.log(user.notifications)
 
         this.profileForm.patchValue({
           picture: user.picture,
@@ -172,34 +170,6 @@ export class ProfileComponent implements OnInit {
       }
     );
   }
-
-  /**
-   * Handles profile picture selection and updates the `user.picture` property.
-   * Ensures only image files are accepted.
-   * @param {Event | null} event - The file input change event.
-   */
-  //onSelectFile(event: Event | null): void {
-  //  if (!event) return;
-
-  //  const input = event.target as HTMLInputElement;
-
-  //  if (input.files && input.files[0]) {
-  //    const file = input.files[0];
-  //    if (!file.type.startsWith('image/')) return;
-
-  //    var reader = new FileReader();
-  //    reader.readAsDataURL(file);
-
-  //    reader.onload = () => {
-  //      if (typeof reader.result === 'string') {
-  //        this.user.picture = reader.result
-  //        this.showToast("Alterou a imagem com sucesso!", 2000, undefined)
-  //      };
-  //    }
-  //  }
-  //}
-
-
 
   preventSubmit(event: Event) {
     event.preventDefault();

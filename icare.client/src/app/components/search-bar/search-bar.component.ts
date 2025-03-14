@@ -1,41 +1,32 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { debounceTime, Subject } from 'rxjs';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { debounceTime } from 'rxjs';
+import { memoize } from '../../utils/Memoization';
+import { normalize } from '../../utils/Normalize';
 
 @Component({
   selector: 'search-bar',
   templateUrl: './search-bar.component.html',
   styleUrl: './search-bar.component.css'
 })
-export class SearchBarComponent {
-  public searchTerm: string = '';
-  public searchSubject = new Subject<string>();
-
+export class SearchBarComponent implements OnInit {
   @Input() containerStyles: { [key: string]: string } = {};
   @Input() searchBarStyles: { [key: string]: string } = {};
   @Input() id: string = '';
   @Input() placeholder: string = '';
   @Input() normalize: boolean = false;
+
   @Output() query = new EventEmitter<string>();
 
-  constructor() {
-    this.searchSubject.pipe(debounceTime(300)).subscribe((newSearchTerm) => this.emitChange(newSearchTerm));
-  }
+  searchControl = new FormControl('');
+  private normalizeMemoized = memoize(normalize);
 
-  onSearchTermChange(newSearchTerm: string | number) {
-    let tmp: string = '';
-    if (typeof newSearchTerm === 'number') tmp = newSearchTerm.toString();
-
-    this.searchSubject.next(tmp);
+  ngOnInit() {
+    this.searchControl.valueChanges.pipe(debounceTime(300)).subscribe((newQuery: string | null) => this.emitChange(newQuery || ''));
   }
 
   emitChange(newSearchTerm: string) {
-    this.searchTerm = newSearchTerm
-    let result = this.searchTerm;
-    if (this.normalize) result = this.searchTerm.normalize('NFD')
-                                                .replace(/[\u0300-\u036f]/g, '')
-                                                .replace(/[^a-zA-Z0-9]/g, '')
-                                                .toLowerCase();
-
-    this.query.emit(result);
+    if (this.normalize) newSearchTerm = this.normalizeMemoized(newSearchTerm);
+    this.query.emit(newSearchTerm);
   }
 }

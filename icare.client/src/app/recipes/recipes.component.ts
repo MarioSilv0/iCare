@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
 import { RecipeService } from '../services/recipes.service';
-import { StorageUtil } from '../utils/StorageUtil';
 import { UsersService, Permissions } from '../services/users.service';
 import { Recipe } from '../../models/recipe';
+import { normalize } from '../utils/Normalize';
+import { memoize } from '../utils/Memoization';
+import { StorageUtil } from '../utils/StorageUtil';
 
 @Component({
   selector: 'app-recipes',
@@ -36,6 +38,7 @@ export class RecipesComponent {
   private restrictions: Set<string> | null = null;
   private preferences: Set<string> | null = null;
   private inventory: Map<string, number> | null = null;
+  private normalizeMemoized = memoize(normalize);
 
   constructor(private api: RecipeService, private user: UsersService) {
     this.searchSubject.pipe(debounceTime(300)).subscribe(() => this.filterRecipes(''));
@@ -110,21 +113,19 @@ export class RecipesComponent {
         for (const item of result) {
           const quantity = item.unit === "kg" ? item.quantity / 1000 : item.quantity;
           this.inventory!.set(item.name, quantity);
-          if (this.inventoryFilter) this.filterRecipes('');
         }
+
+        if (this.inventoryFilter) this.filterRecipes('');
       },
       (error) => console.error(error)
     );
   }
 
   filterRecipes(newQuery: string) {
-    const normalize = (str: string): string => str.normalize('NFD')
-                                                  .replace(/[\u0300-\u036f]/g, '')
-                                                  .replace(/[^a-zA-Z0-9]/g, '')
-                                                  .toLowerCase();
-    const query = normalize(newQuery);
+    
+    const query = this.normalizeMemoized(newQuery);
 
-    this.filteredRecipes = this.recipes.filter(r => normalize(r.name).includes(query));
+    this.filteredRecipes = this.recipes.filter(r => this.normalizeMemoized(r.name).includes(query) || this.normalizeMemoized(r.category).includes(query) || this.normalizeMemoized(r.area).includes(query));
 
     if (this.preferencesFilter) this.filterPreferences();
     if (this.restrictionsFilter) this.filterRestrictions();
@@ -146,7 +147,7 @@ export class RecipesComponent {
     this.filteredRecipes = this.filteredRecipes.filter(r => {
       for (const ingredient of r.ingredients) {
         const quantity = this.inventory!.get(ingredient.name) || -1 ;
-        if (!this.inventory!.has(ingredient.name) ||  quantity < 0) return false;
+        if (!this.inventory!.has(ingredient.name) ||  quantity < ingredient.grams) return false;
       }
 
       return true;

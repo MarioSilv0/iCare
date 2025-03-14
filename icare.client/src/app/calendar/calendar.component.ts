@@ -11,9 +11,7 @@ export class CalendarComponent {
   @Output() dates = new EventEmitter<DatesEmiter>();
 
   startDate: string = '';
-  endDate: string = '';
-
-
+  endDate: string = ''
 
   constructor(private snackBar: MatSnackBar) { }
 
