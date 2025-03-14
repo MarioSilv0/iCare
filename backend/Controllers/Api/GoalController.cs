@@ -1,87 +1,128 @@
 ﻿using backend.Models.Goals;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using backend.Data;
 using backend.Services;
+using backend.Models.Data_Transfer_Objects;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
+/// <summary>
+/// This file defines the <c>GoalController</c> class, responsible for managing user goals.
+/// It provides API endpoints for creating, retrieving, updating, and deleting goals based on authentication tokens.
+/// </summary>
+/// <author>Mário Silva - 202000500</author>
+/// <date>Last Modified: 2025-03-14</date>
+
 namespace backend.Controllers.Api
 {
-
     [Route("api/goal")]
     [ApiController]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class GoalController : ControllerBase
     {
         private readonly GoalService _goalService;
+        private readonly ILogger<GoalController> _logger;
 
-        public GoalController(GoalService goalService)
+        public GoalController(GoalService goalService, ILogger<GoalController> logger)
         {
             _goalService = goalService;
+            _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetUserGoal()
+        /// <summary>
+        /// Retrieves a goal by its unique identifier.
+        /// </summary>
+        /// <param name="id">The ID of the goal.</param>
+        /// <returns>The goal if found; otherwise, NotFound.</returns>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetGoalById(int id)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId)) return Unauthorized();
-
-            var goal = await _goalService.GetCurrentGoalAsync(userId);
-            if (goal == null) return NotFound("Nenhuma meta alimentar definida.");
-
-            return Ok(goal);
+            try
+            {
+                var goal = await _goalService.GetGoalByIdAsync(id);
+                if (goal == null)
+                {
+                    return NotFound("Meta não encontrada.");
+                }
+                return Ok(goal);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao recuperar a meta.");
+                return StatusCode(500, "Erro ao recuperar a meta.");
+            }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateGoal([FromBody] Goal goal)
+        /// <summary>
+        /// Creates a new goal for the authenticated user.
+        /// </summary>
+        /// <param name="goalDto">The goal data transfer object containing goal details.</param>
+        /// <returns>The created goal.</returns>
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateGoal([FromBody] GoalDTO goalDto)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId)) return Unauthorized();
-
-            goal.UserId = userId;
-
-            var success = await _goalService.ValidateAndSaveGoalAsync(goal,userId);
-            if (!success) return BadRequest("Meta inválida ou utilizador já tem uma meta ativa.");
-
-            return CreatedAtAction(nameof(GetUserGoal), new { userId }, goal);
+            var userId = User.FindFirst("UserId")?.Value;
+            if (userId == null) return Unauthorized("User ID not found in token.");
+            try
+            {
+                var createdGoal = await _goalService.CreateGoalAsync(userId, goalDto);
+                return CreatedAtAction(nameof(GetGoalById), new { id = createdGoal.Id }, createdGoal);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao criar a meta.");
+                return StatusCode(500, "Erro ao criar a meta.");
+            }
         }
 
-
-
+        /// <summary>
+        /// Updates an existing goal.
+        /// </summary>
+        /// <param name="id">The ID of the goal to update.</param>
+        /// <param name="goalDto">The updated goal data.</param>
+        /// <returns>No content if successful; NotFound if the goal does not exist.</returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateGoal(int id, [FromBody] Goal goal)
+        public async Task<IActionResult> UpdateGoal(int id, [FromBody] GoalDTO goalDto)
         {
-            if (id != goal.Id) return BadRequest("IDs não coincidem!");
-
-            var success = await _goalService.UpdateGoalAsync(goal);
-            if (!success) return NotFound("Meta não encontrada!");
-
-            return NoContent();
+            var userId = User.FindFirst("UserId")?.Value;
+            if (userId == null) return Unauthorized("User ID not found in token.");
+            try
+            {
+                var success = await _goalService.UpdateGoalAsync(userId, id, goalDto);
+                if (!success)
+                {
+                    return NotFound("Meta não encontrada.");
+                }
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao atualizar a meta.");
+                return StatusCode(500, "Erro ao atualizar a meta.");
+            }
         }
 
+        /// <summary>
+        /// Deletes an existing goal.
+        /// </summary>
+        /// <param name="id">The ID of the goal to delete.</param>
+        /// <returns>No content if successful; NotFound if the goal does not exist.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGoal(int id)
         {
-            var success = await _goalService.DeleteGoalAsync(id);
-            if (!success) return NotFound("Meta não encontrada!");
-
-            return NoContent();
+            try
+            {
+                var success = await _goalService.DeleteGoalAsync(id);
+                if (!success)
+                {
+                    return NotFound("Meta não encontrada.");
+                }
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao deletar a meta.");
+                return StatusCode(500, "Erro ao deletar a meta.");
+            }
         }
     }
-
 }
-
-//const goal = "/api/goal"
-//
-//getGoal() : Observable<any> {
-//return this.http.get<any>(this.goal);
-//}
-//createGoal() : Observable<any> {
-//return this.http.post<any>(this.goal);
-//}
-//updateGoal() : Observable<any> {
-//return this.http.put<any>(``${this.goal}/${id});
-//}
-//deleteGoal() : Observable<any> {
-//return this.http.delete<any>(``${this.goal}/${id});
-//}

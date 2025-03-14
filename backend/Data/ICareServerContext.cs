@@ -61,9 +61,14 @@ namespace backend.Data
         public DbSet<UserRecipe> UserRecipes { get; set; } = default!;
 
         /// <summary>
-        /// Represents the collection of user-specific goals in the database.
+        /// Represents the collection of user goals in the database.
         /// </summary>
         public DbSet<Goal> Goals { get; set; }
+
+        /// <summary>
+        /// Represents the collection of user goals logs in the database.
+        /// </summary>
+        public DbSet<GoalLog> GoalLogs { get; set; }
 
         /// <summary>
         /// Configures the model, including relationships, composite keys, and initial data seeding.

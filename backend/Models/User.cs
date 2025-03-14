@@ -5,12 +5,13 @@
 /// </summary>
 /// <author>João Morais  - 202001541</author>
 /// <author>Luís Martins - 202100239</author>
-/// <author>Mário Silva  - 202000500</author>
 /// <date>Last Modified: 2025-03-01</date>
 
+using backend.Models.Enums;
 using backend.Models.Ingredients;
 using backend.Models.Recipes;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace backend.Models
 {
@@ -35,22 +36,38 @@ namespace backend.Models
         /// <summary>
         /// Gets or sets the user's birthdate.
         /// </summary>
-        public DateTime Birthdate { get; set; } = new DateTime().Date.AddYears(-10);
+        public DateOnly Birthdate { get; set; } = new DateOnly().AddYears(-10);
 
         /// <summary>
-        /// Indicates whether the user has enabled notifications.
+        /// Gets the user's age based on this birthdate.
         /// </summary>
-        public bool Notifications { get; set; } = false;
+        /// <returns>Age of the user.</returns>
+        public int Age() => CaculateAge(Birthdate);
 
         /// <summary>
         /// Gets or sets the user's height in meters.
         /// </summary>
-        public float Height { get; set; } = 0f;
+        public float Height { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the user's weight in kilograms.
         /// </summary>
         public float Weight { get; set; } = 0f;
+
+        /// <summary>
+        /// Gets or sets the user's gender.
+        /// </summary>
+        public Gender Gender { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user's activity level.
+        /// </summary>
+        public ActivityLevel ActivityLevel { get; set; }
+
+        /// <summary>
+        /// Indicates whether the user has enabled notifications.
+        /// </summary>
+        public bool Notifications { get; set; } = false;
 
         /// <summary>
         /// Gets or sets the user's dietary preferences.
@@ -99,6 +116,9 @@ namespace backend.Models
                     Birthdate = model.Birthdate;
             }
 
+            Gender = model.Gender;
+            ActivityLevel = model.ActivityLevel;
+
             Notifications = model.Notifications;
 
             float roundedHeight = (float)Math.Round(model.Height, 1);
@@ -121,7 +141,7 @@ namespace backend.Models
         /// </summary>
         /// <param name="birthdate">The user's birthdate.</param>
         /// <returns>The calculated age of the user.</returns>
-        private int CaculateAge(DateTime birthdate)
+        private int CaculateAge(DateOnly birthdate)
         {
             int age = DateTime.Today.Year - birthdate.Year;
 

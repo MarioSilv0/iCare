@@ -1,4 +1,7 @@
-﻿/// <summary>
+﻿
+using backend.Models.Enums;
+
+/// <summary>
 /// This file defines the <c>UserDTO</c> class, which represents a user's publicly
 /// accessible profile, including preferences and restrictions.
 /// </summary>
@@ -34,12 +37,7 @@ namespace backend.Models
         /// <summary>
         /// Gets or sets the user's birthdate.
         /// </summary>
-        public DateTime Birthdate { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the user has notifications enabled.
-        /// </summary>
-        public Boolean Notifications { get; set; }
+        public DateOnly Birthdate { get; set; }
 
         /// <summary>
         /// Gets or sets the user's height in meters.
@@ -50,6 +48,21 @@ namespace backend.Models
         /// Gets or sets the user's weight in kilograms.
         /// </summary>
         public float Weight { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user's gender.
+        /// </summary>
+        public Gender Gender { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user's activity level.
+        /// </summary>
+        public ActivityLevel ActivityLevel { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the user has notifications enabled.
+        /// </summary>
+        public Boolean Notifications { get; set; }
 
         /// <summary>
         /// Gets or sets the user's preferred food categories.
@@ -83,9 +96,11 @@ namespace backend.Models
             Name = user.Name;
             Email = user.Email;
             Birthdate = user.Birthdate;
-            Notifications = user.Notifications;
             Height = user.Height;
             Weight = user.Weight;
+            Gender = user.Gender;
+            ActivityLevel = user.ActivityLevel;
+            Notifications = user.Notifications;
             Preferences = model?.Preferences ?? new List<string>(user.Preferences ?? []);
             Restrictions = model?.Restrictions ?? new List<string>(user.Restrictions ?? []);
             Categories = categories;
