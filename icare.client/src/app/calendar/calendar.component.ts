@@ -21,12 +21,22 @@ export class CalendarComponent {
 
     const start = new Date(this.dateForm.value.startDate);
     const end = new Date(this.dateForm.value.endDate);
-    console.log({start, end})
-    if (end < start) {
+    const today = new Date();
+    console.log({ start, end, today })
+    if (start.getDate() < today.getDate()) {
+      this.dateForm.reset()
+      this.snackBar.open("Só pode criar metas com inicio atual ou superior.", undefined, {
+        duration: 2000,
+        panelClass: ['fail-snackbar']
+      })
+    }
+
+    if (end.getDate() < start.getDate()) {
       this.dateForm.reset()
       this.snackBar.open('A data final deve ser maior que a data inicial.', '', {
         duration: 2000,
-        panelClass: ["fail-snackbar"]
+        panelClass: ["fail-snackbar"],
+        
       });
     }
 

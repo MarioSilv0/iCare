@@ -70,13 +70,13 @@ export class GoalsComponent {
     switch (goalType) {
       case "Automática": {
         goal = {
-          type: goalType,
+          type: "Automatica",
           goal: this.goalForm.value.selectedGoal
         } as MetaAutomatica
       }; break;
       case "Manual": {
         goal = {
-          type: goalType,
+          type: "Manual",
           calories: this.goalForm.value.calories,
           startDate: this.goalForm.value.startDate,
           endDate: this.goalForm.value.endDate
@@ -87,7 +87,7 @@ export class GoalsComponent {
         return null;
       }
     }
-
+    alert(JSON.stringify(goal))
     return goal;
   }
 
