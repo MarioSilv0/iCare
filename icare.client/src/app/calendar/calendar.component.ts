@@ -22,30 +22,32 @@ export class CalendarComponent {
     const start = new Date(this.dateForm.value.startDate);
     const end = new Date(this.dateForm.value.endDate);
     const today = new Date();
-    console.log({ start, end, today })
-    if (start.getDate() < today.getDate()) {
-      this.dateForm.reset()
-      this.snackBar.open("Só pode criar metas com inicio atual ou superior.", undefined, {
-        duration: 2000,
-        panelClass: ['fail-snackbar']
-      })
-    }
 
-    if (end.getDate() < start.getDate()) {
-      this.dateForm.reset()
-      this.snackBar.open('A data final deve ser maior que a data inicial.', '', {
-        duration: 2000,
-        panelClass: ["fail-snackbar"],
-        
-      });
-    }
+    console.log({ start, end, today });
 
     this.dates.emit({
       startDate: this.dateForm.value.startDate,
       endDate: this.dateForm.value.endDate
-    })
-  }
+    });
 
+    if (start.getDate() < today.getDate()) {
+      this.snackBar.open("Só pode criar metas com inicio atual ou superior.", undefined, {
+        duration: 2000,
+        panelClass: ['fail-snackbar']
+      });
+      this.dateForm.reset();  
+      return;
+    }
+
+    if (end.getDate() < start.getDate()) {
+      this.snackBar.open('A data final deve ser maior que a data inicial.', '', {
+        duration: 2000,
+        panelClass: ["fail-snackbar"],
+      });
+      this.dateForm.reset();  
+      return;
+    }
+  }
 }
 
 interface DatesEmiter {
