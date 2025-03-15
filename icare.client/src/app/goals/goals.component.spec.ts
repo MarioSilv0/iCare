@@ -5,7 +5,7 @@ import {
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { GoalsComponent } from './goals.component';
 
 describe('GoalsComponent', () => {
@@ -95,7 +95,6 @@ describe('GoalsComponent', () => {
   });
 
   it('should show success snackbar on successful addGoal', () => {
-    spyOn(component['http'], 'post').and.returnValue(of({}));
     component.addGoal();
     expect(snackBarSpy.open).toHaveBeenCalledWith(
       'Meta criada com sucesso.',
@@ -105,9 +104,6 @@ describe('GoalsComponent', () => {
   });
 
   it('should show error snackbar on failed addGoal', () => {
-    spyOn(component['http'], 'post').and.returnValue(
-      throwError(() => new Error('Error'))
-    );
     component.addGoal();
     expect(snackBarSpy.open).toHaveBeenCalledWith(
       'Erro ao tentar criar meta.',
@@ -117,7 +113,6 @@ describe('GoalsComponent', () => {
   });
 
   it('should show success snackbar on successful updateUserInfo', () => {
-    spyOn(component['http'], 'put').and.returnValue(of({}));
     component.updateUserInfo();
     expect(snackBarSpy.open).toHaveBeenCalledWith(
       'Informações atualizadas com sucesso.',
@@ -127,9 +122,6 @@ describe('GoalsComponent', () => {
   });
 
   it('should show error snackbar on failed updateUserInfo', () => {
-    spyOn(component['http'], 'put').and.returnValue(
-      throwError(() => new Error('Error'))
-    );
     component.updateUserInfo();
     expect(snackBarSpy.open).toHaveBeenCalledWith(
       'Erro ao tentar atualizar informações.',
