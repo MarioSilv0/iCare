@@ -59,6 +59,19 @@ form {
   transform: scale(0.95);
 }
 
+.submit-btn:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+  transform: none !important;
+  color: #ccc;
+}
+
+.submit-btn:disabled:hover,
+.submit-btn:disabled:active {
+  background-color: gray;
+  transform: none;
+}
+
 @media (max-width: 320px) {
   #extraData #extraData-controls {
     flex-direction: column;
