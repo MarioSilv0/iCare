@@ -92,7 +92,11 @@ namespace backend.Migrations
                     Area = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UrlVideo = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Instructions = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Calories = table.Column<float>(type: "real", nullable: false)
+                    Calories = table.Column<float>(type: "real", nullable: false),
+                    Proteins = table.Column<float>(type: "real", nullable: false),
+                    Carbohydrates = table.Column<float>(type: "real", nullable: false),
+                    Lipids = table.Column<float>(type: "real", nullable: false),
+                    Fibers = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -314,11 +318,11 @@ namespace backend.Migrations
 
             migrationBuilder.InsertData(
                 table: "Recipes",
-                columns: new[] { "Id", "Area", "Calories", "Category", "Instructions", "Name", "Picture", "UrlVideo" },
+                columns: new[] { "Id", "Area", "Calories", "Carbohydrates", "Category", "Fibers", "Instructions", "Lipids", "Name", "Picture", "Proteins", "UrlVideo" },
                 values: new object[,]
                 {
-                    { 1, "Portugal", 0f, "Bom", "Tu Consegues", "Algo de Bom", "", "" },
-                    { 2, "Bugs", 0f, "Mau", "Boa Sorte", "Algo de Mau", "", "" }
+                    { 1, "Portugal", 0f, 0f, "Bom", 0f, "Tu Consegues", 0f, "Algo de Bom", "", 0f, "" },
+                    { 2, "Bugs", 0f, 0f, "Mau", 0f, "Boa Sorte", 0f, "Algo de Mau", "", 0f, "" }
                 });
 
             migrationBuilder.InsertData(

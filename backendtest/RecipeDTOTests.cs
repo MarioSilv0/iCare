@@ -28,7 +28,7 @@ namespace backendtest
         [Fact]
         public void Constructor_WhenRecipeIsNull_DoesNotThrow()
         {
-            var dto = new RecipeDTO(null, "UserId");
+            var dto = new RecipeDTO(null, "UserId", false);
 
             Assert.Null(dto.Name);
             Assert.Null(dto.Category);
@@ -59,7 +59,7 @@ namespace backendtest
             };
             float totalCalories = 453.5f;// 248 + 205.5
 
-            var dto = new RecipeDTO(recipe, "UserId");
+            var dto = new RecipeDTO(recipe, "UserId", false);
 
             Assert.Equal("Test Recipe", dto.Name);
             Assert.Equal(totalCalories, dto.Calories);
@@ -96,7 +96,7 @@ namespace backendtest
                 }
             };
 
-            var dto = new RecipeDTO(recipe, "UserId");
+            var dto = new RecipeDTO(recipe, "UserId", false);
 
             Assert.Equal("Algo de Bom", dto.Name);
             Assert.Equal(0, dto.Calories);
@@ -128,7 +128,7 @@ namespace backendtest
                 }
             };
 
-            var dto = new RecipeDTO(recipe, "UserId");
+            var dto = new RecipeDTO(recipe, "UserId", false);
 
             Assert.True(dto.IsFavorite);
         }
@@ -150,7 +150,7 @@ namespace backendtest
                 }
             };
 
-            var dto = new RecipeDTO(recipe, "UserId");
+            var dto = new RecipeDTO(recipe, "UserId", false);
 
             Assert.False(dto.IsFavorite);
         }

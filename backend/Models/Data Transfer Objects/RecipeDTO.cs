@@ -60,6 +60,26 @@ namespace backend.Models.Data_Transfer_Objects
         public float Calories { get; set; }
 
         /// <summary>
+        /// Gets or sets the total proteins count of the recipe.
+        /// </summary>
+        public float Proteins { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total cabohydrates count of the recipe.
+        /// </summary>
+        public float Carbohydrates { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total lipids count of the recipe.
+        /// </summary>
+        public float Lipids { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total fibers count of the recipe.
+        /// </summary>
+        public float Fibers { get; set; }
+
+        /// <summary>
         /// Indicates whether the recipe is marked as a favorite by the authenticated user.
         /// </summary>
         public bool IsFavorite { get; set; }
@@ -78,13 +98,17 @@ namespace backend.Models.Data_Transfer_Objects
             Category = recipe.Category;
             Area = recipe.Area;
             Ingredients = recipe.RecipeIngredients.Select(i => new RecipeIngredientDTO(i));
+            IsFavorite = recipe?.UserRecipes?.Any(ur => ur.UserId == userId) ?? false;
             
             if (!wantDetails) return;
 
-            UrlVideo = recipe.UrlVideo;
+            UrlVideo = recipe!.UrlVideo;
             Instructions = recipe.Instructions;
             Calories = recipe.Calories;
-            IsFavorite = recipe?.UserRecipes?.Any(ur => ur.UserId == userId) ?? false;
+            Proteins = recipe.Proteins;
+            Carbohydrates = recipe.Carbohydrates;
+            Lipids = recipe.Lipids;
+            Fibers = recipe.Fibers;
         }
     }
 }

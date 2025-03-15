@@ -60,7 +60,7 @@ namespace backend.Controllers.Api
                                                     .Include(r => r.RecipeIngredients)
                                                     .ThenInclude(ri => ri.Ingredient)
                                                     .Include(r => r.UserRecipes)
-                                                    .Select(r => new RecipeDTO(r, id))
+                                                    .Select(r => new RecipeDTO(r, id, false))
                                                     .ToListAsync();
                 return Ok(recipes);
             }
@@ -93,7 +93,7 @@ namespace backend.Controllers.Api
                                                    .FirstOrDefaultAsync(r => r.Name == recipeName);
                 if (recipe == null) return NotFound($"Recipe '{recipe}' not found.");
 
-                var publicRecipe = new RecipeDTO(recipe!, id);
+                var publicRecipe = new RecipeDTO(recipe!, id, true);
 
                 return Ok(publicRecipe);
             }
@@ -142,6 +142,13 @@ namespace backend.Controllers.Api
 
                         foreach (var ingredientDto in recipeDto.Ingredients)
                             ProcessIngredient(existingIngredients, newRecipe, ingredientDto);
+
+                        newRecipe.Calories = newRecipe.RecipeIngredients.Sum(i => i.Ingredient?.Kcal * i.Grams / 100) ?? 0;
+                        newRecipe.Proteins = newRecipe.RecipeIngredients.Sum(i => i.Ingredient?.Protein * i.Grams / 100) ?? 0;
+                        newRecipe.Carbohydrates = newRecipe.RecipeIngredients.Sum(i => i.Ingredient?.Carbohydrates * i.Grams / 100) ?? 0;
+                        newRecipe.Lipids = newRecipe.RecipeIngredients.Sum(i => i.Ingredient?.Lipids * i.Grams / 100) ?? 0;
+                        newRecipe.Fibers = newRecipe.RecipeIngredients.Sum(i => i.Ingredient?.Fibers * i.Grams / 100) ?? 0;
+
                         _context.Recipes.Add(newRecipe);
                     }
                     else
@@ -152,6 +159,10 @@ namespace backend.Controllers.Api
                         existingRecipe.UrlVideo = recipeDto.UrlVideo;
                         existingRecipe.Instructions = recipeDto.Instructions;
                         existingRecipe.Calories = recipeDto.Calories;
+                        existingRecipe.Proteins = recipeDto.Proteins;
+                        existingRecipe.Carbohydrates = recipeDto.Carbohydrates;
+                        existingRecipe.Lipids = recipeDto.Lipids;
+                        existingRecipe.Fibers = recipeDto.Fibers;
 
                         existingRecipe.RecipeIngredients.Clear();
                         foreach (var ingredientDto in recipeDto.Ingredients)
