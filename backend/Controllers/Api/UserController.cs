@@ -283,13 +283,13 @@ namespace backend.Controllers.Api
                 else _context.UserRecipes.Remove(r);
 
                 _context.SaveChanges();
+                return Ok(new { message = "very nice!" });
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Error updating user");
                 return StatusCode(500, "An error occurred while processing your request.");
             }
-            return Ok("very nice!");
         }
     }
 }

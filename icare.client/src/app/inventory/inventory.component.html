@@ -1,3 +1,13 @@
+<br />
+<div class="m-0 position-relative">
+  <help helpText="Nesta página pode gerir o seu inventário de ingredientes.
+                  Pode adicionar novos ingredientes, editar a quantidade e unidade dos itens já existentes, ou removê-los do inventário.
+                  Também é possível visualizar as informações nutricionais correspondentes à quantidade inserida de cada ingrediente.
+                  Utilize as opções disponíveis para manter o seu inventário sempre atualizado." />
+</div>
+<br />
+<br />
+
 <div class="container align-items-start mx-0">
   <!-- Sidebar -->
   <div class="sidebar shadow">
@@ -36,11 +46,9 @@
         <tr>
           <th class="small-col"></th>
           <th class="small-col">
-            <input
-              type="checkbox"
-              [checked]="selectedItemsInInventory.size === inventory.size"
-              (change)="toggleAllInventorySelection()"
-            />
+            <input type="checkbox"
+                   [checked]="selectedItemsInInventory.size === inventory.size"
+                   (change)="toggleAllInventorySelection()" />
           </th>
           <th class="large-col">Nome</th>
           <th class="small-col">Quantidade</th>
@@ -49,53 +57,41 @@
       <tbody *ngIf="inventory.size > 0; else emptyInventory">
         <ng-container *ngFor="let item of inventory | mapKeys">
           <tr>
-            <td
-              class="d-flex align-items-center justify-content-center"
-              (click)="toggleDetails(item)"
-            >
-              <img
-                *ngIf="expandedItems.has(item)"
-                src="../../assets/svgs/expand.svg"
-                alt="expanded-arrow"
-                style="
+            <td class="d-flex align-items-center justify-content-center"
+                (click)="toggleDetails(item)">
+              <img *ngIf="expandedItems.has(item)"
+                   src="../../assets/svgs/expand.svg"
+                   alt="expanded-arrow"
+                   style="
                   margin: 0;
                   transform: rotate(90deg);
                   width: 20px;
                   height: 20px;
-                "
-              />
-              <img
-                *ngIf="!expandedItems.has(item)"
-                src="../../assets/svgs/expand.svg"
-                alt="expanded-arrow"
-                style="margin: 0; width: 20px; height: 20px"
-              />
+                " />
+              <img *ngIf="!expandedItems.has(item)"
+                   src="../../assets/svgs/expand.svg"
+                   alt="expanded-arrow"
+                   style="margin: 0; width: 20px; height: 20px" />
             </td>
 
             <td>
-              <input
-                type="checkbox"
-                [checked]="selectedItemsInInventory.has(item)"
-                (change)="toggleInventorySelection(item)"
-              />
+              <input type="checkbox"
+                     [checked]="selectedItemsInInventory.has(item)"
+                     (change)="toggleInventorySelection(item)" />
             </td>
 
             <td class="item-name">{{ item }}</td>
 
             <td class="item-quantity">
-              <input
-                type="number"
-                class="quantity-input"
-                [value]="inventory.get(item)?.quantity || 0"
-                (input)="updateQuantity(item, $event)"
-                min="0"
-              />
-              <select
-                name="unitsSelect"
-                id="unitsSelect"
-                [ngModel]="getUnit(item)"
-                (input)="updateUnit(item, $event)"
-              >
+              <input type="number"
+                     class="quantity-input"
+                     [value]="inventory.get(item)?.quantity || 0"
+                     (input)="updateQuantity(item, $event)"
+                     min="0" />
+              <select name="unitsSelect"
+                      id="unitsSelect"
+                      [ngModel]="getUnit(item)"
+                      (input)="updateUnit(item, $event)">
                 <option value=""></option>
                 <option *ngFor="let opt of units" value="{{ opt }}">
                   {{ opt }}
@@ -121,129 +117,107 @@
                     {{ itemDetails.get(item)?.kj }}
                   </p>
                   <p><strong>Macronutrientes:</strong></p>
-                  <ul
-                    *ngIf="inventory.get(item)?.unit"
-                    style="list-style: none; margin: 0; padding: 0"
-                  >
-                    <li
-                      style="
+                  <ul *ngIf="inventory.get(item)?.unit"
+                      style="list-style: none; margin: 0; padding: 0">
+                    <li style="
                         max-width: 400px;
                         display: flex;
                         flex-direction: column;
                         margin: 0;
                         align-items: center;
                         justify-items: start;
-                      "
-                    >
-                      <div
-                        style="
+                      ">
+                      <div style="
                           width: 100%;
                           margin: 0;
                           display: flex;
                           justify-content: space-between;
-                        "
-                      >
+                        ">
                         <span class="mx-0">Proteína</span>
-                        <span class="mx-0"
-                          >{{ itemDetails.get(item)?.protein
-                          }}{{ inventory.get(item)?.unit }}</span
-                        >
+                        <span class="mx-0">
+                          {{
+ itemDetails.get(item)?.protein
+                          }}{{ inventory.get(item)?.unit }}
+                        </span>
                       </div>
-                      <progress
-                        class="pg-protaina"
-                        value="{{ itemDetails.get(item)?.protein }}"
-                        max="{{ getProgress(item) }}"
-                      ></progress>
+                      <progress class="pg-protaina"
+                                value="{{ itemDetails.get(item)?.protein }}"
+                                max="{{ getProgress(item) }}"></progress>
                     </li>
-                    <li
-                      style="
+                    <li style="
                         max-width: 400px;
                         display: flex;
                         flex-direction: column;
                         margin: 0;
                         align-items: center;
                         justify-items: start;
-                      "
-                    >
-                      <div
-                        style="
+                      ">
+                      <div style="
                           width: 100%;
                           margin: 0;
                           display: flex;
                           justify-content: space-between;
-                        "
-                      >
+                        ">
                         <span class="mx-0">Carbo Hidratos</span>
-                        <span class="mx-0"
-                          >{{ itemDetails.get(item)?.carbohydrates
-                          }}{{ inventory.get(item)?.unit }}</span
-                        >
+                        <span class="mx-0">
+                          {{
+ itemDetails.get(item)?.carbohydrates
+                          }}{{ inventory.get(item)?.unit }}
+                        </span>
                       </div>
-                      <progress
-                        class="pg-hidratos"
-                        value="{{ itemDetails.get(item)?.carbohydrates }}"
-                        max="{{ getProgress(item) }}"
-                      ></progress>
+                      <progress class="pg-hidratos"
+                                value="{{ itemDetails.get(item)?.carbohydrates }}"
+                                max="{{ getProgress(item) }}"></progress>
                     </li>
-                    <li
-                      style="
+                    <li style="
                         max-width: 400px;
                         display: flex;
                         flex-direction: column;
                         margin: 0;
                         align-items: center;
                         justify-items: start;
-                      "
-                    >
-                      <div
-                        style="
+                      ">
+                      <div style="
                           width: 100%;
                           margin: 0;
                           display: flex;
                           justify-content: space-between;
-                        "
-                      >
+                        ">
                         <span class="mx-0">Lipidos</span>
-                        <span class="mx-0"
-                          >{{ itemDetails.get(item)?.lipids
-                          }}{{ inventory.get(item)?.unit }}</span
-                        >
+                        <span class="mx-0">
+                          {{
+ itemDetails.get(item)?.lipids
+                          }}{{ inventory.get(item)?.unit }}
+                        </span>
                       </div>
-                      <progress
-                        class="pg-lipidos"
-                        value="{{ itemDetails.get(item)?.lipids }}"
-                        max="{{ getProgress(item) }}"
-                      ></progress>
+                      <progress class="pg-lipidos"
+                                value="{{ itemDetails.get(item)?.lipids }}"
+                                max="{{ getProgress(item) }}"></progress>
                     </li>
-                    <li
-                      style="
+                    <li style="
                         max-width: 400px;
                         display: flex;
                         flex-direction: column;
                         margin: 0;
                         align-items: center;
                         justify-items: start;
-                      "
-                    >
-                      <div
-                        style="
+                      ">
+                      <div style="
                           width: 100%;
                           margin: 0;
                           display: flex;
                           justify-content: space-between;
-                        "
-                      >
+                        ">
                         <span class="mx-0">Fibras</span>
-                        <span class="mx-0"
-                          >{{ itemDetails.get(item)?.fibers
-                          }}{{ inventory.get(item)?.unit }}</span
-                        >
+                        <span class="mx-0">
+                          {{
+ itemDetails.get(item)?.fibers
+                          }}{{ inventory.get(item)?.unit }}
+                        </span>
                       </div>
-                      <progress
-                        class="pg-fibras"
-                        value="{{ itemDetails.get(item)?.fibers }}"
-                        max="{{ getProgress(item) }}"
-                      ></progress>
+                      <progress class="pg-fibras"
+                                value="{{ itemDetails.get(item)?.fibers }}"
+                                max="{{ getProgress(item) }}"></progress>
                     </li>
                   </ul>
                 </ng-container>
@@ -268,13 +242,11 @@
         Excluir <span class="trash-icon">🗑️</span>
       </button>
     </div>
-    <div
-      class="modal fade"
-      id="deleteModal"
-      tabindex="-1"
-      aria-labelledby="deleteModalLabel"
-      aria-hidden="true"
-    >
+    <div class="modal fade"
+         id="deleteModal"
+         tabindex="-1"
+         aria-labelledby="deleteModalLabel"
+         aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -284,19 +256,15 @@
             Tem a certeza que deseja eliminar os itens selecionados?
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
+            <button type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
               Cancelar
             </button>
-            <button
-              type="button"
-              class="btn btn-danger"
-              (click)="removeItemFromInventory(null)"
-              data-bs-dismiss="modal"
-            >
+            <button type="button"
+                    class="btn btn-danger"
+                    (click)="removeItemFromInventory(null)"
+                    data-bs-dismiss="modal">
               Eliminar
             </button>
           </div>
@@ -314,20 +282,16 @@
             atualizar o inventário?
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              (click)="updateItemsInInventory()"
-              data-bs-dismiss="modal"
-            >
+            <button type="button"
+                    class="btn btn-secondary"
+                    (click)="updateItemsInInventory()"
+                    data-bs-dismiss="modal">
               Não
             </button>
-            <button
-              type="button"
-              class="btn btn-danger"
-              (click)="updateItemsInInventory(true)"
-              data-bs-dismiss="modal"
-            >
+            <button type="button"
+                    class="btn btn-danger"
+                    (click)="updateItemsInInventory(true)"
+                    data-bs-dismiss="modal">
               Sim, Remover
             </button>
           </div>

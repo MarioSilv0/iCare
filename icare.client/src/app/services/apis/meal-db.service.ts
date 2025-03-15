@@ -58,7 +58,7 @@ export class MealDbService {
    * @param id The meal ID.
    * @returns An Observable with the Recipe object.
    */
-  getMealById(id: number): Observable<Recipe> {
+  getMealById(id: number): Observable<any> {
     return this.http.get<any>(`${this.mealByIdUrl}${id}`).pipe(
       map(response => {
         if (!response.meals || response.meals.length === 0) {

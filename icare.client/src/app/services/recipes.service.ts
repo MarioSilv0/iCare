@@ -13,6 +13,7 @@ import { Injectable } from '@angular/core';
 import { Recipe } from '../../models/recipe';
 import { catchError } from 'rxjs/operators';
 import { throwError, Observable } from 'rxjs';
+import { PROFILE } from './users.service';
 
 const RECIPE: string = '/api/Recipe';
 
@@ -42,6 +43,10 @@ export class RecipeService {
    */
   getSpecificRecipe(recipeName: string): Observable<Recipe> {
     return this.http.get<Recipe>(`${RECIPE}/${recipeName}`);
+  }
+
+  toggleFavorite(recipeName: string): Observable<string> {
+    return this.http.put<string> (`${PROFILE}/Recipe/${recipeName}`, {});
   }
 
   /**

@@ -55,9 +55,15 @@ export class RecipesComponent {
     let recipe = this.recipes[id]
     let old = recipe.isFavorite;
 
-    this.recipes[id].isFavorite = !this.recipes[id].isFavorite;
+    this.recipesService.toggleFavorite(recipe.name).subscribe(
+      (result) => recipe.isFavorite = !old,
+      (error) => {
+        console.error(error);
+        recipe.isFavorite = old
+      }
+    )
   }
-  
+
   getPermissions() {
     const permissions: Permissions | null = this.permissionsService.getPermissions();
     this.preferencesPermission = permissions?.preferences ?? false;
@@ -68,7 +74,6 @@ export class RecipesComponent {
   getRecipes() {
     this.recipesService.getAllRecipes().subscribe(
       (result) => {
-        console.log(result)
         this.recipes = this.filteredRecipes = result;
       },
       (error) => {

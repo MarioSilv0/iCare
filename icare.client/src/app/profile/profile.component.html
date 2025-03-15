@@ -3,7 +3,11 @@
       (ngSubmit)="updateUser()"
       (keydown.enter)="$event.preventDefault()">
 
-  <container class="m-0">
+  <container class="m-0 position-relative">
+    <help helpText="Esta página permite editar o seu perfil.
+                    Preencha todos os campos com atenção, garantindo que os dados inseridos são válidos.
+                    Após preencher, clique em 'Salvar' para guardar as alterações.
+                    Se algum campo estiver incorreto, uma mensagem de erro será exibida com explicações sobre o problema." />
     <!-- Profile Image -->
     <div class="image-wrapper">
       <profile-image id="image" [imageUrl]="profileForm.get('picture')?.value" [editable]="true" (imageChange)="changePicture($event)" />
@@ -45,7 +49,7 @@
     <br />
     <!-- Profile Height -->
     <custom-input id="height"
-                  name="Altura:"
+                  name="Altura (em metros):"
                   type="number"
                   formControlName="height" />
     <div *ngIf="profileForm.get('height')?.touched && profileForm.get('height')?.invalid">
@@ -57,7 +61,7 @@
     <br />
     <!-- Profile Weight -->
     <custom-input id="weight"
-                  name="Peso:"
+                  name="Peso (em quilogramas):"
                   type="number"
                   formControlName="weight"></custom-input>
     <small *ngIf="profileForm.get('weight')?.invalid && profileForm.get('weight')?.touched" class="text-danger">

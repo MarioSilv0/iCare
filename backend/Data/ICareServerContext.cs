@@ -120,8 +120,8 @@ namespace backend.Data
                 new Ingredient { Id = 3, Name = "Carne", Kcal = 137, KJ = 175, Protein = 1.6f, Carbohydrates = 35.4f, Lipids = 2, Fibers = 103, Category = "Carne" }
             );
             modelBuilder.Entity<Recipe>().HasData(
-                new Recipe { Id = 1, Picture = "", Name = "Algo de Bom", Instructions = "Tu Consegues", Category = "Bom", Area = "Portugal", UrlVideo = "" },
-                new Recipe { Id = 2, Picture = "", Name = "Algo de Mau", Instructions = "Boa Sorte", Category = "Mau", Area = "Bugs", UrlVideo = "" }
+                new Recipe { Id = 1, Picture = "", Name = "Algo de Bom", Instructions = "Tu Consegues", Category = "Bom", Area = "Portugal", UrlVideo = "", Calories = 50, Proteins = 20, Carbohydrates = 50, Lipids = 20, Fibers = 10 },
+                new Recipe { Id = 2, Picture = "", Name = "Algo de Mau", Instructions = "Boa Sorte", Category = "Mau", Area = "Bugs", UrlVideo = "", Calories = 100, Proteins = 5, Carbohydrates = 70, Lipids = 25, Fibers = 20 }
             );
             modelBuilder.Entity<RecipeIngredient>().HasData(
                 new RecipeIngredient { RecipeId = 1, Measure = "1 xícara", Grams = 20, IngredientId = 1 },

@@ -426,30 +426,30 @@ namespace backend.Migrations
                         {
                             Id = 1,
                             Area = "Portugal",
-                            Calories = 0f,
-                            Carbohydrates = 0f,
+                            Calories = 50f,
+                            Carbohydrates = 50f,
                             Category = "Bom",
-                            Fibers = 0f,
+                            Fibers = 10f,
                             Instructions = "Tu Consegues",
-                            Lipids = 0f,
+                            Lipids = 20f,
                             Name = "Algo de Bom",
                             Picture = "",
-                            Proteins = 0f,
+                            Proteins = 20f,
                             UrlVideo = ""
                         },
                         new
                         {
                             Id = 2,
                             Area = "Bugs",
-                            Calories = 0f,
-                            Carbohydrates = 0f,
+                            Calories = 100f,
+                            Carbohydrates = 70f,
                             Category = "Mau",
-                            Fibers = 0f,
+                            Fibers = 20f,
                             Instructions = "Boa Sorte",
-                            Lipids = 0f,
+                            Lipids = 25f,
                             Name = "Algo de Mau",
                             Picture = "",
-                            Proteins = 0f,
+                            Proteins = 5f,
                             UrlVideo = ""
                         });
                 });

@@ -375,8 +375,8 @@ namespace backend.Migrations
                 columns: new[] { "Id", "Area", "Calories", "Carbohydrates", "Category", "Fibers", "Instructions", "Lipids", "Name", "Picture", "Proteins", "UrlVideo" },
                 values: new object[,]
                 {
-                    { 1, "Portugal", 0f, 0f, "Bom", 0f, "Tu Consegues", 0f, "Algo de Bom", "", 0f, "" },
-                    { 2, "Bugs", 0f, 0f, "Mau", 0f, "Boa Sorte", 0f, "Algo de Mau", "", 0f, "" }
+                    { 1, "Portugal", 50f, 50f, "Bom", 10f, "Tu Consegues", 20f, "Algo de Bom", "", 20f, "" },
+                    { 2, "Bugs", 100f, 70f, "Mau", 20f, "Boa Sorte", 25f, "Algo de Mau", "", 5f, "" }
                 });
 
             migrationBuilder.InsertData(

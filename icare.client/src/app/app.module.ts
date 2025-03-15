@@ -34,6 +34,7 @@ import { CustomInputComponent } from './components/custom-input/custom-input.com
 import { CustomCheckboxComponent } from './components/custom-checkbox/custom-checkbox.component';
 import { CategorySelectorComponent } from './components/category-selector/category-selector.component';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
+import { HelpComponent } from './components/help/help.component';
 
 
 @NgModule({
@@ -62,6 +63,7 @@ import { SearchBarComponent } from './components/search-bar/search-bar.component
     CustomCheckboxComponent,
     CategorySelectorComponent,
     SearchBarComponent,
+    HelpComponent,
   ],
   imports: [
     BrowserModule,
