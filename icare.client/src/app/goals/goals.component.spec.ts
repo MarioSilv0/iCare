@@ -5,7 +5,7 @@ import {
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { GoalsComponent } from './goals.component';
 
 describe('GoalsComponent', () => {
@@ -29,6 +29,8 @@ describe('GoalsComponent', () => {
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
     spyOn(component['http'], 'get').and.returnValue(of([]));
+    spyOn(component['http'], 'put').and.returnValue(of({}));
+    spyOn(component['http'], 'post').and.returnValue(of({}));
     fixture.detectChanges();
   });
 
@@ -58,7 +60,7 @@ describe('GoalsComponent', () => {
   });
 
   it('should create a MetaManual goal correctly', () => {
-    component.goalForm.setValue({
+    component.goalForm.patchValue({
       selectedGoal: 'Perder Peso',
       calories: 2000,
       startDate: '2025-01-01',
@@ -74,12 +76,7 @@ describe('GoalsComponent', () => {
   });
 
   it('should create a MetaAutomatica goal correctly', () => {
-    component.goalForm.setValue({
-      selectedGoal: 'Perder Peso',
-      calories: 0,
-      startDate: '',
-      endDate: '',
-    });
+    component.goalForm.patchValue({ selectedGoal: 'Perder Peso' });
     const goal = component.createGoal('Automática');
     expect(goal).toEqual({ type: 'Automatica', goal: 'Perder Peso' });
   });
@@ -98,12 +95,6 @@ describe('GoalsComponent', () => {
   });
 
   it('should show success snackbar on successful addGoal', () => {
-    component.goalForm.setValue({
-      selectedGoal: 'Perder Peso',
-      calories: 2000,
-      startDate: '2025-01-01',
-      endDate: '2025-01-31',
-    });
     spyOn(component['http'], 'post').and.returnValue(of({}));
     component.addGoal();
     expect(snackBarSpy.open).toHaveBeenCalledWith(
@@ -114,16 +105,34 @@ describe('GoalsComponent', () => {
   });
 
   it('should show error snackbar on failed addGoal', () => {
-    component.goalForm.setValue({
-      selectedGoal: 'Perder Peso',
-      calories: 2000,
-      startDate: '2025-01-31',
-      endDate: '2025-01-01',
-    });
-    spyOn(component['http'], 'post').and.returnValue(of({}));
+    spyOn(component['http'], 'post').and.returnValue(
+      throwError(() => new Error('Error'))
+    );
     component.addGoal();
     expect(snackBarSpy.open).toHaveBeenCalledWith(
       'Erro ao tentar criar meta.',
+      undefined,
+      { duration: 2000, panelClass: ['fail-snackbar'] }
+    );
+  });
+
+  it('should show success snackbar on successful updateUserInfo', () => {
+    spyOn(component['http'], 'put').and.returnValue(of({}));
+    component.updateUserInfo();
+    expect(snackBarSpy.open).toHaveBeenCalledWith(
+      'Informações atualizadas com sucesso.',
+      undefined,
+      { duration: 2000, panelClass: ['success-snackbar'] }
+    );
+  });
+
+  it('should show error snackbar on failed updateUserInfo', () => {
+    spyOn(component['http'], 'put').and.returnValue(
+      throwError(() => new Error('Error'))
+    );
+    component.updateUserInfo();
+    expect(snackBarSpy.open).toHaveBeenCalledWith(
+      'Erro ao tentar atualizar informações.',
       undefined,
       { duration: 2000, panelClass: ['fail-snackbar'] }
     );

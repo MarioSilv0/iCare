@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class GoalsComponent {
   goalType: string = 'Manual';
+  userInfoForm: FormGroup;
   goalForm: FormGroup;
   userGoals?: Goal[];
   goals: Goal[] = [
@@ -28,13 +29,27 @@ export class GoalsComponent {
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
     });
+
+    this.userInfoForm = this.fb.group({
+      birthdate: ['', Validators.required],
+      weigth: [
+        0,
+        [Validators.required, Validators.min(0), Validators.max(700)],
+      ],
+      height: [0, [Validators.required, Validators.min(0), Validators.max(3)]],
+      gender: ['', Validators.required],
+      activity: ['', Validators.required],
+    });
   }
 
   ngOnInit() {
-    let url = '';
+    let url = 'api/goal/current';
     this.http.get<Goal[]>(url).subscribe({
       next: (goals) => (this.userGoals = goals),
-      error: (error) => console.log(error),
+      error: (error) => {
+        console.log(error);
+        this.userGoals = [];
+      },
     });
   }
 
@@ -42,10 +57,28 @@ export class GoalsComponent {
     this.goalType = this.goalType === 'Automática' ? 'Manual' : 'Automática';
   }
 
+  updateUserInfo() {
+    let url = '/api/user/physical';
+    this.http.put(url, this.userInfoForm.value).subscribe({
+      next: () => {
+        this.snack.open('Informações atualizadas com sucesso.', undefined, {
+          duration: 2000,
+          panelClass: ['success-snackbar'],
+        });
+      },
+      error: () => {
+        this.snack.open('Erro ao tentar atualizar informações.', undefined, {
+          duration: 2000,
+          panelClass: ['fail-snackbar'],
+        });
+      },
+    });
+  }
+
   addGoal() {
     let meta = this.createGoal(this.goalType);
 
-    let url = '/qualquer';
+    let url = 'api/goal/create';
     this.http.post(url, meta).subscribe({
       next: () => {
         this.snack.open('Meta criada com sucesso.', undefined, {

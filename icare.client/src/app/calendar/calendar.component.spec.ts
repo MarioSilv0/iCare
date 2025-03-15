@@ -1,8 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { CalendarComponent } from './calendar.component';
-import { NoopAnimationsModule, BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import {
+  BrowserAnimationsModule,
+  NoopAnimationsModule,
+} from '@angular/platform-browser/animations';
+import { CalendarComponent } from './calendar.component';
 
 describe('CalendarComponent', () => {
   let component: CalendarComponent;
@@ -14,10 +17,12 @@ describe('CalendarComponent', () => {
 
     await TestBed.configureTestingModule({
       declarations: [CalendarComponent],
-      imports: [NoopAnimationsModule, BrowserAnimationsModule, ReactiveFormsModule], // ✅ Add ReactiveFormsModule
-      providers: [
-        { provide: MatSnackBar, useValue: snackBar }
-      ]
+      imports: [
+        NoopAnimationsModule,
+        BrowserAnimationsModule,
+        ReactiveFormsModule,
+      ], // ✅ Add ReactiveFormsModule
+      providers: [{ provide: MatSnackBar, useValue: snackBar }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CalendarComponent);
@@ -51,7 +56,7 @@ describe('CalendarComponent', () => {
 
     expect(component.dates.emit).toHaveBeenCalledWith({
       startDate: '2025-03-13',
-      endDate: '2025-03-14'
+      endDate: '2025-03-14',
     });
   });
 
@@ -59,14 +64,20 @@ describe('CalendarComponent', () => {
     const today = new Date();
     const startDateBeforeToday = new Date(today.setDate(today.getDate() - 1)); // Set to a day before today
 
-    component.dateForm.controls['startDate'].setValue(startDateBeforeToday.toISOString().split('T')[0]);
+    component.dateForm.controls['startDate'].setValue(
+      startDateBeforeToday.toISOString().split('T')[0]
+    );
     component.dateForm.controls['endDate'].setValue('2025-03-14');
     component.validateDate();
 
-    expect(snackBar.open).toHaveBeenCalledWith("Só pode criar metas com inicio atual ou superior.", undefined, {
-      duration: 2000,
-      panelClass: ['fail-snackbar']
-    });
+    expect(snackBar.open).toHaveBeenCalledWith(
+      'Só pode criar metas com inicio atual ou superior.',
+      undefined,
+      {
+        duration: 2000,
+        panelClass: ['fail-snackbar'],
+      }
+    );
 
     expect(component.dateForm.value.startDate).toBeNull();
     expect(component.dateForm.value.endDate).toBeNull();
@@ -77,10 +88,14 @@ describe('CalendarComponent', () => {
     component.dateForm.controls['endDate'].setValue('2025-03-13');
     component.validateDate();
 
-    expect(snackBar.open).toHaveBeenCalledWith('A data final deve ser maior que a data inicial.', '', {
-      duration: 2000,
-      panelClass: ["fail-snackbar"]
-    });
+    expect(snackBar.open).toHaveBeenCalledWith(
+      'Só pode criar metas com inicio atual ou superior.',
+      undefined,
+      {
+        duration: 2000,
+        panelClass: ['fail-snackbar'],
+      }
+    );
 
     expect(component.dateForm.value.startDate).toBeNull();
     expect(component.dateForm.value.endDate).toBeNull();

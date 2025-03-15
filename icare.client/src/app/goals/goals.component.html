@@ -5,37 +5,34 @@
       Informações necessárias para definir meta alimentar estão incompletas.
       Preencha os campos obrigatórios.
     </p>
-    <p *ngIf="!userGoals || userGoals.length == 0">Nenhuma meta alimentar definida. É necessário definir uma meta.</p>
+    <p *ngIf="!userGoals || userGoals.length == 0">
+      Nenhuma meta alimentar definida. É necessário definir uma meta.
+    </p>
   </div>
 
   <div style="border: 1px solid cyan" *ngIf="false">
     <h2>Informações Necessárias</h2>
-    <form action="" class="info-form shadow">
+    <form class="info-form shadow" [formGroup]="userInfoForm">
       <div class="info-inputs-container">
         <label for="ipt-data-nascimento">Data de nascimento</label>
-        <input id="ipt-data-nascimento" type="date" required />
+        <input
+          id="ipt-data-nascimento"
+          type="date"
+          formControlName="birthdate"
+          required
+        />
       </div>
       <div class="info-inputs-container">
         <label for="ipt-altura">Altura</label>
-        <input id="ipt-altura"
-               type="number"
-               min="0"
-               value="0"
-               max="3"
-               required />
+        <input id="ipt-altura" type="number" formControlName="height" />
       </div>
       <div class="info-inputs-container">
         <label for="ipt-peso">Peso</label>
-        <input id="ipt-peso"
-               type="number"
-               min="0"
-               value="0"
-               max="700"
-               required />
+        <input id="ipt-peso" type="number" formControlName="weight" />
       </div>
       <div class="info-inputs-container">
         <label for="ipt-genero">Genero</label>
-        <select name="ipt-genero" id="ipt-genero" required>
+        <select name="ipt-genero" id="ipt-genero" formControlName="gender">
           <option value="" disabled>-- selecione uma opção --</option>
           <option value="M">Masculino</option>
           <option value="F">Feminino</option>
@@ -43,7 +40,11 @@
       </div>
       <div class="info-inputs-container">
         <label for="ipt-atividade-fisica">Nivel de atividade fisica</label>
-        <select name="ipt-atividade-fisica" id="ipt-atividade-fisica" required>
+        <select
+          name="ipt-atividade-fisica"
+          id="ipt-atividade-fisica"
+          formControlName="activity"
+        >
           <option value="" disabled>-- selecione uma opção --</option>
           <option value="high">Alta</option>
           <option value="medium">Média</option>
@@ -52,7 +53,13 @@
       </div>
       <div class="info-inputs-container">
         <button class="bt-clear-info" type="reset">Cancelar</button>
-        <button class="bt-confirm-info" type="submit">Confirmar</button>
+        <button
+          class="bt-confirm-info"
+          (click)="updateUserInfo()"
+          type="submit"
+        >
+          Confirmar
+        </button>
       </div>
     </form>
   </div>
@@ -68,26 +75,36 @@
         <label class="goal-type-label {{ goalType }}" for="ipt-goal-type">
           Meta Alimentar {{ goalType }}
         </label>
-        <input class="goal-type-input"
-               type="checkbox"
-               name="ipt-goal-type"
-               id="ipt-goal-type"
-               (click)="toggleGoalType()" />
+        <input
+          class="goal-type-input"
+          type="checkbox"
+          name="ipt-goal-type"
+          id="ipt-goal-type"
+          (click)="toggleGoalType()"
+        />
       </div>
       <div>
-        <form [formGroup]="goalForm" class="goal-form shadow" > 
-          <div *ngIf="goalType === 'Automática'" class="mx-0 goals-inputs-container">
+        <form [formGroup]="goalForm" class="goal-form shadow">
+          <div
+            *ngIf="goalType === 'Automática'"
+            class="mx-0 goals-inputs-container"
+          >
             <label>Escolha um Objetivo:</label>
             <select formControlName="selectedGoal">
-              <option *ngFor="let goal of goals" [value]="goal.name">{{ goal.name }}</option>
+              <option *ngFor="let goal of goals" [value]="goal.name">
+                {{ goal.name }}
+              </option>
             </select>
           </div>
 
           <div *ngIf="goalType === 'Manual'">
-
             <div class="mx-0 goals-inputs-container">
               <label>Calorias:</label>
-              <input type="number" formControlName="calories" id="ipt-calorias-diarias"/>
+              <input
+                type="number"
+                formControlName="calories"
+                id="ipt-calorias-diarias"
+              />
             </div>
 
             <div>
@@ -95,12 +112,30 @@
             </div>
           </div>
 
-          <button *ngIf="goalType === 'Automática'" type="button" (click)="addGoal()" class="bt-add-goal" [disabled]="!goalForm.get('selectedGoal')?.value">Adicionar Meta</button>
-          <button *ngIf="goalType === 'Manual'" type="button" (click)="addGoal()" class="bt-add-goal" [disabled]="goalForm.get('calories')?.value <= 0 || !goalForm.get('startDate')?.value || !goalForm.get('endDate')?.value">Adicionar Meta</button>
+          <button
+            *ngIf="goalType === 'Automática'"
+            type="button"
+            (click)="addGoal()"
+            class="bt-add-goal"
+            [disabled]="!goalForm.get('selectedGoal')?.value"
+          >
+            Adicionar Meta
+          </button>
+          <button
+            *ngIf="goalType === 'Manual'"
+            type="button"
+            (click)="addGoal()"
+            class="bt-add-goal"
+            [disabled]="
+              goalForm.get('calories')?.value <= 0 ||
+              !goalForm.get('startDate')?.value ||
+              !goalForm.get('endDate')?.value
+            "
+          >
+            Adicionar Meta
+          </button>
         </form>
       </div>
-
     </div>
   </div>
-  
 </div>
