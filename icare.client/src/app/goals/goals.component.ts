@@ -9,29 +9,33 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrl: './goals.component.css',
 })
 export class GoalsComponent {
-  goalType: string = "Manual";
+  goalType: string = 'Manual';
   goalForm: FormGroup;
-  userGoals?: Goal[]
+  userGoals?: Goal[];
   goals: Goal[] = [
     { name: 'Perder Peso' },
     { name: 'Manter Peso' },
     { name: 'Ganhar Peso' },
   ];
-  constructor(private http: HttpClient, private snack: MatSnackBar, private fb: FormBuilder) {
+  constructor(
+    private http: HttpClient,
+    private snack: MatSnackBar,
+    private fb: FormBuilder
+  ) {
     this.goalForm = this.fb.group({
       selectedGoal: [''],
       calories: [0],
       startDate: ['', Validators.required],
-      endDate: ['', Validators.required]
-    })
+      endDate: ['', Validators.required],
+    });
   }
 
   ngOnInit() {
-    let url = ''
-    this.http.get<Goal[]>(url).subscribe(
-      goals => this.userGoals = goals,
-      error => console.log(error)
-    )
+    let url = '';
+    this.http.get<Goal[]>(url).subscribe({
+      next: (goals) => (this.userGoals = goals),
+      error: (error) => console.log(error),
+    });
   }
 
   toggleGoalType() {
@@ -39,67 +43,65 @@ export class GoalsComponent {
   }
 
   addGoal() {
+    let meta = this.createGoal(this.goalType);
 
-    let meta = this.createGoal(this.goalType)
-
-    let url = ''
-    this.http.post(url, meta).subscribe(
-      {
-        next: () => {
-          this.snack.open("Meta criada com sucesso.", undefined, {
-            duration: 2000,
-            panelClass: ['success-snackbar']
-          })
-        },
-        error: () => {
-          this.snack.open("Erro ao tentar criar meta.", undefined, {
-            duration: 2000,
-            panelClass: ['fail-snackbar']
-          })
-        },
-        complete: () => {
-          this.goalForm.reset()
-        }
-      }
-    )
-
+    let url = '/qualquer';
+    this.http.post(url, meta).subscribe({
+      next: () => {
+        this.snack.open('Meta criada com sucesso.', undefined, {
+          duration: 2000,
+          panelClass: ['success-snackbar'],
+        });
+      },
+      error: () => {
+        this.snack.open('Erro ao tentar criar meta.', undefined, {
+          duration: 2000,
+          panelClass: ['fail-snackbar'],
+        });
+      },
+      complete: () => {
+        this.goalForm.reset();
+      },
+    });
   }
 
   createGoal(goalType: string) {
     let goal;
     switch (goalType) {
-      case "Automática": {
-        goal = {
-          type: "Automatica",
-          goal: this.goalForm.value.selectedGoal
-        } as MetaAutomatica
-      }; break;
-      case "Manual": {
-        goal = {
-          type: "Manual",
-          calories: this.goalForm.value.calories,
-          startDate: this.goalForm.value.startDate,
-          endDate: this.goalForm.value.endDate
-        } as MetaManual
-      }; break;
+      case 'Automática':
+        {
+          goal = {
+            type: 'Automatica',
+            goal: this.goalForm.value.selectedGoal,
+          } as MetaAutomatica;
+        }
+        break;
+      case 'Manual':
+        {
+          goal = {
+            type: 'Manual',
+            calories: this.goalForm.value.calories,
+            startDate: this.goalForm.value.startDate,
+            endDate: this.goalForm.value.endDate,
+          } as MetaManual;
+        }
+        break;
       default: {
-        console.error("O tipo de meta não existe.")
+        console.error('O tipo de meta não existe.');
         return null;
       }
     }
-    alert(JSON.stringify(goal))
     return goal;
   }
 
   receiveData(data: DatesEmiter) {
-    if (!data) return; 
+    if (!data) return;
 
     this.goalForm.patchValue({
       startDate: data.startDate,
-      endDate: data.endDate
+      endDate: data.endDate,
     });
   }
-
 }
 
 interface Goal {
@@ -107,19 +109,19 @@ interface Goal {
 }
 
 interface DatesEmiter {
-  startDate: string,
-  endDate: string,
+  startDate: string;
+  endDate: string;
 }
 
 interface Meta {
-  type: string
+  type: string;
 }
 
 interface MetaManual extends Meta {
-  calories: number,
-  startDate: string,
-  endDate: string
+  calories: number;
+  startDate: string;
+  endDate: string;
 }
 interface MetaAutomatica extends Meta {
-  goal: string
+  goal: string;
 }
