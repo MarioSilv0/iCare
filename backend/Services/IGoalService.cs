@@ -1,0 +1,58 @@
+﻿using backend.Models.Data_Transfer_Objects;
+using backend.Models.Goals;
+
+namespace backend.Services
+{
+    /// <summary>
+    /// Defines the contract for goal-related operations, ensuring validation and consistency.
+    /// </summary>
+    /// <author>Mário Silva - 202000500</author>
+    /// <date>Last Modified: 2025-03-14</date>
+    public interface IGoalService
+    {
+        /// <summary>
+        /// Retrieves the latest goal for a user by their unique user ID.
+        /// The goal is ordered by the start date, with the most recent goal returned.
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user whose latest goal is to be retrieved.</param>
+        /// <returns>The latest goal if found; otherwise, null if no goal exists for the user.</returns>
+        Task<Goal?> GetLatestGoalByUserIdAsync(string userId);
+
+        /// <summary>
+        /// Creates a new dietary goal for a user.
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <param name="goalDto">The goal data transfer object containing goal details.</param>
+        /// <returns>The created goal.</returns>
+        /// <exception cref="InvalidOperationException">Thrown if the goal is invalid.</exception>
+        Task<Goal> CreateGoalAsync(string userId, GoalDTO goalDto);
+
+        /// <summary>
+        /// Deletes a goal and logs the action.
+        /// </summary>
+        /// <param name="id">The ID of the goal to delete.</param>
+        /// <returns>True if deletion was successful; otherwise, false.</returns>
+        Task<bool> DeleteGoalAsync(int id);
+
+        /// <summary>
+        /// Updates an existing goal.
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <param name="id">The ID of the goal to update.</param>
+        /// <param name="goalDto">The updated goal data.</param>
+        /// <returns>True if the update was successful; otherwise, false.</returns>
+        /// <exception cref="InvalidOperationException">Thrown if the goal is invalid.</exception>
+        Task<bool> UpdateGoalAsync(string userId, int id, GoalDTO goalDto);
+
+        /// <summary>
+        /// Validates a dietary goal based on predefined rules.
+        /// </summary>
+        /// <param name="goal">The goal to validate.</param>
+        /// <returns>
+        /// A tuple indicating:
+        /// - Success (bool): Whether the validation passed.
+        /// - ErrorMessage (string?): The error message if validation fails.
+        /// </returns>
+        (bool Success, string? ErrorMessage) ValidateGoal(Goal goal);
+    }
+}

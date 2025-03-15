@@ -5,9 +5,9 @@
 /// </summary>
 /// <author>João Morais  - 202001541</author>
 /// <author>Luís Martins - 202100239</author>
-/// <author>Mário Silva  - 202000500</author>
 /// <date>Last Modified: 2025-03-01</date>
 
+using backend.Models.Enums;
 using backend.Models.Ingredients;
 using backend.Models.Recipes;
 using Microsoft.AspNetCore.Identity;
@@ -39,9 +39,10 @@ namespace backend.Models
         public DateOnly Birthdate { get; set; } = new DateOnly();
 
         /// <summary>
-        /// Indicates whether the user has enabled notifications.
+        /// Gets the user's age based on this birthdate.
         /// </summary>
-        public bool Notifications { get; set; } = false;
+        /// <returns>Age of the user.</returns>
+        public int Age() => CaculateAge(Birthdate);
 
         /// <summary>
         /// Gets or sets the user's height in meters.
@@ -52,6 +53,21 @@ namespace backend.Models
         /// Gets or sets the user's weight in kilograms.
         /// </summary>
         public float Weight { get; set; } = 0f;
+
+        /// <summary>
+        /// Gets or sets the user's gender.
+        /// </summary>
+        public Gender Gender { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user's activity level.
+        /// </summary>
+        public ActivityLevel ActivityLevel { get; set; }
+
+        /// <summary>
+        /// Indicates whether the user has enabled notifications.
+        /// </summary>
+        public bool Notifications { get; set; } = false;
 
         /// <summary>
         /// Gets or sets the user's dietary preferences.
@@ -71,7 +87,7 @@ namespace backend.Models
         /// <summary>
         /// Gets or sets the user's favorite recipes.
         /// </summary>
-        public ICollection<UserRecipe>? favoriteRecipes { get; set; }
+        public ICollection<UserRecipe>? FavoriteRecipes { get; set; }
 
         /// <summary>
         /// Gets or sets the logs associated with the user.
@@ -84,13 +100,13 @@ namespace backend.Models
         /// <param name="model">The public user model containing updated user data.</param>
         public void UpdateFromModel(UserDTO model)
         {
-            if(Picture != model.Picture && !string.IsNullOrWhiteSpace(model.Picture))
+            if (Picture != model.Picture && !string.IsNullOrWhiteSpace(model.Picture))
                 Picture = model.Picture;
 
-            if(Name != model.Name && !string.IsNullOrWhiteSpace(model.Name))
+            if (Name != model.Name && !string.IsNullOrWhiteSpace(model.Name))
                 Name = model.Name;
 
-            if(Email != model.Email && !string.IsNullOrWhiteSpace(model.Email) && this.IsValidEmail(model.Email))
+            if (Email != model.Email && !string.IsNullOrWhiteSpace(model.Email) && this.IsValidEmail(model.Email))
                 Email = model.Email;
 
             if (Birthdate != model.Birthdate)
@@ -100,17 +116,20 @@ namespace backend.Models
                     Birthdate = model.Birthdate;
             }
 
+            Gender = model.Gender;
+            ActivityLevel = model.ActivityLevel;
+
             Notifications = model.Notifications;
 
-            float roundedHeight = (float) Math.Round(model.Height, 1);
+            float roundedHeight = (float)Math.Round(model.Height, 1);
             if (Height != roundedHeight && roundedHeight > 0 && roundedHeight < 3)
                 Height = roundedHeight;
 
-            float roundedWeight = (float) Math.Round(model.Weight, 1);
+            float roundedWeight = (float)Math.Round(model.Weight, 1);
             if (Weight != roundedWeight && roundedWeight > 0 && roundedWeight < 700)
                 Weight = roundedWeight;
 
-            if(model.Preferences != Preferences)
+            if (model.Preferences != Preferences)
                 Preferences = model.Preferences;
 
             if (model.Restrictions != Restrictions)

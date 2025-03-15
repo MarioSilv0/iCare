@@ -19,7 +19,7 @@ using Xunit;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace backendtest
+namespace backendtest.Controllers.Api
 {
     public class AccountControllerTests
     {
@@ -88,7 +88,7 @@ namespace backendtest
                 emailSenderService
             );
         }
-        
+
         /// <summary>
         /// Obtém o valor de uma propriedade de um objeto via reflection.
         /// Retorna null caso a propriedade não exista.

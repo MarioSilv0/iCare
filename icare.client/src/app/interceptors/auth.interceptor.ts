@@ -36,7 +36,7 @@ export class AuthInterceptor implements HttpInterceptor {
       || request.url.includes('localhost:4000/graphql')
       || request.url.includes('127.0.0.1:5000/translate')
     ) {
-      return next.handle(request); // Não adiciona Authorization para esta API, Mário
+      return next.handle(request);
     }
 
     const token = localStorage.getItem('authToken');
