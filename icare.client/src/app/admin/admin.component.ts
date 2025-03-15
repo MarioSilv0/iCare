@@ -12,42 +12,10 @@ import { RecipeService } from '../services/recipes.service';
   styleUrl: './admin.component.css'
 })
 export class AdminComponent {
-  originalRecipe!: Recipe;
-  translatedRecipe!: Recipe;
-  loading: boolean = false;
-  errorMessage: string = '';
+    progressMessage?: string;
 
     constructor(private foodService: IngredientService, private taco: TacoApiService, private mealDb: MealDbService, private translate: TranslateService) { }
 
-
-  //fetchRecipes() {
-  //  this.loading = true;
-  //  this.errorMessage = '';
-
-  //  const mealId = '52772'; // ID de teste
-
-  //  this.mealDb.getMealById(mealId).subscribe({
-  //    next: (recipe) => {
-  //      this.originalRecipe = recipe;
-  //    },
-  //    error: (error) => {
-  //      console.error('Erro ao obter receita original:', error);
-  //      this.errorMessage = 'Erro ao carregar receita original.';
-  //    }
-  //  });
-
-  //  this.mealDb.getMealByIdTranslated(mealId).then({
-  //    next: (recipe) => {
-  //      this.translatedRecipe = recipe;
-  //      this.loading = false;
-  //    },
-  //    error: (error) => {
-  //      console.error('Erro ao obter receita traduzida:', error);
-  //      this.errorMessage = 'Erro ao carregar receita traduzida.';
-  //      this.loading = false;
-  //    }
-  //  });
-  //}
 
 
   updateIngredientDb() {
@@ -81,7 +49,11 @@ export class AdminComponent {
   }
 
   updateRecipeDb() {
-    this.mealDb.updateRecipeDB();
+    this.mealDb.updateRecipeDB(
+      (message: string) => {
+        this.progressMessage = message;
+      }
+    );
   }
 
 

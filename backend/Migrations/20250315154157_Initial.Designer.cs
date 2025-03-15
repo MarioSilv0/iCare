@@ -12,8 +12,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ICareServerContext))]
-    [Migration("20250314172542_initial")]
-    partial class initial
+    [Migration("20250315154157_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -393,17 +393,29 @@ namespace backend.Migrations
                     b.Property<float>("Calories")
                         .HasColumnType("real");
 
+                    b.Property<float>("Carbohydrates")
+                        .HasColumnType("real");
+
                     b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<float>("Fibers")
+                        .HasColumnType("real");
+
                     b.Property<string>("Instructions")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Lipids")
+                        .HasColumnType("real");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Picture")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Proteins")
+                        .HasColumnType("real");
 
                     b.Property<string>("UrlVideo")
                         .HasColumnType("nvarchar(max)");
@@ -418,10 +430,14 @@ namespace backend.Migrations
                             Id = 1,
                             Area = "Portugal",
                             Calories = 0f,
+                            Carbohydrates = 0f,
                             Category = "Bom",
+                            Fibers = 0f,
                             Instructions = "Tu Consegues",
+                            Lipids = 0f,
                             Name = "Algo de Bom",
                             Picture = "",
+                            Proteins = 0f,
                             UrlVideo = ""
                         },
                         new
@@ -429,10 +445,14 @@ namespace backend.Migrations
                             Id = 2,
                             Area = "Bugs",
                             Calories = 0f,
+                            Carbohydrates = 0f,
                             Category = "Mau",
+                            Fibers = 0f,
                             Instructions = "Boa Sorte",
+                            Lipids = 0f,
                             Name = "Algo de Mau",
                             Picture = "",
+                            Proteins = 0f,
                             UrlVideo = ""
                         });
                 });

@@ -35,9 +35,11 @@ namespace backend.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Picture = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Birthdate = table.Column<DateOnly>(type: "date", nullable: false),
-                    Notifications = table.Column<bool>(type: "bit", nullable: false),
                     Height = table.Column<float>(type: "real", nullable: false),
                     Weight = table.Column<float>(type: "real", nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: false),
+                    ActivityLevel = table.Column<int>(type: "int", nullable: false),
+                    Notifications = table.Column<bool>(type: "bit", nullable: false),
                     Preferences = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Restrictions = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -210,6 +212,58 @@ namespace backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "GoalLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    GoalId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    GoalType = table.Column<int>(type: "int", nullable: false),
+                    AutoGoalType = table.Column<int>(type: "int", nullable: true),
+                    Calories = table.Column<int>(type: "int", nullable: true),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Action = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ActionDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GoalLogs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GoalLogs_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Goals",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    GoalType = table.Column<int>(type: "int", nullable: false),
+                    AutoGoalType = table.Column<int>(type: "int", nullable: true),
+                    Calories = table.Column<int>(type: "int", nullable: true),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Goals", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Goals_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserLogs",
                 columns: table => new
                 {
@@ -375,6 +429,16 @@ namespace backend.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_GoalLogs_UserId",
+                table: "GoalLogs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Goals_UserId",
+                table: "Goals",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RecipeIngredients_IngredientId",
                 table: "RecipeIngredients",
                 column: "IngredientId");
@@ -412,6 +476,12 @@ namespace backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "GoalLogs");
+
+            migrationBuilder.DropTable(
+                name: "Goals");
 
             migrationBuilder.DropTable(
                 name: "RecipeIngredients");

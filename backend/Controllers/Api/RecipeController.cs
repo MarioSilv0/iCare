@@ -171,8 +171,9 @@ namespace backend.Controllers.Api
                     }
                 }
 
-                await _context.SaveChangesAsync();
-                return Ok("Recipes updated successfully.");
+                await _context.SaveChangesAsync(); 
+                return Ok(new { message = "Recipes updated successfully." });
+
             }
             catch (Exception ex)
             {

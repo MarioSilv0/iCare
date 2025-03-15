@@ -209,32 +209,43 @@ export class MealDbService {
    * Updates the recipe database by fetching categories and meals, 
    * translating the data and storing the processed recipes.
    */
-  async updateRecipeDB() {
+  async updateRecipeDB(updateProgress?: (message: string) => void) {
     try {
+
       const mealsList: Recipe[] = [];
       const categoriesList: string[] = [];
 
       const categoriesResponse = await this.getCategories().toPromise();
       const categories: [{ strCategory: string }] = categoriesResponse.categories ?? [];
+      const totalCategories = categories.length;
 
       // Process each category
-      for (let ic = 0; ic < categories.length; ic++) {
+      for (let ic = 0; ic < totalCategories; ic++) {
         const category = categories[ic];
+
         console.log(`categories: (${ic + 1}/${categories.length})`);
+        const progress = ((ic + 1) / totalCategories) * 100;
+        if (updateProgress) {
+          updateProgress(`Processando receitas da categoria (${ic + 1}/${totalCategories})`);
+        }
+
         const translatedCategory = await this.processCategory(category.strCategory);
         categoriesList.push(translatedCategory);
 
         // Get meals from the category and process
         const meals = await this.getMealsByCategoryAndTranslate(category.strCategory);
         mealsList.push(...meals);
-      }
 
-      if (mealsList.length > 0) {
-        this.recipeService.updateRecipeDB(mealsList).subscribe(
-          (response => {
-            console.log('✅ Receita(s) atualizada(s) com sucesso:', response);
-            return response;
-          }));
+        if (mealsList.length > 0) {
+          this.recipeService.updateRecipeDB(mealsList).subscribe(() => {
+            if (updateProgress) {
+              updateProgress(`✅ Receita(s) da categoria "${translatedCategory}" atualizadas!`);
+            }
+          });
+        }
+      }
+      if (updateProgress) {
+        updateProgress(`🎉 Atualização concluída!`);
       }
     } catch (error) {
       console.error('Error updating the database:', error);
@@ -269,10 +280,6 @@ export class MealDbService {
       console.log(mealDetails);
       if (mealDetails) {
         translatedMeals.push(mealDetails);
-        this.recipeService.updateRecipeDB([mealDetails]).subscribe(
-          (response => {
-            console.log('response:', response);
-          }));
       }
     }
 

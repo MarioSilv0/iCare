@@ -102,7 +102,7 @@
         /// <param name="autoGoalType">The <see cref="AutoGoalType"/> to convert.</param>
         /// <returns>The string representation of the <see cref="AutoGoalType"/>.</returns>
         /// <exception cref="ArgumentException">Thrown if the <see cref="AutoGoalType"/> is invalid.</exception>
-        public static string ToFriendlyString(this AutoGoalType autoGoalType)
+        public static string ToFriendlyString(this AutoGoalType? autoGoalType)
         {
             return autoGoalType switch
             {
