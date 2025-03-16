@@ -22,6 +22,12 @@ namespace backend.Controllers.Api
     /// The <c>RecipeController</c> class provides API endpoints for retrieving recipes.
     /// It allows authenticated users to fetch a list of recipes and details of a specific recipe.
     /// </summary>
+    /// <remarks>
+    /// The controller requires JWT authentication. The routes are as follows:
+    /// 1. <c>GET /api/recipe</c> - Retrieve all recipes.
+    /// 2. <c>GET /api/recipe/{recipeName}</c> - Retrieve a specific recipe by name.
+    /// 3. <c>PUT /api/recipe/update</c> - Update the list of recipes.
+    /// </remarks>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -48,6 +54,10 @@ namespace backend.Controllers.Api
         /// An <c>ActionResult</c> containing a list of <c>RecipeDTO</c> objects 
         /// if recipes are found, or an error response otherwise.
         /// </returns>
+        /// <remarks>
+        /// The response will be a list of recipes, each containing information about the recipe's ingredients, category,
+        /// and nutritional values.
+        /// </remarks>
         [HttpGet]
         public async Task<ActionResult<List<RecipeDTO>>> Get()
         {
@@ -79,6 +89,9 @@ namespace backend.Controllers.Api
         /// An <c>ActionResult</c> containing the <c>RecipeDTO</c> object if found, 
         /// or a <c>NotFound</c> response if the recipe does not exist.
         /// </returns>
+        /// <remarks>
+        /// This endpoint retrieves a specific recipe by its name, along with its ingredients and nutritional details.
+        /// </remarks>
         [HttpGet("{recipeName}")]
         public async Task<ActionResult<RecipeDTO>> Get(string recipeName)
         {
@@ -91,7 +104,7 @@ namespace backend.Controllers.Api
                                                    .ThenInclude(ri => ri.Ingredient)
                                                    .Include(r => r.UserRecipes)
                                                    .FirstOrDefaultAsync(r => r.Name == recipeName);
-                if (recipe == null) return NotFound($"Recipe '{recipe}' not found.");
+                if (recipe == null) return NotFound($"Recipe '{recipeName}' not found.");
 
                 var publicRecipe = new RecipeDTO(recipe!, id, true);
 
@@ -109,6 +122,10 @@ namespace backend.Controllers.Api
         /// </summary>
         /// <param name="recipes">The list of recipes to update.</param>
         /// <returns>An HTTP response indicating success or failure.</returns>
+        /// <remarks>
+        /// The request body must contain a list of recipes, and each recipe will be updated or added to the database.
+        /// The ingredients for each recipe will also be processed and linked to existing ingredients in the system.
+        /// </remarks>
         [HttpPut("update")]
         public async Task<IActionResult> UpdateRecipes([FromBody] List<RecipeDTO> recipes)
         {
@@ -175,6 +192,13 @@ namespace backend.Controllers.Api
             }
         }
 
+        /// <summary>
+        /// Processes an ingredient and associates it with the recipe.
+        /// </summary>
+        /// <param name="existingIngredients">The list of ingredients in the database.</param>
+        /// <param name="recipe">The recipe to associate the ingredient with.</param>
+        /// <param name="ingredientDto">The ingredient details to process.</param>
+        /// <param name="newRecipe">Indicates whether the ingredient is being added to a new recipe or an existing one.</param>
         private static void ProcessIngredient(List<Ingredient> existingIngredients, Recipe recipe, RecipeIngredientDTO ingredientDto, bool newRecipe)
         {
             var existingIngredient = existingIngredients.FirstOrDefault(i => i.Name == ingredientDto.Name);
@@ -188,7 +212,7 @@ namespace backend.Controllers.Api
                     Grams = ingredientDto.Grams
                 };
 
-                if(newRecipe)
+                if (newRecipe)
                 {
                     recipe.Calories += existingIngredient.Kcal * (ingredientDto.Grams ?? 0) / 100;
                     recipe.Proteins += existingIngredient.Protein * (ingredientDto.Grams ?? 0) / 100;

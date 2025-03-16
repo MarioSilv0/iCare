@@ -109,6 +109,13 @@ namespace backend.Controllers.Api
             }
         }
 
+        /// <summary>
+        /// Retrieves the preferences associated with the authenticated user.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="ActionResult"/> containing the <see cref="PreferencesDTO"/> with the user's preferences,
+        /// or an error response if the request fails.
+        /// </returns>
         [HttpGet("preferences")]
         public async Task<ActionResult<PermissionsDTO>> GetPreferences()
         {
@@ -131,6 +138,13 @@ namespace backend.Controllers.Api
             }
         }
 
+        /// <summary>
+        /// Retrieves the restrictions associated with the authenticated user.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="ActionResult"/> containing the <see cref="RestrictionsDTO"/> with the user's restrictions,
+        /// or an error response if the request fails.
+        /// </returns>
         [HttpGet("restrictions")]
         public async Task<ActionResult<PermissionsDTO>> GetRestrictions()
         {
@@ -165,7 +179,8 @@ namespace backend.Controllers.Api
         {
             if (model == null) return BadRequest("Invalid data provided.");
 
-            try {
+            try
+            {
                 var id = User.FindFirst("UserId")?.Value;
                 if (id == null) return Unauthorized("User ID not found in token.");
 
@@ -242,7 +257,6 @@ namespace backend.Controllers.Api
             }
         }
 
-
         /// <summary>
         /// Checks whether the provided email is unique in the system.
         /// </summary>
@@ -257,7 +271,13 @@ namespace backend.Controllers.Api
             return !await _context.Users.AnyAsync(u => u.Email == email);
         }
 
-
+        /// <summary>
+        /// Toggles a recipe as a favorite for the authenticated user.
+        /// </summary>
+        /// <param name="recipeName">The name of the recipe to be toggled as favorite.</param>
+        /// <returns>
+        /// An <c>ActionResult</c> indicating the success or failure of the operation.
+        /// </returns>
         [HttpPut("Recipe/{recipeName}")]
         public async Task<ActionResult> ToggleFavoriteRecipe(string recipeName)
         {
@@ -293,5 +313,3 @@ namespace backend.Controllers.Api
         }
     }
 }
-
-
