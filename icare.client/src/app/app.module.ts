@@ -35,6 +35,7 @@ import { CustomCheckboxComponent } from './components/custom-checkbox/custom-che
 import { CategorySelectorComponent } from './components/category-selector/category-selector.component';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { HelpComponent } from './components/help/help.component';
+import { GoalComponent } from './goal/goal.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { HelpComponent } from './components/help/help.component';
     CategorySelectorComponent,
     SearchBarComponent,
     HelpComponent,
+    GoalComponent,
   ],
   imports: [
     BrowserModule,

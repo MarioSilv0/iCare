@@ -1,16 +1,13 @@
 <div class="goals">
-  <div style="border: 1px solid green">
+  <div>
     <h1>Meta Alimentar</h1>
     <p *ngIf="false">
       Informações necessárias para definir meta alimentar estão incompletas.
       Preencha os campos obrigatórios.
     </p>
-    <p *ngIf="!goals || goals.length == 0">
-      Nenhuma meta alimentar definida. É necessário definir uma meta.
-    </p>
+    <app-goal [goal]="userGoal"></app-goal>
   </div>
-
-  <div style="border: 1px solid cyan" *ngIf="false">
+  <div>
     <h2>Informações Necessárias</h2>
     <form class="info-form shadow" [formGroup]="userInfoForm">
       <div class="info-inputs-container">
@@ -33,9 +30,7 @@
       <div class="info-inputs-container">
         <label for="ipt-genero">Genero</label>
         <select name="ipt-genero" id="ipt-genero" formControlName="gender">
-          <option value="" disabled>-- selecione uma opção --</option>
-          <option value="M">Masculino</option>
-          <option value="F">Feminino</option>
+          <option *ngFor="let g of genders;let i = index" value="{{g.value}}" [disabled]="i === 0">{{g.label}}</option>
         </select>
       </div>
       <div class="info-inputs-container">
@@ -43,12 +38,9 @@
         <select
           name="ipt-atividade-fisica"
           id="ipt-atividade-fisica"
-          formControlName="activity"
+          formControlName="activityLevel"
         >
-          <option value="" disabled>-- selecione uma opção --</option>
-          <option value="high">Alta</option>
-          <option value="medium">Média</option>
-          <option value="low">Baixa</option>
+          <option *ngFor="let a of activities; let i = index" value="{{a.value}}" [disabled]="i === 0">{{a.label}}</option>
         </select>
       </div>
       <div class="info-inputs-container">
@@ -57,6 +49,7 @@
           class="bt-confirm-info"
           (click)="updateUserInfo()"
           type="submit"
+          [disabled]="userInfoForm.invalid"
         >
           Confirmar
         </button>
@@ -64,7 +57,7 @@
     </form>
   </div>
 
-  <div style="border: 1px solid red">
+  <div>
     <h2>Definir Meta Alimentar</h2>
     <p>
       Preencha o tipo de meta desejada, selecione os dias que quer fugir à meta
@@ -126,12 +119,7 @@
             type="button"
             (click)="addGoal()"
             class="bt-add-goal"
-            [disabled]="
-              goalForm.get('calories')?.value <= 0 ||
-              !goalForm.get('startDate')?.value ||
-              !goalForm.get('endDate')?.value
-            "
-          >
+            [disabled]="goalForm.get('calories')?.value <= 0 || !goalForm.get('startDate')?.value || !goalForm.get('endDate')?.value || userInfoForm.invalid">
             Adicionar Meta
           </button>
         </form>
