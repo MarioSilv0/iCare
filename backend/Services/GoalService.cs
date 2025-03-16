@@ -7,17 +7,30 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services
 {
+    /// <summary>
+    /// Provides functionality for managing user goals, including creating, updating, retrieving, and deleting goals.
+    /// This service validates goal data, supports automatic and manual goal types, and calculates caloric goals based on user profiles.
+    /// </summary>
     public class GoalService : IGoalService
     {
         private readonly ICareServerContext _context;
         private const int MinCalories = 1200;
         private const int MaxCalories = 4000;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GoalService"/> class with the specified database context.
+        /// </summary>
+        /// <param name="context">The database context to interact with.</param>
         public GoalService(ICareServerContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Retrieves the latest goal for a specified user by their user ID.
+        /// </summary>
+        /// <param name="userId">The ID of the user whose latest goal is to be retrieved.</param>
+        /// <returns>The most recent goal for the user, or <c>null</c> if no goal exists.</returns>
         public async Task<Goal?> GetLatestGoalByUserIdAsync(string userId)
         {
             return await _context.Goals
@@ -26,6 +39,13 @@ namespace backend.Services
                 .FirstOrDefaultAsync();
         }
 
+        /// <summary>
+        /// Creates a new goal for a specified user.
+        /// </summary>
+        /// <param name="userId">The ID of the user for whom the goal is being created.</param>
+        /// <param name="goalDto">The data transfer object containing the goal details.</param>
+        /// <returns>The created <see cref="Goal"/> object.</returns>
+        /// <exception cref="InvalidOperationException">Thrown if the goal validation fails.</exception>
         public async Task<Goal> CreateGoalAsync(string userId, GoalDTO goalDto)
         {
             var goal = new Goal
@@ -56,6 +76,14 @@ namespace backend.Services
             return goal;
         }
 
+        /// <summary>
+        /// Updates an existing goal for a specified user.
+        /// </summary>
+        /// <param name="userId">The ID of the user whose goal is to be updated.</param>
+        /// <param name="id">The ID of the goal to be updated.</param>
+        /// <param name="goalDto">The data transfer object containing the updated goal details.</param>
+        /// <returns><c>true</c> if the goal was successfully updated, otherwise <c>false</c>.</returns>
+        /// <exception cref="InvalidOperationException">Thrown if the goal validation fails.</exception>
         public async Task<bool> UpdateGoalAsync(string userId, int id, GoalDTO goalDto)
         {
             var goal = await _context.Goals.FindAsync(id);
@@ -86,6 +114,11 @@ namespace backend.Services
             return true;
         }
 
+        /// <summary>
+        /// Deletes a goal for a specified user.
+        /// </summary>
+        /// <param name="id">The ID of the goal to be deleted.</param>
+        /// <returns><c>true</c> if the goal was successfully deleted, otherwise <c>false</c>.</returns>
         public async Task<bool> DeleteGoalAsync(int id)
         {
             var goal = await _context.Goals.FindAsync(id);
@@ -113,6 +146,11 @@ namespace backend.Services
             return true;
         }
 
+        /// <summary>
+        /// Validates the specified goal for correctness.
+        /// </summary>
+        /// <param name="goal">The goal to be validated.</param>
+        /// <returns>A tuple containing a boolean indicating success and an error message if validation fails.</returns>
         public (bool Success, string? ErrorMessage) ValidateGoal(Goal goal)
         {
             if (goal.GoalType == GoalType.Automatica && !goal.AutoGoalType.HasValue)
@@ -137,6 +175,12 @@ namespace backend.Services
             return (true, null);
         }
 
+        /// <summary>
+        /// Calculates the automatic caloric goal based on a user's profile and activity level.
+        /// </summary>
+        /// <param name="profile">The user's profile containing weight, height, age, and activity level.</param>
+        /// <param name="autoGoalType">The type of automatic goal (lose weight, maintain weight, gain weight).</param>
+        /// <returns>The calculated caloric goal based on the user's profile and goal type.</returns>
         private int CalculateAutomaticGoal(User profile, AutoGoalType? autoGoalType)
         {
             double bmr = 10 * profile.Weight + 6.25 * profile.Height - 5 * profile.Age() + (profile.Gender.Equals("Male") ? 5 : -161);
