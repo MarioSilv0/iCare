@@ -77,7 +77,7 @@ export class GoalsComponent {
           weight,
           height,
           gender,
-          activityLevel
+          activityLevel: activityLevel
         })
       }
     )
