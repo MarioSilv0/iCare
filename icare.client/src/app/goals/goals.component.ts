@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { UsersService } from '../services/users.service';
 
 @Component({
   selector: 'app-goals',
@@ -18,10 +19,25 @@ export class GoalsComponent {
     { name: 'Manter Peso' },
     { name: 'Ganhar Peso' },
   ];
+  genders = [
+    {value: '', label: 'Selecione o seu genero'},
+    { value: 'Male', label: 'Masculino'},
+    { value: 'Female', label: 'Feminino'}
+  ]
+
+  activities = [
+    {value: '', label: 'Nivel de atividade'},
+    {value: 'Sedentary', label: 'Sedentário'},
+    {value: 'LightlyActive', label: 'Pouco Ativo'},
+    {value: 'ModeratelyActive', label: 'Moderadamente Ativo'},
+    {value: 'VeryActive', label: 'Muito Ativo'},
+    {value: 'SuperActive', label: 'Super Ativo'}
+  ]
   constructor(
     private http: HttpClient,
     private snack: MatSnackBar,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private userService: UsersService
   ) {
     this.goalForm = this.fb.group({
       selectedGoal: [''],
@@ -32,25 +48,38 @@ export class GoalsComponent {
 
     this.userInfoForm = this.fb.group({
       birthdate: ['', Validators.required],
-      weigth: [
+      weight: [
         0,
         [Validators.required, Validators.min(0), Validators.max(700)],
       ],
       height: [0, [Validators.required, Validators.min(0), Validators.max(3)]],
       gender: ['', Validators.required],
       activity: ['', Validators.required],
-    });
+    });    
   }
 
   ngOnInit() {
     let url = 'api/goal/current';
     this.http.get<Goal>(url).subscribe({
-      next: (goals) => (this.userGoal = goals),
+      next: (goal) => (this.userGoal = goal),
       error: (error) => {
         console.log(error);
         this.userGoal = undefined;
       },
     });
+
+    this.userService.getUser().subscribe(
+      ({ birthdate, height, weight, gender, activityLevel }) => {
+        alert(JSON.stringify({ birthdate, height, weight, gender, activityLevel }))
+        this.userInfoForm.patchValue({
+          birthdate,
+          weight,
+          height,
+          gender,
+          activityLevel
+        })
+      }
+    )
   }
 
   toggleGoalType() {
@@ -59,14 +88,25 @@ export class GoalsComponent {
 
   updateUserInfo() {
     let url = '/api/user/physical';
-    this.http.put(url, this.userInfoForm.value).subscribe({
-      next: () => {
+
+    let userPhysical = {
+      Birthdate: this.userInfoForm.get("birthdate")?.value,
+      Height: this.userInfoForm.get("height")?.value,
+      Weight: this.userInfoForm.get("weight")?.value,
+      Gender: this.userInfoForm.get("gender")?.value,
+      ActivityLevel: this.userInfoForm.get("activityLevel")?.value,
+    }
+
+    this.http.put(url, JSON.stringify(userPhysical)).subscribe({
+      next: (d) => {
+        console.log(d)
         this.snack.open('Informações atualizadas com sucesso.', undefined, {
           duration: 2000,
           panelClass: ['success-snackbar'],
         });
       },
-      error: () => {
+      error: (e) => {
+        console.log(e)
         this.snack.open('Erro ao tentar atualizar informações.', undefined, {
           duration: 2000,
           panelClass: ['fail-snackbar'],
