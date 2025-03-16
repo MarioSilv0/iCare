@@ -15,7 +15,7 @@ using System.Security.Claims;
 
 namespace backend.Controllers.Api
 {
-    [Route("api/goal")]
+    [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class GoalController : ControllerBase

@@ -3,6 +3,8 @@
 </p>
 
 <div>
-<p *ngFor="let g in goal">{{g}}</p>
+  <p *ngFor="let entry of objectEntries(goal)">
+    {{ entry[0] }} - {{ entry[1] }}
+  </p>
 
 </div>

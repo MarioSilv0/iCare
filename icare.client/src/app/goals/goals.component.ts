@@ -29,10 +29,10 @@ export class GoalsComponent {
   activities = [
     {value: '', label: 'Nivel de atividade'},
     {value: 'Sedentary', label: 'Sedentário'},
-    {value: 'LightlyActive', label: 'Pouco Ativo'},
-    {value: 'ModeratelyActive', label: 'Moderadamente Ativo'},
-    {value: 'VeryActive', label: 'Muito Ativo'},
-    {value: 'SuperActive', label: 'Super Ativo'}
+    {value: 'Lightly Active', label: 'Pouco Ativo'},
+    {value: 'Moderately Active', label: 'Moderadamente Ativo'},
+    {value: 'Very Active', label: 'Muito Ativo'},
+    {value: 'Super Active', label: 'Super Ativo'}
   ]
   constructor(
     private http: HttpClient,
@@ -64,14 +64,13 @@ export class GoalsComponent {
     this.http.get<UserGoal>(url).subscribe({
       next: (goal) => (this.userGoal = goal),
       error: (error) => {
-        console.log(error);
+        console.error(error);
         this.userGoal = undefined;
       },
     });
 
     this.userService.getUser().subscribe(
       ({ birthdate, height, weight, gender, activityLevel }) => {
-        alert(JSON.stringify({ birthdate, height, weight, gender, activityLevel }))
         this.userInfoForm.patchValue({
           birthdate,
           weight,

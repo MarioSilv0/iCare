@@ -6,10 +6,12 @@ import { Component, Input } from '@angular/core';
   styleUrl: './goal.component.css'
 })
 export class GoalComponent {
-  @Input() goal: UserGoal | undefined;
+  @Input() goal: UserGoal = { type: '', dailyCalories: 0, duration: 0 };
 
-  constructor() {
-    
+  constructor() { }
+
+  objectEntries(obj: any): [string, any][] {
+    return Object.entries(obj);
   }
 }
 
