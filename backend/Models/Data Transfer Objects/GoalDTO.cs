@@ -10,11 +10,6 @@ namespace backend.Models.Data_Transfer_Objects
     public class GoalDTO
     {
         /// <summary>
-        /// The unique identifier of the goal DTO.
-        /// </summary>
-        public int Id { get; set; }
-
-        /// <summary>
         /// The type of dietary goal. This field is required.
         /// </summary>
         public required string GoalType { get; set; }
@@ -52,7 +47,6 @@ namespace backend.Models.Data_Transfer_Objects
         /// <param name="goal">The <see cref="Goal"/> entity containing goal details.</param>
         public GoalDTO(Goal goal)
         {
-            Id = goal.Id;
             GoalType = GoalTypeExtensions.ToFriendlyString(goal.GoalType);
             AutoGoalType = AutoGoalTypeExtensions.ToFriendlyString(goal.AutoGoalType);
             Calories = goal.Calories;

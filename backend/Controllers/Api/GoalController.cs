@@ -34,7 +34,7 @@ namespace backend.Controllers.Api
         /// </summary>
         /// <param name="userId">The ID of the user.</param>
         /// <returns>The latest goal if found; otherwise, NotFound.</returns>
-        [HttpGet("current")]
+        [HttpGet]
         public async Task<IActionResult> GetCurrentGoalByUserId()
         {
 
@@ -63,7 +63,7 @@ namespace backend.Controllers.Api
         /// </summary>
         /// <param name="goalDto">The goal data transfer object containing goal details.</param>
         /// <returns>The created goal.</returns>
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateGoal([FromBody] GoalDTO goalDto)
         {
             var userId = User.FindFirst("UserId")?.Value;
@@ -86,14 +86,14 @@ namespace backend.Controllers.Api
         /// <param name="id">The ID of the goal to update.</param>
         /// <param name="goalDto">The updated goal data.</param>
         /// <returns>No content if successful; NotFound if the goal does not exist.</returns>
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateGoal(int id, [FromBody] GoalDTO goalDto)
+        [HttpPut]
+        public async Task<IActionResult> UpdateGoal([FromBody] GoalDTO goalDto)
         {
             var userId = User.FindFirst("UserId")?.Value;
             if (userId == null) return Unauthorized("User ID not found in token.");
             try
             {
-                var success = await _goalService.UpdateGoalAsync(userId, id, goalDto);
+                var success = await _goalService.UpdateGoalAsync(userId, goalDto);
                 if (!success)
                 {
                     return NotFound("Meta não encontrada.");
@@ -108,16 +108,17 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
-        /// Deletes an existing goal.
+        /// Deletes the current goal.
         /// </summary>
-        /// <param name="id">The ID of the goal to delete.</param>
         /// <returns>No content if successful; NotFound if the goal does not exist.</returns>
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGoal(int id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteGoal()
         {
+            var userId = User.FindFirst("UserId")?.Value;
+            if (userId == null) return Unauthorized("User ID not found in token.");
             try
             {
-                var success = await _goalService.DeleteGoalAsync(id);
+                var success = await _goalService.DeleteGoalAsync(userId);
                 if (!success)
                 {
                     return NotFound("Meta não encontrada.");
