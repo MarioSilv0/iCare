@@ -204,6 +204,33 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
+        /// Retrieves the physical attributes of the authenticated user.
+        /// </summary>
+        /// <returns>
+        /// An <c>ActionResult</c> containing the <c>PublicUser</c> object if found, or an error response otherwise.
+        /// </returns>
+        [HttpGet("physical")]
+        public async Task<ActionResult<UserPhysicalDTO>> GetPhysicalAttributes()
+        {
+            try
+            {
+                var id = User.FindFirst("UserId")?.Value;
+                if (id == null) return Unauthorized("User ID not found in token.");
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+                if (user == null) return NotFound();
+
+
+                return Ok(new UserPhysicalDTO(user));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
+        /// <summary>
         /// Updates the physical attributes of the authenticated user.
         /// </summary>
         /// <param name="model">The <c>UserPhysicalDTO</c> model containing the updated physical data.</param>

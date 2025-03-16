@@ -24,8 +24,8 @@ describe('MealDbService', () => {
   let recipeServiceSpy: jasmine.SpyObj<RecipeService>;
 
   /**
-   * Configuração inicial dos testes. Define os espiões (spies) para os serviços injetados
-   * e configura o módulo de testes com as dependências necessárias.
+   * Initial setup for the tests. Defines the spies for injected services
+   * and configures the testing module with the necessary dependencies.
    */
   beforeEach(() => {
     const translateSpy = jasmine.createSpyObj('TranslateService', ['translateENPT']);
@@ -50,15 +50,15 @@ describe('MealDbService', () => {
   });
 
   /**
-   * Após cada teste, verifica se todas as requisições HTTP esperadas foram feitas.
+   * After each test, checks if all expected HTTP requests have been made.
    */
   afterEach(() => {
     httpMock.verify();
   });
 
   /**
-   * Testa o método `getCategories` para garantir que ele recupera as categorias corretamente da API.
-   * Verifica se a resposta da API é manipulada corretamente e se o serviço retorna as categorias esperadas.
+   * Tests the `getCategories` method to ensure it correctly fetches categories from the API.
+   * Verifies that the API response is handled correctly and the service returns the expected categories.
    */
   it('should fetch categories from API', () => {
     const mockCategories = { categories: [{ strCategory: 'Beef' }, { strCategory: 'Chicken' }] };
@@ -71,8 +71,8 @@ describe('MealDbService', () => {
   });
 
   /**
-   * Testa o método `getMealsByCategory` para garantir que ele recupera as refeições por categoria da API.
-   * Verifica se o serviço chama a URL correta da API e processa a resposta adequadamente.
+   * Tests the `getMealsByCategory` method to ensure it correctly fetches meals by category from the API.
+   * Verifies that the service calls the correct API URL and processes the response properly.
    */
   it('should fetch meals by category', () => {
     const mockMeals = { meals: [{ strMeal: 'Steak', idMeal: 1234 }] };
@@ -85,8 +85,8 @@ describe('MealDbService', () => {
   });
 
   /**
-   * Testa o método `getMealById` para garantir que ele recupera os detalhes de uma refeição pela ID da API.
-   * Verifica se os detalhes da refeição são extraídos e retornados corretamente.
+   * Tests the `getMealById` method to ensure it correctly fetches meal details by ID from the API.
+   * Verifies that the meal details are extracted and returned correctly.
    */
   it('should fetch meal details by ID', () => {
     const mockMeal = { meals: [{ idMeal: 1234, strMeal: 'Steak', strInstructions: 'Cook it', strCategory: 'Beef' }] };
@@ -101,8 +101,8 @@ describe('MealDbService', () => {
   });
 
   /**
-   * Testa o método `extractIngredients` para garantir que ele retorna uma lista vazia
-   * quando nenhum ingrediente é encontrado no objeto de refeição.
+   * Tests the `extractIngredients` method to ensure it returns an empty array
+   * when no ingredients are found in the meal object.
    */
   it('should return an empty array when no ingredients are found', () => {
     const result = (service as any).extractIngredients({});
@@ -110,8 +110,8 @@ describe('MealDbService', () => {
   });
 
   /**
-   * Testa o método `formatInstructions` para garantir que ele formate corretamente as instruções
-   * de uma refeição em um array de linhas.
+   * Tests the `formatInstructions` method to ensure it correctly formats the instructions
+   * of a meal into an array of lines.
    */
   it('should format instructions into an array', () => {
     const formatted = service.formatInstructions('Step 1\nStep 2\n');
@@ -119,15 +119,15 @@ describe('MealDbService', () => {
   });
 
   /**
-   * Testa o método `processCategory` para garantir que ele traduza corretamente o nome da categoria
-   * utilizando o serviço de tradução.
+   * Tests the `processCategory` method to ensure it correctly translates the category name
+   * using the translation service.
    */
   it('should process categories and translate them', async () => {
     const mockCategories = { categories: [{ strCategory: 'Beef' }, { strCategory: 'Chicken' }] };
     const mockTranslation = 'translated category';
     translateServiceSpy.translateENPT.and.returnValue(Promise.resolve(mockTranslation));
 
-    // Simula a resposta da API
+    // Simulate the API response
     httpMock.match(() => true)[0]?.flush(mockCategories);
 
     const translatedCategory = await service['processCategory']('Beef');

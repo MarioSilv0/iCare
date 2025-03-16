@@ -12,7 +12,7 @@ export class GoalsComponent {
   goalType: string = 'Manual';
   userInfoForm: FormGroup;
   goalForm: FormGroup;
-  userGoals?: Goal[];
+  userGoal?: Goal;
   goals: Goal[] = [
     { name: 'Perder Peso' },
     { name: 'Manter Peso' },
@@ -44,11 +44,11 @@ export class GoalsComponent {
 
   ngOnInit() {
     let url = 'api/goal/current';
-    this.http.get<Goal[]>(url).subscribe({
-      next: (goals) => (this.userGoals = goals),
+    this.http.get<Goal>(url).subscribe({
+      next: (goals) => (this.userGoal = goals),
       error: (error) => {
         console.log(error);
-        this.userGoals = [];
+        this.userGoal = undefined;
       },
     });
   }
