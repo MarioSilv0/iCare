@@ -97,7 +97,7 @@ export class GoalsComponent {
       ActivityLevel: this.userInfoForm.get("activityLevel")?.value,
     }
 
-    this.http.put(url, JSON.stringify(userPhysical)).subscribe({
+    this.http.put(url, userPhysical).subscribe({
       next: (d) => {
         console.log(d)
         this.snack.open('Informações atualizadas com sucesso.', undefined, {

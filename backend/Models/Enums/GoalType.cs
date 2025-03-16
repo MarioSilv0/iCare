@@ -54,7 +54,7 @@
             {
                 "Manual" => GoalType.Manual,
                 "Automatica" => GoalType.Automatica,
-                _ => throw new ArgumentException($"Invalid value for GoalType: {goalType}")
+                _ => GoalType.Manual
             };
         }
 
@@ -70,7 +70,7 @@
             {
                 GoalType.Manual => "Manual",
                 GoalType.Automatica => "Automatica",
-                _ => throw new ArgumentException($"Invalid value for GoalType: {goalType}")
+                _ => "Manual",
             };
         }
     }
@@ -92,7 +92,7 @@
                 "Perder Peso" => AutoGoalType.PerderPeso,
                 "Manter Peso" => AutoGoalType.ManterPeso,
                 "Ganhar Peso" => AutoGoalType.GanharPeso,
-                _ => null
+                _ => AutoGoalType.ManterPeso,
             };
         }
 
@@ -109,7 +109,7 @@
                 AutoGoalType.PerderPeso => "Perder Peso",
                 AutoGoalType.ManterPeso => "Manter Peso",
                 AutoGoalType.GanharPeso => "Ganhar Peso",
-                _ => throw new ArgumentException($"Invalid value for AutoGoalType: {autoGoalType}")
+                _ => "Manter Peso",
             };
         }
     }
