@@ -14,11 +14,19 @@ using System.Security.Claims;
 
 namespace backendtest.Controllers.Api
 {
+    /// <summary>
+    /// The <c>GoalControllerTests</c> class contains unit tests for the <see cref="GoalController"/> class.
+    /// These tests ensure that the methods for creating, retrieving, updating, and deleting goals behave as expected.
+    /// </summary>
     public class GoalControllerTests : IClassFixture<ICareContextFixture>
     {
         private readonly GoalController _controller;
         private readonly Mock<IGoalService> _goalServiceMock;
 
+        /// <summary>
+        /// Initializes a new instance of the <c>GoalControllerTests</c> class.
+        /// This sets up the mock services and controller, and initializes the user claims for authentication.
+        /// </summary>
         public GoalControllerTests(ICareContextFixture fixture)
         {
             _goalServiceMock = new Mock<IGoalService>();
@@ -35,6 +43,10 @@ namespace backendtest.Controllers.Api
             };
         }
 
+        /// <summary>
+        /// Test for the <see cref="GoalController.GetCurrentGoalByUserId"/> method.
+        /// Ensures that a valid goal for the user is returned with a status of OK.
+        /// </summary>
         [Fact]
         public async Task GetLatestGoalByUserId_ShouldReturnOk_WhenGoalExists()
         {
@@ -49,9 +61,13 @@ namespace backendtest.Controllers.Api
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             var returnGoal = Assert.IsType<Goal>(okResult.Value);
-            Assert.Equal(goal.Id, returnGoal.Id); // Verifica se o id da meta retornada é igual ao esperado
+            Assert.Equal(goal.Id, returnGoal.Id); // Verifies that the returned goal ID matches the expected one
         }
 
+        /// <summary>
+        /// Test for the <see cref="GoalController.GetCurrentGoalByUserId"/> method.
+        /// Ensures that when no goal exists for the user, a NotFound status is returned.
+        /// </summary>
         [Fact]
         public async Task GetLatestGoalByUserId_ShouldReturnNotFound_WhenGoalDoesNotExist()
         {
@@ -64,9 +80,13 @@ namespace backendtest.Controllers.Api
 
             // Assert
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-            Assert.Equal("Meta não encontrada.", notFoundResult.Value); // Verifica se a mensagem de erro é correta
+            Assert.Equal("Meta não encontrada.", notFoundResult.Value); // Verifies the correct error message
         }
 
+        /// <summary>
+        /// Test for the <see cref="GoalController.GetCurrentGoalByUserId"/> method.
+        /// Ensures that an internal server error is returned when an exception occurs during goal retrieval.
+        /// </summary>
         [Fact]
         public async Task GetLatestGoalByUserId_ShouldReturnInternalServerError_WhenExceptionOccurs()
         {
@@ -83,6 +103,10 @@ namespace backendtest.Controllers.Api
             Assert.Equal("Erro ao acessar a meta.", statusCodeResult.Value);
         }
 
+        /// <summary>
+        /// Test for the <see cref="GoalController.CreateGoal"/> method.
+        /// Ensures that a goal is created successfully and returns a CreatedAtAction result.
+        /// </summary>
         [Fact]
         public async Task CreateGoal_ReturnsCreatedAtAction_WhenGoalIsCreated()
         {
@@ -116,6 +140,10 @@ namespace backendtest.Controllers.Api
             Assert.Equal(userId, createdGoal.UserId);
         }
 
+        /// <summary>
+        /// Test for the <see cref="GoalController.UpdateGoal"/> method.
+        /// Ensures that a goal update returns a NoContent result when the goal is updated successfully.
+        /// </summary>
         [Fact]
         public async Task UpdateGoal_ReturnsNoContent_WhenGoalIsUpdated()
         {
@@ -147,6 +175,10 @@ namespace backendtest.Controllers.Api
             Assert.IsType<NoContentResult>(result);
         }
 
+        /// <summary>
+        /// Test for the <see cref="GoalController.DeleteGoal"/> method.
+        /// Ensures that a goal is deleted successfully and returns a NoContent result.
+        /// </summary>
         [Fact]
         public async Task DeleteGoal_ReturnsNoContent_WhenGoalIsDeleted()
         {
@@ -169,6 +201,10 @@ namespace backendtest.Controllers.Api
             Assert.IsType<NoContentResult>(result);
         }
 
+        /// <summary>
+        /// Test for the <see cref="GoalController.DeleteGoal"/> method.
+        /// Ensures that when the goal does not exist, a NotFound result is returned.
+        /// </summary>
         [Fact]
         public async Task DeleteGoal_ReturnsNotFound_WhenGoalDoesNotExist()
         {

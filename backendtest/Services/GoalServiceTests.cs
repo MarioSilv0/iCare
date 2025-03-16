@@ -11,25 +11,40 @@ using Xunit;
 
 namespace backendtest.Services
 {
+    /// <summary>
+    /// The <c>GoalServiceTests</c> class contains unit tests for the <see cref="GoalService"/> class.
+    /// These tests verify the business logic for creating, updating, deleting, and retrieving goals, 
+    /// as well as validating goal inputs and handling exceptions.
+    /// </summary>
     public class GoalServiceTests : IClassFixture<ICareContextFixture>, IDisposable
     {
         private readonly ICareServerContext _context;
         private readonly GoalService _goalService;
 
+        /// <summary>
+        /// Initializes a new instance of the <c>GoalServiceTests</c> class.
+        /// This sets up the context and the service to test, along with cleaning the database between tests.
+        /// </summary>
         public GoalServiceTests(ICareContextFixture fixture)
         {
             _context = fixture.DbContext;
             _goalService = new GoalService(_context);
         }
 
-        void IDisposable.Dispose()
+        /// <summary>
+        /// Cleans up the database by removing goals and users after each test.
+        /// </summary>
+        public void Dispose()
         {
-            // Limpar os dados do banco de dados entre os testes
             _context.Goals.RemoveRange(_context.Goals);
             _context.Users.RemoveRange(_context.Users);
             _context.SaveChanges();
         }
 
+        /// <summary>
+        /// Tests the <see cref="GoalService.GetLatestGoalByUserIdAsync"/> method.
+        /// Verifies that the latest goal for the user is returned when the user has goals.
+        /// </summary>
         [Fact]
         public async Task GetLatestGoalByUserIdAsync_ShouldReturnLatestGoal_WhenUserHasGoals()
         {
@@ -59,10 +74,14 @@ namespace backendtest.Services
             var result = await _goalService.GetLatestGoalByUserIdAsync(userId);
 
             // Assert
-            Assert.NotNull(result); 
+            Assert.NotNull(result);
             Assert.Equal(goal2.Id, result.Id);
         }
 
+        /// <summary>
+        /// Tests the <see cref="GoalService.GetLatestGoalByUserIdAsync"/> method.
+        /// Verifies that the method returns <c>null</c> when the user has no goals.
+        /// </summary>
         [Fact]
         public async Task GetLatestGoalByUserIdAsync_ShouldReturnNull_WhenUserHasNoGoals()
         {
@@ -76,11 +95,15 @@ namespace backendtest.Services
             Assert.Null(result);
         }
 
+        /// <summary>
+        /// Tests the <see cref="GoalService.CreateGoalAsync"/> method.
+        /// Verifies that the correct number of calories is calculated for an automatic goal.
+        /// </summary>
         [Fact]
         public async Task CreateGoalAsync_ShouldCalculateCaloriesForAutomaticGoal_WhenGoalTypeIsAutomatica()
         {
             // Arrange
-            var userId = "user123"; // Mock do ID do usuário
+            var userId = "user123";
             var user = new User()
             {
                 Id = userId,
@@ -108,19 +131,23 @@ namespace backendtest.Services
             // Assert
             Assert.NotNull(createdGoal);
             Assert.Equal(userId, createdGoal.UserId);
-            Assert.Equal(1837, createdGoal.Calories);
+            Assert.Equal(1837, createdGoal.Calories); // Assert the calculated calories
         }
 
+        /// <summary>
+        /// Tests the <see cref="GoalService.CreateGoalAsync"/> method.
+        /// Verifies that an exception is thrown when the calorie value for a manual goal is out of the allowed range.
+        /// </summary>
         [Fact]
         public async Task CreateGoalAsync_ShouldThrowInvalidOperationException_WhenCaloriesAreOutOfRange()
         {
             // Arrange
-            var userId = "user123"; // Mock do ID do usuário
+            var userId = "user123";
             var goalDto = new GoalDTO
             {
-                GoalType = "Manual", // Meta manual
+                GoalType = "Manual",
                 AutoGoalType = null,
-                Calories = 500, // Calorias fora da faixa permitida (menor que 1200)
+                Calories = 500, // Invalid calories (less than 1200)
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddMonths(1)
             };
@@ -130,6 +157,10 @@ namespace backendtest.Services
                 await _goalService.CreateGoalAsync(userId, goalDto));
         }
 
+        /// <summary>
+        /// Tests the <see cref="GoalService.UpdateGoalAsync"/> method.
+        /// Verifies that the method returns <c>false</c> when trying to update a non-existent goal.
+        /// </summary>
         [Fact]
         public async Task UpdateGoalAsync_ShouldReturnFalse_WhenGoalDoesNotExist()
         {
@@ -144,22 +175,30 @@ namespace backendtest.Services
             };
 
             // Act
-            var success = await _goalService.UpdateGoalAsync("user123", 999, goalDto); // ID inválido
+            var success = await _goalService.UpdateGoalAsync("user123", 999, goalDto); // Invalid goal ID
 
             // Assert
             Assert.False(success);
         }
 
+        /// <summary>
+        /// Tests the <see cref="GoalService.DeleteGoalAsync"/> method.
+        /// Verifies that the method returns <c>false</c> when trying to delete a non-existent goal.
+        /// </summary>
         [Fact]
         public async Task DeleteGoalAsync_ShouldReturnFalse_WhenGoalDoesNotExist()
         {
             // Act
-            var success = await _goalService.DeleteGoalAsync(999); // ID inválido
+            var success = await _goalService.DeleteGoalAsync(999); // Invalid goal ID
 
             // Assert
             Assert.False(success);
         }
 
+        /// <summary>
+        /// Tests the <see cref="GoalService.ValidateGoal"/> method.
+        /// Verifies that the validation fails when the goal type is "Automatica" but no AutoGoalType is provided.
+        /// </summary>
         [Fact]
         public void ValidateGoal_ShouldReturnFalse_WhenGoalTypeIsAutomaticaButAutoGoalTypeIsNull()
         {
@@ -168,7 +207,7 @@ namespace backendtest.Services
             {
                 UserId = "user123",
                 GoalType = GoalType.Automatica,
-                AutoGoalType = null, // AutoGoalType não pode ser nulo
+                AutoGoalType = null, // AutoGoalType cannot be null
                 Calories = 2500,
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddMonths(1)
@@ -182,6 +221,10 @@ namespace backendtest.Services
             Assert.Equal("O tipo de meta automática deve ter um valor definido para AutoGoalType.", errorMessage);
         }
 
+        /// <summary>
+        /// Tests the <see cref="GoalService.ValidateGoal"/> method.
+        /// Verifies that the validation fails when the goal type is "Manual" but no calories are provided.
+        /// </summary>
         [Fact]
         public void ValidateGoal_ShouldReturnFalse_WhenGoalTypeIsManualButCaloriesAreNull()
         {
@@ -191,7 +234,7 @@ namespace backendtest.Services
                 UserId = "user123",
                 GoalType = GoalType.Manual,
                 AutoGoalType = null,
-                Calories = null, // Calorias não definidas
+                Calories = null, // Calories are required for manual goals
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddMonths(1)
             };

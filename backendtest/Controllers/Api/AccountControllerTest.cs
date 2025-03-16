@@ -30,21 +30,26 @@ namespace backendtest.Controllers.Api
         private readonly AccountController _controller;
         private readonly ICareServerContext _careServerContext;
 
+        /// <summary>
+        /// Initializes a new instance of the <c>AccountControllerTests</c> class.
+        /// This sets up the mocks for UserManager, SignInManager, and other dependencies,
+        /// as well as initializing an in-memory database for testing.
+        /// </summary>
         public AccountControllerTests()
         {
-            // Cria um banco de dados in-memory (usando um nome único para isolar os testes)
+            // Setup in-memory database for testing
             var options = new DbContextOptionsBuilder<ICareServerContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
             _careServerContext = new ICareServerContext(options);
 
-            // Configura o UserManager com um mock
+            // Setup mocks for UserManager and SignInManager
             var userStore = new Mock<IUserStore<User>>();
             _mockUserManager = new Mock<UserManager<User>>(
                 userStore.Object,
                 null, null, null, null, null, null, null, null);
 
-            // Configura o SignInManager com um mock
+            // Setup IConfiguration for JWT
             var contextAccessor = new Mock<IHttpContextAccessor>();
             var claimsFactory = new Mock<IUserClaimsPrincipalFactory<User>>();
             _mockSignInManager = new Mock<SignInManager<User>>(
@@ -53,22 +58,21 @@ namespace backendtest.Controllers.Api
                 claimsFactory.Object,
                 null, null, null, null);
 
-            // Configura o IConfiguration (para JWT e outras dependências, se necessário)
+            // Setup IConfiguration
             _mockConfiguration = new Mock<IConfiguration>();
             _mockConfiguration.Setup(x => x["Jwt:Key"])
                 .Returns("your-test-secret-key-that-is-long-enough-for-testing");
             _mockConfiguration.Setup(x => x["Jwt:Issuer"]).Returns("test-issuer");
             _mockConfiguration.Setup(x => x["Jwt:Audience"]).Returns("test-audience");
 
-            // Configura o IHttpContextAccessor
+            // Setup IHttpContextAccessor
             _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
             _mockHttpContextAccessor.Setup(h => h.HttpContext)
                 .Returns(new DefaultHttpContext());
 
-            // Instancia os serviços reais (UserLogService e EmailSenderService)
+            // Instantiate services and controller
             var userLogService = new UserLogService(_careServerContext, _mockHttpContextAccessor.Object);
 
-            // Configura o EmailSettings e encapsula-o em IOptions<EmailSettings>
             var emailSettings = new EmailSettings
             {
                 SmtpServer = "smtp.gmail.com",
@@ -79,7 +83,7 @@ namespace backendtest.Controllers.Api
             };
             var emailSenderService = new EmailSenderService(Options.Create(emailSettings));
 
-            // Instancia o controller, injetando as dependências
+            // Instantiate controller with dependency injection
             _controller = new AccountController(
                 _mockUserManager.Object,
                 userLogService,
@@ -90,15 +94,21 @@ namespace backendtest.Controllers.Api
         }
 
         /// <summary>
-        /// Obtém o valor de uma propriedade de um objeto via reflection.
-        /// Retorna null caso a propriedade não exista.
+        /// A helper method to access properties of an object via reflection.
         /// </summary>
+        /// <param name="obj">The object to inspect.</param>
+        /// <param name="propertyName">The name of the property.</param>
+        /// <returns>The value of the property, or null if not found.</returns>
         private static string GetPropertyValue(object obj, string propertyName)
         {
             var prop = obj.GetType().GetProperty(propertyName);
             return prop?.GetValue(obj, null)?.ToString();
         }
 
+        /// <summary>
+        /// Test for the <see cref="AccountController.Login"/> method.
+        /// Ensures that a valid login with correct credentials returns an Ok result with a token.
+        /// </summary>
         [Fact]
         public async Task Login_WithValidCredentials_ReturnsOkResult()
         {
@@ -139,6 +149,10 @@ namespace backendtest.Controllers.Api
             Assert.Equal("Login successful", message);
         }
 
+        /// <summary>
+        /// Test for the <see cref="AccountController.Login"/> method.
+        /// Ensures that an invalid model state returns a BadRequest result with an appropriate message.
+        /// </summary>
         [Fact]
         public async Task Login_WithInvalidModelState_ReturnsBadRequest()
         {
@@ -159,7 +173,10 @@ namespace backendtest.Controllers.Api
             Assert.Equal("Invalid data.", message);
         }
 
-
+        /// <summary>
+        /// Test for the <see cref="AccountController.Login"/> method.
+        /// Ensures that invalid credentials return a BadRequest result.
+        /// </summary>
         [Fact]
         public async Task Login_WithInvalidCredentials_ReturnsBadRequest()
         {
@@ -180,6 +197,10 @@ namespace backendtest.Controllers.Api
             Assert.IsType<BadRequestObjectResult>(result);
         }
 
+        /// <summary>
+        /// Test for the <see cref="AccountController.Register"/> method.
+        /// Ensures that a valid registration request returns a successful response.
+        /// </summary>
         [Fact]
         public async Task Register_WithValidModel_ReturnsOkResult()
         {
@@ -210,6 +231,10 @@ namespace backendtest.Controllers.Api
             Assert.Contains("Account created successfully", message);
         }
 
+        /// <summary>
+        /// Test for the <see cref="AccountController.Register"/> method.
+        /// Ensures that a registration with an existing email returns a Conflict result.
+        /// </summary>
         [Fact]
         public async Task Register_WithExistingEmail_ReturnsConflict()
         {
@@ -231,6 +256,10 @@ namespace backendtest.Controllers.Api
             Assert.IsType<ConflictObjectResult>(result);
         }
 
+        /// <summary>
+        /// Test for the <see cref="AccountController.ChangePassword"/> method.
+        /// Ensures that a valid password change request returns a successful response.
+        /// </summary>
         [Fact]
         public async Task ChangePassword_WithValidModel_ReturnsOkResult()
         {
@@ -270,7 +299,10 @@ namespace backendtest.Controllers.Api
             Assert.Contains("Senha alterada com sucesso", message);
         }
 
-
+        /// <summary>
+        /// Test for the <see cref="AccountController.RecoverPassword"/> method.
+        /// Ensures that a valid email for password recovery returns a successful response.
+        /// </summary>
         [Fact]
         public async Task RecoverPassword_WithValidEmail_ReturnsOkResult()
         {
@@ -302,6 +334,10 @@ namespace backendtest.Controllers.Api
             Assert.Contains("Instruções para redefinição de senha", message);
         }
 
+        /// <summary>
+        /// Test for the <see cref="AccountController.ResetPassword"/> method.
+        /// Ensures that a valid password reset request returns a successful response.
+        /// </summary>
         [Fact]
         public async Task ResetPassword_WithValidModel_ReturnsOkResult()
         {
@@ -329,6 +365,10 @@ namespace backendtest.Controllers.Api
             Assert.Contains("Senha redefinida com sucesso", message);
         }
 
+        /// <summary>
+        /// Test for the <see cref="AccountController.ConfirmEmail"/> method.
+        /// Ensures that a valid email confirmation returns a successful response.
+        /// </summary>
         [Fact]
         public async Task ConfirmEmail_WithValidToken_ReturnsOkResult()
         {
@@ -351,6 +391,10 @@ namespace backendtest.Controllers.Api
             Assert.Contains("Email confirmado com sucesso", message);
         }
 
+        /// <summary>
+        /// Test for the <see cref="AccountController.GoogleLogin"/> method.
+        /// Ensures that an invalid Google token returns a BadRequest result.
+        /// </summary>
         [Fact]
         public async Task GoogleLogin_WithInvalidToken_ReturnsBadRequest()
         {
