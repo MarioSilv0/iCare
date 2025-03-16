@@ -19,11 +19,11 @@
 }
 
 .Automática {
-  background-color: var(--bg-vermelho);
+  background-color: var(--bg-azul);
 }
 
 .Manual {
-  background-color: var(--bg-verde);
+  background-color: var(--bg-azul);
 }
 
 .goal-type-input {
@@ -45,10 +45,10 @@
   color: var(--bg-branco);
 }
 
-.bt-add-goal:disabled:hover {
+  .bt-add-goal:disabled:hover, .bt-confirm-info:disabled:hover {
     cursor: not-allowed;
     background-color: var(--bg-vermelho);
-}
+  }
 
 .bt-confirm-info {
   background-color: var(--bg-verde);
