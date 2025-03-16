@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UsersService } from '../services/users.service';
+import { UserGoal } from '../goal/goal.component';
 
 @Component({
   selector: 'app-goals',
@@ -13,7 +14,7 @@ export class GoalsComponent {
   goalType: string = 'Manual';
   userInfoForm: FormGroup;
   goalForm: FormGroup;
-  userGoal?: Goal;
+  userGoal?: UserGoal;
   goals: Goal[] = [
     { name: 'Perder Peso' },
     { name: 'Manter Peso' },
@@ -60,7 +61,7 @@ export class GoalsComponent {
 
   ngOnInit() {
     let url = 'api/goal/current';
-    this.http.get<Goal>(url).subscribe({
+    this.http.get<UserGoal>(url).subscribe({
       next: (goal) => (this.userGoal = goal),
       error: (error) => {
         console.log(error);

@@ -6,10 +6,8 @@
       Preencha os campos obrigatórios.
     </p>
 
-    <p *ngIf="!userGoal">
-      Nenhuma meta alimentar definida. É necessário definir uma meta.
-    </p>
-
+    
+    <app-goal [goal]="userGoal"></app-goal>
   </div>
 
   <div>
