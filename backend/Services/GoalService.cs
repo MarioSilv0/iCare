@@ -26,7 +26,7 @@ namespace backend.Services
                 .FirstOrDefaultAsync();
 
             if (goal != null && goal.EndDate >= DateTime.UtcNow){
-                await DeleteGoalAsync(goal.Id);
+                await DeleteGoalAsync(userId);
                 return null;
             }
             return goal;

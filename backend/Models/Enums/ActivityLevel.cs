@@ -28,10 +28,10 @@
             return activityLevel switch
             {
                 "Sedentary" => ActivityLevel.Sedentary,
-                "LightlyActive" => ActivityLevel.LightlyActive,
-                "ModeratelyActive" => ActivityLevel.ModeratelyActive,
-                "VeryActive" => ActivityLevel.VeryActive,
-                "SuperActive" => ActivityLevel.SuperActive,
+                "Lightly Active" => ActivityLevel.LightlyActive,
+                "Moderately Active" => ActivityLevel.ModeratelyActive,
+                "Very Active" => ActivityLevel.VeryActive,
+                "Super Active" => ActivityLevel.SuperActive,
                 _ => ActivityLevel.ModeratelyActive,
             };
         }

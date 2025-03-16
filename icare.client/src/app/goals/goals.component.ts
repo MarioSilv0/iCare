@@ -60,7 +60,7 @@ export class GoalsComponent {
   }
 
   ngOnInit() {
-    let url = 'api/goal/current';
+    let url = 'api/goal';
     this.http.get<UserGoal>(url).subscribe({
       next: (goal) => (this.userGoal = goal),
       error: (error) => {
@@ -118,7 +118,7 @@ export class GoalsComponent {
   addGoal() {
     let meta = this.createGoal(this.goalType);
 
-    let url = 'api/goal/create';
+    let url = 'api/goal';
     this.http.post(url, meta).subscribe({
       next: () => {
         this.snack.open('Meta criada com sucesso.', undefined, {
