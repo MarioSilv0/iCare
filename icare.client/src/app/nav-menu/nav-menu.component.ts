@@ -70,11 +70,6 @@ export class NavMenuComponent {
       path: '/settings',
     },
     {
-      icon: `${this.commonPath}help${this.extension}`,
-      text: 'Ajuda',
-      path: '/help',
-    },
-    {
       icon: `${this.commonPath}exit${this.extension}`,
       text: 'Sign Out',
       path: '/login',

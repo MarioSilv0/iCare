@@ -20,10 +20,16 @@ namespace backend.Services
 
         public async Task<Goal?> GetLatestGoalByUserIdAsync(string userId)
         {
-            return await _context.Goals
+            var goal = await _context.Goals
                 .Where(g => g.UserId == userId)
                 .OrderByDescending(g => g.StartDate)
                 .FirstOrDefaultAsync();
+
+            if (goal != null && goal.EndDate >= DateTime.UtcNow){
+                await DeleteGoalAsync(goal.Id);
+                return null;
+            }
+            return goal;
         }
 
         public async Task<Goal> CreateGoalAsync(string userId, GoalDTO goalDto)
@@ -56,13 +62,12 @@ namespace backend.Services
             return goal;
         }
 
-        public async Task<bool> UpdateGoalAsync(string userId, int id, GoalDTO goalDto)
+        public async Task<bool> UpdateGoalAsync(string userId, GoalDTO goalDto)
         {
-            var goal = await _context.Goals.FindAsync(id);
+            var goal = await GetLatestGoalByUserIdAsync(userId);
             if (goal == null)
-            {
                 return false;
-            }
+            
 
             goal.GoalType = GoalTypeExtensions.FromString(goalDto.GoalType);
             goal.AutoGoalType = AutoGoalTypeExtensions.FromString(goalDto.AutoGoalType);
@@ -86,13 +91,11 @@ namespace backend.Services
             return true;
         }
 
-        public async Task<bool> DeleteGoalAsync(int id)
+        public async Task<bool> DeleteGoalAsync(string userId)
         {
-            var goal = await _context.Goals.FindAsync(id);
+            var goal = await GetLatestGoalByUserIdAsync(userId);
             if (goal == null)
-            {
                 return false;
-            }
 
             var goalLog = new GoalLog
             {

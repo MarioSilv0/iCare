@@ -99,8 +99,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 // Serviços personalizados
 builder.Services.AddScoped<UserLogService>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-builder.Services.AddTransient<EmailSenderService>();
-builder.Services.AddScoped<GoalService>();
+builder.Services.AddTransient<EmailSenderService>(); 
+builder.Services.AddScoped<IGoalService, GoalService>();
+
 
 var app = builder.Build();
 
