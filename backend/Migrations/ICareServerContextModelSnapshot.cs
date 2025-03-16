@@ -10,15 +10,28 @@ using backend.Data;
 
 namespace backend.Migrations
 {
+    /// <summary>
+    /// Represents the snapshot of the model for the <see cref="ICareServerContext"/>.
+    /// This class is used to represent the schema of the database at a particular point in time.
+    /// It is automatically generated during migrations to maintain the database model version.
+    /// </summary>
     [DbContext(typeof(ICareServerContext))]
     partial class ICareServerContextModelSnapshot : ModelSnapshot
     {
+        /// <inheritdoc />
+        /// <summary>
+        /// Builds the model for the database context.
+        /// This method configures the entity types and their relationships as part of the migration process.
+        /// It is used by Entity Framework to ensure that the model matches the database schema.
+        /// </summary>
+        /// <param name="modelBuilder">The model builder used to configure the model.</param>
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.11")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("ProductVersion", "8.0.11")  // Specifies the version of Entity Framework Core
+                .HasAnnotation("Relational:MaxIdentifierLength", 128); // Sets the maximum identifier length for the relational database
+
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
