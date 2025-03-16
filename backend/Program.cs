@@ -200,6 +200,10 @@ app.MapControllerRoute(
 //    await next();
 //});
 
+// Custom middleware for serving static files or fallback to index page for non-API requests
+/// <summary>
+/// Middleware for handling non-API requests by redirecting them to the default index page.
+/// </summary>
 app.Use(async (context, next) =>
 {
     if (context.Request.Path.Value != null &&
