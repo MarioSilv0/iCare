@@ -115,7 +115,6 @@ export class ProfileComponent implements OnInit {
   getUser() {
     this.userService.getUser().subscribe(
       (user) => {
-        console.log(user)
         const defaultBirthdate = "2000-01-01";
         const birthdate = (!user.birthdate || user.birthdate === '0001-01-01') ? defaultBirthdate : user.birthdate;
         const height = user.height === 0 ? 1 : user.height;
