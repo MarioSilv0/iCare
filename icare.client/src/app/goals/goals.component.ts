@@ -55,7 +55,7 @@ export class GoalsComponent {
       ],
       height: [0, [Validators.required, Validators.min(0), Validators.max(3)]],
       gender: ['', Validators.required],
-      activity: ['', Validators.required],
+      activityLevel: ['', Validators.required],
     });    
   }
 

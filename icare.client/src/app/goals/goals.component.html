@@ -48,7 +48,7 @@
         <select
           name="ipt-atividade-fisica"
           id="ipt-atividade-fisica"
-          formControlName="activity"
+          formControlName="activityLevel"
         >
           <option *ngFor="let a of activities; let i = index" value="{{a.value}}" [disabled]="i === 0">{{a.label}}</option>
         </select>
