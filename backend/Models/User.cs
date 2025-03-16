@@ -116,8 +116,8 @@ namespace backend.Models
                     Birthdate = model.Birthdate;
             }
 
-            Gender = GenderExtensions.FromString(model.Gender);
-            ActivityLevel = ActivityLevelExtensions.FromString(model.ActivityLevel);
+            Gender = GenderExtensions.FromString(model.Gender?.Replace(" ", ""));
+            ActivityLevel = ActivityLevelExtensions.FromString(model.ActivityLevel?.Replace(" ", ""));
 
             Notifications = model.Notifications;
 

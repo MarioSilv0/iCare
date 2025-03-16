@@ -80,6 +80,16 @@ namespace backend.Models
         public List<string> Categories { get; set; } = new();
 
         /// <summary>
+        /// Gets or sets the list of available genders.
+        /// </summary>
+        public List<string> Genders { get; set; } = new();
+
+        /// <summary>
+        /// Gets or sets the list of available levels of activity.
+        /// </summary>
+        public List<string> ActivityLevels { get; set; } = new();
+
+        /// <summary>
         /// Initializes a new instance of the <c>UserDTO</c> class.
         /// </summary>
         public UserDTO() { }
@@ -104,6 +114,14 @@ namespace backend.Models
             Preferences = model?.Preferences ?? new List<string>(user.Preferences ?? []);
             Restrictions = model?.Restrictions ?? new List<string>(user.Restrictions ?? []);
             Categories = categories;
+            Genders = Enum.GetValues(typeof(Gender))
+                          .Cast<Gender>()
+                          .Select(g => GenderExtensions.ToFriendlyString(g))
+                          .ToList();
+            ActivityLevels = Enum.GetValues(typeof(ActivityLevel))
+                                 .Cast<ActivityLevel>()
+                                 .Select(a => ActivityLevelExtensions.ToFriendlyString(a))
+                                 .ToList();
         }
     }
 }

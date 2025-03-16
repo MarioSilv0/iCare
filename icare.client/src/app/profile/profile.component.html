@@ -68,6 +68,24 @@
       Peso inválida. Valor deve estar compreendido entre 0 e 700 quilogramas!
     </small>
     <br />
+    <!-- Profile Genders -->
+    <label for="genero">Genero: </label>
+    <select name="genero" id="genero" formControlName="gender">
+      <option value="" disabled selected>-- selecione uma opção --</option>
+      <option *ngFor="let gender of genders" [value]="gender.value">
+        {{ gender.label }}
+      </option>
+    </select>
+    <br />
+    <!-- Profile Acitivity Levels -->
+    <label for="activityLevel">Nivel de atividade fisica: </label>
+    <select name="activityLevel" id="activityLevel" formControlName="activityLevel">
+      <option value="" disabled selected>-- selecione uma opção --</option>
+      <option *ngFor="let ac of activityLevels" [value]="ac.value">
+        {{ ac.label }}
+      </option>
+    </select>
+    <br />
     <!-- Profile Notifications -->
     <custom-checkbox [checked]="profileForm.get('notifications')?.value"
                      (checkedChange)="changeNotifications($event)"

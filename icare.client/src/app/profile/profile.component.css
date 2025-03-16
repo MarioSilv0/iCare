@@ -14,6 +14,29 @@ form {
   width: 100%;
 }
 
+label {
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+select {
+  width: 200px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  background-color: #fff;
+  outline: none;
+  margin-bottom: 16px;
+  transition: border-color 0.3s ease;
+}
+
+select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+}
+
+
 .buttons {
     display: flex;
     justify-content: end;

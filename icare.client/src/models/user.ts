@@ -13,6 +13,8 @@ interface User {
   preferences: Set<string>;
   restrictions: Set<string>;
   categories: Set<string>;
+  genders: string[];
+  activityLevels: string[];
 }
 
 interface Item {

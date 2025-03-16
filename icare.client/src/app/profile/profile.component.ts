@@ -41,6 +41,8 @@ export class ProfileComponent implements OnInit {
   public categories: Set<string> = new Set<string>();
   public preferences: Set<string> = new Set<string>();
   public restrictions: Set<string> = new Set<string>();
+  public genders: { label: string, value: string }[] = [];
+  public activityLevels: { label: string, value: string }[] = [];
 
   constructor(private router: Router, private fb: FormBuilder, private userService: UsersService, private permissionsService: PermissionsService, private snack: MatSnackBar) {
     this.todayDate = new Date().toISOString().split('T')[0];
@@ -104,6 +106,8 @@ export class ProfileComponent implements OnInit {
       birthdate: ['', [Validators.required, birthdateValidator]],
       height: ['', [Validators.required, Validators.min(0.1), Validators.max(3), Validators.pattern(/^\d*\.?\d+$/)]],
       weight: ['', [Validators.required, Validators.min(0.1), Validators.max(700), Validators.pattern(/^\d*\.?\d+$/)]],
+      gender: ['', Validators.required],
+      activityLevel: ['', Validators.required],
       notifications: [true]
     });
   }
@@ -111,6 +115,7 @@ export class ProfileComponent implements OnInit {
   getUser() {
     this.userService.getUser().subscribe(
       (user) => {
+        console.log(user)
         const defaultBirthdate = "2000-01-01";
         const birthdate = (!user.birthdate || user.birthdate === '0001-01-01') ? defaultBirthdate : user.birthdate;
         const height = user.height === 0 ? 1 : user.height;
@@ -123,6 +128,8 @@ export class ProfileComponent implements OnInit {
           birthdate,
           height: height,
           weight: weight,
+          gender: user.gender,
+          activityLevel: user.activityLevel,
           notifications: user.notifications,
         });
 
@@ -133,6 +140,18 @@ export class ProfileComponent implements OnInit {
         for (const c of user.categories) {
           if (this.preferences.has(c) || this.restrictions.has(c)) this.categories.delete(c);
         }
+
+        this.genders = user.genders.map(g => g === "Male" ? { value: g, label: "Masculino" } : { value: g, label: "Feminino" });
+        this.activityLevels = user.activityLevels.map(ac => {
+          switch (ac) {
+            case "Sedentary": return { value: ac, label: "Sedentário" };
+            case "Lightly Active": return { value: ac, label: "Levemente Ativo" };
+            case "Moderately Active": return { value: ac, label: "Moderadamente Ativo" };
+            case "Very Active": return { value: ac, label: "Muito Ativo" };
+            case "Super Active": return { value: ac, label: "Super Ativo" };
+            default: return { value: "", label: "" };
+          }
+        });
       },
       (error) => {
         console.error(error);
