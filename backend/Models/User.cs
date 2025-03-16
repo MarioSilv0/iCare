@@ -57,12 +57,12 @@ namespace backend.Models
         /// <summary>
         /// Gets or sets the user's gender.
         /// </summary>
-        public Gender Gender { get; set; }
+        public Gender Gender { get; set; } = Gender.Male;
 
         /// <summary>
         /// Gets or sets the user's activity level.
         /// </summary>
-        public ActivityLevel ActivityLevel { get; set; }
+        public ActivityLevel ActivityLevel { get; set; } = ActivityLevel.ModeratelyActive;
 
         /// <summary>
         /// Indicates whether the user has enabled notifications.
@@ -116,8 +116,8 @@ namespace backend.Models
                     Birthdate = model.Birthdate;
             }
 
-            Gender = model.Gender;
-            ActivityLevel = model.ActivityLevel;
+            Gender = GenderExtensions.FromString(model.Gender);
+            ActivityLevel = ActivityLevelExtensions.FromString(model.ActivityLevel);
 
             Notifications = model.Notifications;
 

@@ -10,6 +10,7 @@
 using backend.Data;
 using backend.Models;
 using backend.Models.Data_Transfer_Objects;
+using backend.Models.Enums;
 using backend.Models.Extensions;
 using backend.Models.Recipes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -238,7 +239,7 @@ namespace backend.Controllers.Api
         /// An <c>ActionResult</c> containing the updated <c>UserPhysicalDTO</c> object if successful, or an error response otherwise.
         /// </returns>
         [HttpPut("physical")]
-        public async Task<ActionResult<UserPhysicalDTO>> EditPhysicalAttributes([FromBody] UserPhysicalDTO model)
+        public async Task<ActionResult<UserPhysicalDTO>> EditPhysicalAttributes([FromBody] UserPhysicalDTO? model)
         {
             if (model == null) return BadRequest("Invalid data provided.");
 
@@ -252,8 +253,8 @@ namespace backend.Controllers.Api
 
                 user.Height = model.Height;
                 user.Weight = model.Weight;
-                user.Gender = model.Gender;
-                user.ActivityLevel = model.ActivityLevel;
+                user.Gender = GenderExtensions.FromString(model.Gender);
+                user.ActivityLevel = ActivityLevelExtensions.FromString(model.ActivityLevel);
 
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();
