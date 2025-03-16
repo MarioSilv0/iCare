@@ -60,7 +60,7 @@ namespace backend.Controllers.Api
                                                     .Include(r => r.RecipeIngredients)
                                                     .ThenInclude(ri => ri.Ingredient)
                                                     .Include(r => r.UserRecipes)
-                                                    .Select(r => new RecipeDTO(r, id))
+                                                    .Select(r => new RecipeDTO(r, id, false))
                                                     .ToListAsync();
                 return Ok(recipes);
             }
@@ -93,7 +93,7 @@ namespace backend.Controllers.Api
                                                    .FirstOrDefaultAsync(r => r.Name == recipeName);
                 if (recipe == null) return NotFound($"Recipe '{recipe}' not found.");
 
-                var publicRecipe = new RecipeDTO(recipe!, id);
+                var publicRecipe = new RecipeDTO(recipe!, id, true);
 
                 return Ok(publicRecipe);
             }
@@ -141,7 +141,8 @@ namespace backend.Controllers.Api
                         };
 
                         foreach (var ingredientDto in recipeDto.Ingredients)
-                            ProcessIngredient(existingIngredients, newRecipe, ingredientDto);
+                            ProcessIngredient(existingIngredients, newRecipe, ingredientDto, true);
+
                         _context.Recipes.Add(newRecipe);
                     }
                     else
@@ -152,10 +153,14 @@ namespace backend.Controllers.Api
                         existingRecipe.UrlVideo = recipeDto.UrlVideo;
                         existingRecipe.Instructions = recipeDto.Instructions;
                         existingRecipe.Calories = recipeDto.Calories;
+                        existingRecipe.Proteins = recipeDto.Proteins;
+                        existingRecipe.Carbohydrates = recipeDto.Carbohydrates;
+                        existingRecipe.Lipids = recipeDto.Lipids;
+                        existingRecipe.Fibers = recipeDto.Fibers;
 
                         existingRecipe.RecipeIngredients.Clear();
                         foreach (var ingredientDto in recipeDto.Ingredients)
-                            ProcessIngredient(existingIngredients, existingRecipe, ingredientDto);
+                            ProcessIngredient(existingIngredients, existingRecipe, ingredientDto, false);
                         _context.Recipes.Update(existingRecipe);
                     }
                 }
@@ -170,7 +175,7 @@ namespace backend.Controllers.Api
             }
         }
 
-        private static void ProcessIngredient(List<Ingredient> existingIngredients, Recipe recipe, RecipeIngredientDTO ingredientDto)
+        private static void ProcessIngredient(List<Ingredient> existingIngredients, Recipe recipe, RecipeIngredientDTO ingredientDto, bool newRecipe)
         {
             var existingIngredient = existingIngredients.FirstOrDefault(i => i.Name == ingredientDto.Name);
             if (existingIngredient != null)
@@ -182,6 +187,15 @@ namespace backend.Controllers.Api
                     Measure = ingredientDto.Measure,
                     Grams = ingredientDto.Grams
                 };
+
+                if(newRecipe)
+                {
+                    recipe.Calories += existingIngredient.Kcal * (ingredientDto.Grams ?? 0) / 100;
+                    recipe.Proteins += existingIngredient.Protein * (ingredientDto.Grams ?? 0) / 100;
+                    recipe.Carbohydrates += existingIngredient.Carbohydrates * (ingredientDto.Grams ?? 0) / 100;
+                    recipe.Lipids += existingIngredient.Lipids * (ingredientDto.Grams ?? 0) / 100;
+                    recipe.Fibers += existingIngredient.Fibers * (ingredientDto.Grams ?? 0) / 100;
+                }
 
                 recipe.RecipeIngredients.Add(recipeIngredient);
             }

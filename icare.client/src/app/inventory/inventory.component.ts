@@ -12,14 +12,18 @@
 import { Component } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { debounceTime, Subject } from 'rxjs';
-import { IngredientService, Ingredient } from '../services/ingredients.service';
+import { NotificationService } from '../services/notifications.service'
+import { IngredientService } from '../services/ingredients.service';
 import {
+  Ingredient,
+  Item,
+  Permissions,
   addedItemNotification,
   editedItemNotification,
-  NotificationService,
   removedItemNotification,
-} from '../services/notifications.service';
-import { Item, UsersService, Permissions } from '../services/users.service';
+} from '../../models';
+import { PermissionsService } from '../services/permissions.service'
+import { InventoryService } from '../services/inventory.service';
 import { StorageUtil } from '../utils/StorageUtil';
 
 declare var bootstrap: any;
@@ -54,7 +58,7 @@ export class InventoryComponent {
 
   public units: string[] = ['g', 'kg'];
 
-  constructor(private service: UsersService, private api: IngredientService, private snackbar: MatSnackBar) {
+  constructor(private inventoryService: InventoryService, private permissionsService: PermissionsService, private ingredientsService: IngredientService, private snackbar: MatSnackBar) {
     this.searchSubject
       .pipe(debounceTime(300))
       .subscribe(() => this.filterItems());
@@ -72,7 +76,7 @@ export class InventoryComponent {
    * Loads user notification preferences from local storage.
    */
   private loadPermissions() {
-    const permissions: Permissions | null = StorageUtil.getFromStorage('permissions');
+    const permissions: Permissions | null = this.permissionsService.getPermissions();
     this.notificationsPermission = permissions?.notifications ?? false;
     this.inventoryPermission = permissions?.inventory ?? false;
   }
@@ -150,7 +154,7 @@ export class InventoryComponent {
    * Retrieves the current inventory from the server.
    */
   getInventory() {
-    this.service.getInventory().subscribe(
+    this.inventoryService.getInventory().subscribe(
       (result) => {
         result.forEach((i) => this.inventory.set(i.name, { quantity: i.quantity, unit: i.unit }));
         this.getListItems();
@@ -165,7 +169,7 @@ export class InventoryComponent {
    * Retrieves the list of all available items.
    */
   getListItems() {
-    this.api.getAllIngredients().subscribe(
+    this.ingredientsService.getAllIngredients().subscribe(
       (result) => {
         result.forEach((itemName) => { if (!this.inventory.has(itemName)) this.listOfItems.add(itemName); });
         this.filterItems();
@@ -183,7 +187,7 @@ export class InventoryComponent {
   getItemDetails(item: string): void {
     if (this.itemDetails.has(item)) return;
 
-    this.api.getSpecificIngredient(item).subscribe(
+    this.ingredientsService.getSpecificIngredient(item).subscribe(
       (result) => {
         let info = this.inventory.get(item) ?? { quantity: 1, unit: "g" };
         if (!info.unit) info.unit = "g";
@@ -279,7 +283,7 @@ export class InventoryComponent {
       return { name: n, quantity: 1, unit: '' };
     });
 
-    this.service.updateInventory(addedItems).subscribe(
+    this.inventoryService.updateInventory(addedItems).subscribe(
       (result) => {
         const res: Set<string> = new Set(result.map((i) => i.name));
 
@@ -330,7 +334,7 @@ export class InventoryComponent {
     });
     if (updatedItems.length === 0 && !removeZeroQuantity) return;
 
-    this.service.updateInventory(updatedItems).subscribe(
+    this.inventoryService.updateInventory(updatedItems).subscribe(
       (result) => {
         const resultMap = new Map(
           result.map((item) => [
@@ -368,7 +372,7 @@ export class InventoryComponent {
       itemsToDelete ?? Array.from(this.selectedItemsInInventory);
     if (itemsToRemove.length === 0) return;
 
-    this.service.removeInventory(itemsToRemove).subscribe(
+    this.inventoryService.removeInventory(itemsToRemove).subscribe(
       (result) => {
         const res = new Set(result.map((i) => i.name));
 
@@ -398,7 +402,7 @@ export class InventoryComponent {
 
   changePermission() {
     this.inventoryPermission = !this.inventoryPermission;
-    this.service.setPermissions({ inventory: this.inventoryPermission });
+    this.permissionsService.setPermissions({ inventory: this.inventoryPermission });
   }
 
   /**

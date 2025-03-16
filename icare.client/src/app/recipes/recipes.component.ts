@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
 import { RecipeService } from '../services/recipes.service';
+import { UsersService } from '../services/users.service';
+import { InventoryService } from '../services/inventory.service';
+import { PermissionsService } from '../services/permissions.service';
+import { Recipe, Permissions } from '../../models';
+import { normalize } from '../utils/Normalize';
+import { memoize } from '../utils/Memoization';
 import { StorageUtil } from '../utils/StorageUtil';
-import { UsersService, Permissions } from '../services/users.service';
-import { Recipe } from '../../models/recipe';
 
 @Component({
   selector: 'app-recipes',
@@ -36,8 +40,9 @@ export class RecipesComponent {
   private restrictions: Set<string> | null = null;
   private preferences: Set<string> | null = null;
   private inventory: Map<string, number> | null = null;
+  private normalizeMemoized = memoize(normalize);
 
-  constructor(private api: RecipeService, private user: UsersService) {
+  constructor(private recipesService: RecipeService, private userService: UsersService, private inventoryService: InventoryService, private permissionsService: PermissionsService) {
     this.searchSubject.pipe(debounceTime(300)).subscribe(() => this.filterRecipes(''));
   }
 
@@ -50,18 +55,24 @@ export class RecipesComponent {
     let recipe = this.recipes[id]
     let old = recipe.isFavorite;
 
-    this.recipes[id].isFavorite = !this.recipes[id].isFavorite;
+    this.recipesService.toggleFavorite(recipe.name).subscribe(
+      (result) => recipe.isFavorite = !old,
+      (error) => {
+        console.error(error);
+        recipe.isFavorite = old
+      }
+    )
   }
-  
+
   getPermissions() {
-    const permissions: Permissions | null = this.user.getPermissions();
+    const permissions: Permissions | null = this.permissionsService.getPermissions();
     this.preferencesPermission = permissions?.preferences ?? false;
     this.restrictionPermission = permissions?.restrictions ?? false;
     this.inventoryPermission = permissions?.inventory ?? false;
   }
 
   getRecipes() {
-    this.api.getAllRecipes().subscribe(
+    this.recipesService.getAllRecipes().subscribe(
       (result) => {
         this.recipes = this.filteredRecipes = result;
       },
@@ -75,7 +86,7 @@ export class RecipesComponent {
     if (this.preferences) return;
     this.preferences = new Set();
 
-    this.user.getPreferences().subscribe(
+    this.userService.getPreferences().subscribe(
       (result) => {
         this.preferences = new Set(result);
         if (this.preferencesFilter) this.filterRecipes('');
@@ -90,7 +101,7 @@ export class RecipesComponent {
     if (this.restrictions) return;
     this.restrictions = new Set();
 
-    this.user.getRestrictions().subscribe(
+    this.userService.getRestrictions().subscribe(
       (result) => {
         this.restrictions = new Set(result);
         if (this.restrictionsFilter) this.filterRecipes('');
@@ -105,26 +116,24 @@ export class RecipesComponent {
     if (this.inventory) return;
     this.inventory = new Map();
 
-    this.user.getInventory().subscribe(
+    this.inventoryService.getInventory().subscribe(
       (result) => {
         for (const item of result) {
-          const quantity = item.unit === "kg" ? item.quantity / 1000 : item.quantity;
+          const quantity = item.unit === "kg" ? item.quantity * 1000 : item.quantity;
           this.inventory!.set(item.name, quantity);
-          if (this.inventoryFilter) this.filterRecipes('');
         }
+
+        if (this.inventoryFilter) this.filterRecipes('');
       },
       (error) => console.error(error)
     );
   }
 
   filterRecipes(newQuery: string) {
-    const normalize = (str: string): string => str.normalize('NFD')
-                                                  .replace(/[\u0300-\u036f]/g, '')
-                                                  .replace(/[^a-zA-Z0-9]/g, '')
-                                                  .toLowerCase();
-    const query = normalize(newQuery);
+    
+    const query = this.normalizeMemoized(newQuery);
 
-    this.filteredRecipes = this.recipes.filter(r => normalize(r.name).includes(query));
+    this.filteredRecipes = this.recipes.filter(r => this.normalizeMemoized(r.name).includes(query) || this.normalizeMemoized(r.category).includes(query) || this.normalizeMemoized(r.area).includes(query));
 
     if (this.preferencesFilter) this.filterPreferences();
     if (this.restrictionsFilter) this.filterRestrictions();
@@ -146,7 +155,7 @@ export class RecipesComponent {
     this.filteredRecipes = this.filteredRecipes.filter(r => {
       for (const ingredient of r.ingredients) {
         const quantity = this.inventory!.get(ingredient.name) || -1 ;
-        if (!this.inventory!.has(ingredient.name) ||  quantity < 0) return false;
+        if (!this.inventory!.has(ingredient.name) ||  quantity < ingredient.grams) return false;
       }
 
       return true;

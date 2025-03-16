@@ -1,9 +1,7 @@
 <div class="m-0" [ngStyle]="containerStyles">
-  <!--<custom-input type="text"
+  <custom-input type="text"
                 [placeholder]="placeholder"
                 [id]="id"
-                [value]="searchTerm"
-                name=""
-                (valueChange)="onSearchTermChange($event)"
-                [inputStyles]="searchBarStyles" />-->
+                [formControl]="searchControl"
+                [inputStyles]="searchBarStyles" />
 </div>

@@ -8,13 +8,17 @@
         <button class="btn btn-secondary" (click)="updateIngredientDb()">
           🔄 Atualizar Ingredientes
         </button>
-
+        <br />
         <button class="btn btn-secondary" (click)="updateRecipeDb()">
           🔄 Atualizar Receitas
         </button>
+        <div>
+          <p *ngIf="progressMessage">{{ progressMessage }}</p>
+        </div>
       </div>
     </div>
   </div>
+
 
 
 
@@ -27,27 +31,25 @@
       </button>
 
       <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>-->
+  <!-- Receita Original -->
+  <!--<div *ngIf="originalRecipe">
+    <h3>Receita Original</h3>
+    <p><strong>{{ originalRecipe.name }}</strong></p>
 
-      <!-- Receita Original -->
-      <!--<div *ngIf="originalRecipe">
-        <h3>Receita Original</h3>
-        <p><strong>{{ originalRecipe.name }}</strong></p>
+    <p><strong>Instruções:</strong></p>
+    <ul>
+      <li *ngFor="let step of originalRecipe.instructions">{{ step }}</li>
+    </ul>
 
-        <p><strong>Instruções:</strong></p>
-        <ul>
-          <li *ngFor="let step of originalRecipe.instructions">{{ step }}</li>
-        </ul>
-
-        <ul>
-          <li *ngFor="let ing of originalRecipe.ingredients">
-            <strong>{{ ing.name }}</strong> - {{ ing.measure }}
-            <span *ngIf="ing.grams">({{ ing.grams }} g)</span>
-          </li>
-        </ul>
-      </div>-->
-
-      <!-- Receita Traduzida -->
-      <!--<div *ngIf="translatedRecipe">
+    <ul>
+      <li *ngFor="let ing of originalRecipe.ingredients">
+        <strong>{{ ing.name }}</strong> - {{ ing.measure }}
+        <span *ngIf="ing.grams">({{ ing.grams }} g)</span>
+      </li>
+    </ul>
+  </div>-->
+  <!-- Receita Traduzida -->
+  <!--<div *ngIf="translatedRecipe">
         <h3>Receita Traduzida</h3>
         <p><strong>{{ translatedRecipe.name }}</strong></p>
 
@@ -65,10 +67,6 @@
       </div>
     </div>
   </div>-->
-
-
-
-
   <!--<ul *ngIf="mealsList">
     <li *ngFor="let meal of mealsList">
       <img [src]="meal.strMealThumb" [alt]="meal.strMeal">

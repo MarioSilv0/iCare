@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using System.Security.Claims;
 using backend.Models.Recipes;
 using backend.Models.Data_Transfer_Objects;
+using Microsoft.EntityFrameworkCore;
 
 namespace backendtest
 {
@@ -48,6 +49,11 @@ namespace backendtest
         {
             _context.Users.RemoveRange(_context.Users);
             _context.Recipes.RemoveRange(_context.Recipes);
+            await _context.SaveChangesAsync();
+
+            _context.Users.Add(new User { Id = "Someone" });
+            _context.Recipes.Add(new Recipe { Id = 1, Name = "Delicious" });
+
             await _context.SaveChangesAsync();
         }
 
@@ -312,6 +318,74 @@ namespace backendtest
             var updatedUser = Assert.IsType<OkObjectResult>(result.Result)?.Value as UserDTO;
             Assert.NotNull(updatedUser);
             Assert.Equal("user1@example.com", updatedUser.Email);
+        }
+
+        [Fact]
+        public async Task ToggleFavoriteRecipe_WhenUserIdIsNull_ReturnsUnauthorized()
+        {
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity()) }
+            };
+
+            var result = await _controller.ToggleFavoriteRecipe("Delicious");
+
+            Assert.IsType<UnauthorizedObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task ToggleFavoriteRecipe_WhenUserDoesNotExist_ReturnsNotFound()
+        {
+            Authenticate.SetUserIdClaim("InvalidUserId", _controller);
+
+            var result = await _controller.ToggleFavoriteRecipe("Delicious");
+
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task ToggleFavoriteRecipe_WhenRecipeDoesNotExist_ReturnsNotFound()
+        {
+            Authenticate.SetUserIdClaim("Someone", _controller);
+
+            var result = await _controller.ToggleFavoriteRecipe("NonExistingRecipe");
+
+            var notFound = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("Recipe not found", notFound.Value);
+        }
+
+        [Fact]
+        public async Task ToggleFavoriteRecipe_WhenNotFavorite_AddsToFavorites()
+        {
+            Authenticate.SetUserIdClaim("Someone", _controller);
+
+            var result = await _controller.ToggleFavoriteRecipe("Delicious");
+
+            Assert.IsType<OkObjectResult>(result);
+
+            var userFavorites = await _context.UserRecipes.Where(ur => ur.UserId == "Someone" && ur.RecipeId == 1)
+                                                          .ToListAsync();
+
+            Assert.Single(userFavorites);
+        }
+
+        [Fact]
+        public async Task ToggleFavoriteRecipe_WhenAlreadyFavorite_RemovesFromFavorites()
+        {
+            // Pre-add favorite
+            _context.UserRecipes.Add(new UserRecipe { UserId = "Someone", RecipeId = 1 });
+            await _context.SaveChangesAsync();
+
+            Authenticate.SetUserIdClaim("Someone", _controller);
+
+            var result = await _controller.ToggleFavoriteRecipe("Delicious");
+
+            Assert.IsType<OkObjectResult>(result);
+
+            var userFavorites = await _context.UserRecipes.Where(ur => ur.UserId == "Someone" && ur.RecipeId == 1)
+                                                          .ToListAsync();
+
+            Assert.Empty(userFavorites);
         }
     }
 }

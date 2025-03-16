@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using backend.Models;
 using backend.Models.Ingredients;
 using backend.Models.Recipes;
+using backend.Models.Goals;
 
 namespace backend.Data
 {
@@ -60,6 +61,16 @@ namespace backend.Data
         public DbSet<UserRecipe> UserRecipes { get; set; } = default!;
 
         /// <summary>
+        /// Represents the collection of user goals in the database.
+        /// </summary>
+        public DbSet<Goal> Goals { get; set; }
+
+        /// <summary>
+        /// Represents the collection of user goals logs in the database.
+        /// </summary>
+        public DbSet<GoalLog> GoalLogs { get; set; }
+
+        /// <summary>
         /// Configures the model, including relationships, composite keys, and initial data seeding.
         /// </summary>
         /// <param name="modelBuilder">The model builder to configure the model.</param>
@@ -86,7 +97,7 @@ namespace backend.Data
                 .HasForeignKey(ri => ri.RecipeId);
             modelBuilder.Entity<UserRecipe>()
                 .HasOne(ur => ur.User)
-                .WithMany(u => u.favoriteRecipes)
+                .WithMany(u => u.FavoriteRecipes)
                 .HasForeignKey(uf => uf.UserId);
 
             modelBuilder.Entity<UserIngredient>()
@@ -109,8 +120,8 @@ namespace backend.Data
                 new Ingredient { Id = 3, Name = "Carne", Kcal = 137, KJ = 175, Protein = 1.6f, Carbohydrates = 35.4f, Lipids = 2, Fibers = 103, Category = "Carne" }
             );
             modelBuilder.Entity<Recipe>().HasData(
-                new Recipe { Id = 1, Picture = "", Name = "Algo de Bom", Instructions = "Tu Consegues", Category = "Bom", Area = "Portugal", UrlVideo = "" },
-                new Recipe { Id = 2, Picture = "", Name = "Algo de Mau", Instructions = "Boa Sorte", Category = "Mau", Area = "Bugs", UrlVideo = "" }
+                new Recipe { Id = 1, Picture = "", Name = "Algo de Bom", Instructions = "Tu Consegues", Category = "Bom", Area = "Portugal", UrlVideo = "", Calories = 50, Proteins = 20, Carbohydrates = 50, Lipids = 20, Fibers = 10 },
+                new Recipe { Id = 2, Picture = "", Name = "Algo de Mau", Instructions = "Boa Sorte", Category = "Mau", Area = "Bugs", UrlVideo = "", Calories = 100, Proteins = 5, Carbohydrates = 70, Lipids = 25, Fibers = 20 }
             );
             modelBuilder.Entity<RecipeIngredient>().HasData(
                 new RecipeIngredient { RecipeId = 1, Measure = "1 xícara", Grams = 20, IngredientId = 1 },

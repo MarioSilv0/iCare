@@ -26,6 +26,7 @@ form {
   padding: 5px;
   transition: transform 0.2s, background-color 0.2s;
   border: none;
+  border-radius: 10px;
 }
 
 .change-password {
@@ -56,6 +57,19 @@ form {
 .submit-btn:active {
   background-color: var(--bg-verde-contrast);
   transform: scale(0.95);
+}
+
+.submit-btn:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+  transform: none !important;
+  color: #ccc;
+}
+
+.submit-btn:disabled:hover,
+.submit-btn:disabled:active {
+  background-color: gray;
+  transform: none;
 }
 
 @media (max-width: 320px) {

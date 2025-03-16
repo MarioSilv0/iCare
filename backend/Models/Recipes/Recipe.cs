@@ -59,6 +59,26 @@ namespace backend.Models.Recipes
         public float Calories { get; set; }
 
         /// <summary>
+        /// Gets or sets the total proteins count of the recipe.
+        /// </summary>
+        public float Proteins { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total cabohydrates count of the recipe.
+        /// </summary>
+        public float Carbohydrates { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total lipids count of the recipe.
+        /// </summary>
+        public float Lipids { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total fibers count of the recipe.
+        /// </summary>
+        public float Fibers { get; set; }
+
+        /// <summary>
         /// Gets or sets the collection of ingredients associated with the recipe.
         /// </summary>
         public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new HashSet<RecipeIngredient>();

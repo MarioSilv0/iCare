@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { env } from '../../../environments/env';
-import { Ingredient } from '../ingredients.service';
+import { Ingredient } from '../../../models';
 
 /**
  * @file Service for retrieving food ingredient data from the TACO API.

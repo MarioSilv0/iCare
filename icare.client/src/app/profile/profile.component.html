@@ -1,163 +1,104 @@
-<!--<p *ngIf="!user"><em>Loading...</em></p>
+<form class="m-0"
+      [formGroup]="profileForm"
+      (ngSubmit)="updateUser()"
+      (keydown.enter)="$event.preventDefault()">
 
-<form *ngIf="user" (ngSubmit)="updateUser()" (keydown.enter)="$event.preventDefault()" class="m-0">
-  <container class="m-0">-->
+  <container class="m-0 position-relative">
+    <help helpText="Esta página permite editar o seu perfil.
+                    Preencha todos os campos com atenção, garantindo que os dados inseridos são válidos.
+                    Após preencher, clique em 'Salvar' para guardar as alterações.
+                    Se algum campo estiver incorreto, uma mensagem de erro será exibida com explicações sobre o problema." />
     <!-- Profile Image -->
-    <!--<div class="image-wrapper">
-      <profile-image id="image" [imageUrl]="user.picture" [editable]="true" (imageChange)="changePicture($event)" />
+    <div class="image-wrapper">
+      <profile-image id="image" [imageUrl]="profileForm.get('picture')?.value" [editable]="true" (imageChange)="changePicture($event)" />
     </div>
-    <br />-->
+    <br />
     <!-- Profile Name -->
-    <!--<custom-input type="text"
-                  placeholder="Insira o seu nome"
+    <custom-input type="text"
                   id="name"
                   name="Nome:"
-                  [value]="user.name"
-                  (valueChange)="changeName($event)" />
-    <br />-->
-    <!-- Profile Email -->
-    <!--<custom-input type="email"
-                  placeholder="Insira o seu email"
-                  id="email"
-                  name="Email*:"
-                  [value]="user.email"
-                  (valueChange)="changeEmail($event)" />
-    <br />-->
-    <!-- Profile Birthdate -->
-    <!--<custom-input type="date"
-                  placeholder="Insira a sua data de nascimento"
-                  id="birthdate"
-                  name="Data de Nascimento:"
-                  [value]="user.birthdate"
-                  (valueChange)="changeBirthdate($event)" />
-    <br />-->
-    <!-- Profile Height -->
-    <!--<custom-input type="number"
-                  placeholder="Insira a sua altura"
-                  id="height"
-                  name="Altura:"
-                  [value]="user.height"
-                  (valueChange)="changeHeight($event)" />
-    <br />-->
-    <!-- Profile Weight -->
-    <!--<custom-input type="number"
-                  placeholder="Insira a sua altura"
-                  id="weight"
-                  name="Peso:"
-                  [value]="user.weight"
-                  (valueChange)="changeWeight($event)" />
-    <br />-->
-    <!-- Profile Notifications -->
-    <!--<custom-checkbox [checked]="user.notifications"
-                     (checkedChange)="user.notifications = $event"
-                     label="Notificações"
-                     id="notifications" />
+                  placeholder="Insira o seu nome"
+                  formControlName="name" />
+    <small *ngIf="profileForm.get('name')?.invalid && profileForm.get('name')?.touched" class="text-danger">
+      Nome inválido.
+    </small>
     <br />
-  </container>-->
+    <!-- Profile Email -->
+    <custom-input id="email"
+                  name="Email:"
+                  placeholder="Email"
+                  type="email"
+                  formControlName="email" />
+    <small *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched" class="text-danger">
+      Email inválido.
+    </small>
+    <br />
+    <!-- Profile Birthdate -->
+    <custom-input id="birthdate"
+                  name="Data de Nascimento:"
+                  type="date"
+                  formControlName="birthdate" />
+    <div *ngIf="profileForm.get('birthdate')?.touched && profileForm.get('birthdate')?.invalid">
+      <p class="text-danger" *ngIf="profileForm.get('birthdate')?.errors?.['tooOld']">
+        A data é demasiado antiga (máximo 121 anos).
+      </p>
+      <p class="text-danger" *ngIf="profileForm.get('birthdate')?.errors?.['futureDate']">
+        A data não pode ser no futuro.
+      </p>
+    </div>
+    <br />
+    <!-- Profile Height -->
+    <custom-input id="height"
+                  name="Altura (em metros):"
+                  type="number"
+                  formControlName="height" />
+    <div *ngIf="profileForm.get('height')?.touched && profileForm.get('height')?.invalid">
+      <small class="text-danger" *ngIf="profileForm.get('height')?.errors?.['required']">Altura é obrigatória.</small>
+      <small class="text-danger" *ngIf="profileForm.get('height')?.errors?.['min']">Altura mínima é 0.1m.</small>
+      <small class="text-danger" *ngIf="profileForm.get('height')?.errors?.['max']">Altura máxima é 3m.</small>
+      <small class="text-danger" *ngIf="profileForm.get('height')?.errors?.['pattern']">Valor inválido para altura.</small>
+    </div>
+    <br />
+    <!-- Profile Weight -->
+    <custom-input id="weight"
+                  name="Peso (em quilogramas):"
+                  type="number"
+                  formControlName="weight"></custom-input>
+    <small *ngIf="profileForm.get('weight')?.invalid && profileForm.get('weight')?.touched" class="text-danger">
+      Peso inválida. Valor deve estar compreendido entre 0 e 700 quilogramas!
+    </small>
+    <br />
+    <!-- Profile Notifications -->
+    <custom-checkbox [checked]="profileForm.get('notifications')?.value"
+                     (checkedChange)="changeNotifications($event)"
+                     label="Notificações:"
+                     id="notifications" />
+  </container>
 
-  <!--<div class="m-0 buttons">
-    <input class="change-password rounded"
-           type="button"
-           value="Trocar Palavra-Passe"
-           (click)="changePassword()" />
-    <input type="submit"
-           value="Salvar"
-           class="submit-btn rounded" />
+  <!-- Profile Preferences -->
+  <container class="m-0">
+    <p>Preferências</p>
+    <category-selector listId="preferencesList"
+                       placeholder="Procure as suas preferências..."
+                       [options]="categories"
+                       [selectedItems]="preferences"
+                       (addItem)="addPreference($event)"
+                       (removeItem)="removePreference($event)" />
+  </container>
+
+  <!-- Profile Restrictions -->
+  <container class="m-0">
+    <p>Restrições</p>
+    <category-selector listId="restrictionsList"
+                       placeholder="Procure as suas restrições..."
+                       [options]="categories"
+                       [selectedItems]="restrictions"
+                       (addItem)="addRestriction($event)"
+                       (removeItem)="removeRestriction($event)" />
+  </container>
+
+  <div class="buttons">
+    <button class="submit-btn" type="submit" [disabled]="profileForm.invalid">Salvar</button>
+    <button class="change-password" type="button" (click)="changePassword()">Trocar Palavra-Passe</button>
   </div>
-</form>-->
-
-   
-  <form class="m-0"
-        [formGroup]="profileForm"
-        (ngSubmit)="updateUser()"
-        (keydown.enter)="$event.preventDefault()">
-
-    <container class="m-0">
-      <!-- Profile Image -->
-      <div class="image-wrapper">
-        <profile-image id="image" [imageUrl]="profileForm.get('picture')?.value" [editable]="true" (imageChange)="changePicture($event)" />
-      </div>
-      <br />
-      <!-- Profile Name -->
-      <custom-input type="text"
-                    id="name"
-                    name="Nome:"
-                    placeholder="Insira o seu nome"
-                    formControlName="name" />
-      <small *ngIf="profileForm.get('name')?.invalid && profileForm.get('name')?.touched" class="text-danger">
-        Nome inválido.
-      </small>
-      <br />
-      <!-- Profile Email -->
-      <custom-input id="email"
-                    name="Email:"
-                    placeholder="Email"
-                    type="email"
-                    formControlName="email" />
-      <small *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched" class="text-danger">
-        Email inválido.
-      </small>
-      <br />
-      <!-- Profile Birthdate -->
-      <custom-input id="birthdate"
-                    name="Data de Nascimento:"
-                    type="date"
-                    formControlName="birthdate" />
-      <div *ngIf="profileForm.get('birthdate')?.touched && profileForm.get('birthdate')?.invalid">
-        <p class="text-danger" *ngIf="profileForm.get('birthdate')?.errors?.['tooOld']">
-          A data é demasiado antiga (máximo 121 anos).
-        </p>
-        <p class="text-danger" *ngIf="profileForm.get('birthdate')?.errors?.['futureDate']">
-          A data não pode ser no futuro.
-        </p>
-      </div>
-      <br />
-      <!-- Profile Height -->
-      <custom-input id="height"
-                    name="Altura:"
-                    type="number"
-                    formControlName="height" />
-      <small *ngIf="profileForm.get('height')?.invalid && profileForm.get('height')?.touched" class="text-danger">
-        Altura inválida. Valor deve estar compreendido entre 0 e 3 metros!
-      </small>
-      <br />
-      <!-- Profile Weight -->
-      <custom-input id="weight"
-                    name="Peso:"
-                    type="number"
-                    formControlName="weight"></custom-input>
-      <small *ngIf="profileForm.get('weight')?.invalid && profileForm.get('weight')?.touched" class="text-danger">
-        Peso inválida. Valor deve estar compreendido entre 0 e 700 quilogramas!
-      </small>
-      <br />
-      <!-- Profile Notifications -->
-      <custom-checkbox [checked]="profileForm.get('notifications')?.value"
-                       (checkedChange)="changeNotifications($event)"
-                       label="Notificações:"
-                       id="notifications" />
-    </container>
-
-    <!-- Profile Preferences -->
-    <container class="m-0">
-      <p>Preferências</p>
-      <category-selector listId="preferencesList"
-                         placeholder="Procure as suas preferências..."
-                         [options]="categories"
-                         [selectedItems]="preferences"
-                         (addItem)="addPreference($event)"
-                         (removeItem)="removePreference($event)" />
-    </container>
-
-    <!-- Profile Restrictions -->
-    <container class="m-0">
-      <p>Restrições</p>
-      <category-selector listId="restrictionsList"
-                         placeholder="Procure as suas restrições..."
-                         [options]="categories"
-                         [selectedItems]="restrictions"
-                         (addItem)="addRestriction($event)"
-                         (removeItem)="removeRestriction($event)" />
-    </container>
-
-    <button type="submit" [disabled]="profileForm.invalid">Salvar</button>
-  </form>
+</form>

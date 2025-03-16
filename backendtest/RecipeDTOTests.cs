@@ -8,6 +8,7 @@
 /// <author>Mário Silva  - 202000500</author>
 /// <date>Last Modified: 2025-03-04</date>
 
+using backend.Models;
 using backend.Models.Data_Transfer_Objects;
 using backend.Models.Ingredients;
 using backend.Models.Recipes;
@@ -28,7 +29,7 @@ namespace backendtest
         [Fact]
         public void Constructor_WhenRecipeIsNull_DoesNotThrow()
         {
-            var dto = new RecipeDTO(null, "UserId");
+            var dto = new RecipeDTO(null, "UserId", false);
 
             Assert.Null(dto.Name);
             Assert.Null(dto.Category);
@@ -47,28 +48,40 @@ namespace backendtest
         [Fact]
         public void Constructor_WhenWantDetailsIsFalse_CalculatesCaloriesCorrectly()
         {
+            float value = 123, expectedValue = 0;
             var recipe = new Recipe
             {
                 Id = 1,
                 Name = "Test Recipe",
+                Category = "Test Category",
+                Area = "Test Area",
+                Calories = value,
+                Proteins = value,
+                Lipids = value,
+                Fibers = value,
+                Carbohydrates = value,
+                UrlVideo = "Test Url",
                 RecipeIngredients = new List<RecipeIngredient>
                 {
                     new RecipeIngredient { Ingredient = new Ingredient { Name = "Arroz", Kcal = 124 }, Measure = "medida", Grams = 200 }, // (124 * 200) / 100 = 248
                     new RecipeIngredient { Ingredient = new Ingredient { Name = "Batata", Kcal = 137 }, Measure = "medida", Grams = 150 }  // (137 * 150) / 100 = 205.5
                 }
             };
-            float totalCalories = 453.5f;// 248 + 205.5
 
-            var dto = new RecipeDTO(recipe, "UserId");
+            var dto = new RecipeDTO(recipe, "UserId", false);
 
             Assert.Equal("Test Recipe", dto.Name);
-            Assert.Equal(totalCalories, dto.Calories);
+            Assert.Equal("Test Category", dto.Category);
+            Assert.Equal("Test Area", dto.Area);
+            Assert.Equal(2, dto.Ingredients!.Count());
+            Assert.Equal(expectedValue, dto.Calories);
+            Assert.Equal(expectedValue, dto.Proteins);
+            Assert.Equal(expectedValue, dto.Carbohydrates);
+            Assert.Equal(expectedValue, dto.Lipids);
+            Assert.Equal(expectedValue, dto.Fibers);
             Assert.False(dto.IsFavorite);
-            Assert.Null(dto.Category);
-            Assert.Null(dto.Area);
             Assert.Null(dto.UrlVideo);
             Assert.Null(dto.Instructions);
-            Assert.Null(dto.Ingredients);
         }
 
         /// <summary>
@@ -81,7 +94,9 @@ namespace backendtest
             var ingredient1 = new Ingredient { Name = "Arroz", Kcal = 124 };
             var ingredient2 = new Ingredient { Name = "Batata", Kcal = 137 };
 
-        var recipe = new Recipe
+            float expectedValue = 123;
+
+            var recipe = new Recipe
             {
                 Id = 1,
                 Name = "Algo de Bom",
@@ -89,6 +104,11 @@ namespace backendtest
                 Area = "Portugal",
                 UrlVideo = "https://youtube.com",
                 Instructions = "Tu Consegues",
+                Calories = expectedValue,
+                Proteins = expectedValue,
+                Lipids = expectedValue,
+                Fibers = expectedValue,
+                Carbohydrates = expectedValue,
                 RecipeIngredients = new List<RecipeIngredient>
                 {
                     new RecipeIngredient { Ingredient = ingredient1, Measure = "medida", Grams = 200 },
@@ -96,10 +116,9 @@ namespace backendtest
                 }
             };
 
-            var dto = new RecipeDTO(recipe, "UserId");
+            var dto = new RecipeDTO(recipe, "UserId", true);
 
             Assert.Equal("Algo de Bom", dto.Name);
-            Assert.Equal(0, dto.Calories);
             Assert.False(dto.IsFavorite);
             Assert.Equal("Tu Consegues", dto.Instructions);
             Assert.Equal("Bom", dto.Category);
@@ -109,6 +128,12 @@ namespace backendtest
             Assert.Equal(2, dto.Ingredients.Count());
             Assert.Contains(dto.Ingredients, i => i.Name == ingredient1.Name);
             Assert.Contains(dto.Ingredients, i => i.Name == ingredient2.Name);
+            Assert.Equal(2, dto.Ingredients!.Count());
+            Assert.Equal(expectedValue, dto.Calories);
+            Assert.Equal(expectedValue, dto.Proteins);
+            Assert.Equal(expectedValue, dto.Carbohydrates);
+            Assert.Equal(expectedValue, dto.Lipids);
+            Assert.Equal(expectedValue, dto.Fibers);
         }
 
         /// <summary>
@@ -128,7 +153,7 @@ namespace backendtest
                 }
             };
 
-            var dto = new RecipeDTO(recipe, "UserId");
+            var dto = new RecipeDTO(recipe, "UserId", false);
 
             Assert.True(dto.IsFavorite);
         }
@@ -150,7 +175,7 @@ namespace backendtest
                 }
             };
 
-            var dto = new RecipeDTO(recipe, "UserId");
+            var dto = new RecipeDTO(recipe, "UserId", false);
 
             Assert.False(dto.IsFavorite);
         }

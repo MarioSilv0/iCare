@@ -40,7 +40,7 @@ export class CalendarComponent {
     }
 
     if (end.getDate() < start.getDate()) {
-      this.snackBar.open('A data final deve ser maior que a data inicial.', '', {
+      this.snackBar.open('A data final deve ser maior que a data inicial.', undefined, {
         duration: 2000,
         panelClass: ["fail-snackbar"],
       });

@@ -204,6 +204,46 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
+        /// Updates the physical attributes of the authenticated user.
+        /// </summary>
+        /// <param name="model">The <c>UserPhysicalDTO</c> model containing the updated physical data.</param>
+        /// <returns>
+        /// An <c>ActionResult</c> containing the updated <c>UserPhysicalDTO</c> object if successful, or an error response otherwise.
+        /// </returns>
+        [HttpPut("physical")]
+        public async Task<ActionResult<UserPhysicalDTO>> EditPhysicalAttributes([FromBody] UserPhysicalDTO model)
+        {
+            if (model == null) return BadRequest("Invalid data provided.");
+
+            try
+            {
+                var id = User.FindFirst("UserId")?.Value;
+                if (id == null) return Unauthorized("User ID not found in token.");
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+                if (user == null) return NotFound();
+
+                user.Height = model.Height;
+                user.Weight = model.Weight;
+                user.Gender = model.Gender;
+                user.ActivityLevel = model.ActivityLevel;
+
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("User {UserId} updated their physical attributes.", user.Id);
+
+                return Ok(new UserPhysicalDTO(user));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating user physical attributes");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
+
+        /// <summary>
         /// Checks whether the provided email is unique in the system.
         /// </summary>
         /// <param name="email">The email to check for uniqueness.</param>
@@ -243,13 +283,13 @@ namespace backend.Controllers.Api
                 else _context.UserRecipes.Remove(r);
 
                 _context.SaveChanges();
+                return Ok(new { message = "very nice!" });
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Error updating user");
                 return StatusCode(500, "An error occurred while processing your request.");
             }
-            return Ok("very nice!");
         }
     }
 }

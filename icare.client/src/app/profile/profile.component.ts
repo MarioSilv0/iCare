@@ -13,8 +13,10 @@ import { Component, OnInit, input } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
-import { UsersService, User, Permissions } from '../services/users.service';
-import { NotificationService, updatedUserNotification, failedToEditEmailUserNotification } from '../services/notifications.service';
+import { UsersService } from '../services/users.service';
+import { PermissionsService } from '../services/permissions.service';
+import { NotificationService } from '../services/notifications.service'
+import { Permissions, updatedUserNotification, failedToEditEmailUserNotification } from '../../models';
 import { StorageUtil } from '../utils/StorageUtil';
 import { birthdateValidator } from '../utils/Validators';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -40,7 +42,7 @@ export class ProfileComponent implements OnInit {
   public preferences: Set<string> = new Set<string>();
   public restrictions: Set<string> = new Set<string>();
 
-  constructor(private router: Router, private fb: FormBuilder, private service: UsersService, private snack: MatSnackBar) {
+  constructor(private router: Router, private fb: FormBuilder, private userService: UsersService, private permissionsService: PermissionsService, private snack: MatSnackBar) {
     this.todayDate = new Date().toISOString().split('T')[0];
   }
 
@@ -100,27 +102,27 @@ export class ProfileComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(1)]],
       email: ['', [Validators.required, Validators.email]],
       birthdate: ['', [Validators.required, birthdateValidator]],
-      height: [0, [Validators.required, Validators.min(0.1), Validators.max(3)]],
-      weight: [0, [Validators.required, Validators.min(0.1), Validators.max(700)]],
+      height: ['', [Validators.required, Validators.min(0.1), Validators.max(3), Validators.pattern(/^\d*\.?\d+$/)]],
+      weight: ['', [Validators.required, Validators.min(0.1), Validators.max(700), Validators.pattern(/^\d*\.?\d+$/)]],
       notifications: [true]
     });
   }
 
   getUser() {
-    this.service.getUser().subscribe(
+    this.userService.getUser().subscribe(
       (user) => {
         const defaultBirthdate = "2000-01-01";
         const birthdate = (!user.birthdate || user.birthdate === '0001-01-01') ? defaultBirthdate : user.birthdate;
-
-        console.log(user.notifications)
+        const height = user.height === 0 ? 1 : user.height;
+        const weight = user.weight === 0 ? 1 : user.weight;
 
         this.profileForm.patchValue({
           picture: user.picture,
           name: user.name,
           email: user.email,
           birthdate,
-          height: user.height,
-          weight: user.weight,
+          height: height,
+          weight: weight,
           notifications: user.notifications,
         });
 
@@ -151,7 +153,7 @@ export class ProfileComponent implements OnInit {
       categories: Array.from(this.categories)
     };
     
-    this.service.updateUser(updatedUser).subscribe(
+    this.userService.updateUser(updatedUser).subscribe(
       (user) => {
         NotificationService.showNotification(user.notifications, updatedUserNotification);
         if (user.email !== this.profileForm.value.email) NotificationService.showNotification(user.notifications, failedToEditEmailUserNotification); // Toast
@@ -162,7 +164,7 @@ export class ProfileComponent implements OnInit {
 
         const updatedPermissions = { notifications: user.notifications, preferences, restrictions };
         if (!permissions || permissions.notifications !== updatedPermissions.notifications || permissions.preferences !== updatedPermissions.preferences || permissions.restrictions !== updatedPermissions.restrictions) {
-          this.service.setPermissions(updatedPermissions);
+          this.permissionsService.setPermissions(updatedPermissions);
         }
 
         this.router.navigate(['/']);
@@ -172,34 +174,6 @@ export class ProfileComponent implements OnInit {
       }
     );
   }
-
-  /**
-   * Handles profile picture selection and updates the `user.picture` property.
-   * Ensures only image files are accepted.
-   * @param {Event | null} event - The file input change event.
-   */
-  //onSelectFile(event: Event | null): void {
-  //  if (!event) return;
-
-  //  const input = event.target as HTMLInputElement;
-
-  //  if (input.files && input.files[0]) {
-  //    const file = input.files[0];
-  //    if (!file.type.startsWith('image/')) return;
-
-  //    var reader = new FileReader();
-  //    reader.readAsDataURL(file);
-
-  //    reader.onload = () => {
-  //      if (typeof reader.result === 'string') {
-  //        this.user.picture = reader.result
-  //        this.showToast("Alterou a imagem com sucesso!", 2000, undefined)
-  //      };
-  //    }
-  //  }
-  //}
-
-
 
   preventSubmit(event: Event) {
     event.preventDefault();

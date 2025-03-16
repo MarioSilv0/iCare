@@ -11,6 +11,10 @@ interface Recipe {
   urlVideo: string;
   isFavorite: boolean;
   calories: number;
+  proteins: number;
+  carbohydrates: number;
+  lipids: number;
+  fibers: number;
 }
 
 interface RecipeIngredient {

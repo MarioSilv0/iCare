@@ -9,14 +9,14 @@
  * @date Last Modified: 2025-03-05
  */
 
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { StorageUtil } from '../utils/StorageUtil';
+import { User } from '../../models'
 
 export const PROFILE: string = '/api/User';
-export const INVENTORY: string = '/api/Inventory';
 
 
 /**
@@ -62,62 +62,6 @@ export class UsersService {
     );
   }
 
-  /**
-   * Retrieves the inventory data from the API.
-   * 
-   * @returns {Observable<Item[]>} An observable containing an array of inventory items.
-   */
-  getInventory(): Observable<Item[]> {
-    return this.http.get<Item[]>(INVENTORY);
-  }
-
-  /**
-   * Updates the inventory data on the API.
-   * 
-   * @param {Item[]} items - The updated inventory list.
-   * @returns {Observable<Item[]>} An observable containing the updated inventory items.
-   */
-  updateInventory(items: Item[]): Observable<Item[]> {
-    return this.http.put<Item[]>(INVENTORY, items);
-  }
-
-  /**
-   * Removes items from the inventory on the API.
-   * 
-   * @param {string[]} items - The names of the items to remove.
-   * @returns {Observable<Item[]>} An observable containing the updated inventory after removal.
-   */
-  removeInventory(items: string[]): Observable<Item[]> {
-    return this.http.delete<Item[]>(INVENTORY, { body: items });
-  }
-
-  /**
-   * Retrieves the user's permissions from `localStorage`.
-   * 
-   * @returns {Permissions | null} The stored permissions if available, otherwise `null`.
-   */
-  getPermissions(): Permissions | null {
-    return StorageUtil.getFromStorage<Permissions>('permissions');
-  }
-
-  /**
-   * Fetches the user's permissions from the API and stores them in `localStorage`.
-   * 
-   * @returns {Observable<boolean>} An observable that emits the retrieved permission status.
-   */
-  fetchPermissions(): Observable<Permissions> {
-    return this.http.get<Permissions>(`${PROFILE}/permissions`).pipe(
-      tap(permissions => this.setPermissions(permissions))
-    );
-  }
-
-  setPermissions(updatedPermissions: Partial<Permissions>): void {
-    const current = this.getPermissions();
-    const newPermissions = { ...current, ...updatedPermissions };
-
-    StorageUtil.saveToStorage('permissions', newPermissions);
-  }
-
   getPreferences(): Observable<string[]> {
     return this.http.get<string[]>(`${PROFILE}/preferences`);
   }
@@ -125,30 +69,4 @@ export class UsersService {
   getRestrictions(): Observable<string[]> {
     return this.http.get<string[]>(`${PROFILE}/restrictions`);
   }
-}
-
-export interface Permissions {
-  notifications: boolean;
-  preferences: boolean;
-  restrictions: boolean;
-  inventory: boolean;
-}
-
-export interface Item {
-  name: string;
-  quantity: number;
-  unit: string;
-}
-
-export interface User {
-  picture: string;
-  name: string;
-  email: string;
-  birthdate: string;
-  notifications: boolean;
-  height: number;
-  weight: number;
-  preferences: Set<string>;
-  restrictions: Set<string>;
-  categories: Set<string>;
 }
