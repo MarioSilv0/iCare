@@ -143,13 +143,22 @@ input[type="password"] {
     }
 }
 
-.success-snackbar {
-    color: var(--bg-branco);
-    background-color: var(--bg-verde);
-    border-radius: 5px;
+.cdk-overlay-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 200;
+  background-color: none;
 }
-.fail-snackbar{
-    color: var(--bg-branco);
-    background-color: var(--bg-vermelho);
-    border-radius: 5px;
+
+.success-snackbar {
+  color: var(--bg-branco);
+  background-color: var(--bg-verde);
+  border-radius: 5px;
+}
+
+.fail-snackbar {
+  color: var(--bg-branco);
+  background-color: var(--bg-vermelho);
+  border-radius: 5px;
 }

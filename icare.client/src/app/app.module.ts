@@ -36,7 +36,6 @@ import { CategorySelectorComponent } from './components/category-selector/catego
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { HelpComponent } from './components/help/help.component';
 
-
 @NgModule({
   declarations: [
     AppComponent,
