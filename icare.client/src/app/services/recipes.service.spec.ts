@@ -24,19 +24,23 @@ describe('RecipeService', () => {
 
   // Mock recipe data for testing
   const mockRecipe: Recipe = {
-    id: 1,
-    picture: 'image.jpg',
-    name: 'Bife com Batatas',
-    category: 'Carne',
-    area: 'Brasileira',
-    instructions: 'Fritar o bife e servir com batatas.',
-    ingredients: [
-      { name: 'Bife', measure: '200g', grams: 200 },
-      { name: 'Batata', measure: '3 unidades', grams: 300 }
-    ],
-    urlVideo: 'https://video.com/bife',
-    isFavorite: false,
-    calories: 500
+      id: 1,
+      picture: 'image.jpg',
+      name: 'Bife com Batatas',
+      category: 'Carne',
+      area: 'Brasileira',
+      instructions: 'Fritar o bife e servir com batatas.',
+      ingredients: [
+          { name: 'Bife', measure: '200g', grams: 200 },
+          { name: 'Batata', measure: '3 unidades', grams: 300 }
+      ],
+      urlVideo: 'https://video.com/bife',
+      isFavorite: false,
+      calories: 500,
+      proteins: 0,
+      carbohydrates: 0,
+      lipids: 0,
+      fibers: 0
   };
 
   /**

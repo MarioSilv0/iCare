@@ -10,7 +10,11 @@ describe('HomeComponent', () => {
   let fixture: ComponentFixture<HomeComponent>;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
   let usersServiceSpy: jasmine.SpyObj<UsersService>;
-  let mockUser: User = { name: 'John', picture: 'pic.jpg', notifications: false, birthdate: "01-01-2000", email: '', height: 0, weight: 0, preferences: new Set(), restrictions: new Set(), categories: new Set() };
+  let mockUser: User = {
+      name: 'John', picture: 'pic.jpg', notifications: false, birthdate: "01-01-2000", email: '', height: 0, weight: 0, preferences: new Set(), restrictions: new Set(), categories: new Set(),
+      gender: '',
+      activityLevel: ''
+  };
 
   beforeEach(() => {
     authServiceSpy = jasmine.createSpyObj('AuthService', ['userHasRole']);
