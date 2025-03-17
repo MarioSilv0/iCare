@@ -1,6 +1,7 @@
 ﻿using backend.Models.Enums;
 using backend.Models.Goals;
 using backend.Models.Ingredients;
+using System;
 
 namespace backend.Models.Data_Transfer_Objects
 {
@@ -12,7 +13,7 @@ namespace backend.Models.Data_Transfer_Objects
         /// <summary>
         /// The type of dietary goal. This field is required.
         /// </summary>
-        public required string GoalType { get; set; }
+        public string GoalType { get; set; }
 
         /// <summary>
         /// The automatic goal type, if applicable. This field is optional.
@@ -27,18 +28,17 @@ namespace backend.Models.Data_Transfer_Objects
         /// <summary>
         /// The start date of the goal. This field is optional.
         /// </summary>
-        public DateTime? StartDate { get; set; }
+        public DateOnly StartDate { get; set; }
 
         /// <summary>
         /// The end date of the goal. This field is optional.
         /// </summary>
-        public DateTime? EndDate { get; set; }
+        public DateOnly EndDate { get; set; }
 
         /// <summary>
         /// Default constructor for the <c>GoalDTO</c> class.
         /// </summary>
         public GoalDTO() { }
-
 
         /// <summary>
         /// Initializes a new instance of the <c>GoalDTO</c> class using a <see cref="Goal"/> object.
@@ -50,8 +50,8 @@ namespace backend.Models.Data_Transfer_Objects
             GoalType = GoalTypeExtensions.ToFriendlyString(goal.GoalType);
             AutoGoalType = AutoGoalTypeExtensions.ToFriendlyString(goal.AutoGoalType);
             Calories = goal.Calories;
-            StartDate = goal.StartDate;
-            EndDate = goal.EndDate;
+            StartDate = DateOnly.FromDateTime(goal.StartDate);
+            EndDate = DateOnly.FromDateTime(goal.EndDate);
         }
     }
 }

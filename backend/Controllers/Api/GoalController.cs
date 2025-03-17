@@ -49,7 +49,7 @@ namespace backend.Controllers.Api
                     return NotFound("Meta não encontrada.");
                 }
 
-                return Ok(goal);
+                return Ok(new GoalDTO(goal));
             }
             catch (Exception ex)
             {
@@ -76,7 +76,7 @@ namespace backend.Controllers.Api
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao criar a meta.");
-                return StatusCode(500, "Erro ao criar a meta.");
+                return StatusCode(500, "Erro ao criar a meta: ");
             }
         }
 

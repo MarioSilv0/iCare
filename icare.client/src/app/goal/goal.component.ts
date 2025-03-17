@@ -7,6 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export class GoalComponent {
   @Input() goal: UserGoal = { type: '', dailyCalories: 0, duration: 0 };
+  //@Input() goal: GoalDTO = { goalType: '', autoGoalType: '', calories: 0, startDate: '', endDate: '', };
 
   constructor() { }
 
@@ -20,3 +21,11 @@ export interface UserGoal {
   dailyCalories: number,
   duration: number,
 }
+
+//interface GoalDTO {
+//  goalType: string,
+//  autoGoalType: string,
+//  calories: number,
+//  startDate: string,
+//  endDate: string,
+//}
