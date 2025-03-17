@@ -4,6 +4,7 @@ using backend.Models.Data_Transfer_Objects;
 using backend.Models.Enums;
 using backend.Models.Goals;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace backend.Services
 {
@@ -43,18 +44,11 @@ namespace backend.Services
                 StartDate = goalDto.StartDate.ToDateTime(TimeOnly.MinValue),
                 EndDate = goalDto.EndDate.ToDateTime(TimeOnly.MinValue)
             };
-
-            var (Success, ErrorMessage) = ValidateGoal(goal);
+            
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            var (Success, ErrorMessage) = ValidateAndCalculateGoal(user, goal);
             if (!Success)
-            {
                 throw new InvalidOperationException(ErrorMessage);
-            }
-
-            if (goal.GoalType == GoalType.Automatica)
-            {
-                var user = await _context.Users.FindAsync(userId);
-                goal.Calories = CalculateAutomaticGoal(user, goal.AutoGoalType);
-            }
 
             _context.Goals.Add(goal);
             await _context.SaveChangesAsync();
@@ -75,17 +69,10 @@ namespace backend.Services
             goal.StartDate = goalDto.StartDate.ToDateTime(TimeOnly.MinValue);
             goal.EndDate = goalDto.EndDate.ToDateTime(TimeOnly.MinValue);
 
-            var (Success, ErrorMessage) = ValidateGoal(goal);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            var (Success, ErrorMessage) = ValidateAndCalculateGoal(user, goal);
             if (!Success)
-            {
                 throw new InvalidOperationException(ErrorMessage);
-            }
-
-            if (goal.GoalType == GoalType.Automatica)
-            {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-                goal.Calories = CalculateAutomaticGoal(user!, goal.AutoGoalType);
-            }
 
             await _context.SaveChangesAsync();
             return true;
@@ -116,20 +103,19 @@ namespace backend.Services
             return true;
         }
 
-        public (bool Success, string? ErrorMessage) ValidateGoal(Goal goal)
+        public (bool Success, string? ErrorMessage) ValidateAndCalculateGoal(User user, Goal goal)
         {
-            if (goal.GoalType == GoalType.Automatica && !goal.AutoGoalType.HasValue)
+            if (goal.GoalType == GoalType.Automatica)
             {
-                return (false, "O tipo de meta automática deve ter um valor definido para AutoGoalType.");
+                if (!goal.AutoGoalType.HasValue)
+                    return (false, "O tipo de meta automática deve ter um valor definido para AutoGoalType.");
+                else
+                    goal.Calories = CalculateAutomaticGoal(user!, goal.AutoGoalType);
             }
-
-            if (goal.GoalType == GoalType.Manual && !goal.Calories.HasValue)
+            else
             {
-                return (false, "O valor das calorias deve ser definido para metas manuais.");
-            }
-            else if (goal.Calories < MinCalories || goal.Calories > MaxCalories)
-            {
-                return (false, "Valor calórico deve estar entre 1200 e 4000 kcal.");
+                if (!goal.Calories.HasValue)
+                    return (false, "O valor das calorias deve ser definido para metas manuais.");
             }
 
             if (goal.StartDate >= goal.EndDate)
@@ -140,11 +126,11 @@ namespace backend.Services
             return (true, null);
         }
 
-        private int CalculateAutomaticGoal(User profile, AutoGoalType? autoGoalType)
+        private int CalculateAutomaticGoal(User user, AutoGoalType? autoGoalType)
         {
-            double bmr = 10 * profile.Weight + 6.25 * profile.Height - 5 * profile.Age() + (profile.Gender.Equals("Male") ? 5 : -161);
+            double bmr = 10 * user.Weight + 6.25 * user.Height - 5 * user.Age() + (user.Gender.Equals("Male") ? 5 : -161);
 
-            double activityMultiplier = profile.ActivityLevel switch
+            double activityMultiplier = user.ActivityLevel switch
             {
                 ActivityLevel.Sedentary => 1.2,
                 ActivityLevel.LightlyActive => 1.375,
@@ -164,5 +150,6 @@ namespace backend.Services
                 _ => maintenanceCalories
             };
         }
+
     }
 }
