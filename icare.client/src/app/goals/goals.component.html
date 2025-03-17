@@ -5,7 +5,8 @@
       Informações necessárias para definir meta alimentar estão incompletas.
       Preencha os campos obrigatórios.
     </p>
-    <app-goal [goal]="userGoal ?? { type: '', dailyCalories: 0 , duration: 0}"></app-goal>
+    <!--<app-goal [goal]="userGoal ?? { type: '', dailyCalories: 0 , duration: 0}"></app-goal>-->
+    <app-goal [goal]="userGoal ?? { goalType: '', autoGoalType: '', calories: 0, startDate: '', endDate: ''}"></app-goal>
   </div>
   <div>
     <h2>Informações Necessárias</h2>

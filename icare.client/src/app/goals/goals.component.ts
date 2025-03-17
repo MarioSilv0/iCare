@@ -43,7 +43,7 @@ export class GoalsComponent {
   ) {
     this.goalForm = this.fb.group({
       selectedGoal: [''],
-      calories: [0],
+      calories: [2000],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
     });
