@@ -1,4 +1,5 @@
-﻿using backend.Models.Data_Transfer_Objects;
+﻿using backend.Models;
+using backend.Models.Data_Transfer_Objects;
 using backend.Models.Goals;
 
 namespace backend.Services
@@ -44,14 +45,15 @@ namespace backend.Services
         Task<bool> UpdateGoalAsync(string userId, GoalDTO goalDto);
 
         /// <summary>
-        /// Validates a dietary goal based on predefined rules.
+        /// Validates a dietary goal based on predefined rules and calculates calories if necessary.
         /// </summary>
+        /// <param name="user">The user for whom the goal is being validated.</param>
         /// <param name="goal">The goal to validate.</param>
         /// <returns>
         /// A tuple indicating:
         /// - Success (bool): Whether the validation passed.
         /// - ErrorMessage (string?): The error message if validation fails.
         /// </returns>
-        (bool Success, string? ErrorMessage) ValidateGoal(Goal goal);
+        (bool Success, string? ErrorMessage) ValidateAndCalculateGoal(User user, Goal goal);
     }
 }

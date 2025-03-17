@@ -91,8 +91,8 @@ namespace backendtest.Controllers.Api
             {
                 GoalType = "Manual",
                 Calories = 3000,
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddDays(7)
+                StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                EndDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)),
             };
             var userId = "user123";
 
@@ -135,13 +135,13 @@ namespace backendtest.Controllers.Api
             {
                 GoalType = "Manual",
                 Calories = 3000,
-                StartDate = DateTime.UtcNow.AddDays(1),
-                EndDate = DateTime.UtcNow.AddDays(8)
+                StartDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+                EndDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(8)),
             };
-            _goalServiceMock.Setup(service => service.UpdateGoalAsync(userId, 1, goalDto)).ReturnsAsync(true);
+            _goalServiceMock.Setup(service => service.UpdateGoalAsync(userId, goalDto)).ReturnsAsync(true);
 
             // Act
-            var result = await _controller.UpdateGoal(goal.Id, goalDto);
+            var result = await _controller.UpdateGoal(goalDto);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
@@ -151,6 +151,7 @@ namespace backendtest.Controllers.Api
         public async Task DeleteGoal_ReturnsNoContent_WhenGoalIsDeleted()
         {
             // Arrange
+            var userId = "user123";
             var goal = new Goal
             {
                 Id = 1,
@@ -160,10 +161,10 @@ namespace backendtest.Controllers.Api
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddDays(7)
             };
-            _goalServiceMock.Setup(service => service.DeleteGoalAsync(goal.Id)).ReturnsAsync(true);
+            _goalServiceMock.Setup(service => service.DeleteGoalAsync(userId)).ReturnsAsync(true);
 
             // Act
-            var result = await _controller.DeleteGoal(goal.Id);
+            var result = await _controller.DeleteGoal();
 
             // Assert
             Assert.IsType<NoContentResult>(result);
@@ -173,7 +174,7 @@ namespace backendtest.Controllers.Api
         public async Task DeleteGoal_ReturnsNotFound_WhenGoalDoesNotExist()
         {
             // Act
-            var result = await _controller.DeleteGoal(999);
+            var result = await _controller.DeleteGoal();
 
             // Assert
             Assert.IsType<NotFoundObjectResult>(result);

@@ -98,8 +98,8 @@ namespace backendtest.Services
             {
                 GoalType = "Automatica",
                 AutoGoalType = "Perder Peso",
-                StartDate = DateTime.UtcNow.AddMonths(-1),
-                EndDate = DateTime.UtcNow.AddMonths(1)
+                StartDate = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-1)),
+                EndDate = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(1))
             };
 
             // Act
@@ -115,14 +115,14 @@ namespace backendtest.Services
         public async Task CreateGoalAsync_ShouldThrowInvalidOperationException_WhenCaloriesAreOutOfRange()
         {
             // Arrange
-            var userId = "user123"; // Mock do ID do usuário
+            var userId = "user123";
             var goalDto = new GoalDTO
             {
                 GoalType = "Manual", // Meta manual
                 AutoGoalType = null,
                 Calories = 500, // Calorias fora da faixa permitida (menor que 1200)
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddMonths(1)
+                StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                EndDate = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(1))
             };
 
             // Act & Assert
@@ -139,12 +139,12 @@ namespace backendtest.Services
                 GoalType = "Manual",
                 AutoGoalType = null,
                 Calories = 2500,
-                StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddMonths(1)
+                StartDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                EndDate = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(1))
             };
 
             // Act
-            var success = await _goalService.UpdateGoalAsync("user123", 999, goalDto); // ID inválido
+            var success = await _goalService.UpdateGoalAsync("user123", goalDto); // ID inválido
 
             // Assert
             Assert.False(success);
@@ -153,8 +153,9 @@ namespace backendtest.Services
         [Fact]
         public async Task DeleteGoalAsync_ShouldReturnFalse_WhenGoalDoesNotExist()
         {
+            var userId = "user123";
             // Act
-            var success = await _goalService.DeleteGoalAsync(999); // ID inválido
+            var success = await _goalService.DeleteGoalAsync(userId); // ID inválido
 
             // Assert
             Assert.False(success);
@@ -164,6 +165,7 @@ namespace backendtest.Services
         public void ValidateGoal_ShouldReturnFalse_WhenGoalTypeIsAutomaticaButAutoGoalTypeIsNull()
         {
             // Arrange
+            var user = new User { Id = "user123", Weight = 70, Height = 175, Gender = Gender.Male, ActivityLevel = ActivityLevel.ModeratelyActive, Birthdate = new DateOnly(1995, 5, 10) };
             var goal = new Goal
             {
                 UserId = "user123",
@@ -175,7 +177,7 @@ namespace backendtest.Services
             };
 
             // Act
-            var (success, errorMessage) = _goalService.ValidateGoal(goal);
+            var (success, errorMessage) = _goalService.ValidateAndCalculateGoal(user, goal);
 
             // Assert
             Assert.False(success);
@@ -186,6 +188,7 @@ namespace backendtest.Services
         public void ValidateGoal_ShouldReturnFalse_WhenGoalTypeIsManualButCaloriesAreNull()
         {
             // Arrange
+            var user = new User { Id = "user123", Weight = 70, Height = 175, Gender = Gender.Male, ActivityLevel = ActivityLevel.ModeratelyActive, Birthdate = new DateOnly(1995, 5, 10) };
             var goal = new Goal
             {
                 UserId = "user123",
@@ -197,11 +200,64 @@ namespace backendtest.Services
             };
 
             // Act
-            var (success, errorMessage) = _goalService.ValidateGoal(goal);
+            var (success, errorMessage) = _goalService.ValidateAndCalculateGoal(user, goal);
 
             // Assert
             Assert.False(success);
             Assert.Equal("O valor das calorias deve ser definido para metas manuais.", errorMessage);
+        }
+
+        [Theory]
+        [InlineData(AutoGoalType.PerderPeso, -500)]
+        [InlineData(AutoGoalType.ManterPeso, 0)]
+        [InlineData(AutoGoalType.GanharPeso, 500)]
+        public void ValidateGoal_ShouldCalculateCorrectCalories_WhenGoalIsAutomatic(AutoGoalType autoGoalType, int expectedDifference)
+        {
+            // Arrange
+            var user = new User { Id = "user123", Weight = 70, Height = 175, Gender = Gender.Male, ActivityLevel = ActivityLevel.ModeratelyActive, Birthdate = new DateOnly(1995, 5, 10) };
+            var goal = new Goal
+            {
+                UserId = "user123",
+                GoalType = GoalType.Automatica,
+                AutoGoalType = autoGoalType,
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow.AddMonths(1)
+            };
+
+            // Calcula o BMR e calorias esperadas
+            double bmr = 10 * user.Weight + 6.25 * user.Height - 5 * user.Age() + 5; // Para "Male"
+            double activityMultiplier = 1.55; // Moderadamente Ativo
+            int expectedCalories = (int)(bmr * activityMultiplier) + expectedDifference;
+
+            // Act
+            var (success, errorMessage) = _goalService.ValidateAndCalculateGoal(user, goal);
+
+            // Assert
+            Assert.True(success);
+            Assert.Null(errorMessage);
+            Assert.Equal(expectedCalories, goal.Calories);
+        }
+
+        [Fact]
+        public void ValidateGoal_ShouldReturnFalse_WhenStartDateIsAfterEndDate()
+        {
+            // Arrange
+            var user = new User { Id = "user123", Weight = 70, Height = 175, Gender = Gender.Male, ActivityLevel = ActivityLevel.ModeratelyActive, Birthdate = new DateOnly(1995, 5, 10) };
+            var goal = new Goal
+            {
+                UserId = "user123",
+                GoalType = GoalType.Manual,
+                Calories = 2000,
+                StartDate = DateTime.UtcNow.AddMonths(1),
+                EndDate = DateTime.UtcNow
+            };
+
+            // Act
+            var (success, errorMessage) = _goalService.ValidateAndCalculateGoal(user, goal);
+
+            // Assert
+            Assert.False(success);
+            Assert.Equal("A data de início deve ser anterior à data de término.", errorMessage);
         }
     }
 }
