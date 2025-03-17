@@ -62,7 +62,7 @@ export class GoalsComponent {
 
   ngOnInit() {
     let url = 'api/goal';
-    this.http.get<GoalDTO>(url +"/current").subscribe({
+    this.http.get<GoalDTO>(url).subscribe({
       next: (goal) => {
         console.log(goal);
         this.userGoal = goal;

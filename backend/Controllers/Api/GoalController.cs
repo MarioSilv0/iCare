@@ -34,7 +34,7 @@ namespace backend.Controllers.Api
         /// </summary>
         /// <param name="userId">The ID of the user.</param>
         /// <returns>The latest goal if found; otherwise, NotFound.</returns>
-        [HttpGet("current")]
+        [HttpGet]
         public async Task<IActionResult> GetCurrentGoalByUserId()
         {
 
@@ -76,7 +76,7 @@ namespace backend.Controllers.Api
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao criar a meta.");
-                return StatusCode(500, "Erro ao criar a meta: "+ex.Message);
+                return StatusCode(500, "Erro ao criar a meta: ");
             }
         }
 
