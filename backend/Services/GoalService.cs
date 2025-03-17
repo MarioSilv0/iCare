@@ -25,7 +25,7 @@ namespace backend.Services
                 .OrderByDescending(g => g.StartDate)
                 .FirstOrDefaultAsync();
 
-            if (goal != null && goal.EndDate >= DateTime.UtcNow){
+            if (goal != null && goal.EndDate <= DateTime.UtcNow){
                 await DeleteGoalAsync(userId);
                 return null;
             }
@@ -40,8 +40,8 @@ namespace backend.Services
                 GoalType = GoalTypeExtensions.FromString(goalDto.GoalType),
                 AutoGoalType = AutoGoalTypeExtensions.FromString(goalDto.AutoGoalType),
                 Calories = goalDto.Calories,
-                StartDate = goalDto.StartDate ?? DateTime.UtcNow,
-                EndDate = goalDto.EndDate ?? DateTime.UtcNow.AddMonths(1)
+                StartDate = goalDto.StartDate.ToDateTime(TimeOnly.MinValue),
+                EndDate = goalDto.EndDate.ToDateTime(TimeOnly.MinValue)
             };
 
             var (Success, ErrorMessage) = ValidateGoal(goal);
@@ -72,8 +72,8 @@ namespace backend.Services
             goal.GoalType = GoalTypeExtensions.FromString(goalDto.GoalType);
             goal.AutoGoalType = AutoGoalTypeExtensions.FromString(goalDto.AutoGoalType);
             goal.Calories = goalDto.Calories;
-            goal.StartDate = goalDto.StartDate ?? DateTime.UtcNow;
-            goal.EndDate = goalDto.EndDate ?? DateTime.UtcNow.AddMonths(1);
+            goal.StartDate = goalDto.StartDate.ToDateTime(TimeOnly.MinValue);
+            goal.EndDate = goalDto.EndDate.ToDateTime(TimeOnly.MinValue);
 
             var (Success, ErrorMessage) = ValidateGoal(goal);
             if (!Success)

@@ -251,6 +251,7 @@ namespace backend.Controllers.Api
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
                 if (user == null) return NotFound();
 
+                user.Birthdate = model.Birthdate;
                 user.Height = model.Height;
                 user.Weight = model.Weight;
                 user.Gender = GenderExtensions.FromString(model.Gender);

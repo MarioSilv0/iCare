@@ -14,7 +14,8 @@ export class GoalsComponent {
   goalType: string = 'Manual';
   userInfoForm: FormGroup;
   goalForm: FormGroup;
-  userGoal?: UserGoal;
+  //userGoal?: UserGoal;
+  userGoal?: GoalDTO;
   goals: Goal[] = [
     { name: 'Perder Peso' },
     { name: 'Manter Peso' },
@@ -61,8 +62,11 @@ export class GoalsComponent {
 
   ngOnInit() {
     let url = 'api/goal';
-    this.http.get<UserGoal>(url).subscribe({
-      next: (goal) => (this.userGoal = goal),
+    this.http.get<GoalDTO>(url +"/current").subscribe({
+      next: (goal) => {
+        console.log(goal);
+        this.userGoal = goal;
+      },
       error: (error) => {
         console.error(error);
         this.userGoal = undefined;
@@ -120,13 +124,15 @@ export class GoalsComponent {
 
     let url = 'api/goal';
     this.http.post(url, meta).subscribe({
-      next: () => {
+      next: (res) => {
+        console.log(res);
         this.snack.open('Meta criada com sucesso.', undefined, {
           duration: 2000,
           panelClass: ['success-snackbar'],
         });
       },
-      error: () => {
+      error: (err) => {
+        console.log(err);
         this.snack.open('Erro ao tentar criar meta.', undefined, {
           duration: 2000,
           panelClass: ['fail-snackbar'],
@@ -139,32 +145,39 @@ export class GoalsComponent {
   }
 
   createGoal(goalType: string) {
-    let goal;
-    switch (goalType) {
-      case 'Automática':
-        {
-          goal = {
-            type: 'Automatica',
-            goal: this.goalForm.value.selectedGoal,
-          } as MetaAutomatica;
-        }
-        break;
-      case 'Manual':
-        {
-          goal = {
-            type: 'Manual',
-            calories: this.goalForm.value.calories,
-            startDate: this.goalForm.value.startDate,
-            endDate: this.goalForm.value.endDate,
-          } as MetaManual;
-        }
-        break;
-      default: {
-        console.error('O tipo de meta não existe.');
-        return null;
-      }
-    }
-    return goal;
+    //let goal;
+    //switch (goalType) {
+    //  case 'Automática':
+    //    {
+    //      goal = {
+    //        type: 'Automatica',
+    //        goal: this.goalForm.value.selectedGoal,
+    //      } as MetaAutomatica;
+    //    }
+    //    break;
+    //  case 'Manual':
+    //    {
+    //      goal = {
+    //        type: 'Manual',
+    //        calories: this.goalForm.value.calories,
+    //        startDate: this.goalForm.value.startDate,
+    //        endDate: this.goalForm.value.endDate,
+    //      } as MetaManual;
+    //    }
+    //    break;
+    //  default: {
+    //    console.error('O tipo de meta não existe.');
+    //    return null;
+    //  }
+    //}
+    //return goal;
+    return {
+      goalType: goalType,
+      autoGoalType: this.goalForm.value.selectedGoal,
+      calories: this.goalForm.value.calories,
+      startDate: this.goalForm.value.startDate,
+      endDate: this.goalForm.value.endDate,
+    } as GoalDTO;
   }
 
   receiveData(data: DatesEmiter) {
@@ -175,6 +188,15 @@ export class GoalsComponent {
       endDate: data.endDate,
     });
   }
+}
+
+
+interface GoalDTO {
+  goalType: string,
+  autoGoalType: string,
+  calories: number,
+  startDate: string,
+  endDate: string,
 }
 
 interface Goal {

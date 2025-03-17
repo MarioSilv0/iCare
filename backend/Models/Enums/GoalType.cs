@@ -92,7 +92,7 @@
                 "Perder Peso" => AutoGoalType.PerderPeso,
                 "Manter Peso" => AutoGoalType.ManterPeso,
                 "Ganhar Peso" => AutoGoalType.GanharPeso,
-                _ => AutoGoalType.ManterPeso,
+                _ => null,
             };
         }
 
@@ -109,7 +109,7 @@
                 AutoGoalType.PerderPeso => "Perder Peso",
                 AutoGoalType.ManterPeso => "Manter Peso",
                 AutoGoalType.GanharPeso => "Ganhar Peso",
-                _ => "Manter Peso",
+                _ => "",
             };
         }
     }
