@@ -1,19 +1,35 @@
 <aside
   id="navbar"
   class="d-flex flex-column bg-bege-contrast p-2 shadow m-0"
-  [ngClass]=" isExpanded ? 'expanded' : 'collapsed'"
+  [ngClass]="isExpanded ? 'expanded' : 'collapsed'"
 >
   <button class="closeButton" (click)="collapse()">
-    <img src="../../assets/svgs/close.svg" alt="close-nav-icon" style="width: 24px; height: 24px;" />
+    <img
+      src="../../assets/svgs/close.svg"
+      alt="close-nav-icon"
+      style="width: 24px; height: 24px"
+    />
   </button>
   <nav
     class="d-flex flex-column align-items-start justify-content-between m-0 gap-2 flex-grow-1"
   >
-    <div class="d-flex w-100 align-items-center justify-content-center gap-3 m-0"
-     [ngClass]="!isExpanded ? 'justify-content-center' : 'justify-content-evenly'"
-     >
+    <div
+      class="d-flex w-100 align-items-center justify-content-center gap-3 m-0"
+      [ngClass]="
+        !isExpanded ? 'justify-content-center' : 'justify-content-evenly'
+      "
+    >
       <!-- profile pic -->
-      <profile-image class="m-0" [imageUrl]="picture" [editable]="false" [imageStyles]="{ 'width': '24px', 'height': '24px', 'border-radius': '100%' }" />
+      <profile-image
+        class="m-0"
+        [imageUrl]="picture"
+        [editable]="false"
+        [imageStyles]="{
+          width: '24px',
+          height: '24px',
+          'border-radius': '100%'
+        }"
+      />
       <p *ngIf="isExpanded" class="m-0" style="flex-wrap: wrap">
         <!-- user name/email -->
         {{ this?.username ?? "User" }}
@@ -58,6 +74,7 @@
           <a
             *ngIf="!isExpanded"
             [routerLink]="link.path"
+            (click)="link.action && link.action()"
             class="text-start nav-link"
             style="flex-wrap: wrap; cursor: pointer"
           >
@@ -81,7 +98,7 @@
             class="text-start nav-link"
             style="flex-wrap: wrap"
             (click)="link.action && link.action()"
-             >
+          >
             {{ link.text }}
           </a>
         </span>
