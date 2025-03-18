@@ -194,7 +194,7 @@
           </button>
         </div>
         <h4 class="m-0" style="font-size: 1.2rem">{{ recipe.name }}</h4>
-        <span class="m-0">{{ recipe.calories || "sem descrição..." }}</span>
+        <span class="m-0">{{ recipe.category }}</span>
         <a
           [routerLink]="['/recipe', recipe.name]"
           class="mx-0 nav-link bg-verde rounded"
