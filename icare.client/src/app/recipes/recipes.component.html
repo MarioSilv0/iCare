@@ -1,82 +1,159 @@
-<div class="mx-0 position-relative"
-     style="min-height: calc(100vh - 80px); width: 100%; display: flex; align-items: center; justify-content: center;">
-
-
-  <help helpText="Nesta página pode explorar a lista de receitas disponíveis.
+<div
+  class="mx-0"
+  style="
+    min-height: calc(100vh - 80px);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  "
+>
+  <div
+    class="mx-0 w-100 d-flex flex-column align-items-center"
+    style="min-width: 300px; height: calc(100vh - 80px); position: relative"
+  >
+    <h1 class="pt-2 fs-3 mt-3 mb-3">Sugestões de Receitas</h1>
+    <help
+      helpText="Nesta página pode explorar a lista de receitas disponíveis.
                   Pode aplicar filtros com base nas suas preferências alimentares, restrições, objetivos ou ingredientes disponíveis no seu inventário.
                   Também pode pesquisar receitas pelo nome, categoria ou área.
-                  Além disso, é possível marcar receitas como favoritas ou clicar numa receita para visualizar todos os seus detalhes." />
-
-  <div class="mx-0 w-100 d-flex flex-column align-items-center justify-content-center"
-       style="min-width: 300px; max-width:1300px; flex-grow: 1;">
-    <h1 class="pt-2 fs-3">Sugestões de Receitas</h1>
-
+                  Além disso, é possível marcar receitas como favoritas ou clicar numa receita para visualizar todos os seus detalhes."
+    />
     <!-- barra de filtros -->
-    <div class="w-100 m-0 w-50 d-flex flex-column">
+    <div
+      class="m-0 d-flex flex-column"
+      style="min-width: 200px; max-width: 1200px"
+    >
       <h1 class="m-0 align-self-center py-1 fs-5">Filtros</h1>
       <!-- lista de filtros -->
-      <div class="m-0 d-flex flex-wrap align-items-center justify-content-between gap-2 py-2 me-2">
+      <div
+        class="m-0 d-flex flex-wrap align-items-center justify-content-between gap-2 py-2 me-2"
+      >
         <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
-          <input type="checkbox"
-                 style="width: 20px; height: 20px; cursor: pointer"
-                 [disabled]="!restrictionPermission"
-                 [(ngModel)]="restrictionsFilter"
-                 (change)="filterRecipes('')" />
-          <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
+          <input
+            type="checkbox"
+            style="width: 20px; height: 20px; cursor: pointer"
+            [disabled]="!restrictionPermission"
+            [(ngModel)]="restrictionsFilter"
+            (change)="filterRecipes('')"
+          />
+          <p
+            class="m-0 p-0"
+            style="
+              font-size: 0.75rem;
+              display: flex;
+              text-wrap-mode: nowrap;
+              text-overflow: clip !important;
+            "
+          >
             Restrições
           </p>
         </div>
         <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
-          <input type="checkbox"
-                 style="width: 20px; height: 20px; cursor: pointer"
-                 [disabled]="!preferencesPermission"
-                 [(ngModel)]="preferencesFilter"
-                 (change)="filterRecipes('')" />
-          <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
+          <input
+            type="checkbox"
+            style="width: 20px; height: 20px; cursor: pointer"
+            [disabled]="!preferencesPermission"
+            [(ngModel)]="preferencesFilter"
+            (change)="filterRecipes('')"
+          />
+          <p
+            class="m-0 p-0"
+            style="
+              font-size: 0.75rem;
+              display: flex;
+              text-wrap-mode: nowrap;
+              text-overflow: clip !important;
+            "
+          >
             Preferências
           </p>
         </div>
         <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
-          <input type="checkbox"
-                 style="width: 20px; height: 20px; cursor: pointer"
-                 [disabled]="!objectivesFilter" />
-          <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
+          <input
+            type="checkbox"
+            style="width: 20px; height: 20px; cursor: pointer"
+            [disabled]="!objectivesFilter"
+          />
+          <p
+            class="m-0 p-0"
+            style="
+              font-size: 0.75rem;
+              display: flex;
+              text-wrap-mode: nowrap;
+              text-overflow: clip !important;
+            "
+          >
             Metas
           </p>
         </div>
         <div class="d-flex gap-1 bg-bege-contrast p-1 rounded">
-          <input type="checkbox"
-                 name="" id="" style="width: 20px; height: 20px; cursor: pointer"
-                 [disabled]="!inventoryPermission"
-                 [(ngModel)]="inventoryFilter"
-                 (change)="filterRecipes('')" />
-          <p class="m-0 p-0" style="font-size: .75rem; display: flex; text-wrap-mode: nowrap; text-overflow: clip !important;">
+          <input
+            type="checkbox"
+            name=""
+            id=""
+            style="width: 20px; height: 20px; cursor: pointer"
+            [disabled]="!inventoryPermission"
+            [(ngModel)]="inventoryFilter"
+            (change)="filterRecipes('')"
+          />
+          <p
+            class="m-0 p-0"
+            style="
+              font-size: 0.75rem;
+              display: flex;
+              text-wrap-mode: nowrap;
+              text-overflow: clip !important;
+            "
+          >
             Inventário
           </p>
         </div>
       </div>
     </div>
 
-    <search-bar placeholder="Procure receitas por nome, categoria ou região..."
-                id="recipesSearch"
-                [containerStyles]="{ 'max-width': '500px', 'width': '100%', 'padding-top': '4px' }"
-                [searchBarStyles]="{ 'height': '30px' }"
-                [normalize]="true"
-                (query)="filterRecipes($event)" />
+    <search-bar
+      placeholder="Arroz de pato.."
+      id="recipesSearch"
+      [containerStyles]="{
+        'max-width': '500px',
+        width: '100%',
+        'padding-top': '4px'
+      }"
+      [searchBarStyles]="{ height: '30px' }"
+      [normalize]="true"
+      (query)="filterRecipes($event)"
+      [containerStyles]="{
+        'background-color': 'var(--bg-bege-contrast)',
+        padding: '5px',
+        'border-radius': '5px',
+      }"
+      [searchBarStyles]="{
+        height: '35px',
+        border: '2px solid var(--bg-bege)',
+        'background-color': 'var(--bg-bege-contrast)',
+      }"
+    />
 
     <!-- lista de receitas -->
-    <div *ngIf="filteredRecipes.length === 0" class="pt-4 pe-4 d-flex flex-md-row flex-wrap flex-sm-column mx-0 align-items-center justify-content-evenly gap-4 pt-2">
-      <article>
-        No recipes available..
-      </article>
+    <div
+      *ngIf="filteredRecipes.length === 0"
+      class="pt-4 pe-4 d-flex flex-md-row flex-wrap flex-sm-column mx-0 align-items-center justify-content-evenly gap-4 pt-2"
+    >
+      <article>No recipes available..</article>
     </div>
-    <div *ngIf="filteredRecipes.length > 0" class="pt-4 pe-4 d-flex flex-md-row flex-wrap flex-sm-column mx-0 align-items-center justify-content-evenly gap-4 pt-2">
-
-      <article *ngFor="let recipe of filteredRecipes; index as i"
-               class="m-0 p-2 rounded d-flex flex-column bg-bege-contrast shadow"
-               style="min-width: 300px">
-        <div class="m-0 p-0 bg-cinzento rounded"
-             style="
+    <div
+      *ngIf="filteredRecipes.length > 0"
+      class="pt-4 pe-4 d-flex flex-md-row flex-wrap flex-sm-column mx-0 align-items-center justify-content-evenly gap-4 pt-2"
+    >
+      <article
+        *ngFor="let recipe of filteredRecipes; index as i"
+        class="m-0 p-2 rounded d-flex flex-column bg-bege-contrast shadow"
+        style="min-width: 300px"
+      >
+        <div
+          class="m-0 p-0 bg-cinzento rounded"
+          style="
             max-width: 300px;
             max-height: 200px;
             min-height: 100px;
@@ -84,15 +161,19 @@
             display: flex;
             position: relative;
             justify-self: center !important;
-          ">
-          <img src="{{ recipe.picture }}"
-               alt="{{ recipe.name }}"
-               loading="lazy"
-               class="m-0 p-0 rounded"
-               style="min-width: 100%; min-height: 100%" />
-          <button (click)="toggleFavoriteRecipe(i)"
-                  class="d-flex bg-transparent"
-                  style="
+          "
+        >
+          <img
+            src="{{ recipe.picture }}"
+            alt="{{ recipe.name }}"
+            loading="lazy"
+            class="m-0 p-0 rounded"
+            style="min-width: 100%; min-height: 100%"
+          />
+          <button
+            (click)="toggleFavoriteRecipe(i)"
+            class="d-flex bg-transparent"
+            style="
               width: clamp(20px, 35px, 50px);
               height: clamp(20px, 35px, 50px);
               position: absolute;
@@ -100,29 +181,35 @@
               right: 5px;
               border: none;
               outline: none;
-            ">
-            <img *ngIf="recipe.isFavorite"
-                 src="../../assets/svgs/heart-solid.svg" />
-            <img *ngIf="!recipe.isFavorite"
-                 src="../../assets/svgs/heart-regular.svg" />
+            "
+          >
+            <img
+              *ngIf="recipe.isFavorite"
+              src="../../assets/svgs/heart-solid.svg"
+            />
+            <img
+              *ngIf="!recipe.isFavorite"
+              src="../../assets/svgs/heart-regular.svg"
+            />
           </button>
         </div>
-        <h4 class="m-0" style="font-size: 1.2rem;">{{ recipe.name }}</h4>
+        <h4 class="m-0" style="font-size: 1.2rem">{{ recipe.name }}</h4>
         <span class="m-0">{{ recipe.calories || "sem descrição..." }}</span>
-        <a [routerLink]="['/recipe', recipe.name]"
-           class="mx-0 nav-link bg-verde rounded"
-           style="
+        <a
+          [routerLink]="['/recipe', recipe.name]"
+          class="mx-0 nav-link bg-verde rounded"
+          style="
             width: 100px;
             height: 30px;
             font-size: 0.75rem;
             display: grid;
             align-content: center;
             justify-content: center;
-          ">
+          "
+        >
           Ver Detalhes
         </a>
       </article>
-
     </div>
   </div>
 </div>
