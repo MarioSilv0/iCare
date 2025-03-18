@@ -3,21 +3,21 @@ a.nav-link.text-dark {
 }
 
 aside {
-    position: fixed;
-    top: 80px;
-    z-index: 1000;
-    height: 100vh;
+  position: fixed;
+  top: 80px;
+  z-index: 1000;
+  height: 100vh;
 }
 
 .closeButton {
-    display: none;
+  display: none;
 }
 
 @media (max-width: 500px) {
   aside {
     top: 0;
     min-width: 100vw !important;
-    transition: left .3s linear;
+    transition: left 0.3s linear;
     border: none !important;
     outline: none !important;
   }
@@ -33,7 +33,7 @@ aside {
   }
 
   .collapsed {
-    left: -1000px;    
+    left: -1000px;
   }
 
   .expanded {
@@ -41,27 +41,26 @@ aside {
   }
 
   nav {
-      padding: 40px 20px;
+    padding: 40px 20px;
   }
 
-    .expanded nav div {
-      margin: auto;
-    }
+  .expanded nav div {
+    margin: auto;
+  }
 
   .expanded nav div:nth-child(1) {
-      height: 40px;
+    height: 40px;
   }
 
   .expanded nav div:nth-child(2) {
-      display: none !important;
+    display: none !important;
   }
 
   .expanded nav:nth-child(3) {
     display: hidden;
-    border: 1px solid blue;
   }
 
   .expanded nav div:nth-child(3) {
-      justify-content: space-evenly;
+    justify-content: space-evenly;
   }
 }
