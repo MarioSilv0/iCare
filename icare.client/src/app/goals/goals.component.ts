@@ -97,6 +97,9 @@ export class GoalsComponent {
     )
   }
 
+  toggleValidInfo() {
+    this.validInfo = !this.validInfo;
+  }
 
   toggleGoalType() {
     this.goalType = this.goalType === 'Automática' ? 'Manual' : 'Automática';
@@ -142,7 +145,8 @@ export class GoalsComponent {
           duration: 2000,
           panelClass: ['success-snackbar'],
         });
-        this.getUserGoal()
+        this.toggleValidInfo();
+        this.getUserGoal();
       },
       error: (err) => {
         console.log(err);
@@ -175,7 +179,50 @@ export class GoalsComponent {
       endDate: data.endDate,
     });
   }
+
+  updateGoal() {
+    this.http.put(this.url, this.userGoal).subscribe({
+      next: (res) => {
+        console.log(res);
+        this.snack.open('Meta editada com sucesso.', undefined, {
+          duration: 2000,
+          panelClass: ['success-snackbar'],
+        });
+        this.validInfo = true;
+      },
+      error: (err) => {
+        console.log(err);
+        this.snack.open('Erro ao tentar editar meta.', undefined, {
+          duration: 2000,
+          panelClass: ['fail-snackbar'],
+        });
+      },
+    });
+  }
+
+  removeGoal() {
+    this.http.delete(this.url).subscribe({
+      next: (res) => {
+        console.log(res);
+        this.snack.open('Meta excluida com sucesso.', undefined, {
+          duration: 2000,
+          panelClass: ['success-snackbar'],
+        });
+        this.toggleValidInfo();
+        this.getUserGoal();
+      },
+      error: (err) => {
+        console.log(err);
+        this.snack.open('Erro ao tentar excluir meta.', undefined, {
+          duration: 2000,
+          panelClass: ['fail-snackbar'],
+        });
+      },
+    });
+  }
+
 }
+
 interface AutoGoalType {
   name: string;
 }

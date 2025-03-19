@@ -1,13 +1,26 @@
 <div class="goals">
 
   <!--Meta Atual-->
-  <div *ngIf="userGoal">
+  <div *ngIf="userGoal && !validInfo">
     <h1>Meta Alimentar</h1>
     <p *ngIf="false">
       Informações necessárias para definir meta alimentar estão incompletas.
       Preencha os campos obrigatórios.
     </p>
     <app-goal [goal]="userGoal || { goalType: '', autoGoalType: '', calories: 0, startDate: '', endDate: ''}"></app-goal>
+
+    <div class="info-inputs">
+      <button type="button"
+              (click)="toggleValidInfo()"
+              class="bt-clear-info" [disabled]="true"> <!--Fazer Editar-->
+        Editar Meta
+      </button>
+      <button type="button"
+              (click)="removeGoal()"
+              class="bt-add-goal">
+        Excluir Meta
+      </button>
+    </div>
   </div>
 
   <!--Informações Necessárias-->
@@ -56,7 +69,7 @@
   </div>
 
   <!--Definir Meta Alimentar-->
-  <div *ngIf="!userGoal && validInfo">
+  <div *ngIf="!userGoal &&validInfo">
     <h2>Definir Meta Alimentar</h2>
     <p>
       Preencha o tipo de meta desejada, selecione os dias que quer fugir à meta
@@ -75,14 +88,19 @@
       </div>
       <div>
         <form [formGroup]="goalForm" class="goal-form shadow">
-          <div *ngIf="goalType === 'Automática'"
-               class="mx-0 goals-inputs-container">
-            <label>Escolha um Objetivo:</label>
-            <select formControlName="selectedGoal">
-              <option *ngFor="let goal of goals" [value]="goal.name">
-                {{ goal.name }}
-              </option>
-            </select>
+          <div *ngIf="goalType === 'Automática'">
+            <div class="mx-0 goals-inputs-container">
+              <label>Escolha um Objetivo:</label>
+              <select formControlName="selectedGoal">
+                <option *ngFor="let goal of goals" [value]="goal.name">
+                  {{ goal.name }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <app-calendar (dates)="receiveData($event)"></app-calendar>
+            </div>
           </div>
 
           <div *ngIf="goalType === 'Manual'">
@@ -102,7 +120,7 @@
                   type="button"
                   (click)="addGoal()"
                   class="bt-add-goal"
-                  [disabled]="!goalForm.get('selectedGoal')?.value">
+                  [disabled]="!goalForm.get('selectedGoal')?.value || !goalForm.get('startDate')?.value || !goalForm.get('endDate')?.value">
             Adicionar Meta
           </button>
           <button *ngIf="goalType === 'Manual'"
@@ -116,5 +134,11 @@
       </div>
     </div>
   </div>
+
+
+  <!--Editar Meta Alimentar-->
+  <!-- like Definir Meta mas com valores da meta-->
+  <!-- tem um botão cancel com (click)="toggleValidInfo()"-->
+
 
 </div>

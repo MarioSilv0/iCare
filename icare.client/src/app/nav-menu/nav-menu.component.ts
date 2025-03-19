@@ -34,11 +34,11 @@ export class NavMenuComponent {
   public commonPath: string = '../../assets/svgs/';
   public extension: string = '.svg';
   public links: Link[] = [
-    {
-      icon: `${this.commonPath}home${this.extension}`,
-      text: 'Página Principal',
-      path: '/home',
-    },
+    //{
+    //  icon: `${this.commonPath}home${this.extension}`,
+    //  text: 'Página Principal',
+    //  path: '/home',
+    //},
     {
       icon: `${this.commonPath}user${this.extension}`,
       text: 'Perfil',
@@ -59,16 +59,16 @@ export class NavMenuComponent {
       text: 'Inventário',
       path: '/inventory',
     },
-    {
-      icon: `${this.commonPath}metrics${this.extension}`,
-      text: 'Progresso',
-      path: '/progress',
-    },
-    {
-      icon: `${this.commonPath}settings${this.extension}`,
-      text: 'Configurações',
-      path: '/settings',
-    },
+    //{
+    //  icon: `${this.commonPath}metrics${this.extension}`,
+    //  text: 'Progresso',
+    //  path: '/progress',
+    //},
+    //{
+    //  icon: `${this.commonPath}settings${this.extension}`,
+    //  text: 'Configurações',
+    //  path: '/settings',
+    //},
     {
       icon: `${this.commonPath}exit${this.extension}`,
       text: 'Sign Out',
