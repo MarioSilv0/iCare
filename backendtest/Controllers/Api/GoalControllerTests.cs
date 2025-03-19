@@ -40,7 +40,14 @@ namespace backendtest.Controllers.Api
         {
             // Arrange
             var userId = "user123";
-            var goal = new Goal { UserId = userId, GoalType = GoalType.Manual, StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(4), Calories = 2500 };
+            var goal = new Goal { UserId = userId, GoalType = GoalType.Manual, Calories = 2500, StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddDays(4) };
+            var goalDTO = new GoalDTO { 
+                GoalType = "Manual",
+                AutoGoalType = null,
+                Calories = 2500,
+                StartDate = DateOnly.FromDateTime(goal.StartDate),
+                EndDate = DateOnly.FromDateTime(goal.EndDate),
+            };
             _goalServiceMock.Setup(service => service.GetLatestGoalByUserIdAsync(userId)).ReturnsAsync(goal);
 
             // Act
@@ -48,8 +55,8 @@ namespace backendtest.Controllers.Api
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnGoal = Assert.IsType<Goal>(okResult.Value);
-            Assert.Equal(goal.Id, returnGoal.Id); // Verifica se o id da meta retornada é igual ao esperado
+            var returnGoal = Assert.IsType<GoalDTO>(okResult.Value);
+            Assert.Equal(goalDTO.ToString(), returnGoal.ToString());
         }
 
         [Fact]

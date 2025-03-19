@@ -66,7 +66,8 @@ describe('GoalsComponent', () => {
     });
     const goal = component.createGoal('Manual');
     expect(goal).toEqual({
-      type: 'Manual',
+      goalType: 'Manual',
+      autoGoalType : '',
       calories: 2000,
       startDate: '2025-01-01',
       endDate: '2025-01-31',
@@ -76,7 +77,12 @@ describe('GoalsComponent', () => {
   it('should create a MetaAutomatica goal correctly', () => {
     component.goalForm.patchValue({ selectedGoal: 'Perder Peso' });
     const goal = component.createGoal('Automática');
-    expect(goal).toEqual({ type: 'Automatica', goal: 'Perder Peso' });
+    expect(goal).toEqual({
+      goalType: 'Automatica',
+      autoGoalType: 'Perder Peso',
+      calories: 2000,
+      startDate: '2025-01-01',
+      endDate: '2025-01-31', });
   });
 
   it('should return null and log an error for invalid goal type', () => {

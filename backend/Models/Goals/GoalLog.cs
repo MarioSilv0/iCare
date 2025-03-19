@@ -5,6 +5,8 @@ namespace backend.Models.Goals
     /// <summary>
     /// Represents a log entry for a user's dietary goal actions.
     /// </summary>
+    /// <author>Mário Silva - 202000500</author>
+    /// <date>Last Modified: 2025-03-17</date> 
     public class GoalLog
     {
         /// <summary>
@@ -20,7 +22,7 @@ namespace backend.Models.Goals
         /// <summary>
         /// The identifier of the user who performed the action related to the goal.
         /// </summary>
-        public string UserId { get; set; }
+        public required string UserId { get; set; }
 
         /// <summary>
         /// A reference to the user associated with the log entry.

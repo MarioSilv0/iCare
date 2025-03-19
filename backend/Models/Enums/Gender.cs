@@ -1,48 +1,32 @@
 ﻿namespace backend.Models.Enums
 {
     /// <summary>
-    /// Represents the biological gender of the user.
+    /// Represents the gender of a user.
     /// </summary>
+    /// <author>Mário Silva - 202000500</author>
+    /// <date>Last Modified: 2025-03-17</date> 
     public enum Gender
     {
-        Male,   // Male gender
-        Female, // Female gender
+        Male,
+        Female
     }
 
-    /// <summary>
-    /// Extension methods for the <see cref="Gender"/> enum.
-    /// </summary>
     public static class GenderExtensions
     {
         /// <summary>
-        /// Converts a string value to a corresponding <see cref="Gender"/>.
+        /// Converts a string to a <see cref="Gender"/> enum value, defaulting to Male if invalid.
         /// </summary>
-        /// <param name="gender">The string value representing the gender.</param>
-        /// <returns>The corresponding <see cref="Gender"/>.</returns>
-        /// <exception cref="ArgumentException">Thrown if the string value is invalid.</exception>
-        public static Gender FromString(string? gender)
-        {
-            return gender switch
-            {
-                "Male" => Gender.Male,
-                "Female" => Gender.Female,
-                _ => Gender.Male,
-            };
-        }
+        /// <param name="gender">The string representing the gender.</param>
+        /// <returns>The corresponding <see cref="Gender"/>, or Male if invalid.</returns>
+        public static Gender FromString(string? gender) =>
+            Enum.TryParse(gender, true, out Gender result) ? result : Gender.Male;
 
         /// <summary>
-        /// Converts a <see cref="Gender"/> to its string representation.
+        /// Converts a <see cref="Gender"/> enum value to a user-friendly string.
         /// </summary>
-        /// <param name="gender">The <see cref="Gender"/> to convert.</param>
-        /// <returns>The string representation of the <see cref="Gender"/>.</returns>
-        public static string ToFriendlyString(this Gender? gender)
-        {
-            return gender switch
-            {
-                Gender.Male => "Male",
-                Gender.Female => "Female",
-                _ => "Male",
-            };
-        }
+        /// <param name="gender">The <see cref="Gender"/> value.</param>
+        /// <returns>The string representation of the gender.</returns>
+        public static string ToFriendlyString(this Gender? gender) =>
+            gender?.ToString() ?? "Male";
     }
 }
