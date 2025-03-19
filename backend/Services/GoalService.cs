@@ -45,7 +45,7 @@ namespace backend.Services
                 EndDate = goalDto.EndDate.ToDateTime(TimeOnly.MinValue)
             };
             
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId) ?? throw new InvalidOperationException("User not found");
             var (Success, ErrorMessage) = ValidateAndCalculateGoal(user, goal);
             if (!Success)
                 throw new InvalidOperationException(ErrorMessage);
@@ -128,7 +128,7 @@ namespace backend.Services
 
         private int CalculateAutomaticGoal(User user, AutoGoalType? autoGoalType)
         {
-            double bmr = 10 * user.Weight + 6.25 * user.Height - 5 * user.Age() + (user.Gender.Equals("Male") ? 5 : -161);
+            double bmr = 10 * user.Weight + 6.25 * user.Height - 5 * user.Age() + (user.Gender.Equals(Gender.Male) ? 5 : -161);
 
             double activityMultiplier = user.ActivityLevel switch
             {

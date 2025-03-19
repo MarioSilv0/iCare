@@ -3,6 +3,8 @@
     /// <summary>
     /// Represents the type of goal, either automatic or manual.
     /// </summary>
+    /// <author>Mário Silva - 202000500</author>
+    /// <date>Last Modified: 2025-03-17</date> 
     public enum GoalType
     {
         /// <summary>
@@ -40,39 +42,29 @@
     /// <summary>
     /// Extension methods for the <see cref="GoalType"/> enum.
     /// </summary>
+
     public static class GoalTypeExtensions
     {
         /// <summary>
-        /// Converts a string value to a corresponding <see cref="GoalType"/>.
+        /// Converts a string to a corresponding <see cref="GoalType"/> enum value, defaulting to Automatica if invalid.
         /// </summary>
-        /// <param name="goalType">The string value representing the goal type.</param>
-        /// <returns>The corresponding <see cref="GoalType"/>.</returns>
-        /// <exception cref="ArgumentException">Thrown if the string value is invalid.</exception>
-        public static GoalType FromString(string goalType)
-        {
-            return goalType switch
+        /// <param name="goalType">The string representing the goal type.</param>
+        /// <returns>The corresponding <see cref="GoalType"/>, or Automatica if invalid.</returns>
+        public static GoalType FromString(string goalType) =>
+            goalType switch
             {
                 "Manual" => GoalType.Manual,
                 "Automatica" => GoalType.Automatica,
-                _ => GoalType.Manual
+                _ => GoalType.Automatica
             };
-        }
 
         /// <summary>
-        /// Converts a <see cref="GoalType"/> to its string representation.
+        /// Converts a <see cref="GoalType"/> enum value to a user-friendly string.
         /// </summary>
-        /// <param name="goalType">The <see cref="GoalType"/> to convert.</param>
-        /// <returns>The string representation of the <see cref="GoalType"/>.</returns>
-        /// <exception cref="ArgumentException">Thrown if the <see cref="GoalType"/> is invalid.</exception>
-        public static string ToFriendlyString(this GoalType goalType)
-        {
-            return goalType switch
-            {
-                GoalType.Manual => "Manual",
-                GoalType.Automatica => "Automatica",
-                _ => "Manual",
-            };
-        }
+        /// <param name="goalType">The <see cref="GoalType"/> value.</param>
+        /// <returns>The string representation of the goal type.</returns>
+        public static string ToFriendlyString(this GoalType goalType) =>
+            goalType.ToString();
     }
 
     /// <summary>
@@ -102,14 +94,14 @@
         /// <param name="autoGoalType">The <see cref="AutoGoalType"/> to convert.</param>
         /// <returns>The string representation of the <see cref="AutoGoalType"/>.</returns>
         /// <exception cref="ArgumentException">Thrown if the <see cref="AutoGoalType"/> is invalid.</exception>
-        public static string ToFriendlyString(this AutoGoalType? autoGoalType)
+        public static string? ToFriendlyString(this AutoGoalType? autoGoalType)
         {
             return autoGoalType switch
             {
                 AutoGoalType.PerderPeso => "Perder Peso",
                 AutoGoalType.ManterPeso => "Manter Peso",
                 AutoGoalType.GanharPeso => "Ganhar Peso",
-                _ => "",
+                _ => null,
             };
         }
     }

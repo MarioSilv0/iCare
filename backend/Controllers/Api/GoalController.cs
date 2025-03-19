@@ -5,6 +5,8 @@ using backend.Services;
 using backend.Models.Data_Transfer_Objects;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Security.Claims;
+using backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 /// <summary>
 /// This file defines the <c>GoalController</c> class, responsible for managing user goals.

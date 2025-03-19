@@ -5,6 +5,8 @@ namespace backend.Models.Goals
     /// <summary>
     /// Represents a dietary goal associated with a user.
     /// </summary>
+    /// <author>Mário Silva - 202000500</author>
+    /// <date>Last Modified: 2025-03-17</date> 
     public class Goal
     {
         /// <summary>

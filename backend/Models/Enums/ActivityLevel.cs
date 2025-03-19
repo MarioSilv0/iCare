@@ -3,6 +3,8 @@
     /// <summary>
     /// Represents the user's activity level, which affects calorie calculation.
     /// </summary>
+    /// <author>Mário Silva - 202000500</author>
+    /// <date>Last Modified: 2025-03-17</date> 
     public enum ActivityLevel
     {
         Sedentary,         // Little or no exercise
