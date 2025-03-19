@@ -49,11 +49,11 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install
+        run: cd icare.client && npm ci
 
       - name: Build Angular app
-        run: npm run build -- --configuration production
+        run: cd icare.client && npm run build
 
       - name: Run tests
-        run: npm run test -- --watch=false --browsers=ChromeHeadless
+        run: cd icare.client && npm run test --watch=false --browsers=ChromeHeadless
 
