@@ -33,6 +33,8 @@ jobs:
 
       - name: Publish project
         run: dotnet publish ./backend/backend.csproj --configuration Release --output ./publish
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
 
   frontend:
     name: Build & Test Frontend
