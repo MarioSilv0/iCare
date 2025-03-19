@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UsersService } from '../services/users.service';
-import { UserGoal } from '../goal/goal.component';
+import { Goal } from '../../models';
 
 @Component({
   selector: 'app-goals',
@@ -11,18 +11,20 @@ import { UserGoal } from '../goal/goal.component';
   styleUrl: './goals.component.css',
 })
 export class GoalsComponent {
+  url = 'api/goal';
+  userGoal?: Goal;
+  validInfo = false;
+
   goalType: string = 'Manual';
   userInfoForm: FormGroup;
   goalForm: FormGroup;
-  //userGoal?: UserGoal;
-  userGoal?: GoalDTO;
-  goals: Goal[] = [
+  goals: AutoGoalType[] = [
     { name: 'Perder Peso' },
     { name: 'Manter Peso' },
     { name: 'Ganhar Peso' },
   ];
   genders = [
-    {value: '', label: 'Selecione o seu genero'},
+    { value: '', label: 'Selecione o seu genero'},
     { value: 'Male', label: 'Masculino'},
     { value: 'Female', label: 'Feminino'}
   ]
@@ -61,18 +63,24 @@ export class GoalsComponent {
   }
 
   ngOnInit() {
-    let url = 'api/goal';
-    this.http.get<GoalDTO>(url).subscribe({
-      next: (goal) => {
-        console.log(goal);
-        this.userGoal = goal;
-      },
-      error: (error) => {
-        console.error(error);
-        this.userGoal = undefined;
-      },
-    });
+    this.getUserGoal();
+  }
 
+  private getUserGoal() {
+      this.http.get<Goal>(this.url).subscribe({
+          next: (goal) => {
+              console.log(goal);
+              this.userGoal = goal;
+          },
+          error: (error) => {
+              console.error(error);
+              this.userGoal = undefined;
+              this.setupUserInfo();
+          },
+      });
+  }
+
+  private setupUserInfo() {
     this.userService.getUser().subscribe(
       ({ birthdate, height, weight, gender, activityLevel }) => {
         this.userInfoForm.patchValue({
@@ -82,9 +90,13 @@ export class GoalsComponent {
           gender,
           activityLevel: activityLevel
         })
+
+        const missingInfo = !birthdate || !weight || !height || !gender || !activityLevel;
+        this.validInfo = !missingInfo;
       }
     )
   }
+
 
   toggleGoalType() {
     this.goalType = this.goalType === 'Automática' ? 'Manual' : 'Automática';
@@ -108,6 +120,7 @@ export class GoalsComponent {
           duration: 2000,
           panelClass: ['success-snackbar'],
         });
+        this.validInfo = true;
       },
       error: (e) => {
         console.log(e)
@@ -122,14 +135,14 @@ export class GoalsComponent {
   addGoal() {
     let meta = this.createGoal(this.goalType);
 
-    let url = 'api/goal';
-    this.http.post(url, meta).subscribe({
+    this.http.post(this.url, meta).subscribe({
       next: (res) => {
         console.log(res);
         this.snack.open('Meta criada com sucesso.', undefined, {
           duration: 2000,
           panelClass: ['success-snackbar'],
         });
+        this.getUserGoal()
       },
       error: (err) => {
         console.log(err);
@@ -145,39 +158,13 @@ export class GoalsComponent {
   }
 
   createGoal(goalType: string) {
-    //let goal;
-    //switch (goalType) {
-    //  case 'Automática':
-    //    {
-    //      goal = {
-    //        type: 'Automatica',
-    //        goal: this.goalForm.value.selectedGoal,
-    //      } as MetaAutomatica;
-    //    }
-    //    break;
-    //  case 'Manual':
-    //    {
-    //      goal = {
-    //        type: 'Manual',
-    //        calories: this.goalForm.value.calories,
-    //        startDate: this.goalForm.value.startDate,
-    //        endDate: this.goalForm.value.endDate,
-    //      } as MetaManual;
-    //    }
-    //    break;
-    //  default: {
-    //    console.error('O tipo de meta não existe.');
-    //    return null;
-    //  }
-    //}
-    //return goal;
     return {
       goalType: goalType,
       autoGoalType: this.goalForm.value.selectedGoal,
       calories: this.goalForm.value.calories,
       startDate: this.goalForm.value.startDate,
       endDate: this.goalForm.value.endDate,
-    } as GoalDTO;
+    } as Goal;
   }
 
   receiveData(data: DatesEmiter) {
@@ -189,17 +176,7 @@ export class GoalsComponent {
     });
   }
 }
-
-
-interface GoalDTO {
-  goalType: string,
-  autoGoalType: string,
-  calories: number,
-  startDate: string,
-  endDate: string,
-}
-
-interface Goal {
+interface AutoGoalType {
   name: string;
 }
 
@@ -208,15 +185,3 @@ interface DatesEmiter {
   endDate: string;
 }
 
-interface Meta {
-  type: string;
-}
-
-interface MetaManual extends Meta {
-  calories: number;
-  startDate: string;
-  endDate: string;
-}
-interface MetaAutomatica extends Meta {
-  goal: string;
-}

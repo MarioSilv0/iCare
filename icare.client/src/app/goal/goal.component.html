@@ -4,7 +4,7 @@
 
 <div>
   <p *ngFor="let entry of objectEntries(goal)">
-    {{ entry[0] }} - {{ entry[1] }}
+    <span *ngIf="entry[1]"> {{ entry[0] }} - {{ entry[1] }} </span>
   </p>
 
 </div>

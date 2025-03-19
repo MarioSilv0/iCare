@@ -27,7 +27,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
-
 import { ContainerComponent } from './components/container/container.component';
 import { ProfileImageComponent } from './components/profile-image/profile-image.component';
 import { CustomInputComponent } from './components/custom-input/custom-input.component';
