@@ -11,14 +11,14 @@
 
     <div class="info-inputs">
       <button type="button"
-              (click)="toggleValidInfo()"
-              class="bt-clear-info" [disabled]="true"> <!--Fazer Editar-->
-        Editar Meta
+              (click)="removeGoal()"
+              class="bt-clear-info">
+        Excluir Meta
       </button>
       <button type="button"
-              (click)="removeGoal()"
-              class="bt-add-goal">
-        Excluir Meta
+              (click)="toggleValidInfo()"
+              class="bt-add-goal" [disabled]="true"> <!--Fazer Editar-->
+        Editar Meta
       </button>
     </div>
   </div>
@@ -88,7 +88,7 @@
       </div>
       <div>
         <form [formGroup]="goalForm" class="goal-form shadow">
-          <div *ngIf="goalType === 'Automática'">
+          <div *ngIf="goalType === 'Automatica'">
             <div class="mx-0 goals-inputs-container">
               <label>Escolha um Objetivo:</label>
               <select formControlName="selectedGoal">
