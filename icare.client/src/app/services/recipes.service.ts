@@ -58,11 +58,7 @@ export class RecipeService {
    * @date Last Modified: 2025-03-11
    */
   updateRecipeDB(recipes: Recipe[]): Observable<any> {
-    return this.http.put<any>(`${RECIPE}/update`, recipes).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Erro ao atualizar receitas. Tente novamente mais tarde.'));
-      })
-    );
+    return this.http.put<any>(`${RECIPE}/update`, recipes);
   }
 
 }
