@@ -163,17 +163,19 @@ export class GoalsComponent {
   }
 
   createGoal(goalType: string) {
-    if(goalType != "Automatica" || goalType != "Manual"){
-        console.error('O tipo de meta não existe.');
-      return null;
-    }
+    if(goalType == "Automatica" || goalType == "Manual"){
     return {
       goalType: goalType,
       autoGoalType: this.goalForm.value.selectedGoal,
       calories: this.goalForm.value.calories,
       startDate: this.goalForm.value.startDate,
       endDate: this.goalForm.value.endDate,
-    } as Goal;
+      } as Goal;
+    }
+    else{
+    console.error('O tipo de meta não existe.');
+      return null;
+    }
   }
 
   receiveData(data: DatesEmiter) {
