@@ -43,7 +43,7 @@ describe('GoalsComponent', () => {
   it('should initialize goalForm with default values', () => {
     expect(component.goalForm.value).toEqual({
       selectedGoal: '',
-      calories: 0,
+      calories: 2000,
       startDate: '',
       endDate: '',
     });
@@ -59,7 +59,7 @@ describe('GoalsComponent', () => {
 
   it('should create a MetaManual goal correctly', () => {
     component.goalForm.patchValue({
-      selectedGoal: 'Perder Peso',
+      goalType: 'Manual',
       calories: 2000,
       startDate: '2025-01-01',
       endDate: '2025-01-31',
@@ -75,8 +75,12 @@ describe('GoalsComponent', () => {
   });
 
   it('should create a MetaAutomatica goal correctly', () => {
-    component.goalForm.patchValue({ selectedGoal: 'Perder Peso' });
-    const goal = component.createGoal('Automática');
+    component.goalForm.patchValue({
+      selectedGoal: 'Perder Peso',
+      startDate: '2025-01-01',
+      endDate: '2025-01-31',
+    });
+    const goal = component.createGoal('Automatica');
     expect(goal).toEqual({
       goalType: 'Automatica',
       autoGoalType: 'Perder Peso',

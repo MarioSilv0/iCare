@@ -3,16 +3,19 @@
   class="d-flex flex-row align-items-center justify-content-between bg-bege-contrast mx-0 shadow"
   style="width: 100%; height: 80px; position: fixed !important; z-index: 100;"
 >
-  <div class="d-flex m-0 ps-5">
-    <!-- site logo -->
-    <a
-      [routerLink]="['/home']"
-      class="navbar-brand text-start fw-bold text-decoration-none m-0 fs-5"
-      translate="no"
-    >
-      iCare
+  <div class="d-flex m-0 ps-5 gap-5 align-items-center">
+    <a [routerLink]="['/home']" class="navbar-brand text-start m-0">
+      <img [src]="logoPath" alt="iCare Title Logo" class="img-fluid" style="height: 40px;">
+    </a>
+    <a *ngIf="isAdmin"
+       [routerLink]="['/admin']"
+       class="navbar-brand text-start fw-bold text-decoration-none m-0 fs-5"
+       translate="no">
+      Admin
     </a>
   </div>
+
+
   <div class="d-flex m-0 pe-5 burger-icon">
     <button (click)="expand()">
       <img src="../../assets/svgs/burger.svg" alt="nav-menu-icon" style="width: 24px; height: 24px;" />

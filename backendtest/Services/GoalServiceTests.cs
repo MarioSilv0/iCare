@@ -147,7 +147,7 @@ namespace backendtest.Services
         public void ValidateGoal_ShouldReturnFalse_WhenGoalTypeIsAutomaticaButAutoGoalTypeIsNull()
         {
             // Arrange
-            var user = new User { Id = "user123", Weight = 70, Height = 175, Gender = Gender.Male, ActivityLevel = ActivityLevel.ModeratelyActive, Birthdate = new DateOnly(1995, 5, 10) };
+            var user = new User { Id = "user123", Weight = 65.50f, Height = 1.75f, Gender = Gender.Male, ActivityLevel = ActivityLevel.ModeratelyActive, Birthdate = new DateOnly(1995, 5, 10) };
             var goal = new Goal
             {
                 UserId = "user123",
@@ -170,7 +170,7 @@ namespace backendtest.Services
         public void ValidateGoal_ShouldReturnFalse_WhenGoalTypeIsManualButCaloriesAreNull()
         {
             // Arrange
-            var user = new User { Id = "user123", Weight = 70, Height = 175, Gender = Gender.Male, ActivityLevel = ActivityLevel.ModeratelyActive, Birthdate = new DateOnly(1995, 5, 10) };
+            var user = new User { Id = "user123", Weight = 65.50f, Height = 1.75f, Gender = Gender.Male, ActivityLevel = ActivityLevel.ModeratelyActive, Birthdate = new DateOnly(1995, 5, 10) };
             var goal = new Goal
             {
                 UserId = "user123",
@@ -224,7 +224,7 @@ namespace backendtest.Services
         public void ValidateGoal_ShouldReturnFalse_WhenStartDateIsAfterEndDate()
         {
             // Arrange
-            var user = new User { Id = "user123", Weight = 70, Height = 175, Gender = Gender.Male, ActivityLevel = ActivityLevel.ModeratelyActive, Birthdate = new DateOnly(1995, 5, 10) };
+            var user = new User { Id = "user123", Weight = 65.50f, Height = 1.75f, Gender = Gender.Male, ActivityLevel = ActivityLevel.ModeratelyActive, Birthdate = new DateOnly(1995, 5, 10) };
             var goal = new Goal
             {
                 UserId = "user123",

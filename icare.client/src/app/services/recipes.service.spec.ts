@@ -91,7 +91,7 @@ describe('RecipeService', () => {
       expect(recipe.name).toBe('Bife com Batatas');
     });
 
-    const req = httpMock.expectOne('/api/RecipeBife com Batatas');
+    const req = httpMock.expectOne('/api/Recipe/Bife com Batatas');
     expect(req.request.method).toBe('GET');
     req.flush(mockRecipe);
   });

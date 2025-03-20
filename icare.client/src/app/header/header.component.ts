@@ -8,6 +8,9 @@ import { MenuService } from '../services/menu.service';
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
+  isAdmin: boolean = false;
+  logoPath: string = 'assets/images/iCare_title.png';
+
   constructor(private authService: AuthService, private menuService: MenuService) {
     this.authService = authService;
   }
@@ -22,5 +25,9 @@ export class HeaderComponent {
 
   public logout() {
     this.authService.logout();
+  }
+
+  ngOnInit() {
+    this.isAdmin = this.authService.userHasRole('Admin');
   }
 }
