@@ -1,3 +1,9 @@
+.custom-checkbox-container {
+  display: flex;
+  align-items: center;
+  justify-content: start !important;
+}
+
 .custom-checkbox-container input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
@@ -11,7 +17,7 @@
 }
 
 .custom-checkbox-container input[type="checkbox"]:checked::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 2px;
   left: 2px;
@@ -25,4 +31,5 @@
   font-size: 14px;
   cursor: default;
   margin-right: 10px;
+  margin-left: 0;
 }
