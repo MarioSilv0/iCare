@@ -100,12 +100,13 @@ export class ProfileComponent implements OnInit {
 
     this.preferences.add(preference);
     this.categories.delete(preference);
-    this.showToast('Restrição adicionada com sucesso!', 2000, undefined);
+    this.showToast('Preferência adicionada com sucesso!', 2000, undefined);
   }
 
   removePreference(preference: string) {
     this.preferences.delete(preference);
     this.categories.add(preference);
+    this.showToast('Preferência removida com sucesso!', 2000, undefined);
   }
 
   addRestriction(restriction: string) {
