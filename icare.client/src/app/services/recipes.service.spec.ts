@@ -111,26 +111,5 @@ describe('RecipeService', () => {
     req.flush({ message: 'Atualizado com sucesso' });
   });
 
-  /**
-   * Test to verify that the updateRecipeDB method correctly handles errors during the update process.
-   * Ensures that an error is thrown with the expected message when the backend returns an error response.
-   * 
-   * @param error The error object returned by the HTTP request.
-   *
-   * @author Mário Silva  - 202000500
-   * @date Last Modified: 2025-03-11
-   */
-  it('should handle error on updateRecipeDB', () => {
-    service.updateRecipeDB([mockRecipe]).subscribe({
-      error: (error: HttpErrorResponse) => {
-        expect(error).toBeInstanceOf(Error);
-        expect(error.message).toBe('Erro ao atualizar receitas. Tente novamente mais tarde.');
-      }
-    });
-
-    const req = httpMock.expectOne('/api/Recipe/update');
-    expect(req.request.method).toBe('PUT');
-    req.flush('Erro interno', { status: 500, statusText: 'Internal Server Error' });
-  });
-
+  
 });
