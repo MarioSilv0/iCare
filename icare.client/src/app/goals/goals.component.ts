@@ -11,7 +11,6 @@ import { Goal } from '../../models';
   styleUrl: './goals.component.css',
 })
 export class GoalsComponent {
-  url = 'api/goal';
   userGoal?: Goal;
   validInfo = false;
 
@@ -66,8 +65,9 @@ export class GoalsComponent {
     this.getUserGoal();
   }
 
-  private getUserGoal() {
-      this.http.get<Goal>(this.url).subscribe({
+  getUserGoal() {
+    let url = 'api/goal';
+      this.http.get<Goal>(url).subscribe({
           next: (goal) => {
               console.log(goal);
               this.userGoal = goal;
@@ -80,7 +80,7 @@ export class GoalsComponent {
       });
   }
 
-  private setupUserInfo() {
+  setupUserInfo() {
     this.userService.getUser().subscribe(
       ({ birthdate, height, weight, gender, activityLevel }) => {
         this.userInfoForm.patchValue({
@@ -137,8 +137,9 @@ export class GoalsComponent {
 
   addGoal() {
     let meta = this.createGoal(this.goalType);
+    let url = 'api/goal';
 
-    this.http.post(this.url, meta).subscribe({
+    this.http.post(url, meta).subscribe({
       next: (res) => {
         console.log(res);
         this.snack.open('Meta criada com sucesso.', undefined, {
@@ -162,6 +163,10 @@ export class GoalsComponent {
   }
 
   createGoal(goalType: string) {
+    if(goalType != "Automatica" && goalType != "Manual"){
+        console.error('O tipo de meta não existe.');
+      return null;
+    }
     return {
       goalType: goalType,
       autoGoalType: this.goalForm.value.selectedGoal,
@@ -181,7 +186,8 @@ export class GoalsComponent {
   }
 
   updateGoal() {
-    this.http.put(this.url, this.userGoal).subscribe({
+    let url = 'api/goal';
+    this.http.put(url, this.userGoal).subscribe({
       next: (res) => {
         console.log(res);
         this.snack.open('Meta editada com sucesso.', undefined, {
@@ -201,7 +207,8 @@ export class GoalsComponent {
   }
 
   removeGoal() {
-    this.http.delete(this.url).subscribe({
+    let url = 'api/goal';
+    this.http.delete(url).subscribe({
       next: (res) => {
         console.log(res);
         this.snack.open('Meta excluida com sucesso.', undefined, {
