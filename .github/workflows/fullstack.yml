@@ -31,10 +31,6 @@ jobs:
       - name: Run tests
         run: dotnet test ./backend/backend.csproj --configuration Release --no-build --verbosity normal
 
-      - name: Publish project
-        run: dotnet publish ./backend/backend.csproj --configuration Release --output ./publish
-        env:
-          ASPNETCORE_ENVIRONMENT: Production
 
   frontend:
     name: Build & Test Frontend
