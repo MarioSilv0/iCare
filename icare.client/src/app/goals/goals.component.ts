@@ -163,7 +163,7 @@ export class GoalsComponent {
   }
 
   createGoal(goalType: string) {
-    if(goalType != "Automatica" && goalType != "Manual"){
+    if(goalType != "Automatica" || goalType != "Manual"){
         console.error('O tipo de meta não existe.');
       return null;
     }
