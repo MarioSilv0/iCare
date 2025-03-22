@@ -1,3 +1,11 @@
+.help-container {
+    margin: 0;
+    position: fixed;
+    top: calc(80px + 1rem);
+    right: 1rem;
+    z-index: 30;
+}
+
 .pg-protaina {
   accent-color: var(--bg-vermelho-contrast);
 }
@@ -94,7 +102,7 @@ progress {
   margin-bottom: 0.8rem;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: 75%;
+  max-height: 300px;
 }
 
 .item-list::-webkit-scrollbar {
