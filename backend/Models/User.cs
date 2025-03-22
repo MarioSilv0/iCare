@@ -121,11 +121,11 @@ namespace backend.Models
 
             Notifications = model.Notifications;
 
-            float roundedHeight = (float)Math.Round(model.Height, 1);
+            float roundedHeight = (float)Math.Round(model.Height, 2);
             if (Height != roundedHeight && roundedHeight > 0 && roundedHeight < 3)
                 Height = roundedHeight;
 
-            float roundedWeight = (float)Math.Round(model.Weight, 1);
+            float roundedWeight = (float)Math.Round(model.Weight, 2);
             if (Weight != roundedWeight && roundedWeight > 0 && roundedWeight < 700)
                 Weight = roundedWeight;
 
