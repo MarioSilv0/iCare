@@ -1,3 +1,11 @@
+.help-container {
+    margin: 0;
+    position: fixed;
+    top: calc(80px + 1rem);
+    right: 1rem;
+    z-index: 30;
+}
+
 .pg-protaina {
   accent-color: var(--bg-vermelho-contrast);
 }
@@ -35,6 +43,7 @@ progress {
   padding: 15px;
   border-radius: 8px;
   margin: 0;
+  min-height: fit-content;
   max-height: 500px;
 }
 
