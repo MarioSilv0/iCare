@@ -80,9 +80,9 @@ describe('GoalsComponent', () => {
       startDate: '2025-01-01',
       endDate: '2025-01-31',
     });
-    const goal = component.createGoal('Automatica');
+    const goal = component.createGoal('Automática');
     expect(goal).toEqual({
-      goalType: 'Automatica',
+      goalType: 'Automática',
       autoGoalType: 'Perder Peso',
       calories: 2000,
       startDate: '2025-01-01',

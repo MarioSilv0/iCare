@@ -163,7 +163,7 @@ export class GoalsComponent {
   }
 
   createGoal(goalType: string) {
-    if(goalType == "Automatica" || goalType == "Manual"){
+    if(goalType == "Automática" || goalType == "Manual"){
     return {
       goalType: goalType,
       autoGoalType: this.goalForm.value.selectedGoal,
