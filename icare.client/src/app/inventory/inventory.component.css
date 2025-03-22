@@ -35,7 +35,6 @@ progress {
   padding: 15px;
   border-radius: 8px;
   margin: 0;
-  min-height: fit-content;
   max-height: 500px;
 }
 
@@ -94,7 +93,7 @@ progress {
   margin-bottom: 0.8rem;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: 75%;
+  max-height: 300px;
 }
 
 .item-list::-webkit-scrollbar {

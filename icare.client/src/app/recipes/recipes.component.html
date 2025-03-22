@@ -42,7 +42,7 @@
             style="
               font-size: 0.75rem;
               display: flex;
-              text-wrap-mode: nowrap;
+              
               text-overflow: clip !important;
             "
           >
@@ -62,7 +62,7 @@
             style="
               font-size: 0.75rem;
               display: flex;
-              text-wrap-mode: nowrap;
+              
               text-overflow: clip !important;
             "
           >
@@ -80,7 +80,7 @@
             style="
               font-size: 0.75rem;
               display: flex;
-              text-wrap-mode: nowrap;
+              
               text-overflow: clip !important;
             "
           >
@@ -102,7 +102,6 @@
             style="
               font-size: 0.75rem;
               display: flex;
-              text-wrap-mode: nowrap;
               text-overflow: clip !important;
             "
           >
@@ -112,28 +111,21 @@
       </div>
     </div>
 
-    <search-bar
-      placeholder="Arroz de pato.."
-      id="recipesSearch"
-      [containerStyles]="{
+    <search-bar placeholder="Arroz de pato.."
+                id="recipesSearch"
+                [containerStyles]="{
         'max-width': '500px',
         width: '100%',
-        'padding-top': '4px'
-      }"
-      [searchBarStyles]="{ height: '30px' }"
-      [normalize]="true"
-      (query)="filterRecipes($event)"
-      [containerStyles]="{
         'background-color': 'var(--bg-bege-contrast)',
-        padding: '5px',
-        'border-radius': '5px',
+                'border-radius': '5px',
+        padding: '4px 5px 5px 5px'
       }"
-      [searchBarStyles]="{
-        height: '35px',
-        border: '2px solid var(--bg-bege)',
-        'background-color': 'var(--bg-bege-contrast)',
-      }"
-    />
+                [searchBarStyles]="{ height: '35px', border: '2px solid var(--bg-bege)',
+                'background-color': 'var(--bg-bege-contrast)'
+                }"
+                [normalize]="true"
+                (query)="filterRecipes($event)"
+                 />
 
     <!-- lista de receitas -->
     <div
