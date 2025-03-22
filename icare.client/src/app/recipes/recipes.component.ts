@@ -66,9 +66,14 @@ export class RecipesComponent {
 
   getPermissions() {
     const permissions: Permissions | null = this.permissionsService.getPermissions();
-    this.preferencesPermission = permissions?.preferences ?? false;
-    this.restrictionPermission = permissions?.restrictions ?? false;
-    this.inventoryPermission = permissions?.inventory ?? false;
+    if (permissions !== null) this.setPermissions(permissions);
+    else this.permissionsService.fetchPermissions().subscribe((result) => this.setPermissions(result), (error) => console.error(error));
+  }
+
+  setPermissions(permissions: Permissions) {
+    this.preferencesPermission = permissions.preferences;
+    this.restrictionPermission = permissions.restrictions;
+    this.inventoryPermission = permissions.inventory;
   }
 
   getRecipes() {

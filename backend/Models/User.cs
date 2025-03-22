@@ -36,7 +36,7 @@ namespace backend.Models
         /// <summary>
         /// Gets or sets the user's birthdate.
         /// </summary>
-        public DateOnly Birthdate { get; set; } = new DateOnly();
+        public DateOnly Birthdate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-16));
 
         /// <summary>
         /// Gets the user's age based on this birthdate.

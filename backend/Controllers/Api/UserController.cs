@@ -98,7 +98,7 @@ namespace backend.Controllers.Api
                     Notifications = user.Notifications,
                     Preferences = user.Preferences?.Any() ?? false,
                     Restrictions = user.Restrictions?.Any() ?? false,
-                    Inventory = user.UserIngredients?.Any() ?? false,
+                    Inventory = _context.UserIngredients.FirstOrDefault(ui => ui.UserId == user.Id) != null? true : false,
                 };
 
                 return Ok(permissions);
