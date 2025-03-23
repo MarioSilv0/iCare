@@ -1,5 +1,12 @@
 .goals {
+  padding: 20px;
   min-height: 100vh;
+}
+
+.help-container {
+    position: absolute;
+    top: calc(80px + 1rem);
+    right: 1rem;
 }
 
 .goal-type-container {
