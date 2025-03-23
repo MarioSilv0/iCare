@@ -5,6 +5,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { UsersService } from '../services/users.service';
 import { Goal } from '../../models';
 
+declare var bootstrap: any;
+
 @Component({
   selector: 'app-goals',
   templateUrl: './goals.component.html',
@@ -95,6 +97,18 @@ export class GoalsComponent {
         this.validInfo = !missingInfo;
       }
     )
+  }
+
+  /**
+   * Opens a Bootstrap modal by its ID.
+   * @param {string} id - The ID of the modal to be opened.
+   */
+  openModal(id: string) {
+    const modalElement = document.getElementById(id);
+    if (modalElement) {
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
+    }
   }
 
   toggleValidInfo() {
