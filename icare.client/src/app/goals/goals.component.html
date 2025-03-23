@@ -11,21 +11,56 @@
       Informações necessárias para definir meta alimentar estão incompletas.
       Preencha os campos obrigatórios.
     </p>
-    <app-goal [goal]="userGoal || { goalType: '', autoGoalType: '', calories: 0, startDate: '', endDate: ''}"></app-goal>
+    <br />
+    <div class="goal-container">
+      <span class="goal-icon">🎯</span>
+      <app-goal [goal]="userGoal"></app-goal>
 
-    <div class="info-inputs">
-      <button type="button"
-              (click)="removeGoal()"
-              class="bt-clear-info">
-        Excluir Meta
-      </button>
-      <button type="button"
-              (click)="toggleValidInfo()"
-              class="bt-add-goal" [disabled]="true">
-        <!--Fazer Editar-->
-        Editar Meta
-      </button>
+      <div class="info-inputs">
+        <button type="button"
+                (click)="toggleValidInfo()"
+                class="bt-add-goal" [disabled]="true">
+          <!--Fazer Editar-->
+          Editar Meta
+        </button>
+        <button type="button"
+                (click)="openModal('deleteModal')"
+                class="bt-clear-info">
+          Excluir Meta
+        </button>
+
+        <div class="modal fade"
+             id="deleteModal"
+             tabindex="-1"
+             aria-labelledby="deleteModalLabel"
+             aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmação</h5>
+              </div>
+              <div class="modal-body">
+                Tem a certeza que deseja eliminar a meta?
+              </div>
+              <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                  Cancelar
+                </button>
+                <button type="button"
+                        class="btn btn-danger"
+                        (click)="removeGoal()"
+                        data-bs-dismiss="modal">
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
   </div>
 
   <!--Informações Necessárias-->
