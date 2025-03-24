@@ -67,17 +67,15 @@ export class GoalsComponent {
 
   getUserGoal() {
     let url = 'api/goal';
-      this.http.get<Goal>(url).subscribe({
-          next: (goal) => {
-              console.log(goal);
-              this.userGoal = goal;
-          },
-          error: (error) => {
-              console.error(error);
-              this.userGoal = undefined;
-              this.setupUserInfo();
-          },
-      });
+    this.http.get<Goal>(url).subscribe({
+        next: (goal) => {
+            this.userGoal = goal ? goal : undefined;
+        },
+        error: () => {
+            this.userGoal = undefined;
+        },
+    });
+    if (!this.userGoal) this.setupUserInfo();
   }
 
   setupUserInfo() {

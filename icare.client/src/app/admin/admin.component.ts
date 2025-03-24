@@ -14,7 +14,7 @@ import { RecipeService } from '../services/recipes.service';
 export class AdminComponent {
     progressMessage?: string;
 
-    constructor(private foodService: IngredientService, private taco: TacoApiService, private mealDb: MealDbService, private translate: TranslateService) { }
+  constructor(private foodService: IngredientService, private taco: TacoApiService, private mealDb: MealDbService, private recipeService: RecipeService) { }
 
 
 
@@ -57,6 +57,19 @@ export class AdminComponent {
   }
 
 
+  /**
+   * Deletes all recipes and clears the list.
+   */
+  deleteAllRecipes(): void {
+    if (confirm('Are you sure you want to delete ALL recipes? This action cannot be undone.')) {
+      this.recipeService.deleteAllRecipes().subscribe({
+        next: (res) => {
+          console.log('All recipes deleted successfully:', res);
+        },
+        error: (err) => console.error('Error deleting all recipes:', err)
+      });
+    }
+  }
 
 
 

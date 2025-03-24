@@ -12,6 +12,10 @@
         <button class="btn btn-secondary" (click)="updateRecipeDb()">
           🔄 Atualizar Receitas
         </button>
+        <br />
+        <button class="btn btn-danger mt-2" (click)="deleteAllRecipes()">
+          🗑️ Apagar Todas as Receitas
+        </button>
         <div>
           <p *ngIf="progressMessage">{{ progressMessage }}</p>
         </div>
