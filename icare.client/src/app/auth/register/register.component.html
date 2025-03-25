@@ -3,7 +3,7 @@
     <div class="col-md-6" style="min-width: 320px">
       <div class="card border-0 shadow radius">
         <div class="card-body bg-bege-contrast radius w-100">
-          <h2 class="text-center mb-4">Register</h2>
+          <h2 class="text-center mb-4">Registar</h2>
           <form (ngSubmit)="onRegister()" #registerForm="ngForm">
             <!-- Email -->
             <div class="mb-3">
@@ -31,10 +31,10 @@
                 class="text-danger"
               >
                 <small *ngIf="emailInput.errors?.['required']"
-                  >Email is required.</small
+                  >Preencha o email</small
                 >
                 <small *ngIf="emailInput.errors?.['pattern']"
-                  >Please enter a valid email address.</small
+                  >Formato errado de email</small
                 >
               </div>
               <!-- Mensagem de sucesso -->
@@ -42,7 +42,7 @@
                 *ngIf="emailInput.valid && emailInput.touched"
                 class="text-success"
               >
-                <small>Email looks good!</small>
+                <small>Email com formato correto</small>
               </div>
             </div>
             <!-- Password -->
@@ -69,13 +69,13 @@
               <!-- Mensagem de erro -->
               <div *ngIf="!isPasswordValid && passwordInput.touched" class="text-danger">
                 <small *ngIf="passwordInput.errors?.['required']">
-                  Password is required.
+                  Preencha a password
                 </small>
                 <small *ngIf="passwordErrorMessage">{{ passwordErrorMessage }}</small>
               </div>
               <!-- Mensagem de sucesso -->
               <div *ngIf="isPasswordValid" class="text-success">
-                <small>Password is Valide!</small>
+                <small>password correta</small>
               </div>
             </div>
             <!-- Confirm Password -->
@@ -103,13 +103,13 @@
               <!-- Mensagem de erro -->
               <div
                 *ngIf="confirmPasswordInput.invalid && confirmPasswordInput.touched"
-                class="text-danger"
+                class="mx-0 text-danger d-flex flex-column"
               >
-                <small *ngIf="confirmPasswordInput.errors?.['required']">
-                  Confirm password is required.
+                <small class="mx-0" *ngIf="confirmPasswordInput.errors?.['required']">
+                  Confirme a password
                 </small>
-                <small *ngIf="password !== confirmPassword" >
-                  Passwords do not match.
+                <small class="mx-0" *ngIf="password !== confirmPassword" >
+                  Passwords não correspondem
                 </small>
               </div>
               <!-- Mensagem de sucesso -->
@@ -125,7 +125,7 @@
               </div>
             </div>
             <div class="position-relative mb-3">
-              <span style="font-size: 0.8rem">Show password: </span>
+              <span style="font-size: 0.8rem">Mostrar password: </span>
               <button
                 type="button"
                 class="btn position-absolute top-50 end-0 translate-middle-y"
@@ -134,8 +134,7 @@
               >
                 <img
                   src="../../../assets/svgs/show-password.svg"
-                  alt=""
-                  srcset=""
+                  alt="mostrar-password"
                 />
               </button>
               <button
@@ -146,8 +145,7 @@
               >
                 <img
                   src="../../../assets/svgs/hide-password.svg"
-                  alt=""
-                  srcset=""
+                  alt="esconder-password"
                 />
               </button>
             </div>
@@ -157,14 +155,14 @@
             </div>
             <!-- Submit Button -->
             <div class="container d-flex flex-row gap-4">
-              <button type="submit" class="btn bg-verde w-100"> Register </button>
-              <button type="reset" class="btn bg-vermelho w-100"> Reset </button>
+              <button type="submit" [disabled]="!email || !password || !confirmPassword" class="btn bg-verde w-100">Registar</button>
+              <button type="reset" class="btn bg-vermelho w-100">Apagar</button>
             </div>
           </form>
           <div class="text-center mt-3">
             <small>
-              Already have an account?
-              <a routerLink="/login" class="text-primary">Login here</a>.
+              Já tem conta?
+              <a routerLink="/login" class="text-primary">login</a>
             </small>
           </div>
         </div>

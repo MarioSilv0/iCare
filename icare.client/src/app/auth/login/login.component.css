@@ -5,3 +5,14 @@
   align-items: center;
   background-color: #f8f9fa;
 }
+
+button[type="submit"]:disabled:hover {
+  cursor: not-allowed;
+}
+
+.emailError, .passwordError {
+    margin-top: 1rem;
+    padding: 5px;
+    background-color: var(--bg-vermelho);
+    border-radius: 5px;
+}
