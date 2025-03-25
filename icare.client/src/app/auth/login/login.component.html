@@ -1,4 +1,4 @@
-<div class="container pt-5 mx-0">
+<div class="container pt-5">
   <div class="row justify-content-center">
     <div class="col-md-6" style="min-width: 320px">
       <div class="card border-0 shadow radius">
@@ -14,11 +14,13 @@
                 type="email"
                 id="email"
                 [(ngModel)]="email"
+                (ngModelChange)="validateEmail()"
                 name="email"
                 class="form-control bg-bege"
-                placeholder="Enter your email"
+                placeholder="Introduza o seu email"
                 required
               />
+              <p *ngIf="emailError" class="emailError">{{emailError}}</p>
             </div>
             <div class="mb-3">
               <label for="password" class="w-100 form-label text-start">
@@ -29,11 +31,13 @@
                   [type]="showPassword ? 'text' : 'password'"
                   id="password"
                   [(ngModel)]="password"
+                  (ngModelChange)="validatePassword()"
                   name="password"
                   class="form-control bg-bege position-relative"
-                  placeholder="Enter your password"
+                  placeholder="Introduza uma palavra-passe"
                   required
                 />
+                
                 <button
                   type="button"
                   class="btn position-absolute top-50 end-0 translate-middle-y"
@@ -59,6 +63,7 @@
                   />
                 </button>
               </div>
+              <p *ngIf="passwordError" class="passwordError">{{passwordError}}</p>
             </div>
             <div *ngIf="errorMessage" class="alert bg-vermelho" role="alert">
               {{ errorMessage }}
@@ -68,17 +73,20 @@
               class="mb-3 d-flex align-items-center justify-content-center"
             ></div>
             <div class="container d-flex flex-row gap-4">
-              <button type="submit" class="btn bg-verde w-100">Login</button>
+              <button id="btLogin" type="submit" [disabled]="emailError.length !== 0 || passwordError.length !== 0 && !email || !password" class="btn bg-verde w-100">Login</button>
               <button type="reset" class="btn bg-vermelho w-100">Reset</button>
             </div>
           </form>
           <div class="text-center mt-3">
             <small>
-              Don't have an account?
-              <a routerLink="/register">Register here</a>
+              Ainda não tem conta?
+              <a routerLink="/register">Registe-se aqui</a>
             </small>
             <div class="d-flex flex-column">
-              <a routerLink="/recover-password">recover</a>
+              <small>
+                Esqueceu-se da palavra-passe?
+                <a routerLink="/recover-password">Recupere já</a>
+              </small>
             </div>
           </div>
         </div>
