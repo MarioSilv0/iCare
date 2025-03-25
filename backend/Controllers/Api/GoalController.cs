@@ -32,10 +32,16 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
-        /// Retrieves the latest goal for a user by their user ID.
+        /// Retrieves the latest goal for the authenticated user.
         /// </summary>
-        /// <param name="userId">The ID of the user.</param>
-        /// <returns>The latest goal if found; otherwise, NotFound.</returns>
+        /// <returns>
+        /// An <c>Ok</c> response containing the latest <c>GoalDTO</c> if found,
+        /// <c>Ok(null)</c> if no goal exists, or an <c>Unauthorized</c> response
+        /// if the user ID is not found in the token.
+        /// </returns>
+        /// <remarks>
+        /// If an unexpected error occurs, a <c>500 Internal Server Error</c> is returned.
+        /// </remarks>
         [HttpGet]
         public async Task<IActionResult> GetCurrentGoalByUserId()
         {
@@ -48,7 +54,7 @@ namespace backend.Controllers.Api
 
                 if (goal == null)
                 {
-                    return NotFound("Meta não encontrada.");
+                    return Ok(null);
                 }
 
                 return Ok(new GoalDTO(goal));

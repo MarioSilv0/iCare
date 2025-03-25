@@ -40,6 +40,7 @@ export class RecipeComponent {
 
     this.recipeService.getSpecificRecipe(name).subscribe(
       (result) => {
+        console.log(result);
         this.recipe = { ...result, ingredients: result.ingredients };
         this.safeVideoUrl = this.getEmbeddedVideoUrl(this.recipe.urlVideo);
       },

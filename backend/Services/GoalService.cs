@@ -118,7 +118,7 @@ namespace backend.Services
                     return (false, "O valor das calorias deve ser definido para metas manuais.");
             }
 
-            if (goal.StartDate >= goal.EndDate)
+            if (goal.StartDate > goal.EndDate)
             {
                 return (false, "A data de início deve ser anterior à data de término.");
             }
