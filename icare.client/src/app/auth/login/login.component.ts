@@ -18,7 +18,7 @@ export class LoginComponent {
   errorMessage: string | null = null;
   showPassword = false;
   private EMAIL_REGEX_PATTERN = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" // formato valido de email com @ e .
-  private PASSWORD_REGEX_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d).{6,}$" // 6 caracteres sem espaços
+  private PASSWORD_REGEX_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d).{8,}$" // 8 caracteres sem espaços, 1 letra minuscula e maiuscula
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
@@ -99,7 +99,7 @@ export class LoginComponent {
     this.passwordError = ""
     const reg = new RegExp(this.PASSWORD_REGEX_PATTERN)
     console.log({ pass: this.password, valid: reg.test(this.password) })
-    if (!reg.test(this.password)) this.passwordError = "A palavra passe deve ter no minimo 6 caracteres (letras e números)."
+    if (!reg.test(this.password)) this.passwordError = "A palavra passe deve ter no minimo 8 caracteres (letras e números)."
     else this.passwordError = ""
   }
 }
