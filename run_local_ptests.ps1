@@ -1,5 +1,5 @@
 # Caminhos principais
-$JMeterPath = "C:\Program Files\apache-jmeter-5.6.3\bin\jmeter.bat"
+$JMeterPath = "C:\Program Files\apache-jmeter-5.6.3\bin\jmeter.bat" # Link para o download do folder.zip: https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.zip
 $ProjectPath = (Get-Location).Path  # Diretório onde o script está localizado
 
 # Load Test
@@ -41,7 +41,7 @@ function Run-JMeterTest {
 }
 
 # Executar ambos os testes
-#Run-JMeterTest -TestPlan $LoadTestPlan -ResultsFile $LoadResultsFile -ReportDir $LoadReportDir -TestType "Load"
+Run-JMeterTest -TestPlan $LoadTestPlan -ResultsFile $LoadResultsFile -ReportDir $LoadReportDir -TestType "Load"
 
 Start-Sleep -Seconds 20  # Pequena pausa para estabilização
 
