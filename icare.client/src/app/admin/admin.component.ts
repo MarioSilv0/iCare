@@ -5,6 +5,7 @@ import { Ingredient } from '../../models'
 import { MealDbService, TacoApiService, TranslateService } from '../services/apis';
 import { Recipe } from '../../models/recipe';
 import { RecipeService } from '../services/recipes.service';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-admin',
@@ -14,7 +15,7 @@ import { RecipeService } from '../services/recipes.service';
 export class AdminComponent {
     progressMessage?: string;
 
-  constructor(private foodService: IngredientService, private taco: TacoApiService, private mealDb: MealDbService, private recipeService: RecipeService) { }
+  constructor(private foodService: IngredientService, private taco: TacoApiService, private mealDb: MealDbService, private recipeService: RecipeService, private auth:AuthService) { }
 
 
 
@@ -64,9 +65,28 @@ export class AdminComponent {
     if (confirm('Are you sure you want to delete ALL recipes? This action cannot be undone.')) {
       this.recipeService.deleteAllRecipes().subscribe({
         next: (res) => {
+          alert('All recipes deleted successfully')
           console.log('All recipes deleted successfully:', res);
         },
         error: (err) => console.error('Error deleting all recipes:', err)
+      });
+    }
+  }
+
+  /**
+   * Deletes all test users
+   */
+  deleteTestUsers(): void {
+    if (confirm('Are you sure you want to delete ALL Test Users?')) {
+      this.auth.deleteTestUsers().subscribe({
+        next: (res) => {
+          alert(res.message)
+          console.log(res);
+        },
+        error: (err) => {
+          alert(err.message)
+          console.error(err)
+        }
       });
     }
   }

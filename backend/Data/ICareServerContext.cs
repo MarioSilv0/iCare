@@ -78,6 +78,10 @@ namespace backend.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
             // Composite keys
             modelBuilder.Entity<UserIngredient>()
                 .HasKey(ui => new { ui.UserId, ui.IngredientId });
@@ -90,7 +94,8 @@ namespace backend.Data
             modelBuilder.Entity<UserIngredient>()
                 .HasOne(ui => ui.User)
                 .WithMany(u => u.UserIngredients)
-                .HasForeignKey(ui => ui.UserId);
+                .HasForeignKey(ui => ui.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<RecipeIngredient>()
                 .HasOne(ri => ri.Recipe)
                 .WithMany(r => r.RecipeIngredients)
@@ -98,7 +103,8 @@ namespace backend.Data
             modelBuilder.Entity<UserRecipe>()
                 .HasOne(ur => ur.User)
                 .WithMany(u => u.FavoriteRecipes)
-                .HasForeignKey(uf => uf.UserId);
+                .HasForeignKey(uf => uf.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<UserIngredient>()
                 .HasOne(ui => ui.Ingredient)
@@ -112,6 +118,12 @@ namespace backend.Data
                 .HasOne(ur => ur.Recipe)
                 .WithMany(r => r.UserRecipes)
                 .HasForeignKey(ur => ur.RecipeId);
+
+            modelBuilder.Entity<UserLog>()
+                .HasOne(ul => ul.User)
+                .WithMany(u => u.Logs)
+                .HasForeignKey(ul => ul.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Seed initial data
             modelBuilder.Entity<Ingredient>().HasData(
