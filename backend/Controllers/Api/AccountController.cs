@@ -151,54 +151,54 @@ namespace backend.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                await _userLogService.LogAsync(null, $"Invalid data: {model.Email}, {model.Password}");
+                await _userLogService.LogAsync(null, $"Invalid registration data for: {model.Email}");
                 return BadRequest(new { message = "Invalid data.", errors = ModelState });
             }
 
             var existingUser = await _userManager.FindByEmailAsync(model.Email);
             if (existingUser != null)
             {
-                await _userLogService.LogAsync(null, $"This email is already registered: {model.Email}");
-                return BadRequest(new { message = "This email is already registered." });
+                await _userLogService.LogAsync(null, $"Email already registered: {model.Email}");
+                return Conflict(new { message = "This email is already registered." });
             }
 
-            var user = new User()
+            var username = model.Email.Split('@')[0];
+            var user = new User
             {
                 Email = model.Email,
-                UserName = model.Email.Split('@')[0],
-                Name = model.Email.Split('@')[0]
+                UserName = username,
+                Name = username
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, "User");
-
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                if(!model.Email.StartsWith("testuser_"))
-                {
-                    var confirmationLink = $"{model.ClientUrl}/confirm-email?email={model.Email}&token={Uri.EscapeDataString(token)}";
-
-                    var subject = "Please confirm your email address";
-                    var body = $@"
-                        <p>Olá {user.Name},</p>
-                        <p>Por favor, confirme seu endereço de e-mail clicando no link abaixo:</p>
-                        <p><a href='{confirmationLink}'>Confirmar E-mail</a></p>
-                        <p>Se você não solicitou isso, ignore este e-mail.</p>
-                        <p>Obrigado!</p>";
-
-                    await _emailService.SendEmailAsync(user.Email, subject, body);
-                }
-
-                await _userLogService.LogAsync(user.Id, $"Account created successfully. Please confirm your email: {model.Email}");
-                return Ok(new { message = "Account created successfully. Please confirm your email." });
+                var errorMessages = result.Errors.Select(e => e.Description).ToList();
+                await _userLogService.LogAsync(null, $"Registration failed for {model.Email}: {string.Join(", ", errorMessages)}");
+                return BadRequest(new { message = "Registration failed.", errors = errorMessages });
             }
 
+            await _userManager.AddToRoleAsync(user, "User");
 
-            await _userLogService.LogAsync(null, $"Registration failed: {model.Email}");
-            return BadRequest(new { message = "Registration failed.", errors = result.Errors });
+            if (!model.Email.StartsWith("testuser_"))
+            {
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var confirmationLink = $"{model.ClientUrl}/confirm-email?email={model.Email}&token={Uri.EscapeDataString(token)}";
+                var subject = "Please confirm your email address";
+                var body = $@"
+                    <p>Olá {user.Name},</p>
+                    <p>Por favor, confirme seu endereço de e-mail clicando no link abaixo:</p>
+                    <p><a href='{confirmationLink}'>Confirmar E-mail</a></p>
+                    <p>Se você não solicitou isso, ignore este e-mail.</p>
+                    <p>Obrigado!</p>";
+
+                await _emailService.SendEmailAsync(user.Email, subject, body);
+            }
+
+            await _userLogService.LogAsync(user.Id, $"Account created successfully. Confirmation pending: {model.Email}");
+            return Ok(new { message = "Account created successfully. Please confirm your email." });
         }
+
 
         /// <summary>
         /// Handles Google OAuth authentication.
