@@ -12,7 +12,15 @@ describe("Recipes", () => {
 
   it("should disable filters that the user cannot apply", () => { })
 
-  it("should allow the user to search recipes by given words", () => { })
+  it("should allow the user to search recipes by given words", () => {
+    // Type a search term
+    cy.get('[data-testid="search-input"]').type("Bom");
+
+    // Ensure only relevant recipes are displayed
+    cy.get('[data-testid="recipe"]').each(($recipe) => {
+      cy.wrap($recipe).get("h4").should("contain.text", "Bom");
+    });
+  });
 
   it("should allow the user to mark a given recipe as favorite or unfavorite a recipe", () => {
     // Select the first recipe article

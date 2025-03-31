@@ -37,6 +37,7 @@
             [disabled]="!restrictionPermission"
             [(ngModel)]="restrictionsFilter"
             (change)="filterRecipes('')"
+            data-testid="search-input"
           />
           <p
             class="m-0 p-0"
