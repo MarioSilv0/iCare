@@ -36,6 +36,12 @@ describe("Recipes", () => {
   })
 
   it("should allow the user to check the details of a given recipe", () => {
+    // Select the first recipe article
+    cy.get('[data-testid="recipe"]').first().as("firstRecipe");
 
+    // Click the favorite button inside the first recipe
+    cy.get("@firstRecipe").find('[data-testid="bt-show-details"]').click();
+
+    cy.get('[data-testid="recipe-page"]').should('exist')
   })
 });
