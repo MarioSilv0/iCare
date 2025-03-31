@@ -37,7 +37,7 @@
             [disabled]="!restrictionPermission"
             [(ngModel)]="restrictionsFilter"
             (change)="filterRecipes('')"
-            data-testid="search-input"
+            data-testid="filter"
           />
           <p
             class="m-0 p-0"
@@ -58,6 +58,7 @@
             [disabled]="!preferencesPermission"
             [(ngModel)]="preferencesFilter"
             (change)="filterRecipes('')"
+            data-testid="filter"
           />
           <p
             class="m-0 p-0"
@@ -76,6 +77,7 @@
             type="checkbox"
             style="width: 20px; height: 20px; cursor: pointer"
             [disabled]="!objectivesFilter"
+            data-testid="filter"
           />
           <p
             class="m-0 p-0"
@@ -98,6 +100,7 @@
             [disabled]="!inventoryPermission"
             [(ngModel)]="inventoryFilter"
             (change)="filterRecipes('')"
+            data-testid="filter"
           />
           <p
             class="m-0 p-0"
@@ -127,6 +130,7 @@
                 }"
                 [normalize]="true"
                 (query)="filterRecipes($event)"
+                data-testid="search-input"
                  />
 
     <!-- lista de receitas -->

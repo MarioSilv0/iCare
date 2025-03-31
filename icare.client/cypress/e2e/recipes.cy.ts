@@ -8,9 +8,26 @@ describe("Recipes", () => {
     cy.get('[data-testid="recipes-page"]').should('exist')
   });
 
-  it("should allow the user to add and remove filters", () => { })
+  it("should allow the user to add and remove filters", () => {
+    // Select 'Restrições' filter
+    cy.get('[data-testid="filter"]').first().as("restrictionFilter");
+    cy.get("@restrictionFilter").check({ force: true });
 
-  it("should disable filters that the user cannot apply", () => { })
+    // Ensure filter is applied
+    cy.get("@restrictionFilter").should("be.checked");
+
+    // Uncheck filter
+    cy.get("@restrictionFilter").uncheck({ force: true });
+
+    // Ensure filter is removed
+    cy.get("@restrictionFilter").should("not.be.checked");
+  })
+
+  it("should disable filters that the user cannot apply", () => {
+    // Ensure disabled filters are not clickable
+    cy.get('[data-testid="filter"]').eq(2).should("be.disabled"); // 'Metas' filter
+    cy.get('[data-testid="filter"]').eq(3).should("be.disabled"); // 'Inventário' filter
+  })
 
   it("should allow the user to search recipes by given words", () => {
     // Type a search term
