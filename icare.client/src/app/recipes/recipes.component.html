@@ -143,6 +143,7 @@
         *ngFor="let recipe of filteredRecipes; index as i"
         class="m-0 p-2 rounded d-flex flex-column bg-bege-contrast shadow"
         style="min-width: 300px"
+        data-testid="recipe"
       >
         <div
           class="m-0 p-0 bg-cinzento rounded"
@@ -175,6 +176,7 @@
               border: none;
               outline: none;
             "
+            data-testid="bt-toggle-favorite"
           >
             <img
               *ngIf="recipe.isFavorite"
