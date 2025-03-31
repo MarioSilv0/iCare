@@ -1,4 +1,7 @@
-<div class="profile-container">
+<div
+     class="profile-container"
+     data-testid="profile-page"
+>
   <form
     class="m-0"
     [formGroup]="profileForm"
@@ -19,6 +22,7 @@
           [imageUrl]="profileForm.get('picture')?.value"
           [editable]="true"
           (imageChange)="changePicture($event)"
+          data-testid="profile-image"
         />
       </div>
       <br />
