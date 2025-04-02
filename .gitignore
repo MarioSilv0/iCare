@@ -373,4 +373,3 @@ backendtest/obj/Debug/net8.0/backendtest.GeneratedMSBuildEditorConfig.editorconf
 backendtest/obj/project.assets.json
 backendtest/obj/project.nuget.cache
 taco-api/dist/taco-api-standalone.exe
-backend/appsettings.json
