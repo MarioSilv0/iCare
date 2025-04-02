@@ -1,4 +1,4 @@
-<div class="container pt-5">
+<div class="container pt-5" data-testid="register-container">
   <div class="row justify-content-center">
     <div class="col-md-6" style="min-width: 320px">
       <div class="card border-0 shadow radius">
@@ -20,10 +20,11 @@
                   'is-valid': emailInput.valid && emailInput.touched
                 }"
                 [(ngModel)]="email"
-                placeholder="Enter your email"
+                placeholder="Introduza o seu email"
                 required
                 pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
                 #emailInput="ngModel"
+                data-testid="user-email"
               />
               <!-- Mensagem de erro -->
               <div
@@ -61,10 +62,11 @@
                 }"
                 [(ngModel)]="password"
                 required
-                placeholder="Enter your password"
+                placeholder="Insira a sua password"
                 minlength="8"
                 #passwordInput="ngModel"
                 (input)="validatePassword()"
+                data-testid="user-password"
               />
               <!-- Mensagem de erro -->
               <div *ngIf="!isPasswordValid && passwordInput.touched" class="text-danger">
@@ -94,11 +96,12 @@
                   'is-valid':
                     isPasswordValid && confirmPasswordInput.valid && password === confirmPassword && confirmPasswordInput.touched
                 }"
-                placeholder="Confirm your password"
+                placeholder="Confirme a sua password"
                 [(ngModel)]="confirmPassword"
                 required
                 minlength="8"
                 #confirmPasswordInput="ngModel"
+                data-testid="confirm-password"
               />
               <!-- Mensagem de erro -->
               <div
@@ -155,14 +158,14 @@
             </div>
             <!-- Submit Button -->
             <div class="container d-flex flex-row gap-4">
-              <button type="submit" [disabled]="!email || !password || !confirmPassword" class="btn bg-verde w-100">Registar</button>
+              <button type="submit" [disabled]="!email || !password || !confirmPassword" class="btn bg-verde w-100" data-testid="bt-register">Registar</button>
               <button type="reset" class="btn bg-vermelho w-100">Apagar</button>
             </div>
           </form>
           <div class="text-center mt-3">
             <small>
               Já tem conta?
-              <a routerLink="/login" class="text-primary">login</a>
+              <a routerLink="/login" class="text-primary" data-testid="bt-login">login</a>
             </small>
           </div>
         </div>
