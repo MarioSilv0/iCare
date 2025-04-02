@@ -42,7 +42,7 @@ export class MeasureConversionService {
    */
   convertToGrams(measure: string, ingredient: string): number {
 
-    const parts = measure.trim().toLowerCase().match(/^([\d\/.]+)\s*(.*)$/);
+    const parts = measure.trim().toLowerCase().match(/^(\d+(?:\/\d+|\.\d+)?)\s*(\S.*)?$/);
 
     let amount = 1;
     let unit = "";
