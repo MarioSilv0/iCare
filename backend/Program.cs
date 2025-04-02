@@ -24,15 +24,6 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
-builder.Configuration["ConnectionStrings:Deploy"] =
-    builder.Configuration["ConnectionStrings:Deploy"]!.Replace("${DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "");
-
-builder.Configuration["Jwt:Key"] =
-    Environment.GetEnvironmentVariable("JWT_SECRET") ?? builder.Configuration["Jwt:Key"];
-
-builder.Configuration["EmailSettings:SenderPassword"] =
-    Environment.GetEnvironmentVariable("EMAIL_PASSWORD") ?? builder.Configuration["EmailSettings:SenderPassword"];
-
 // Configurar Kestrel para permitir mais conexões simultâneas
 builder.WebHost.ConfigureKestrel((context, options) =>
 {
@@ -50,7 +41,6 @@ builder.Services.AddDbContext<ICareServerContext>(options =>
             .CommandTimeout(60)
             .EnableRetryOnFailure())
     );
-
 
 
 // Reduz o consumo de CPU no ASP.NET Core
