@@ -140,7 +140,7 @@ export class ProfileComponent implements OnInit {
           Validators.required,
           Validators.min(0.1),
           Validators.max(3),
-          Validators.pattern(/^\d*\.?\d+$/),
+          Validators.pattern(/^\d+(\.\d+)?$/),
         ],
       ],
       weight: [
