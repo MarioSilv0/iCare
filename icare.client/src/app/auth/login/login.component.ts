@@ -14,7 +14,7 @@ export class LoginComponent {
   email = '';
   emailError: string = ""
   password = '';
-  passError: string = ""
+  passError: string = "";
   errorMessage: string | null = null;
   showPassword = false;
   private EMAIL_REGEX_PATTERN = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" // formato valido de email com @ e .
