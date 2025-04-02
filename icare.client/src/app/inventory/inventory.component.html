@@ -8,7 +8,7 @@
 <br />
 <br />
 
-<div class="container align-items-start mx-0">
+<div class="container align-items-start mx-0" data-testid="inventory-container">
   <!-- Sidebar -->
   <div class="sidebar shadow">
     <div class="search-bar">
@@ -16,21 +16,23 @@
              type="text"
              placeholder="Pesquisar"
              [(ngModel)]="searchTerm"
-             (input)="onSearchChange()" />
+             (input)="onSearchChange()" data-testid="search-input"/>
       <span class="search-icon">🔍</span>
     </div>
 
     <hr *ngIf="filteredItems.length > 0" style="margin-top: 0" />
-    <button class="add-button" (click)="addItemsToInventory()">
+    <button class="add-button" (click)="addItemsToInventory()" data-testid="add-item-bt">
       <span class="add-text"> Adicionar </span>
       <span class="add-icon">➕</span>
     </button>
     <hr *ngIf="filteredItems.length > 0"/>
 
-    <ul class="item-list" *ngIf="filteredItems.length > 0">
+    <ul class="item-list" *ngIf="filteredItems.length > 0" data-testid="item-list">
       <li *ngFor="let item of filteredItems"
           [class.selected]="selectedItems.has(item)"
-          (click)="toggleSelection(item)">
+          (click)="toggleSelection(item)"
+          data-testid="item"
+          >
         {{ item }}
       </li>
     </ul>
@@ -53,7 +55,7 @@
       </thead>
       <tbody *ngIf="inventory.size > 0; else emptyInventory">
         <ng-container *ngFor="let item of inventory | mapKeys">
-          <tr>
+          <tr data-testid="inventory-item">
             <td class="d-flex align-items-center justify-content-center"
                 (click)="toggleDetails(item)">
               <img *ngIf="expandedItems.has(item)"
