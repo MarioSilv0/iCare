@@ -63,7 +63,7 @@
                   />
                 </button>
               </div>
-              <p *ngIf="passwordError" class="passwordError">{{passwordError}}</p>
+              <p *ngIf="passError" class="passError">{{passError}}</p>
             </div>
             <div *ngIf="errorMessage" class="alert bg-vermelho" role="alert">
               {{ errorMessage }}
@@ -73,7 +73,7 @@
               class="mb-3 d-flex align-items-center justify-content-center"
             ></div>
             <div class="container d-flex flex-row gap-4">
-              <button id="btLogin" type="submit" [disabled]="emailError.length !== 0 || passwordError.length !== 0 && !email || !password" class="btn bg-verde w-100">Login</button>
+              <button id="btLogin" type="submit" [disabled]="emailError.length !== 0 || passError.length !== 0 && !email || !password" class="btn bg-verde w-100">Login</button>
               <button type="reset" class="btn bg-vermelho w-100">Reset</button>
             </div>
           </form>
