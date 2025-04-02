@@ -149,7 +149,7 @@ export class ProfileComponent implements OnInit {
           Validators.required,
           Validators.min(0.1),
           Validators.max(700),
-          Validators.pattern(/^\d*\.?\d+$/),
+          Validators.pattern(/^\d+(\.\d+)?$/),
         ],
       ],
       gender: ['', Validators.required],
