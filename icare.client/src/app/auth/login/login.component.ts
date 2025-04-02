@@ -14,7 +14,7 @@ export class LoginComponent {
   email = '';
   emailError: string = ""
   password = '';
-  passwordError: string = ""
+  passError: string = ""
   errorMessage: string | null = null;
   showPassword = false;
   private EMAIL_REGEX_PATTERN = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" // formato valido de email com @ e .
@@ -96,10 +96,10 @@ export class LoginComponent {
   }
 
   validatePassword() {
-    this.passwordError = ""
+    this.passError = ""
     const reg = new RegExp(this.PASSWORD_REGEX_PATTERN)
     console.log({ pass: this.password, valid: reg.test(this.password) })
-    if (!reg.test(this.password)) this.passwordError = "A palavra passe deve ter no minimo 8 caracteres (letras e números)."
-    else this.passwordError = ""
+    if (!reg.test(this.password)) this.passError = "A palavra passe deve ter no minimo 8 caracteres (letras e números)."
+    else this.passError = ""
   }
 }

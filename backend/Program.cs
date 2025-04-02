@@ -24,11 +24,33 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
+builder.Configuration["ConnectionStrings:Deploy"] =
+    builder.Configuration["ConnectionStrings:Deploy"]!.Replace("${DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "");
+
+builder.Configuration["Jwt:Key"] =
+    Environment.GetEnvironmentVariable("JWT_SECRET") ?? builder.Configuration["Jwt:Key"];
+
+builder.Configuration["EmailSettings:SenderPassword"] =
+    Environment.GetEnvironmentVariable("EMAIL_PASSWORD") ?? builder.Configuration["EmailSettings:SenderPassword"];
+
 // Configurar Kestrel para permitir mais conexões simultâneas
 builder.WebHost.ConfigureKestrel((context, options) =>
 {
     options.Configure(context.Configuration.GetSection("Kestrel"));
 });
+
+
+// Configuração do banco de dados
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+builder.Services.AddDbContext<ICareServerContext>(options =>
+    options.UseSqlServer(connectionString, sqlOptions =>
+        sqlOptions
+            .CommandTimeout(60)
+            .EnableRetryOnFailure())
+    );
+
 
 
 // Reduz o consumo de CPU no ASP.NET Core
@@ -39,17 +61,6 @@ builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-// Configuração do banco de dados
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ICareServerContext>(options =>
-    options.UseSqlServer(connectionString, sqlOptions =>
-        sqlOptions
-            .CommandTimeout(30)
-            .EnableRetryOnFailure())
-    );
-
 
 // Configuração do Identity
 builder.Services
