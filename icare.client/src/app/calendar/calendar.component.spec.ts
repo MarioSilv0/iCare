@@ -89,7 +89,7 @@ describe('CalendarComponent', () => {
     component.validateDate();
 
     expect(snackBar.open).toHaveBeenCalledWith(
-      'Só pode criar metas com inicio atual ou superior.',
+      'A data final deve ser maior que a data inicial.',
       undefined,
       {
         duration: 2000,
