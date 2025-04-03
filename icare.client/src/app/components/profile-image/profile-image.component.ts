@@ -26,6 +26,13 @@ export class ProfileImageComponent {
     const file = input.files[0];
     if (!file.type.startsWith('image/')) return;
 
+    // Convert the file to a Data URL and update the image preview
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imageUrl = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+
     this.imageChange.emit(file);
   }
 }

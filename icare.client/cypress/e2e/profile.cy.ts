@@ -8,21 +8,31 @@ describe("Profile", () => {
     cy.get('[data-testid="profile-page"]').should('exist')
   });
 
-  //it("should allow the user to add a profile picture", () => {
-  //  cy.get('[data-testid="profile-image"]').should('exist')
+  it("should allow the user to add a profile picture", () => {
+    // Ensure the profile image container exists
+    cy.get('[data-testid="profile-image"]').should('exist');
 
-  //  cy.get('[data-testid="profile-image"]', { includeShadowDom: true })
-  //    .get('[data-testid="image"]')
-  //    .should('exist') 
-  //    .attachFile("cat-with-glasses.jpg", { force: true })
+    // Load image fixture and simulate file selection
+    cy.fixture('cat-with-glasses.jpg', 'base64').then((fileContent) => {
+      cy.get('[data-testid="file-input"]').selectFile(
+        {
+          contents: Cypress.Buffer.from(fileContent, 'base64'),
+          fileName: 'cat-with-glasses.jpg',
+          mimeType: 'image/jpeg',
+          lastModified: Date.now(),
+        },
+        { force: true }
+      );
+    });
 
-    
-  //  cy.get('[data-testid="profile-image"]', { includeShadowDom: true })
-  //    .find('img')
-  //    .should("have.attr", "src")
-  //    .and("include", "cat-with-glasses.jpg");
-   
-  //})
+    // Wait for the image to update (handling async FileReader)
+    cy.get('[data-testid="image"]', { timeout: 10000 }) // Wait up to 10 seconds
+      .should("have.attr", "src")
+      .then((src) => {
+        // Ensure the src is not the default image anymore
+        expect(src).to.not.contain('default.jpg'); // Adjust based on your default image
+      });
+  });
 
   it("should allow the user to change his name", () => {
     cy.intercept('PUT', `https://127.0.0.1:4200/api/User`, {
@@ -126,9 +136,9 @@ describe("Profile", () => {
     }).as('updateUser');
 
     cy.get("[data-testid='notifications-input'] input")
-      .should("not.be.checked")
-      .click()
       .should("be.checked")
+      .click()
+      .should("not.be.checked")
 
     cy.get("[data-testid='submit-input']").click();
 

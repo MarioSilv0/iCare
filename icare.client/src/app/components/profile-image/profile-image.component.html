@@ -2,7 +2,7 @@
   <!-- Editable Picture -->
   <div *ngIf="editable">
     <label for="fileInput" class="hoverable profile-image-container">
-      <img [src]="imageUrl || defaultImage" alt="Profile Picture" [ngStyle]="imageStyles" />
+      <img [src]="imageUrl || defaultImage" alt="Profile Picture" [ngStyle]="imageStyles" data-testid="image"/>
       <div>Adicionar imagem</div>
     </label>
     <input id="fileInput" type="file" (change)="onSelectFile($event)" data-testid="file-input" hidden>

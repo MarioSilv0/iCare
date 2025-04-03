@@ -70,7 +70,7 @@ export class ProfileComponent implements OnInit {
     reader.readAsDataURL(file);
 
     reader.onload = () => {
-      if (typeof reader.result === 'string')
+      if (typeof reader.result === 'string')  
         this.profileForm.patchValue({ picture: reader.result });
     };
   }
