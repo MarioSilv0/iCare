@@ -11,8 +11,6 @@ namespace backend.Services
     public class GoalService : IGoalService
     {
         private readonly ICareServerContext _context;
-        private const int MinCalories = 1200;
-        private const int MaxCalories = 4000;
 
         public GoalService(ICareServerContext context)
         {
@@ -51,7 +49,23 @@ namespace backend.Services
                 throw new InvalidOperationException(ErrorMessage);
 
             _context.Goals.Add(goal);
+            
+            var goalLog = new GoalLog
+            {
+                GoalId = goal.Id,
+                UserId = goal.UserId,
+                Calories = goal.Calories,
+                GoalType = goal.GoalType,
+                AutoGoalType = goal.AutoGoalType,
+                StartDate = goal.StartDate,
+                EndDate = goal.EndDate,
+                Action = "Created",
+                ActionDate = DateTime.UtcNow
+            };
+
+            _context.GoalLogs.Add(goalLog);
             await _context.SaveChangesAsync();
+
 
             return goal;
         }
@@ -74,7 +88,22 @@ namespace backend.Services
             if (!Success)
                 throw new InvalidOperationException(ErrorMessage);
 
+            var goalLog = new GoalLog
+            {
+                GoalId = goal.Id,
+                UserId = goal.UserId,
+                Calories = goal.Calories,
+                GoalType = goal.GoalType,
+                AutoGoalType = goal.AutoGoalType,
+                StartDate = goal.StartDate,
+                EndDate = goal.EndDate,
+                Action = "Updated",
+                ActionDate = DateTime.UtcNow
+            };
+
+            _context.GoalLogs.Add(goalLog);
             await _context.SaveChangesAsync();
+
             return true;
         }
 
@@ -126,7 +155,7 @@ namespace backend.Services
             return (true, null);
         }
 
-        private int CalculateAutomaticGoal(User user, AutoGoalType? autoGoalType)
+        public int CalculateAutomaticGoal(User user, AutoGoalType? autoGoalType)
         {
             double bmr = 10 * user.Weight + 6.25 * user.Height - 5 * user.Age() + (user.Gender.Equals(Gender.Male) ? 5 : -161);
 
