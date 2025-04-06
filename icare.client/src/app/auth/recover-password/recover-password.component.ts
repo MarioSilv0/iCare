@@ -10,7 +10,7 @@ import { AuthService } from '../auth.service';
 export class RecoverPasswordComponent {
   email: string = '';
   errorMessage: string | undefined;
-  private EMAIL_REGEX_PATTERN = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" // formato valido de email com @ e .
+  private readonly EMAIL_REGEX_PATTERN = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" // formato valido de email com @ e .
 
   constructor(private authService: AuthService, private router: Router) {}
 
