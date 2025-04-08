@@ -15,7 +15,7 @@ namespace backend.Models.Data_Transfer_Objects
 {
     /// <summary>
     /// Represents a Data Transfer Object (DTO) for recipes, containing relevant details
-    /// such as name, category, area, instructions, ingredients, and nutritional information.
+    /// such as the name, category, area, instructions, ingredients, and nutritional information.
     /// </summary>
     public class RecipeDTO
     {
@@ -45,7 +45,7 @@ namespace backend.Models.Data_Transfer_Objects
         public string? UrlVideo { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of instructions of the recipe.
+        /// Gets or sets the list of instructions for preparing the recipe.
         /// </summary>
         public string? Instructions { get; set; }
 
@@ -65,12 +65,12 @@ namespace backend.Models.Data_Transfer_Objects
         public float Proteins { get; set; }
 
         /// <summary>
-        /// Gets or sets the total cabohydrates count of the recipe.
+        /// Gets or sets the total carbohydrates count of the recipe.
         /// </summary>
         public float Carbohydrates { get; set; }
 
         /// <summary>
-        /// Gets or sets the total lipids count of the recipe.
+        /// Gets or sets the total lipids (fats) count of the recipe.
         /// </summary>
         public float Lipids { get; set; }
 
@@ -89,19 +89,33 @@ namespace backend.Models.Data_Transfer_Objects
         /// </summary>
         public RecipeDTO() { }
 
+        /// <summary>
+        /// Constructs a <c>RecipeDTO</c> from a <see cref="Recipe"/> entity.
+        /// </summary>
+        /// <param name="recipe">The <see cref="Recipe"/> object containing the recipe data.</param>
+        /// <param name="userId">The ID of the authenticated user to check for the favorite status.</param>
+        /// <param name="wantDetails">Determines whether to include detailed recipe information (e.g., calories, instructions).</param>
         public RecipeDTO(Recipe recipe, string userId, bool wantDetails)
         {
+            // If the recipe is null, return without setting any properties
             if (recipe == null) return;
 
-            Picture = recipe.Picture ?? "";
+            // Set the basic properties
+            Picture = recipe.Picture ?? "";  // If Picture is null, default to an empty string
             Name = recipe.Name;
             Category = recipe.Category;
             Area = recipe.Area;
+
+            // Map the recipe ingredients to their DTO equivalent
             Ingredients = recipe.RecipeIngredients.Select(i => new RecipeIngredientDTO(i));
+
+            // Check if the authenticated user has marked this recipe as a favorite
             IsFavorite = recipe?.UserRecipes?.Any(ur => ur.UserId == userId) ?? false;
-            
+
+            // If detailed information is requested, populate the additional properties
             if (!wantDetails) return;
 
+            // Set detailed recipe information
             UrlVideo = recipe!.UrlVideo;
             Instructions = recipe.Instructions;
             Calories = recipe.Calories;

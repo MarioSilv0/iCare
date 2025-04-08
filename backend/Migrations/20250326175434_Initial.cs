@@ -7,9 +7,16 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace backend.Migrations
 {
-    /// <inheritdoc />
+    /// <summary>
+    /// Represents the initial migration for the database schema.
+    /// </summary>
     public partial class Initial : Migration
     {
+        /// <summary>
+        /// Applies the migration to the database.
+        /// This method creates the required tables for the application.
+        /// </summary>
+        /// <param name="migrationBuilder">The migration builder used to construct the migration.</param>
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {

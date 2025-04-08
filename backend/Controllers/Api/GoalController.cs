@@ -25,6 +25,11 @@ namespace backend.Controllers.Api
         private readonly IGoalService _goalService;
         private readonly ILogger<GoalController> _logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <c>GoalController</c> class.
+        /// </summary>
+        /// <param name="goalService">An instance of <c>IGoalService</c> to handle goal operations.</param>
+        /// <param name="logger">An instance of <c>ILogger<GoalController></c> to log errors and information.</param>
         public GoalController(IGoalService goalService, ILogger<GoalController> logger)
         {
             _goalService = goalService;
@@ -45,7 +50,6 @@ namespace backend.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetCurrentGoalByUserId()
         {
-
             var userId = User.FindFirst("UserId")?.Value;
             if (userId == null) return Unauthorized("User ID not found in token.");
             try
@@ -91,9 +95,8 @@ namespace backend.Controllers.Api
         /// <summary>
         /// Updates an existing goal.
         /// </summary>
-        /// <param name="id">The ID of the goal to update.</param>
         /// <param name="goalDto">The updated goal data.</param>
-        /// <returns>No content if successful; NotFound if the goal does not exist.</returns>
+        /// <returns>No content if successful; <c>NotFound</c> if the goal does not exist.</returns>
         [HttpPut]
         public async Task<IActionResult> UpdateGoal([FromBody] GoalDTO goalDto)
         {
@@ -118,7 +121,7 @@ namespace backend.Controllers.Api
         /// <summary>
         /// Deletes the current goal.
         /// </summary>
-        /// <returns>No content if successful; NotFound if the goal does not exist.</returns>
+        /// <returns>No content if successful; <c>NotFound</c> if the goal does not exist.</returns>+
         [HttpDelete]
         public async Task<IActionResult> DeleteGoal()
         {

@@ -320,6 +320,9 @@ namespace backendtest
             Assert.Equal("user1@example.com", updatedUser.Email);
         }
 
+        /// <summary>
+        /// Tests that <c>ToggleFavoriteRecipe()</c> returns <see cref="UnauthorizedObjectResult"/> when no user ID is provided.
+        /// </summary>
         [Fact]
         public async Task ToggleFavoriteRecipe_WhenUserIdIsNull_ReturnsUnauthorized()
         {
@@ -333,6 +336,9 @@ namespace backendtest
             Assert.IsType<UnauthorizedObjectResult>(result);
         }
 
+        /// <summary>
+        /// Tests that <c>ToggleFavoriteRecipe()</c> returns <see cref="NotFoundResult"/> when the user does not exist.
+        /// </summary>
         [Fact]
         public async Task ToggleFavoriteRecipe_WhenUserDoesNotExist_ReturnsNotFound()
         {
@@ -343,6 +349,9 @@ namespace backendtest
             Assert.IsType<NotFoundResult>(result);
         }
 
+        /// <summary>
+        /// Tests that <c>ToggleFavoriteRecipe()</c> returns <see cref="NotFoundObjectResult"/> when the recipe does not exist.
+        /// </summary>
         [Fact]
         public async Task ToggleFavoriteRecipe_WhenRecipeDoesNotExist_ReturnsNotFound()
         {
@@ -354,6 +363,9 @@ namespace backendtest
             Assert.Equal("Recipe not found", notFound.Value);
         }
 
+        /// <summary>
+        /// Tests that <c>ToggleFavoriteRecipe()</c> adds a recipe to the user's favorites when it is not already a favorite.
+        /// </summary>
         [Fact]
         public async Task ToggleFavoriteRecipe_WhenNotFavorite_AddsToFavorites()
         {
@@ -369,6 +381,9 @@ namespace backendtest
             Assert.Single(userFavorites);
         }
 
+        /// <summary>
+        /// Tests that <c>ToggleFavoriteRecipe()</c> removes a recipe from the user's favorites when it is already a favorite.
+        /// </summary>
         [Fact]
         public async Task ToggleFavoriteRecipe_WhenAlreadyFavorite_RemovesFromFavorites()
         {
