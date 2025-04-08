@@ -19,7 +19,7 @@ import { RecipeService } from '../recipes.service';
  * formats instructions, and updates a local meal database.
  * 
  * @author Mário Silva - 202000500
- * @date Last Modified: 2025-03-11
+ * @date Last Modified: 2025-03-23
  */
 export class MealDbService {
   private categoryListUrl = `${env.mealDbApiUrl}/categories.php`;
@@ -236,13 +236,13 @@ export class MealDbService {
         const meals = await this.getMealsByCategoryAndTranslate(category.strCategory);
         mealsList.push(...meals);
 
-        if (mealsList.length > 0) {
-          this.recipeService.updateRecipeDB(mealsList).subscribe(() => {
-            if (updateProgress) {
-              updateProgress(`✅ Receita(s) da categoria "${translatedCategory}" atualizadas!`);
-            }
-          });
-        }
+        //if (mealsList.length > 0) {
+        //  this.recipeService.updateRecipeDB(mealsList).subscribe(() => {
+        //    if (updateProgress) {
+        //      updateProgress(`✅ Receita(s) da categoria "${translatedCategory}" atualizadas!`);
+        //    }
+        //  });
+        //}
       }
       if (updateProgress) {
         updateProgress(`🎉 Atualização concluída!`);
@@ -280,6 +280,9 @@ export class MealDbService {
       console.log(mealDetails);
       if (mealDetails) {
         translatedMeals.push(mealDetails);
+        this.recipeService.updateRecipeDB([mealDetails]).subscribe((res) => {
+          console.log(`(${im + 1}/${meals.length}) meal.`,res);
+        });
       }
     }
 

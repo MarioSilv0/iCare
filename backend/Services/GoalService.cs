@@ -4,48 +4,33 @@ using backend.Models.Data_Transfer_Objects;
 using backend.Models.Enums;
 using backend.Models.Goals;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace backend.Services
 {
-    /// <summary>
-    /// Provides functionality for managing user goals, including creating, updating, retrieving, and deleting goals.
-    /// This service validates goal data, supports automatic and manual goal types, and calculates caloric goals based on user profiles.
-    /// </summary>
     public class GoalService : IGoalService
     {
         private readonly ICareServerContext _context;
-        private const int MinCalories = 1200;
-        private const int MaxCalories = 4000;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GoalService"/> class with the specified database context.
-        /// </summary>
-        /// <param name="context">The database context to interact with.</param>
         public GoalService(ICareServerContext context)
         {
             _context = context;
         }
 
-        /// <summary>
-        /// Retrieves the latest goal for a specified user by their user ID.
-        /// </summary>
-        /// <param name="userId">The ID of the user whose latest goal is to be retrieved.</param>
-        /// <returns>The most recent goal for the user, or <c>null</c> if no goal exists.</returns>
         public async Task<Goal?> GetLatestGoalByUserIdAsync(string userId)
         {
-            return await _context.Goals
+            var goal = await _context.Goals
                 .Where(g => g.UserId == userId)
                 .OrderByDescending(g => g.StartDate)
                 .FirstOrDefaultAsync();
+
+            if (goal != null && goal.EndDate <= DateTime.UtcNow){
+                await DeleteGoalAsync(userId);
+                return null;
+            }
+            return goal;
         }
 
-        /// <summary>
-        /// Creates a new goal for a specified user.
-        /// </summary>
-        /// <param name="userId">The ID of the user for whom the goal is being created.</param>
-        /// <param name="goalDto">The data transfer object containing the goal details.</param>
-        /// <returns>The created <see cref="Goal"/> object.</returns>
-        /// <exception cref="InvalidOperationException">Thrown if the goal validation fails.</exception>
         public async Task<Goal> CreateGoalAsync(string userId, GoalDTO goalDto)
         {
             var goal = new Goal
@@ -54,78 +39,79 @@ namespace backend.Services
                 GoalType = GoalTypeExtensions.FromString(goalDto.GoalType),
                 AutoGoalType = AutoGoalTypeExtensions.FromString(goalDto.AutoGoalType),
                 Calories = goalDto.Calories,
-                StartDate = goalDto.StartDate ?? DateTime.UtcNow,
-                EndDate = goalDto.EndDate ?? DateTime.UtcNow.AddMonths(1)
+                StartDate = goalDto.StartDate.ToDateTime(TimeOnly.MinValue),
+                EndDate = goalDto.EndDate.ToDateTime(TimeOnly.MinValue)
             };
-
-            var (Success, ErrorMessage) = ValidateGoal(goal);
+            
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId) ?? throw new InvalidOperationException("User not found");
+            var (Success, ErrorMessage) = ValidateAndCalculateGoal(user, goal);
             if (!Success)
-            {
                 throw new InvalidOperationException(ErrorMessage);
-            }
-
-            if (goal.GoalType == GoalType.Automatica)
-            {
-                var user = await _context.Users.FindAsync(userId);
-                goal.Calories = CalculateAutomaticGoal(user, goal.AutoGoalType);
-            }
 
             _context.Goals.Add(goal);
+            
+            var goalLog = new GoalLog
+            {
+                GoalId = goal.Id,
+                UserId = goal.UserId,
+                Calories = goal.Calories,
+                GoalType = goal.GoalType,
+                AutoGoalType = goal.AutoGoalType,
+                StartDate = goal.StartDate,
+                EndDate = goal.EndDate,
+                Action = "Created",
+                ActionDate = DateTime.UtcNow
+            };
+
+            _context.GoalLogs.Add(goalLog);
             await _context.SaveChangesAsync();
+
 
             return goal;
         }
 
-        /// <summary>
-        /// Updates an existing goal for a specified user.
-        /// </summary>
-        /// <param name="userId">The ID of the user whose goal is to be updated.</param>
-        /// <param name="id">The ID of the goal to be updated.</param>
-        /// <param name="goalDto">The data transfer object containing the updated goal details.</param>
-        /// <returns><c>true</c> if the goal was successfully updated, otherwise <c>false</c>.</returns>
-        /// <exception cref="InvalidOperationException">Thrown if the goal validation fails.</exception>
-        public async Task<bool> UpdateGoalAsync(string userId, int id, GoalDTO goalDto)
+        public async Task<bool> UpdateGoalAsync(string userId, GoalDTO goalDto)
         {
-            var goal = await _context.Goals.FindAsync(id);
+            var goal = await GetLatestGoalByUserIdAsync(userId);
             if (goal == null)
-            {
                 return false;
-            }
+            
 
             goal.GoalType = GoalTypeExtensions.FromString(goalDto.GoalType);
             goal.AutoGoalType = AutoGoalTypeExtensions.FromString(goalDto.AutoGoalType);
             goal.Calories = goalDto.Calories;
-            goal.StartDate = goalDto.StartDate ?? DateTime.UtcNow;
-            goal.EndDate = goalDto.EndDate ?? DateTime.UtcNow.AddMonths(1);
+            goal.StartDate = goalDto.StartDate.ToDateTime(TimeOnly.MinValue);
+            goal.EndDate = goalDto.EndDate.ToDateTime(TimeOnly.MinValue);
 
-            var (Success, ErrorMessage) = ValidateGoal(goal);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            var (Success, ErrorMessage) = ValidateAndCalculateGoal(user, goal);
             if (!Success)
-            {
                 throw new InvalidOperationException(ErrorMessage);
-            }
 
-            if (goal.GoalType == GoalType.Automatica)
+            var goalLog = new GoalLog
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-                goal.Calories = CalculateAutomaticGoal(user!, goal.AutoGoalType);
-            }
+                GoalId = goal.Id,
+                UserId = goal.UserId,
+                Calories = goal.Calories,
+                GoalType = goal.GoalType,
+                AutoGoalType = goal.AutoGoalType,
+                StartDate = goal.StartDate,
+                EndDate = goal.EndDate,
+                Action = "Updated",
+                ActionDate = DateTime.UtcNow
+            };
 
+            _context.GoalLogs.Add(goalLog);
             await _context.SaveChangesAsync();
+
             return true;
         }
 
-        /// <summary>
-        /// Deletes a goal for a specified user.
-        /// </summary>
-        /// <param name="id">The ID of the goal to be deleted.</param>
-        /// <returns><c>true</c> if the goal was successfully deleted, otherwise <c>false</c>.</returns>
-        public async Task<bool> DeleteGoalAsync(int id)
+        public async Task<bool> DeleteGoalAsync(string userId)
         {
-            var goal = await _context.Goals.FindAsync(id);
+            var goal = await GetLatestGoalByUserIdAsync(userId);
             if (goal == null)
-            {
                 return false;
-            }
 
             var goalLog = new GoalLog
             {
@@ -146,28 +132,22 @@ namespace backend.Services
             return true;
         }
 
-        /// <summary>
-        /// Validates the specified goal for correctness.
-        /// </summary>
-        /// <param name="goal">The goal to be validated.</param>
-        /// <returns>A tuple containing a boolean indicating success and an error message if validation fails.</returns>
-        public (bool Success, string? ErrorMessage) ValidateGoal(Goal goal)
+        public (bool Success, string? ErrorMessage) ValidateAndCalculateGoal(User user, Goal goal)
         {
-            if (goal.GoalType == GoalType.Automatica && !goal.AutoGoalType.HasValue)
+            if (goal.GoalType == GoalType.Automatica)
             {
-                return (false, "O tipo de meta automática deve ter um valor definido para AutoGoalType.");
+                if (!goal.AutoGoalType.HasValue)
+                    return (false, "O tipo de meta automática deve ter um valor definido para AutoGoalType.");
+                else
+                    goal.Calories = CalculateAutomaticGoal(user!, goal.AutoGoalType);
+            }
+            else
+            {
+                if (!goal.Calories.HasValue)
+                    return (false, "O valor das calorias deve ser definido para metas manuais.");
             }
 
-            if (goal.GoalType == GoalType.Manual && !goal.Calories.HasValue)
-            {
-                return (false, "O valor das calorias deve ser definido para metas manuais.");
-            }
-            else if (goal.Calories < MinCalories || goal.Calories > MaxCalories)
-            {
-                return (false, "Valor calórico deve estar entre 1200 e 4000 kcal.");
-            }
-
-            if (goal.StartDate >= goal.EndDate)
+            if (goal.StartDate > goal.EndDate)
             {
                 return (false, "A data de início deve ser anterior à data de término.");
             }
@@ -175,17 +155,11 @@ namespace backend.Services
             return (true, null);
         }
 
-        /// <summary>
-        /// Calculates the automatic caloric goal based on a user's profile and activity level.
-        /// </summary>
-        /// <param name="profile">The user's profile containing weight, height, age, and activity level.</param>
-        /// <param name="autoGoalType">The type of automatic goal (lose weight, maintain weight, gain weight).</param>
-        /// <returns>The calculated caloric goal based on the user's profile and goal type.</returns>
-        private int CalculateAutomaticGoal(User profile, AutoGoalType? autoGoalType)
+        public int CalculateAutomaticGoal(User user, AutoGoalType? autoGoalType)
         {
-            double bmr = 10 * profile.Weight + 6.25 * profile.Height - 5 * profile.Age() + (profile.Gender.Equals("Male") ? 5 : -161);
+            double bmr = 10 * user.Weight + 6.25 * user.Height - 5 * user.Age() + (user.Gender.Equals(Gender.Male) ? 5 : -161);
 
-            double activityMultiplier = profile.ActivityLevel switch
+            double activityMultiplier = user.ActivityLevel switch
             {
                 ActivityLevel.Sedentary => 1.2,
                 ActivityLevel.LightlyActive => 1.375,
@@ -205,5 +179,6 @@ namespace backend.Services
                 _ => maintenanceCalories
             };
         }
+
     }
 }

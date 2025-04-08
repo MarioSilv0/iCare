@@ -1,35 +1,49 @@
 <div *ngIf="!recipe" class="d-flex p-5">receita não encontrada..</div>
 
 <div *ngIf="recipe" class="mx-0 d-flex flex-column p-5 position-relative">
-  <help helpText="Nesta página pode visualizar todos os detalhes da receita selecionada.
+  <help
+    [ngStyle]="{ position: 'absolute', top: '0', right: '2rem' }"
+    helpText="Nesta página pode visualizar todos os detalhes da receita selecionada.
                   Aqui encontrará as instruções de preparação, os valores nutricionais dos ingredientes, um vídeo explicativo e outras informações relevantes.
-                  Também pode adicionar ou remover esta receita dos seus favoritos diretamente nesta página." />
+                  Também pode adicionar ou remover esta receita dos seus favoritos diretamente nesta página."
+  />
 
-  <div class="recipe-container d-flex w-100 align-items-center justify-content-between">
+  <div
+    class="recipe-container d-flex w-100 align-items-center justify-content-between"
+  >
     <h1 class="m-0 p-0 my-2">{{ recipe.name }}</h1>
     <span class="m-0 justify-self-end">
-      <img *ngIf="!recipe.isFavorite"
-           src="../../assets/svgs/heart-regular.svg"
-           alt="Imagem de coração"
-           style="width: 40px; cursor: pointer"
-           (click)="toggleFavorite()" />
-      <img *ngIf="recipe.isFavorite"
-           src="../../assets/svgs/heart-solid.svg"
-           alt="Imagem de coração"
-           style="width: 40px; cursor: pointer"
-           (click)="toggleFavorite()" />
+      <img
+        *ngIf="!recipe.isFavorite"
+        src="../../assets/svgs/heart-regular.svg"
+        alt="Imagem de coração"
+        style="width: 40px; cursor: pointer"
+        (click)="toggleFavorite()"
+      />
+      <img
+        *ngIf="recipe.isFavorite"
+        src="../../assets/svgs/heart-solid.svg"
+        alt="Imagem de coração"
+        style="width: 40px; cursor: pointer"
+        (click)="toggleFavorite()"
+      />
     </span>
   </div>
   <hr />
-  <div class="d-flex flex-column w-100 align-items-center justify-content-between">
+  <div
+    class="d-flex flex-column w-100 align-items-start justify-content-between"
+  >
     <h2 class="mx-0 align-self-start">Instruções</h2>
-    <p>
+    <p class="mx-0">
       {{ recipe.instructions }}
     </p>
   </div>
-  <div>
-    <h2>Informações Nutricionais</h2>
-    <ul>
+  <hr />
+  <div
+    class="d-flex flex-column w-100 align-items-start justify-content-between"
+  >
+    <h2 class="mx-0">Informações Nutricionais</h2>
+    <ul class="mx-0">
       <li>Calorias: {{ recipe.calories }} kcal</li>
       <li>Proteinas: {{ recipe.proteins }}</li>
       <li>Carboidratos: {{ recipe.carbohydrates }}</li>
@@ -39,34 +53,58 @@
   </div>
   <hr />
   <h2 class="mx-0 align-self-start">Ingredientes</h2>
-  <div class="d-flex ingredient-container justify-content-around">
-    <div class="mx-0" style="min-width: 300px; justify-self: flex-start;">
-      <ul class="mx-0 w-100 d-flex align-self-start list-group list-unstyled"
-          style="min-width: 100%;">
-        <li *ngFor="let ingredient of recipe.ingredients"
-            class="m-0 list-group-item bg-bege-contrast mb-2 rounded"
-            style="box-shadow: rgba(0, 0, 0, 0.2) 0 2px 2px 0;">
-          <div class="w-100 mx-0 d-flex align-items-center justify-content-between">
-            <span class="mx-0 justify-self-start"
-                  style="max-width: 50%; flex-wrap: wrap">{{ ingredient.name }}</span>
+  <div
+    class="d-flex mx-0 ingredient-container align-items-start justify-content-around"
+  >
+    <div
+      class="mx-0"
+      style="min-width: 300px; justify-self: flex-start !important"
+    >
+      <ul
+        class="mx-0 w-100 d-flex align-self-start list-group list-unstyled"
+        style="min-width: 100%"
+      >
+        <li
+          *ngFor="let ingredient of recipe.ingredients"
+          class="m-0 list-group-item bg-bege-contrast mb-2 rounded"
+          style="box-shadow: rgba(0, 0, 0, 0.2) 0 2px 2px 0"
+        >
+          <div
+            class="w-100 mx-0 d-flex align-items-center justify-content-between"
+          >
+            <span
+              class="mx-0 justify-self-start"
+              style="max-width: 50%; flex-wrap: wrap"
+              >{{ ingredient.name }}</span
+            >
             <span class="mx-0 justify-self-end">{{ ingredient.measure }}</span>
           </div>
         </li>
       </ul>
     </div>
-    <img src="{{ recipe.picture }}"
-         alt="Imagem da receita"
-         class="mx-0 shadow rounded"
-         loading="lazy"
-         style="width: 25%; max-height: fit-content" />
+    <img
+      src="{{ recipe.picture }}"
+      alt="Imagem da receita"
+      class="mx-0 shadow rounded"
+      loading="lazy"
+      style="width: 300px; height: 200px"
+    />
   </div>
-  <iframe *ngIf="safeVideoUrl"
-          width="640" height="360"
-          [src]="safeVideoUrl"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen>
+  <iframe
+    *ngIf="safeVideoUrl"
+    width="640"
+    height="360"
+    [src]="safeVideoUrl"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+  >
   </iframe>
-  <h4>Categoria:</h4>
-  <p>{{ recipe.category }}</p>
+  <hr />
+  <div
+    class="d-flex flex-column w-100 align-items-start justify-content-between"
+  >
+    <h4 class="mx-0">Categoria:</h4>
+    <p class="mx-0">{{ recipe.category }}</p>
+  </div>
 </div>

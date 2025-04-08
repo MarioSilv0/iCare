@@ -12,7 +12,7 @@ export class HomeComponent {
   constructor(private authService: AuthService, private permissionsService: PermissionsService) { }
 
   ngOnInit() {
-    this.isAdmin = this.authService.userHasRole('Admin'); // Checa se o usuário é admin
+    this.isAdmin = this.authService.userHasRole('Admin'); 
 
     this.getPermissions();
   }

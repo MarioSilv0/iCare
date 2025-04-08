@@ -73,7 +73,7 @@ namespace backend.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                await _userLogService.LogAsync(null, $"Invalid data: {model.Email}, {model.Password}");
+                await _userLogService.LogAsync(null, $"Invalid data: {model.Email}");
                 return BadRequest(new { message = "Invalid data.", errors = ModelState });
             }
 
@@ -81,48 +81,54 @@ namespace backend.Controllers.Api
             if (user == null)
             {
                 await _userLogService.LogAsync(null, $"Failed login attempt for email: {model.Email}");
-                return BadRequest("Invalid login credentials.");
+                return BadRequest(new { message = "Invalid login credentials." });
             }
+
             var passwordValid = await _userManager.CheckPasswordAsync(user, model.Password);
             if (!passwordValid)
             {
                 await _userLogService.LogAsync(null, $"Failed login attempt for email: {model.Email}");
-                return BadRequest("Invalid login credentials.");
+                return BadRequest(new { message = "Invalid login credentials." });
             }
 
-            // Gerar os claims do utilizador
+            // Generate user claims
             var claims = new List<Claim>
             {
-                new("Name", user.Name),
-                new("Email", user.Email),
+                new(ClaimTypes.Name, user.Name ?? "Unknown"),
+                new(ClaimTypes.Email, user.Email ?? "Unknown"),
                 new("UserId", user.Id)
             };
-            // Obtém as roles do Identity
+
             var roles = await _userManager.GetRolesAsync(user);
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-            // Gerar o token JWT
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            // Get JWT settings
+            var jwtKey = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is not configured.");
+            var jwtIssuer = _configuration["Jwt:Issuer"];
+            var jwtAudience = _configuration["Jwt:Audience"];
+            var expiration = DateTime.UtcNow.AddHours(12); // You can change this to be configurable
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
+                issuer: jwtIssuer,
+                audience: jwtAudience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddDays(1), // Definir o tempo de expiração
+                expires: expiration,
                 signingCredentials: creds);
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-            // Retornar o token ao cliente
             return Ok(new
             {
                 token = tokenString,
                 roles = roles,
-                expiration = token.ValidTo,
+                expiration = expiration,
                 message = "Login successful"
             });
         }
+
 
         /// <summary>
         /// Registers a new user in the system.
@@ -145,33 +151,39 @@ namespace backend.Controllers.Api
         {
             if (!ModelState.IsValid)
             {
-                await _userLogService.LogAsync(null, $"Invalid data: {model.Email}, {model.Password}");
+                await _userLogService.LogAsync(null, $"Invalid registration data for: {model.Email}");
                 return BadRequest(new { message = "Invalid data.", errors = ModelState });
             }
 
             var existingUser = await _userManager.FindByEmailAsync(model.Email);
             if (existingUser != null)
             {
-                await _userLogService.LogAsync(null, $"This email is already registered: {model.Email}");
+                await _userLogService.LogAsync(null, $"Email already registered: {model.Email}");
                 return Conflict(new { message = "This email is already registered." });
             }
 
-            var user = new User()
+            var username = model.Email.Split('@')[0];
+            var user = new User
             {
                 Email = model.Email,
-                UserName = model.Email.Split('@')[0],
-                Name = model.Email.Split('@')[0]
+                UserName = username,
+                Name = username
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, "User");
+                var errorMessages = result.Errors.Select(e => e.Description).ToList();
+                await _userLogService.LogAsync(null, $"Registration failed for {model.Email}: {string.Join(", ", errorMessages)}");
+                return BadRequest(new { message = "Registration failed.", errors = errorMessages });
+            }
 
+            await _userManager.AddToRoleAsync(user, "User");
+
+            if (!model.Email.StartsWith("testuser_"))
+            {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var confirmationLink = $"{model.ClientUrl}/confirm-email?email={model.Email}&token={Uri.EscapeDataString(token)}";
-
                 var subject = "Please confirm your email address";
                 var body = $@"
                     <p>Olá {user.Name},</p>
@@ -181,15 +193,12 @@ namespace backend.Controllers.Api
                     <p>Obrigado!</p>";
 
                 await _emailService.SendEmailAsync(user.Email, subject, body);
-
-                await _userLogService.LogAsync(user.Id, $"Account created successfully. Please confirm your email: {model.Email}");
-                return Ok(new { message = "Account created successfully. Please confirm your email." });
             }
 
-
-            await _userLogService.LogAsync(null, $"Registration failed: {model.Email}");
-            return BadRequest(new { message = "Registration failed.", errors = result.Errors });
+            await _userLogService.LogAsync(user.Id, $"Account created successfully. Confirmation pending: {model.Email}");
+            return Ok(new { message = "Account created successfully. Please confirm your email." });
         }
+
 
         /// <summary>
         /// Handles Google OAuth authentication.
@@ -556,5 +565,21 @@ namespace backend.Controllers.Api
             /// </summary>
             public required string Body { get; set; }
         }
+
+
+        [HttpDelete("delete-test-users")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> DeleteTestUsers()
+        {
+            var testUsers = _userManager.Users.Where(u => u.Email.StartsWith("testuser_"));
+
+            foreach (var user in testUsers)
+            {
+                await _userManager.DeleteAsync(user);
+            }
+
+            return Ok(new { message = "Test users deleted." });
+        }
+
     }
 }

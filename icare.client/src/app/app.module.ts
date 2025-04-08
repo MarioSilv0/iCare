@@ -27,7 +27,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
-
 import { ContainerComponent } from './components/container/container.component';
 import { ProfileImageComponent } from './components/profile-image/profile-image.component';
 import { CustomInputComponent } from './components/custom-input/custom-input.component';
@@ -35,7 +34,7 @@ import { CustomCheckboxComponent } from './components/custom-checkbox/custom-che
 import { CategorySelectorComponent } from './components/category-selector/category-selector.component';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { HelpComponent } from './components/help/help.component';
-
+import { GoalComponent } from './goal/goal.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +63,7 @@ import { HelpComponent } from './components/help/help.component';
     CategorySelectorComponent,
     SearchBarComponent,
     HelpComponent,
+    GoalComponent,
   ],
   imports: [
     BrowserModule,

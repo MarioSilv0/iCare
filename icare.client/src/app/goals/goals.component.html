@@ -1,63 +1,115 @@
 <div class="goals">
-  <div style="border: 1px solid green">
+
+  <div class="help-container">
+    <help helpText="A página de metas permite a criação de metas automáticas ou manuais conforme as suas informações pessoais. Case se depare com o formulário de informação pessoas, por favor, introduza os valores de forma acertiva para um melhor calculo e ajuste para as suas metas." />
+  </div>
+
+  <!--Meta Atual-->
+  <div *ngIf="userGoal && !validInfo">
     <h1>Meta Alimentar</h1>
     <p *ngIf="false">
       Informações necessárias para definir meta alimentar estão incompletas.
       Preencha os campos obrigatórios.
     </p>
-    <p *ngIf="!userGoals || userGoals.length == 0">Nenhuma meta alimentar definida. É necessário definir uma meta.</p>
+    <br />
+    <div class="goal-container">
+      <span class="goal-icon">🎯</span>
+      <app-goal [goal]="userGoal"></app-goal>
+
+      <div class="info-inputs">
+        <button type="button"
+                (click)="toggleValidInfo()"
+                class="bt-add-goal" [disabled]="true">
+          <!--Fazer Editar-->
+          Editar Meta
+        </button>
+        <button type="button"
+                (click)="openModal('deleteModal')"
+                class="bt-clear-info">
+          Excluir Meta
+        </button>
+
+        <div class="modal fade"
+             id="deleteModal"
+             tabindex="-1"
+             aria-labelledby="deleteModalLabel"
+             aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmação</h5>
+              </div>
+              <div class="modal-body">
+                Tem a certeza que deseja eliminar a meta?
+              </div>
+              <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                  Cancelar
+                </button>
+                <button type="button"
+                        class="btn btn-danger"
+                        (click)="removeGoal()"
+                        data-bs-dismiss="modal">
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <div style="border: 1px solid cyan" *ngIf="false">
+  <!--Informações Necessárias-->
+  <div *ngIf="!userGoal && !validInfo">
     <h2>Informações Necessárias</h2>
-    <form action="" class="info-form shadow">
+    <form class="info-form shadow" [formGroup]="userInfoForm">
       <div class="info-inputs-container">
         <label for="ipt-data-nascimento">Data de nascimento</label>
-        <input id="ipt-data-nascimento" type="date" required />
+        <input id="ipt-data-nascimento"
+               type="date"
+               formControlName="birthdate"
+               required />
       </div>
       <div class="info-inputs-container">
         <label for="ipt-altura">Altura</label>
-        <input id="ipt-altura"
-               type="number"
-               min="0"
-               value="0"
-               max="3"
-               required />
+        <input id="ipt-altura" type="number" formControlName="height" />
       </div>
       <div class="info-inputs-container">
         <label for="ipt-peso">Peso</label>
-        <input id="ipt-peso"
-               type="number"
-               min="0"
-               value="0"
-               max="700"
-               required />
+        <input id="ipt-peso" type="number" formControlName="weight" />
       </div>
       <div class="info-inputs-container">
         <label for="ipt-genero">Genero</label>
-        <select name="ipt-genero" id="ipt-genero" required>
-          <option value="" disabled>-- selecione uma opção --</option>
-          <option value="M">Masculino</option>
-          <option value="F">Feminino</option>
+        <select name="ipt-genero" id="ipt-genero" formControlName="gender">
+          <option *ngFor="let g of genders;let i = index" value="{{g.value}}" [disabled]="i === 0">{{g.label}}</option>
         </select>
       </div>
       <div class="info-inputs-container">
         <label for="ipt-atividade-fisica">Nivel de atividade fisica</label>
-        <select name="ipt-atividade-fisica" id="ipt-atividade-fisica" required>
-          <option value="" disabled>-- selecione uma opção --</option>
-          <option value="high">Alta</option>
-          <option value="medium">Média</option>
-          <option value="low">Baixa</option>
+        <select name="ipt-atividade-fisica"
+                id="ipt-atividade-fisica"
+                formControlName="activityLevel">
+          <option *ngFor="let a of activities; let i = index" value="{{a.value}}" [disabled]="i === 0">{{a.label}}</option>
         </select>
       </div>
       <div class="info-inputs-container">
         <button class="bt-clear-info" type="reset">Cancelar</button>
-        <button class="bt-confirm-info" type="submit">Confirmar</button>
+        <button class="bt-confirm-info"
+                (click)="updateUserInfo()"
+                type="submit"
+                [disabled]="userInfoForm.invalid">
+          Confirmar
+        </button>
       </div>
     </form>
   </div>
 
-  <div style="border: 1px solid red">
+  <!--Definir Meta Alimentar-->
+  <div *ngIf="!userGoal &&validInfo">
     <h2>Definir Meta Alimentar</h2>
     <p>
       Preencha o tipo de meta desejada, selecione os dias que quer fugir à meta
@@ -66,7 +118,7 @@
     <div>
       <div class="goal-type-container">
         <label class="goal-type-label {{ goalType }}" for="ipt-goal-type">
-          Meta Alimentar {{ goalType }}
+          🔄 Meta Alimentar {{ goalType }}
         </label>
         <input class="goal-type-input"
                type="checkbox"
@@ -74,44 +126,59 @@
                id="ipt-goal-type"
                (click)="toggleGoalType()" />
       </div>
-      
-        <div *ngIf="goalType === 'Automática'">
-
-
-          <form class="goal-form shadow">
-
-            <div *ngFor="let goal of goals" class="goals-container">
-              <label for="ipt-goal-{{ goal.name.replace(' ', '-') }}">
-                {{ goal.name }}
-              </label>
-              <input type="radio"
-                     [(ngModel)]="selectedGoal"
-                     name="ipt-goal-group"
-                     id="ipt-goal-{{ goal.name.replace(' ', '-') }}"
-                     [value]="goal.name" required />
-            </div>
-            <button class="bt-add-goal" (click)="addGoal()" type="submit">Adicionar meta</button>
-          </form>
-        </div>
-        
-        <div *ngIf="goalType === 'Manual'">
-          <form class="goal-form shadow">
+      <div>
+        <form [formGroup]="goalForm" class="goal-form shadow">
+          <div *ngIf="goalType === 'Automática'">
             <div class="mx-0 goals-inputs-container">
-              <label for="ipt-calorias-diarias">Calorias diárias (kcal)</label>
-              <input id="ipt-calorias-diarias"
-                     type="number"
-                     min="0"
-                     [(ngModel)]="calories"
-                     value="{{calories}}"
-                     required />
-              <div class="mx-0 w-100">
-                <app-calendar (dates)="receiveData($event)"></app-calendar>
-              </div>
+              <label>Escolha um Objetivo:</label>
+              <select formControlName="selectedGoal">
+                <option *ngFor="let goal of goals" [value]="goal.name">
+                  {{ goal.name }}
+                </option>
+              </select>
             </div>
-            <button class="bt-add-goal" (click)="addGoal()" type="submit">Adicionar meta</button>
-          </form> 
-        </div>
+
+            <div>
+              <app-calendar (dates)="receiveData($event)"></app-calendar>
+            </div>
+          </div>
+
+          <div *ngIf="goalType === 'Manual'">
+            <div class="mx-0 goals-inputs-container">
+              <label>Calorias:</label>
+              <input type="number"
+                     formControlName="calories"
+                     id="ipt-calorias-diarias" />
+            </div>
+
+            <div>
+              <app-calendar (dates)="receiveData($event)"></app-calendar>
+            </div>
+          </div>
+
+          <button *ngIf="goalType === 'Automática'"
+                  type="button"
+                  (click)="addGoal()"
+                  class="bt-add-goal"
+                  [disabled]="!goalForm.get('selectedGoal')?.value || !goalForm.get('startDate')?.value || !goalForm.get('endDate')?.value">
+            Adicionar Meta
+          </button>
+          <button *ngIf="goalType === 'Manual'"
+                  type="button"
+                  (click)="addGoal()"
+                  class="bt-add-goal"
+                  [disabled]="goalForm.get('calories')?.value <= 0 || !goalForm.get('startDate')?.value || !goalForm.get('endDate')?.value || userInfoForm.invalid">
+            Adicionar Meta
+          </button>
+        </form>
+      </div>
     </div>
   </div>
-  
+
+
+  <!--Editar Meta Alimentar-->
+  <!-- like Definir Meta mas com valores da meta-->
+  <!-- tem um botão cancel com (click)="toggleValidInfo()"-->
+
+
 </div>

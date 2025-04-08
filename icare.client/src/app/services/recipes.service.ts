@@ -58,12 +58,34 @@ export class RecipeService {
    * @date Last Modified: 2025-03-11
    */
   updateRecipeDB(recipes: Recipe[]): Observable<any> {
-    return this.http.put<any>(`${RECIPE}/update`, recipes).pipe(
-      catchError(() => {
-        return throwError(() => new Error('Erro ao atualizar receitas. Tente novamente mais tarde.'));
-      })
-    );
+    return this.http.put<any>(`${RECIPE}/update`, recipes);
   }
+
+  /**
+   * Deletes a specific recipe from the backend.
+   * 
+   * @param {string} recipeName - The name of the recipe to delete.
+   * @returns {Observable<string>} An observable containing the deletion result.
+   * 
+   * @author Mário Silva  - 202000500
+   * @date Last Modified: 2025-03-22
+   */
+  deleteRecipe(recipeName: string): Observable<string> {
+    return this.http.delete<string>(`${RECIPE}/${recipeName}`);
+  }
+
+  /**
+   * Deletes all recipes from the backend.
+   * 
+   * @returns {Observable<string>} An observable containing the deletion result.
+   * 
+   * @author Mário Silva  - 202000500
+   * @date Last Modified: 2025-03-22
+   */
+  deleteAllRecipes(): Observable<string> {
+    return this.http.delete<string>(`${RECIPE}/delete-all`);
+  }
+
 
 }
 

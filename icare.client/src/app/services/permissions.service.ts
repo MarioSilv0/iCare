@@ -36,7 +36,7 @@ export class PermissionsService {
   }
 
   setPermissions(updatedPermissions: Partial<Permissions>): void {
-    const current = this.getPermissions();
+    const current = this.getPermissions() ?? {};
     const newPermissions = { ...current, ...updatedPermissions };
 
     StorageUtil.saveToStorage('permissions', newPermissions);

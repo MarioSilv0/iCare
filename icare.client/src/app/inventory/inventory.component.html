@@ -1,5 +1,5 @@
-<br />
-<div class="m-0 position-relative">
+
+<div class="help-container">
   <help helpText="Nesta página pode gerir o seu inventário de ingredientes.
                   Pode adicionar novos ingredientes, editar a quantidade e unidade dos itens já existentes, ou removê-los do inventário.
                   Também é possível visualizar as informações nutricionais correspondentes à quantidade inserida de cada ingrediente.
@@ -12,31 +12,28 @@
   <!-- Sidebar -->
   <div class="sidebar shadow">
     <div class="search-bar">
-      <input
-        class="rounded"
-        type="text"
-        placeholder="Pesquisar"
-        [(ngModel)]="searchTerm"
-        (input)="onSearchChange()"
-      />
+      <input class="rounded"
+             type="text"
+             placeholder="Pesquisar"
+             [(ngModel)]="searchTerm"
+             (input)="onSearchChange()" />
       <span class="search-icon">🔍</span>
     </div>
 
     <hr *ngIf="filteredItems.length > 0" style="margin-top: 0" />
-
-    <ul class="item-list" *ngIf="filteredItems.length > 0">
-      <li
-        *ngFor="let item of filteredItems"
-        [class.selected]="selectedItems.has(item)"
-        (click)="toggleSelection(item)"
-      >
-        {{ item }}
-      </li>
-    </ul>
     <button class="add-button" (click)="addItemsToInventory()">
       <span class="add-text"> Adicionar </span>
       <span class="add-icon">➕</span>
     </button>
+    <hr *ngIf="filteredItems.length > 0"/>
+
+    <ul class="item-list" *ngIf="filteredItems.length > 0">
+      <li *ngFor="let item of filteredItems"
+          [class.selected]="selectedItems.has(item)"
+          (click)="toggleSelection(item)">
+        {{ item }}
+      </li>
+    </ul>
   </div>
 
   <!-- Inventory Table -->

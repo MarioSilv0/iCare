@@ -10,6 +10,7 @@ import { AuthService } from '../auth.service';
 export class RecoverPasswordComponent {
   email: string = '';
   errorMessage: string | undefined;
+  private EMAIL_REGEX_PATTERN = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" // formato valido de email com @ e .
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -28,6 +29,13 @@ export class RecoverPasswordComponent {
         else this.errorMessage = 'Invalid Email.';
       },
     });
+  }
+
+  validateEmail() {
+    this.errorMessage = ""
+    const reg = new RegExp(this.EMAIL_REGEX_PATTERN)
+    if (!reg.test(this.email)) this.errorMessage = "O email deve seguir o formato \"john@doe.com\""
+    else this.errorMessage = ""
   }
 
   onReset() {

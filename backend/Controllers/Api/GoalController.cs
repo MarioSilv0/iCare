@@ -5,6 +5,8 @@ using backend.Services;
 using backend.Models.Data_Transfer_Objects;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Security.Claims;
+using backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 /// <summary>
 /// This file defines the <c>GoalController</c> class, responsible for managing user goals.
@@ -15,7 +17,7 @@ using System.Security.Claims;
 
 namespace backend.Controllers.Api
 {
-    [Route("api/goal")]
+    [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class GoalController : ControllerBase
@@ -35,11 +37,17 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
-        /// Retrieves the latest goal for a user by their user ID.
+        /// Retrieves the latest goal for the authenticated user.
         /// </summary>
-        /// <param name="userId">The ID of the user.</param>
-        /// <returns>The latest goal if found; otherwise, <c>NotFound</c>.</returns>
-        [HttpGet("current")]
+        /// <returns>
+        /// An <c>Ok</c> response containing the latest <c>GoalDTO</c> if found,
+        /// <c>Ok(null)</c> if no goal exists, or an <c>Unauthorized</c> response
+        /// if the user ID is not found in the token.
+        /// </returns>
+        /// <remarks>
+        /// If an unexpected error occurs, a <c>500 Internal Server Error</c> is returned.
+        /// </remarks>
+        [HttpGet]
         public async Task<IActionResult> GetCurrentGoalByUserId()
         {
             var userId = User.FindFirst("UserId")?.Value;
@@ -50,10 +58,10 @@ namespace backend.Controllers.Api
 
                 if (goal == null)
                 {
-                    return NotFound("Meta não encontrada.");
+                    return Ok(null);
                 }
 
-                return Ok(goal);
+                return Ok(new GoalDTO(goal));
             }
             catch (Exception ex)
             {
@@ -67,7 +75,7 @@ namespace backend.Controllers.Api
         /// </summary>
         /// <param name="goalDto">The goal data transfer object containing goal details.</param>
         /// <returns>The created goal.</returns>
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateGoal([FromBody] GoalDTO goalDto)
         {
             var userId = User.FindFirst("UserId")?.Value;
@@ -80,24 +88,23 @@ namespace backend.Controllers.Api
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao criar a meta.");
-                return StatusCode(500, "Erro ao criar a meta.");
+                return StatusCode(500, "Erro ao criar a meta: ");
             }
         }
 
         /// <summary>
         /// Updates an existing goal.
         /// </summary>
-        /// <param name="id">The ID of the goal to update.</param>
         /// <param name="goalDto">The updated goal data.</param>
         /// <returns>No content if successful; <c>NotFound</c> if the goal does not exist.</returns>
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateGoal(int id, [FromBody] GoalDTO goalDto)
+        [HttpPut]
+        public async Task<IActionResult> UpdateGoal([FromBody] GoalDTO goalDto)
         {
             var userId = User.FindFirst("UserId")?.Value;
             if (userId == null) return Unauthorized("User ID not found in token.");
             try
             {
-                var success = await _goalService.UpdateGoalAsync(userId, id, goalDto);
+                var success = await _goalService.UpdateGoalAsync(userId, goalDto);
                 if (!success)
                 {
                     return NotFound("Meta não encontrada.");
@@ -112,16 +119,17 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
-        /// Deletes an existing goal.
+        /// Deletes the current goal.
         /// </summary>
-        /// <param name="id">The ID of the goal to delete.</param>
-        /// <returns>No content if successful; <c>NotFound</c> if the goal does not exist.</returns>
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGoal(int id)
+        /// <returns>No content if successful; <c>NotFound</c> if the goal does not exist.</returns>+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteGoal()
         {
+            var userId = User.FindFirst("UserId")?.Value;
+            if (userId == null) return Unauthorized("User ID not found in token.");
             try
             {
-                var success = await _goalService.DeleteGoalAsync(id);
+                var success = await _goalService.DeleteGoalAsync(userId);
                 if (!success)
                 {
                     return NotFound("Meta não encontrada.");

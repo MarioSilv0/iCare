@@ -1,5 +1,12 @@
 .goals {
+  padding: 20px;
   min-height: 100vh;
+}
+
+.help-container {
+    position: absolute;
+    top: calc(80px + 1rem);
+    right: 1rem;
 }
 
 .goal-type-container {
@@ -19,11 +26,11 @@
 }
 
 .Automática {
-  background-color: var(--bg-vermelho);
+  background-color: var(--bg-azul);
 }
 
 .Manual {
-  background-color: var(--bg-verde);
+  background-color: var(--bg-azul);
 }
 
 .goal-type-input {
@@ -44,6 +51,11 @@
   transition: 0.2s ease-in-out;
   color: var(--bg-branco);
 }
+
+  .bt-add-goal:disabled:hover, .bt-confirm-info:disabled:hover {
+    cursor: not-allowed;
+    background-color: var(--bg-vermelho);
+  }
 
 .bt-confirm-info {
   background-color: var(--bg-verde);
@@ -119,6 +131,31 @@ select {
 
 .goal-form {
   max-width: 300px;
+}
+
+.goal-container {
+    margin: 0;
+    background-color: var(--bg-bege-contrast);
+    border-radius: 8px;
+    box-shadow: hsl(0, 0%, 60%) 0px 2px 10px;
+    padding: 30px 40px;
+    max-width: 400px;
+    position: relative;
+}
+
+.goal-icon {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    font-size: 2rem;
+    cursor: default;
+}
+
+.info-inputs {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
 }
 
 .info-inputs-container {

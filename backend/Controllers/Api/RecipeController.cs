@@ -157,8 +157,8 @@ namespace backend.Controllers.Api
                             Calories = 0
                         };
 
-                        foreach (var ingredientDto in recipeDto.Ingredients)
-                            ProcessIngredient(existingIngredients, newRecipe, ingredientDto, true);
+                        foreach (var ingredientDto in recipeDto.Ingredients!)
+                            ProcessIngredient(existingIngredients, newRecipe, ingredientDto);
 
                         _context.Recipes.Add(newRecipe);
                     }
@@ -169,26 +169,87 @@ namespace backend.Controllers.Api
                         existingRecipe.Picture = recipeDto.Picture;
                         existingRecipe.UrlVideo = recipeDto.UrlVideo;
                         existingRecipe.Instructions = recipeDto.Instructions;
-                        existingRecipe.Calories = recipeDto.Calories;
-                        existingRecipe.Proteins = recipeDto.Proteins;
-                        existingRecipe.Carbohydrates = recipeDto.Carbohydrates;
-                        existingRecipe.Lipids = recipeDto.Lipids;
-                        existingRecipe.Fibers = recipeDto.Fibers;
+                        existingRecipe.Calories = 0;
+                        existingRecipe.Proteins = 0     ;
+                        existingRecipe.Carbohydrates = 0;
+                        existingRecipe.Lipids = 0;
+                        existingRecipe.Fibers = 0;
 
                         existingRecipe.RecipeIngredients.Clear();
                         foreach (var ingredientDto in recipeDto.Ingredients)
-                            ProcessIngredient(existingIngredients, existingRecipe, ingredientDto, false);
+                            ProcessIngredient(existingIngredients, existingRecipe, ingredientDto); 
                         _context.Recipes.Update(existingRecipe);
+
                     }
                 }
 
                 await _context.SaveChangesAsync();
-                return Ok("Recipes updated successfully.");
+                return Ok( new { message = "Recipes updated successfully." });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating recipes.");
-                return StatusCode(500, "An error occurred while updating the recipes.");
+                return StatusCode(500, "An error occurred while updating the recipes");
+            }
+        }
+
+        /// <summary>
+        /// Deletes a specific recipe by name.
+        /// </summary>
+        /// <param name="recipeName">The name of the recipe to delete.</param>
+        /// <returns>An HTTP response indicating success or failure.</returns>
+        [HttpDelete("{recipeName}")]
+        public async Task<IActionResult> Delete(string recipeName)
+        {
+            try
+            {
+                var recipe = await _context.Recipes
+                    .Include(r => r.RecipeIngredients)
+                    .FirstOrDefaultAsync(r => r.Name == recipeName);
+
+                if (recipe == null)
+                    return NotFound($"Recipe '{recipeName}' not found.");
+
+                _context.RecipeIngredients.RemoveRange(recipe.RecipeIngredients);
+                _context.Recipes.Remove(recipe);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = $"Recipe '{recipeName}' deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting recipe {RecipeName}", recipeName);
+                return StatusCode(500, "An error occurred while deleting the recipe.");
+            }
+        }
+
+        /// <summary>
+        /// Deletes all recipes from the database.
+        /// </summary>
+        /// <returns>An HTTP response indicating success or failure.</returns>
+        [HttpDelete("delete-all")]
+        public async Task<IActionResult> DeleteAll()
+        {
+            try
+            {
+                var recipes = await _context.Recipes.Include(r => r.RecipeIngredients).ToListAsync();
+
+                if (recipes.Count == 0)
+                    return NotFound("No recipes found to delete.");
+
+                foreach (var recipe in recipes)
+                {
+                    _context.RecipeIngredients.RemoveRange(recipe.RecipeIngredients);
+                }
+                _context.Recipes.RemoveRange(recipes);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "All recipes deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting all recipes.");
+                return StatusCode(500, "An error occurred while deleting all recipes.");
             }
         }
 
@@ -198,31 +259,76 @@ namespace backend.Controllers.Api
         /// <param name="existingIngredients">The list of ingredients in the database.</param>
         /// <param name="recipe">The recipe to associate the ingredient with.</param>
         /// <param name="ingredientDto">The ingredient details to process.</param>
-        /// <param name="newRecipe">Indicates whether the ingredient is being added to a new recipe or an existing one.</param>
-        private static void ProcessIngredient(List<Ingredient> existingIngredients, Recipe recipe, RecipeIngredientDTO ingredientDto, bool newRecipe)
+        public static void ProcessIngredient(List<Ingredient> existingIngredients, Recipe recipe, RecipeIngredientDTO ingredientDto)
         {
             var existingIngredient = existingIngredients.FirstOrDefault(i => i.Name == ingredientDto.Name);
+
+            existingIngredient ??= FindBestMatch(ingredientDto.Name!, existingIngredients);
+
             if (existingIngredient != null)
             {
-                var recipeIngredient = new RecipeIngredient
-                {
-                    Recipe = recipe,
-                    Ingredient = existingIngredient,
-                    Measure = ingredientDto.Measure,
-                    Grams = ingredientDto.Grams
-                };
+                var existingRecipeIngredient = recipe.RecipeIngredients
+                    .FirstOrDefault(ri => ri.Ingredient.Name == existingIngredient.Name);
 
-                if (newRecipe)
+                if (existingRecipeIngredient == null)
                 {
-                    recipe.Calories += existingIngredient.Kcal * (ingredientDto.Grams ?? 0) / 100;
-                    recipe.Proteins += existingIngredient.Protein * (ingredientDto.Grams ?? 0) / 100;
-                    recipe.Carbohydrates += existingIngredient.Carbohydrates * (ingredientDto.Grams ?? 0) / 100;
-                    recipe.Lipids += existingIngredient.Lipids * (ingredientDto.Grams ?? 0) / 100;
-                    recipe.Fibers += existingIngredient.Fibers * (ingredientDto.Grams ?? 0) / 100;
+                    var recipeIngredient = new RecipeIngredient
+                    {
+                        Recipe = recipe,
+                        Ingredient = existingIngredient,
+                        Measure = ingredientDto.Measure,
+                        Grams = ingredientDto.Grams
+                    };
+
+                    recipe.RecipeIngredients.Add(recipeIngredient);
                 }
 
-                recipe.RecipeIngredients.Add(recipeIngredient);
+                recipe.Calories += existingIngredient.Kcal * (ingredientDto.Grams ?? 0) / 100;
+                recipe.Proteins += existingIngredient.Protein * (ingredientDto.Grams ?? 0) / 100;
+                recipe.Carbohydrates += existingIngredient.Carbohydrates * (ingredientDto.Grams ?? 0) / 100;
+                recipe.Lipids += existingIngredient.Lipids * (ingredientDto.Grams ?? 0) / 100;
+                recipe.Fibers += existingIngredient.Fibers * (ingredientDto.Grams ?? 0) / 100;
+                
             }
         }
+
+
+        private static Ingredient? FindBestMatch(string ingredientName, List<Ingredient> existingIngredients)
+        {
+            int minDistance = int.MaxValue;
+            Ingredient? bestMatch = null;
+
+            foreach (var ingredient in existingIngredients)
+            {
+                int distance = LevenshteinDistance(ingredientName.ToLower(), ingredient.Name!.ToLower());
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    bestMatch = ingredient;
+                }
+            }
+
+            return bestMatch;
+        }
+
+        private static int LevenshteinDistance(string s1, string s2)
+        {
+            int len1 = s1.Length, len2 = s2.Length;
+            var dp = new int[len1 + 1, len2 + 1];
+
+            for (int i = 0; i <= len1; i++)
+                for (int j = 0; j <= len2; j++)
+                {
+                    if (i == 0) dp[i, j] = j;
+                    else if (j == 0) dp[i, j] = i;
+                    else dp[i, j] = Math.Min(
+                        Math.Min(dp[i - 1, j] + 1, dp[i, j - 1] + 1),
+                        dp[i - 1, j - 1] + (s1[i - 1] == s2[j - 1] ? 0 : 1)
+                    );
+                }
+
+            return dp[len1, len2];
+        }
     }
+
 }

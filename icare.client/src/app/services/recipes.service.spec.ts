@@ -24,19 +24,23 @@ describe('RecipeService', () => {
 
   // Mock recipe data for testing
   const mockRecipe: Recipe = {
-    id: 1,
-    picture: 'image.jpg',
-    name: 'Bife com Batatas',
-    category: 'Carne',
-    area: 'Brasileira',
-    instructions: 'Fritar o bife e servir com batatas.',
-    ingredients: [
-      { name: 'Bife', measure: '200g', grams: 200 },
-      { name: 'Batata', measure: '3 unidades', grams: 300 }
-    ],
-    urlVideo: 'https://video.com/bife',
-    isFavorite: false,
-    calories: 500
+      id: 1,
+      picture: 'image.jpg',
+      name: 'Bife com Batatas',
+      category: 'Carne',
+      area: 'Brasileira',
+      instructions: 'Fritar o bife e servir com batatas.',
+      ingredients: [
+          { name: 'Bife', measure: '200g', grams: 200 },
+          { name: 'Batata', measure: '3 unidades', grams: 300 }
+      ],
+      urlVideo: 'https://video.com/bife',
+      isFavorite: false,
+      calories: 500,
+      proteins: 0,
+      carbohydrates: 0,
+      lipids: 0,
+      fibers: 0
   };
 
   /**
@@ -87,7 +91,7 @@ describe('RecipeService', () => {
       expect(recipe.name).toBe('Bife com Batatas');
     });
 
-    const req = httpMock.expectOne('/api/RecipeBife com Batatas');
+    const req = httpMock.expectOne('/api/Recipe/Bife com Batatas');
     expect(req.request.method).toBe('GET');
     req.flush(mockRecipe);
   });
@@ -107,26 +111,5 @@ describe('RecipeService', () => {
     req.flush({ message: 'Atualizado com sucesso' });
   });
 
-  /**
-   * Test to verify that the updateRecipeDB method correctly handles errors during the update process.
-   * Ensures that an error is thrown with the expected message when the backend returns an error response.
-   * 
-   * @param error The error object returned by the HTTP request.
-   *
-   * @author Mário Silva  - 202000500
-   * @date Last Modified: 2025-03-11
-   */
-  it('should handle error on updateRecipeDB', () => {
-    service.updateRecipeDB([mockRecipe]).subscribe({
-      error: (error: HttpErrorResponse) => {
-        expect(error).toBeInstanceOf(Error);
-        expect(error.message).toBe('Erro ao atualizar receitas. Tente novamente mais tarde.');
-      }
-    });
-
-    const req = httpMock.expectOne('/api/Recipe/update');
-    expect(req.request.method).toBe('PUT');
-    req.flush('Erro interno', { status: 500, statusText: 'Internal Server Error' });
-  });
-
+  
 });

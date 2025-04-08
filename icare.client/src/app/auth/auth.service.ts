@@ -55,7 +55,10 @@ export class AuthService {
   }  
 
   public login(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post<{ token: string, roles:string }>(`${this.baseUrl}/login`, credentials).pipe(map((response) => {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    return this.http.post<{ token: string, roles: string }>(`${this.baseUrl}/login`, credentials, { headers }).pipe(map((response) => {
       if (response && response.token) {
         this.saveToken(response.token, response.roles);
         this._authStateChanged.next(true);
@@ -78,8 +81,11 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  public register(email: string, password: string ): Observable<any> {
-    return this.http.post(`${this.baseUrl}/register`, { email, password, clientUrl: window.location.origin });
+  public register(email: string, password: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    return this.http.post(`${this.baseUrl}/register`, { email, password, clientUrl: window.location.origin }, { headers });
   }
 
   public recoverPassword(email: string): Observable<any> {
@@ -101,5 +107,10 @@ export class AuthService {
 
   public confirmEmail(email: string, token: string): Observable<any> {
     return this.http.get(`/api/account/confirm-email?email=${email}&token=${token}`);
+  }
+
+
+  public deleteTestUsers(): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/delete-test-users`);
   }
 }

@@ -18,7 +18,7 @@ import { RecipesComponent } from './recipes/recipes.component';
 const routes: Routes = [
   {
     path: 'home',
-    component: HomeComponent,
+    component: RecipesComponent,
     canActivate: [AuthGuard],
     pathMatch: 'full',
   },

@@ -36,7 +36,7 @@ namespace backend.Models
         /// <summary>
         /// Gets or sets the user's birthdate.
         /// </summary>
-        public DateOnly Birthdate { get; set; } = new DateOnly();
+        public DateOnly Birthdate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-16));
 
         /// <summary>
         /// Gets the user's age based on this birthdate.
@@ -57,12 +57,12 @@ namespace backend.Models
         /// <summary>
         /// Gets or sets the user's gender.
         /// </summary>
-        public Gender Gender { get; set; }
+        public Gender Gender { get; set; } = Gender.Male;
 
         /// <summary>
         /// Gets or sets the user's activity level.
         /// </summary>
-        public ActivityLevel ActivityLevel { get; set; }
+        public ActivityLevel ActivityLevel { get; set; } = ActivityLevel.ModeratelyActive;
 
         /// <summary>
         /// Indicates whether the user has enabled notifications.
@@ -116,16 +116,16 @@ namespace backend.Models
                     Birthdate = model.Birthdate;
             }
 
-            Gender = model.Gender;
-            ActivityLevel = model.ActivityLevel;
+            Gender = GenderExtensions.FromString(model.Gender);
+            ActivityLevel = ActivityLevelExtensions.FromString(model.ActivityLevel);
 
             Notifications = model.Notifications;
 
-            float roundedHeight = (float)Math.Round(model.Height, 1);
+            float roundedHeight = (float)Math.Round(model.Height, 2);
             if (Height != roundedHeight && roundedHeight > 0 && roundedHeight < 3)
                 Height = roundedHeight;
 
-            float roundedWeight = (float)Math.Round(model.Weight, 1);
+            float roundedWeight = (float)Math.Round(model.Weight, 2);
             if (Weight != roundedWeight && roundedWeight > 0 && roundedWeight < 700)
                 Weight = roundedWeight;
 

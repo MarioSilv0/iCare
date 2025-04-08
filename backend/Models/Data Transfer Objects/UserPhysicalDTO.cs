@@ -34,12 +34,12 @@ namespace backend.Models
         /// <summary>
         /// Gets or sets the user's gender.
         /// </summary>
-        public Gender Gender { get; set; }
+        public string? Gender { get; set; }
 
         /// <summary>
         /// Gets or sets the user's activity level.
         /// </summary>
-        public ActivityLevel ActivityLevel { get; set; }
+        public string? ActivityLevel { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <c>UserPhysicalDTO</c> class.
@@ -55,8 +55,8 @@ namespace backend.Models
             Birthdate = user.Birthdate;
             Height = user.Height;
             Weight = user.Weight;
-            Gender = user.Gender;
-            ActivityLevel = user.ActivityLevel;
+            Gender = GenderExtensions.ToFriendlyString(user.Gender);
+            ActivityLevel = ActivityLevelExtensions.ToFriendlyString(user.ActivityLevel);
         }
     }
 }

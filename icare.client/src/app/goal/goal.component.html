@@ -1,0 +1,22 @@
+<p *ngIf="!goal">
+  Nenhuma meta alimentar definida. É necessário definir uma meta.
+</p>
+
+<div>
+  <p>
+    <span>Tipo de Meta: </span>
+    <span>{{goal.goalType}}</span>
+  </p>
+  <p>
+    <span>Calorias: </span>
+    <span>{{goal.calories}} kcal</span>
+  </p>
+  <p>
+    <span>Data de Inicio: </span>
+    <span>{{goal.startDate.replaceAll("-", "/")}}</span>
+  </p>
+  <p>
+    <span>Data de Fim: </span>
+    <span>{{goal.endDate.replaceAll("-", "/")}}</span>
+  </p>
+</div>

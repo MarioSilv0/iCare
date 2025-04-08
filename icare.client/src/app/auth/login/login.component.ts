@@ -8,12 +8,17 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./login.component.css'],
 })
 
+
 //Mário
 export class LoginComponent {
   email = '';
+  emailError: string = ""
   password = '';
+  passError: string = ""
   errorMessage: string | null = null;
   showPassword = false;
+  private EMAIL_REGEX_PATTERN = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" // formato valido de email com @ e .
+  private PASSWORD_REGEX_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d).{8,}$" // 8 caracteres sem espaços, 1 letra minuscula e maiuscula
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
@@ -83,4 +88,18 @@ export class LoginComponent {
     });
   }
 
+  validateEmail() {
+    this.emailError = ""
+    const reg = new RegExp(this.EMAIL_REGEX_PATTERN)
+    if (!reg.test(this.email)) this.emailError = "O email deve seguir o formato \"john@doe.com\""
+    else this.emailError = ""
+  }
+
+  validatePassword() {
+    this.passError = ""
+    const reg = new RegExp(this.PASSWORD_REGEX_PATTERN)
+    console.log({ pass: this.password, valid: reg.test(this.password) })
+    if (!reg.test(this.password)) this.passError = "A palavra passe deve ter no minimo 8 caracteres (letras e números)."
+    else this.passError = ""
+  }
 }

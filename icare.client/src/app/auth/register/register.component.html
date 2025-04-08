@@ -1,9 +1,9 @@
-<div class="container pt-5">
+<div class="container pt-5" data-testid="register-container">
   <div class="row justify-content-center">
     <div class="col-md-6" style="min-width: 320px">
       <div class="card border-0 shadow radius">
         <div class="card-body bg-bege-contrast radius w-100">
-          <h2 class="text-center mb-4">Register</h2>
+          <h2 class="text-center mb-4">Registar</h2>
           <form (ngSubmit)="onRegister()" #registerForm="ngForm">
             <!-- Email -->
             <div class="mb-3">
@@ -20,10 +20,11 @@
                   'is-valid': emailInput.valid && emailInput.touched
                 }"
                 [(ngModel)]="email"
-                placeholder="Enter your email"
+                placeholder="Introduza o seu email"
                 required
                 pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
                 #emailInput="ngModel"
+                data-testid="user-email"
               />
               <!-- Mensagem de erro -->
               <div
@@ -31,10 +32,10 @@
                 class="text-danger"
               >
                 <small *ngIf="emailInput.errors?.['required']"
-                  >Email is required.</small
+                  >Preencha o email</small
                 >
                 <small *ngIf="emailInput.errors?.['pattern']"
-                  >Please enter a valid email address.</small
+                  >Formato errado de email</small
                 >
               </div>
               <!-- Mensagem de sucesso -->
@@ -42,7 +43,7 @@
                 *ngIf="emailInput.valid && emailInput.touched"
                 class="text-success"
               >
-                <small>Email looks good!</small>
+                <small>Email com formato correto</small>
               </div>
             </div>
             <!-- Password -->
@@ -61,21 +62,22 @@
                 }"
                 [(ngModel)]="password"
                 required
-                placeholder="Enter your password"
+                placeholder="Insira a sua password"
                 minlength="8"
                 #passwordInput="ngModel"
                 (input)="validatePassword()"
+                data-testid="user-password"
               />
               <!-- Mensagem de erro -->
               <div *ngIf="!isPasswordValid && passwordInput.touched" class="text-danger">
                 <small *ngIf="passwordInput.errors?.['required']">
-                  Password is required.
+                  Preencha a password
                 </small>
                 <small *ngIf="passwordErrorMessage">{{ passwordErrorMessage }}</small>
               </div>
               <!-- Mensagem de sucesso -->
               <div *ngIf="isPasswordValid" class="text-success">
-                <small>Password is Valide!</small>
+                <small>password correta</small>
               </div>
             </div>
             <!-- Confirm Password -->
@@ -94,22 +96,23 @@
                   'is-valid':
                     isPasswordValid && confirmPasswordInput.valid && password === confirmPassword && confirmPasswordInput.touched
                 }"
-                placeholder="Confirm your password"
+                placeholder="Confirme a sua password"
                 [(ngModel)]="confirmPassword"
                 required
                 minlength="8"
                 #confirmPasswordInput="ngModel"
+                data-testid="confirm-password"
               />
               <!-- Mensagem de erro -->
               <div
                 *ngIf="confirmPasswordInput.invalid && confirmPasswordInput.touched"
-                class="text-danger"
+                class="mx-0 text-danger d-flex flex-column"
               >
-                <small *ngIf="confirmPasswordInput.errors?.['required']">
-                  Confirm password is required.
+                <small class="mx-0" *ngIf="confirmPasswordInput.errors?.['required']">
+                  Confirme a password
                 </small>
-                <small *ngIf="password !== confirmPassword" >
-                  Passwords do not match.
+                <small class="mx-0" *ngIf="password !== confirmPassword" >
+                  Passwords não correspondem
                 </small>
               </div>
               <!-- Mensagem de sucesso -->
@@ -125,7 +128,7 @@
               </div>
             </div>
             <div class="position-relative mb-3">
-              <span style="font-size: 0.8rem">Show password: </span>
+              <span style="font-size: 0.8rem">Mostrar password: </span>
               <button
                 type="button"
                 class="btn position-absolute top-50 end-0 translate-middle-y"
@@ -134,8 +137,7 @@
               >
                 <img
                   src="../../../assets/svgs/show-password.svg"
-                  alt=""
-                  srcset=""
+                  alt="mostrar-password"
                 />
               </button>
               <button
@@ -146,8 +148,7 @@
               >
                 <img
                   src="../../../assets/svgs/hide-password.svg"
-                  alt=""
-                  srcset=""
+                  alt="esconder-password"
                 />
               </button>
             </div>
@@ -157,14 +158,14 @@
             </div>
             <!-- Submit Button -->
             <div class="container d-flex flex-row gap-4">
-              <button type="submit" class="btn bg-verde w-100"> Register </button>
-              <button type="reset" class="btn bg-vermelho w-100"> Reset </button>
+              <button type="submit" [disabled]="!email || !password || !confirmPassword" class="btn bg-verde w-100" data-testid="bt-register">Registar</button>
+              <button type="reset" class="btn bg-vermelho w-100">Apagar</button>
             </div>
           </form>
           <div class="text-center mt-3">
             <small>
-              Already have an account?
-              <a routerLink="/login" class="text-primary">Login here</a>.
+              Já tem conta?
+              <a routerLink="/login" class="text-primary" data-testid="bt-login">login</a>
             </small>
           </div>
         </div>

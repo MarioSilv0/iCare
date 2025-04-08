@@ -10,6 +10,7 @@
 using backend.Data;
 using backend.Models;
 using backend.Models.Data_Transfer_Objects;
+using backend.Models.Enums;
 using backend.Models.Extensions;
 using backend.Models.Recipes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -97,7 +98,7 @@ namespace backend.Controllers.Api
                     Notifications = user.Notifications,
                     Preferences = user.Preferences?.Any() ?? false,
                     Restrictions = user.Restrictions?.Any() ?? false,
-                    Inventory = user.UserIngredients?.Any() ?? false,
+                    Inventory = _context.UserIngredients.FirstOrDefault(ui => ui.UserId == user.Id) != null? true : false,
                 };
 
                 return Ok(permissions);
@@ -219,6 +220,33 @@ namespace backend.Controllers.Api
         }
 
         /// <summary>
+        /// Retrieves the physical attributes of the authenticated user.
+        /// </summary>
+        /// <returns>
+        /// An <c>ActionResult</c> containing the <c>PublicUser</c> object if found, or an error response otherwise.
+        /// </returns>
+        [HttpGet("physical")]
+        public async Task<ActionResult<UserPhysicalDTO>> GetPhysicalAttributes()
+        {
+            try
+            {
+                var id = User.FindFirst("UserId")?.Value;
+                if (id == null) return Unauthorized("User ID not found in token.");
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+                if (user == null) return NotFound();
+
+
+                return Ok(new UserPhysicalDTO(user));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user");
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
+        }
+
+        /// <summary>
         /// Updates the physical attributes of the authenticated user.
         /// </summary>
         /// <param name="model">The <c>UserPhysicalDTO</c> model containing the updated physical data.</param>
@@ -226,7 +254,7 @@ namespace backend.Controllers.Api
         /// An <c>ActionResult</c> containing the updated <c>UserPhysicalDTO</c> object if successful, or an error response otherwise.
         /// </returns>
         [HttpPut("physical")]
-        public async Task<ActionResult<UserPhysicalDTO>> EditPhysicalAttributes([FromBody] UserPhysicalDTO model)
+        public async Task<ActionResult<UserPhysicalDTO>> EditPhysicalAttributes([FromBody] UserPhysicalDTO? model)
         {
             if (model == null) return BadRequest("Invalid data provided.");
 
@@ -238,10 +266,11 @@ namespace backend.Controllers.Api
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
                 if (user == null) return NotFound();
 
+                user.Birthdate = model.Birthdate;
                 user.Height = model.Height;
                 user.Weight = model.Weight;
-                user.Gender = model.Gender;
-                user.ActivityLevel = model.ActivityLevel;
+                user.Gender = GenderExtensions.FromString(model.Gender);
+                user.ActivityLevel = ActivityLevelExtensions.FromString(model.ActivityLevel);
 
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();

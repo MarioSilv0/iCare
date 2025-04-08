@@ -52,12 +52,12 @@ namespace backend.Models
         /// <summary>
         /// Gets or sets the user's gender.
         /// </summary>
-        public Gender Gender { get; set; }
+        public string? Gender { get; set; }
 
         /// <summary>
         /// Gets or sets the user's activity level.
         /// </summary>
-        public ActivityLevel ActivityLevel { get; set; }
+        public string? ActivityLevel { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the user has notifications enabled.
@@ -80,6 +80,16 @@ namespace backend.Models
         public List<string> Categories { get; set; } = new();
 
         /// <summary>
+        /// Gets or sets the list of available genders.
+        /// </summary>
+        public List<string> Genders { get; set; } = new();
+
+        /// <summary>
+        /// Gets or sets the list of available levels of activity.
+        /// </summary>
+        public List<string> ActivityLevels { get; set; } = new();
+
+        /// <summary>
         /// Initializes a new instance of the <c>UserDTO</c> class.
         /// </summary>
         public UserDTO() { }
@@ -98,12 +108,20 @@ namespace backend.Models
             Birthdate = user.Birthdate;
             Height = user.Height;
             Weight = user.Weight;
-            Gender = user.Gender;
-            ActivityLevel = user.ActivityLevel;
+            Gender = GenderExtensions.ToFriendlyString(user.Gender);
+            ActivityLevel = ActivityLevelExtensions.ToFriendlyString(user.ActivityLevel);
             Notifications = user.Notifications;
             Preferences = model?.Preferences ?? new List<string>(user.Preferences ?? []);
             Restrictions = model?.Restrictions ?? new List<string>(user.Restrictions ?? []);
             Categories = categories;
+            Genders = Enum.GetValues(typeof(Gender))
+                          .Cast<Gender>()
+                          .Select(g => GenderExtensions.ToFriendlyString(g))
+                          .ToList();
+            ActivityLevels = Enum.GetValues(typeof(ActivityLevel))
+                                 .Cast<ActivityLevel>()
+                                 .Select(a => ActivityLevelExtensions.ToFriendlyString(a))
+                                 .ToList();
         }
     }
 }

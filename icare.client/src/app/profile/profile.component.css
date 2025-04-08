@@ -1,7 +1,16 @@
+.profile-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 form {
   display: flex;
   flex-direction: column;
   gap: 50px;
+  max-width: 800px;
   width: 100%;
   height: 100%;
   padding: 20px;
@@ -14,10 +23,34 @@ form {
   width: 100%;
 }
 
+label {
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+select {
+  width: 200px;
+  height: 44px;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 16px;
+  outline: none;
+  border: none;
+  transition: border-color 0.3s ease;
+}
+
+select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+}
+
 .buttons {
-    display: flex;
-    justify-content: end;
-    width: 90%;
+  display: flex;
+  justify-content: end;
+  width: 90%;
+  margin: 0;
 }
 
 .change-password,
@@ -70,6 +103,37 @@ form {
 .submit-btn:disabled:active {
   background-color: gray;
   transform: none;
+}
+
+.activityLevel-container,
+.activityLevel-container *,
+.genders-container,
+.genders-container * {
+  margin: 0 !important;
+}
+
+.activityLevel-container,
+.genders-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.activityLevel-container select,
+.genders-container select {
+  width: 100%;
+}
+
+#genero,
+#activityLevel {
+  background-color: var(--bg-bege);
+}
+
+#genero option:checked,
+#genero option:hover,
+#activityLevel option:checked,
+#activityLevel option:hover {
+  background-color: var(--bg-bege-contrast) !important;
 }
 
 @media (max-width: 320px) {

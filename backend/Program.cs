@@ -3,8 +3,10 @@ using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SpaServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 
@@ -14,7 +16,28 @@ using System.Text.Json.Serialization;
 /// </summary>
 /// <author>Mário Silva - 202000500</author>
 /// <author>Luís Martins - 202100239</author>
+
+ThreadPool.SetMinThreads(100, 100);
+ThreadPool.SetMaxThreads(10000, 10000);
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
+// Configurar Kestrel para permitir mais conexões simultâneas
+builder.WebHost.ConfigureKestrel((context, options) =>
+{
+    options.Configure(context.Configuration.GetSection("Kestrel"));
+});
+
+
+// Reduz o consumo de CPU no ASP.NET Core
+builder.Services.AddResponseCompression();
+builder.Services.AddMemoryCache();
 
 // Configuração de serviços
 /// <summary>
@@ -30,7 +53,12 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ICareServerContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString, sqlOptions =>
+        sqlOptions
+            .CommandTimeout(30)
+            .EnableRetryOnFailure())
+    );
+
 
 // Configuração do Identity
 /// <summary>
@@ -75,6 +103,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+
 
 // Configuração de serialização JSON
 /// <summary>
@@ -122,8 +151,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 /// </summary>
 builder.Services.AddScoped<UserLogService>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-builder.Services.AddTransient<EmailSenderService>();
-builder.Services.AddScoped<GoalService>();
+builder.Services.AddTransient<EmailSenderService>(); 
+builder.Services.AddScoped<IGoalService, GoalService>();
+
 
 var app = builder.Build();
 
