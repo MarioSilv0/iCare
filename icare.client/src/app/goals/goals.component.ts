@@ -71,15 +71,22 @@ export class GoalsComponent {
     let url = 'api/goal';
     this.http.get<Goal>(url).subscribe({
       next: (goal) => {
-        this.userGoal = goal ? goal : undefined;
-        this.validInfo = true
-        },
+        if (!goal || Object.keys(goal).length === 0) {
+          this.userGoal = undefined;
+          this.validInfo = false;
+          this.setupUserInfo();
+        } else {
+          this.userGoal = goal;
+          this.validInfo = true;
+        }
+       },
         error: () => {
           this.userGoal = undefined;
           this.validInfo = false
-        },
+          this.setupUserInfo();
+      }
     });
-    if (!this.userGoal) this.setupUserInfo();
+    
   }
 
   setupUserInfo() {
