@@ -3,13 +3,22 @@ using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SpaServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 
+/// <summary>
+/// Entry point for configuring and running the web application.
+/// This sets up services, middleware, authentication, and other necessary configurations.
+/// </summary>
 /// <author>Mário Silva - 202000500</author>
 /// <author>Luís Martins - 202100239</author>
+
+ThreadPool.SetMinThreads(100, 100);
+ThreadPool.SetMaxThreads(10000, 10000);
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,18 +28,42 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
+// Configurar Kestrel para permitir mais conexões simultâneas
+builder.WebHost.ConfigureKestrel((context, options) =>
+{
+    options.Configure(context.Configuration.GetSection("Kestrel"));
+});
+
+
+// Reduz o consumo de CPU no ASP.NET Core
+builder.Services.AddResponseCompression();
+builder.Services.AddMemoryCache();
+
 // Configuração de serviços
+/// <summary>
+/// Add controllers, API documentation (Swagger), and other necessary configurations.
+/// </summary>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Configuração do banco de dados
+/// <summary>
+/// Configures the database context to use SQL Server connection.
+/// </summary>
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ICareServerContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString, sqlOptions =>
+        sqlOptions
+            .CommandTimeout(30)
+            .EnableRetryOnFailure())
+    );
+
 
 // Configuração do Identity
+/// <summary>
+/// Configures Identity services, including password policies, user registration, and token management.
+/// </summary>
 builder.Services
     .AddIdentity<User, IdentityRole>(options =>
     {
@@ -46,7 +79,9 @@ builder.Services
     .AddDefaultTokenProviders()
     .AddDefaultUI();
 
-// Configuração de autenticação e JWT
+/// <summary>
+/// Configures authentication using JWT tokens, setting up token validation parameters, such as issuer, audience, and key.
+/// </summary>
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not found.");
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT Issuer not found.");
 var jwtAudience = builder.Configuration["Jwt:Audience"] ?? throw new InvalidOperationException("JWT Audience not found.");
@@ -67,15 +102,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-
 builder.Services.AddAuthorization();
 
+
 // Configuração de serialização JSON
+/// <summary>
+/// Configures JSON serialization to use string-based enum values in API responses.
+/// </summary>
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-// Configuração de CORS
+// Configuração de CORS (Cross-Origin Resource Sharing)
+/// <summary>
+/// Configures CORS to allow specific origins for frontend-backend communication.
+/// </summary>
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", policy =>
@@ -91,8 +132,10 @@ builder.Services.AddCors(options =>
     });
 });
 
-
 // Evitar redirecionamentos automáticos
+/// <summary>
+/// Prevents automatic redirection to login pages by returning a 401 Unauthorized status instead.
+/// </summary>
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Events.OnRedirectToLogin = context =>
@@ -103,6 +146,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 // Serviços personalizados
+/// <summary>
+/// Registers custom services for logging, email sending, and goal management.
+/// </summary>
 builder.Services.AddScoped<UserLogService>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<EmailSenderService>(); 
@@ -112,6 +158,9 @@ builder.Services.AddScoped<IGoalService, GoalService>();
 var app = builder.Build();
 
 // Execução de migrações e seeding de dados
+/// <summary>
+/// Executes database migrations and seeding for roles and users.
+/// </summary>
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -139,6 +188,9 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configuração do pipeline de middleware
+/// <summary>
+/// Configures middleware to handle exceptions, HTTP redirection, static files, routing, CORS, and authentication.
+/// </summary>
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -160,6 +212,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Mapear controladores e rotas
+/// <summary>
+/// Maps controllers and sets up default routing for the application.
+/// </summary>
 app.MapControllers();
 app.MapRazorPages();
 app.MapGroup("/api");
@@ -175,6 +230,10 @@ app.MapControllerRoute(
 //    await next();
 //});
 
+// Custom middleware for serving static files or fallback to index page for non-API requests
+/// <summary>
+/// Middleware for handling non-API requests by redirecting them to the default index page.
+/// </summary>
 app.Use(async (context, next) =>
 {
     if (context.Request.Path.Value != null &&

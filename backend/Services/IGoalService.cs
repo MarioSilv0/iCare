@@ -1,5 +1,6 @@
 ﻿using backend.Models;
 using backend.Models.Data_Transfer_Objects;
+using backend.Models.Enums;
 using backend.Models.Goals;
 
 namespace backend.Services
@@ -55,5 +56,18 @@ namespace backend.Services
         /// - ErrorMessage (string?): The error message if validation fails.
         /// </returns>
         (bool Success, string? ErrorMessage) ValidateAndCalculateGoal(User user, Goal goal);
+
+        /// <summary>
+        /// Calculates the recommended daily caloric intake based on user information and automatic goal type.
+        /// Uses the Mifflin-St Jeor formula for BMR calculation and applies an activity level multiplier.
+        /// </summary>
+        /// <param name="user">The user whose information is used to calculate the goal.</param>
+        /// <param name="autoGoalType">The automatic goal type (e.g., Lose Weight, Maintain Weight, Gain Weight).</param>
+        /// <returns>
+        /// The calculated number of calories to meet the specified automatic goal.
+        /// Returns adjusted calories based on the maintenance level and goal type.
+        /// </returns>
+        int CalculateAutomaticGoal(User user, AutoGoalType? autoGoalType);
+
     }
 }

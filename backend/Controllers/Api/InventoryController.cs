@@ -120,7 +120,7 @@ namespace backend.Controllers.Api
                     {
                         existingIngredient.Quantity = item.Quantity;
                         existingIngredient.Unit = item.Unit;
-                        _logger.LogInformation("Ingredient {IngredientName} has been eddited to quantity: {Quantity}; unit: {Unit}; for user {UserId}.", item.Name, item.Quantity, item.Unit, id);
+                        _logger.LogInformation("Ingredient {IngredientName} has been edited to quantity: {Quantity}; unit: {Unit}; for user {UserId}.", item.Name, item.Quantity, item.Unit, id);
                     }
                 }
                 await _context.SaveChangesAsync();
@@ -155,7 +155,8 @@ namespace backend.Controllers.Api
                 var id = User.FindFirst("UserId")?.Value;
                 if (id == null) return Unauthorized("User ID not found in token.");
 
-                if (nameOfItemsToRemove == null || !nameOfItemsToRemove.Any()) {
+                if (nameOfItemsToRemove == null || !nameOfItemsToRemove.Any())
+                {
                     var currentItems = await _context.UserIngredients.Where(ui => ui.UserId == id)
                                                                      .Include(ui => ui.Ingredient)
                                                                      .Select(ui => new ItemDTO(ui))
