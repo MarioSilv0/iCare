@@ -17,8 +17,8 @@ export class LoginComponent {
   passError: string = ""
   errorMessage: string | null = null;
   showPassword = false;
-  private EMAIL_REGEX_PATTERN = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" // formato valido de email com @ e .
-  private PASSWORD_REGEX_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d).{8,}$" // 8 caracteres sem espaços, 1 letra minuscula e maiuscula
+  private readonly EMAIL_REGEX_PATTERN = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" // formato valido de email com @ e .
+  private readonly PASSWORD_REGEX_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d).{8,}$" // 8 caracteres sem espaços, 1 letra minuscula e maiuscula
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;

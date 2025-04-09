@@ -5,7 +5,7 @@
 /// <author>João Morais  - 202001541</author>
 /// <author>Luís Martins - 202100239</author>
 /// <author>Mário Silva  - 202000500</author>
-/// <date>Last Modified: 2025-03-01</date> 
+/// <date>Last Modified: 2025-03-01</date>
 
 using backend.Data;
 using backend.Models.Data_Transfer_Objects;
@@ -100,7 +100,7 @@ namespace backend.Controllers.Api
         /// </summary>
         /// <param name="ingredients">An array of ingredient objects to update the database.</param>
         /// <returns>An <c>ActionResult</c> indicating success or failure.</returns>
-        /// <author> Mário </author>
+        /// <author>Mário Silva</author>
         [HttpPost("update")]
         public async Task<ActionResult> UpdateDB([FromBody] List<IngredientDTO> ingredients)
         {
@@ -153,7 +153,5 @@ namespace backend.Controllers.Api
                 return StatusCode(500, "An error occurred while updating the database.");
             }
         }
-
-
     }
 }

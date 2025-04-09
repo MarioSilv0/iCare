@@ -8,7 +8,7 @@
 <br />
 <br />
 
-<div class="container align-items-start mx-0">
+<div class="container align-items-start mx-0" data-testid="inventory-container">
   <!-- Sidebar -->
   <div class="sidebar shadow">
     <div class="search-bar">
@@ -16,21 +16,23 @@
              type="text"
              placeholder="Pesquisar"
              [(ngModel)]="searchTerm"
-             (input)="onSearchChange()" />
+             (input)="onSearchChange()" data-testid="search-input"/>
       <span class="search-icon">🔍</span>
     </div>
 
     <hr *ngIf="filteredItems.length > 0" style="margin-top: 0" />
-    <button class="add-button" (click)="addItemsToInventory()">
+    <button class="add-button" (click)="addItemsToInventory()" data-testid="add-item-bt">
       <span class="add-text"> Adicionar </span>
       <span class="add-icon">➕</span>
     </button>
     <hr *ngIf="filteredItems.length > 0"/>
 
-    <ul class="item-list" *ngIf="filteredItems.length > 0">
+    <ul class="item-list" *ngIf="filteredItems.length > 0" data-testid="item-list">
       <li *ngFor="let item of filteredItems"
           [class.selected]="selectedItems.has(item)"
-          (click)="toggleSelection(item)">
+          (click)="toggleSelection(item)"
+          data-testid="item"
+          >
         {{ item }}
       </li>
     </ul>
@@ -51,9 +53,9 @@
           <th class="small-col">Quantidade</th>
         </tr>
       </thead>
-      <tbody *ngIf="inventory.size > 0; else emptyInventory">
+      <tbody *ngIf="inventory.size > 0; else emptyInventory" data-testid="inventory-table">
         <ng-container *ngFor="let item of inventory | mapKeys">
-          <tr>
+          <tr data-testid="inventory-item">
             <td class="d-flex align-items-center justify-content-center"
                 (click)="toggleDetails(item)">
               <img *ngIf="expandedItems.has(item)"
@@ -71,24 +73,26 @@
                    style="margin: 0; width: 20px; height: 20px" />
             </td>
 
-            <td>
+            <td data-testid="check-item">
               <input type="checkbox"
                      [checked]="selectedItemsInInventory.has(item)"
                      (change)="toggleInventorySelection(item)" />
             </td>
 
-            <td class="item-name">{{ item }}</td>
+            <td class="item-name" data-testid="item-name">{{ item }}</td>
 
             <td class="item-quantity">
               <input type="number"
                      class="quantity-input"
                      [value]="inventory.get(item)?.quantity || 0"
                      (input)="updateQuantity(item, $event)"
-                     min="0" />
+                     min="0"
+                     data-testid="item-quantity"/>
               <select name="unitsSelect"
                       id="unitsSelect"
                       [ngModel]="getUnit(item)"
-                      (input)="updateUnit(item, $event)">
+                      (input)="updateUnit(item, $event)"
+                      data-testid="item-weight-list">
                 <option value=""></option>
                 <option *ngFor="let opt of units" value="{{ opt }}">
                   {{ opt }}
@@ -224,8 +228,8 @@
         </ng-container>
       </tbody>
       <ng-template #emptyInventory>
-        <tbody>
-          <tr>
+        <tbody data-testid="inventory-table">
+          <tr data-testid="empty-row">
             <td colspan="4" class="empty-message">O inventário está vazio.</td>
           </tr>
         </tbody>
@@ -235,7 +239,8 @@
       <button class="update-button" (click)="checkForEmptyItems()">
         Atualizar Inventário
       </button>
-      <button class="delete-button" (click)="openModal('deleteModal')" [disabled]="selectedItemsInInventory.size === 0">
+      <button class="delete-button" (click)="openModal('deleteModal')" [disabled]="selectedItemsInInventory.size === 0"
+              data-testid="delete-modal">
         Excluir <span class="trash-icon">🗑️</span>
       </button>
     </div>
@@ -261,7 +266,8 @@
             <button type="button"
                     class="btn btn-danger"
                     (click)="removeItemFromInventory(null)"
-                    data-bs-dismiss="modal">
+                    data-bs-dismiss="modal"
+                    data-testid="delete-bt">
               Eliminar
             </button>
           </div>
