@@ -25,11 +25,6 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore backend/backend.csproj
 
-      - name: Clean previous builds
-        run: |
-          dotnet clean ./backend/backend.csproj
-          rm -rf ./backend/bin ./backend/obj
-
       - name: Build project
         run: dotnet build backend/backend.csproj --configuration Release --no-restore
 
