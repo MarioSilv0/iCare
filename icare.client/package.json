@@ -8,6 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "cy:dev": "npx cypress open",
+    "cy:run": "npx cypress run",
     "prestart": "node aspnetcore-https && npm install concurrently",
     "start-taco-api": "cd ../taco-api && bun run dev --filter=taco-api",
     "start-translate-api": "cd ../LibreTranslate-main && libretranslate --load-only en,pt",

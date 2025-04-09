@@ -29,11 +29,11 @@ describe('Inventory page', () => {
   it("should allow the user to add items on his inventory", () => {
     cy.intercept("PUT", "https://127.0.0.1:4200/api/Inventory", {
       statusCode: 200,
-      body: {
+      body: [{
         name: "Nhoque, batata, cozido",
         quantity: 1,
         unit:""
-      }
+      }]
     }).as("addItem")
 
     cy.get('[data-testid="item-list"]').children('li').should('have.length.above', 0)

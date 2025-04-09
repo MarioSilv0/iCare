@@ -4,15 +4,45 @@ describe("Profile", () => {
     cy.visit("https://127.0.0.1:4200/#/profile"); // Ensure you visit after login
   });
 
+  function updateUserField(selector: string, value: string | number) {
+    cy.intercept('PUT', `https://127.0.0.1:4200/api/User`, {
+      statusCode: 200,
+    }).as('updateUser');
+
+    cy.get(selector)
+      .then($el => {
+        if ($el.is('select')) {
+          cy.wrap($el).select(value.toString());
+        } else {
+          cy.wrap($el).clear().type(value.toString());
+        }
+      });
+
+    cy.get("[data-testid='submit-input']").click({force: true});
+    cy.wait('@updateUser').its('response.statusCode').should('eq', 200);
+  }
+
+  function selectFirstOptionInDatalist(selector: string) {
+    cy.intercept('PUT', `https://127.0.0.1:4200/api/User`, {
+      statusCode: 200,
+    }).as('updateUser');
+
+    cy.get(selector)
+      .find("option")
+      .first()
+      .click({ force: true });
+
+    cy.get("[data-testid='submit-input']").click();
+    cy.wait('@updateUser').its('response.statusCode').should('eq', 200);
+  }
+
   it("should load the profile page", () => {
-    cy.get('[data-testid="profile-page"]').should('exist')
+    cy.get('[data-testid="profile-page"]').should('exist');
   });
 
   it("should allow the user to add a profile picture", () => {
-    // Ensure the profile image container exists
     cy.get('[data-testid="profile-image"]').should('exist');
 
-    // Load image fixture and simulate file selection
     cy.fixture('cat-with-glasses.jpg', 'base64').then((fileContent) => {
       cy.get('[data-testid="file-input"]').selectFile(
         {
@@ -25,110 +55,40 @@ describe("Profile", () => {
       );
     });
 
-    // Wait for the image to update (handling async FileReader)
-    cy.get('[data-testid="image"]', { timeout: 10000 }) // Wait up to 10 seconds
+    cy.get('[data-testid="image"]', { timeout: 10000 })
       .should("have.attr", "src")
       .then((src) => {
-        // Ensure the src is not the default image anymore
-        expect(src).to.not.contain('default.jpg'); // Adjust based on your default image
+        expect(src).to.not.contain('default.jpg');
       });
   });
 
   it("should allow the user to change his name", () => {
-    cy.intercept('PUT', `https://127.0.0.1:4200/api/User`, {
-      statusCode: 200,
-    }).as('updateUser');
-
-    cy.get("[data-testid='name-input'] input")
-      .clear()
-      .type("New Name");
-
-    cy.get("[data-testid='submit-input']").click();
-
-    cy.wait('@updateUser').its('response.statusCode').should('eq', 200);
+    updateUserField("[data-testid='name-input'] input", "New Name");
   });
 
   it("should allow the user to change his email", () => {
-    cy.intercept('PUT', `https://127.0.0.1:4200/api/User`, {
-      statusCode: 200,
-    }).as('updateUser');
-
-    cy.get("[data-testid='email-input'] input")
-      .clear()
-      .type("john@doe.com");
-
-    cy.get("[data-testid='submit-input']").click();
-
-    cy.wait('@updateUser').its('response.statusCode').should('eq', 200);
-  })
+    updateUserField("[data-testid='email-input'] input", "john@doe.com");
+  });
 
   it("should allow the user to change his birthdate", () => {
-    cy.intercept('PUT', `https://127.0.0.1:4200/api/User`, {
-      statusCode: 200,
-    }).as('updateUser');
-
-    cy.get("[data-testid='birthday-input'] input")
-      .clear()
-      .type("2001-04-23");
-
-    cy.get("[data-testid='submit-input']").click();
-
-    cy.wait('@updateUser').its('response.statusCode').should('eq', 200);
-  })
+    updateUserField("[data-testid='birthday-input'] input", "2001-04-23");
+  });
 
   it("should allow the user to change his height", () => {
-    cy.intercept('PUT', `https://127.0.0.1:4200/api/User`, {
-      statusCode: 200,
-    }).as('updateUser');
+    updateUserField("[data-testid='height-input'] input", "1.53");
+  });
 
-    cy.get("[data-testid='height-input'] input")
-      .clear()
-      .type("1.53");
-
-    cy.get("[data-testid='submit-input']").click();
-
-    cy.wait('@updateUser').its('response.statusCode').should('eq', 200);
-  })
-
-  it("should allow the user to change his weigth", () => {
-    cy.intercept('PUT', `https://127.0.0.1:4200/api/User`, {
-      statusCode: 200,
-    }).as('updateUser');
-
-    cy.get("[data-testid='weight-input'] input")
-      .clear()
-      .type("80");
-
-    cy.get("[data-testid='submit-input']").click();
-
-    cy.wait('@updateUser').its('response.statusCode').should('eq', 200);
-  })
+  it("should allow the user to change his weight", () => {
+    updateUserField("[data-testid='weight-input'] input", "80");
+  });
 
   it("should allow the user to change his gender", () => {
-    cy.intercept('PUT', `https://127.0.0.1:4200/api/User`, {
-      statusCode: 200,
-    }).as('updateUser');
-
-    cy.get("[data-testid='gender-input']")
-      .select("Feminino")
-
-    cy.get("[data-testid='submit-input']").click();
-
-    cy.wait('@updateUser').its('response.statusCode').should('eq', 200);
-  })
+    updateUserField("[data-testid='gender-input']", "Feminino");
+  });
 
   it("should allow the user to change his activity level", () => {
-    cy.intercept('PUT', `https://127.0.0.1:4200/api/User`, {
-      statusCode: 200,
-    }).as('updateUser');
-
-    cy.get("[data-testid='activity-input']")
-      .select("Sedentário")
-      
-    cy.get("[data-testid='submit-input']").click();
-
-    cy.wait('@updateUser').its('response.statusCode').should('eq', 200);
-  })
+    updateUserField("[data-testid='activity-input']", "Sedentário");
+  });
 
   it("should allow the user to turn on/off notifications", () => {
     cy.intercept('PUT', `https://127.0.0.1:4200/api/User`, {
@@ -136,47 +96,24 @@ describe("Profile", () => {
     }).as('updateUser');
 
     cy.get("[data-testid='notifications-input'] input")
-      .should("be.checked")
-      .click()
       .should("not.be.checked")
+      .click()
+      .should("be.checked");
 
     cy.get("[data-testid='submit-input']").click();
-
     cy.wait('@updateUser').its('response.statusCode').should('eq', 200);
-  })
+  });
 
   it("should allow the user to change his preferences", () => {
-    cy.intercept('PUT', `https://127.0.0.1:4200/api/User`, {
-      statusCode: 200,
-    }).as('updateUser');
+    selectFirstOptionInDatalist("[data-testid='preferences-input'] datalist");
+  });
 
-    cy.get("[data-testid='preferences-input'] datalist")
-      .find("option")
-      .first()
-      .click({ force: true })
-
-    cy.get("[data-testid='submit-input']").click();
-
-    cy.wait('@updateUser').its('response.statusCode').should('eq', 200);
-  })
-
-  it("should allow the user to change his restritions", () => {
-    cy.intercept('PUT', `https://127.0.0.1:4200/api/User`, {
-      statusCode: 200,
-    }).as('updateUser');
-
-    cy.get("[data-testid='restrictions-input'] datalist")
-      .find("option")
-      .first()
-      .click({ force: true })
-
-    cy.get("[data-testid='submit-input']").click();
-
-    cy.wait('@updateUser').its('response.statusCode').should('eq', 200);
-  })
+  it("should allow the user to change his restrictions", () => {
+    selectFirstOptionInDatalist("[data-testid='restrictions-input'] datalist");
+  });
 
   it("should take the user to the 'change password' page", () => {
     cy.get(".change-password").click();
     cy.url().should('include', '/change-password');
-  })
-})
+  });
+});

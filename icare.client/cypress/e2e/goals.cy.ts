@@ -68,7 +68,7 @@ describe('Goal page', () => {
     const startDate = '2025-04-01';
     const endDate = '2025-04-30';
 
-    cy.get('form.goal-form').within(() => {
+    cy.get('[data-testid="goal-form"]').within(() => {
       cy.get('#ipt-calorias-diarias').type(calories, { force: true });
 
       cy.get('[data-testid="calendar"] input[name="ipt-start-date"]', { includeShadowDom: true })
