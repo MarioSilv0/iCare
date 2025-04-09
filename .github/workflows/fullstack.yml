@@ -63,3 +63,35 @@ jobs:
         run: |
           export CHROME_BIN=$(which google-chrome-stable)
           npm run test -- --watch=false --browsers=ChromeHeadlessNoSandbox
+
+  cypress:
+    name: Run Cypress Tests
+    runs-on: ubuntu-latest
+    needs: frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: icare.client
+        run: npm ci
+
+      - name: Start application
+        working-directory: icare.client
+        run: npm start &
+        env:
+          CI: true
+
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: icare.client
+          start: npm start
+          wait-on: 'http://localhost:4200'
+          browser: chrome
