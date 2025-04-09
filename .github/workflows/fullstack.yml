@@ -25,12 +25,16 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore ./backend/backend.csproj
 
+      - name: Clean previous builds
+        run: |
+          dotnet clean ./backend/backend.csproj
+          rm -rf ./backend/bin ./backend/obj
+
       - name: Build project
         run: dotnet build ./backend/backend.csproj --configuration Release
 
       - name: Run tests
         run: dotnet test ./backend/backend.csproj --configuration Release --no-build --verbosity normal
-
 
   frontend:
     name: Build & Test Frontend
@@ -56,5 +60,3 @@ jobs:
         run: |
               export CHROME_BIN=$(which google-chrome-stable)
               cd icare.client && npm run test -- --watch=false --browsers=ChromeHeadlessNoSandbox
-
-
