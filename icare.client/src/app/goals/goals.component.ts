@@ -70,14 +70,23 @@ export class GoalsComponent {
   getUserGoal() {
     let url = 'api/goal';
     this.http.get<Goal>(url).subscribe({
-        next: (goal) => {
-            this.userGoal = goal ? goal : undefined;
-        },
+      next: (goal) => {
+        if (!goal || Object.keys(goal).length === 0) {
+          this.userGoal = undefined;
+          this.validInfo = false;
+          this.setupUserInfo();
+        } else {
+          this.userGoal = goal;
+          this.validInfo = true;
+        }
+       },
         error: () => {
-            this.userGoal = undefined;
-        },
+          this.userGoal = undefined;
+          this.validInfo = false
+          this.setupUserInfo();
+      }
     });
-    if (!this.userGoal) this.setupUserInfo();
+    
   }
 
   setupUserInfo() {
@@ -88,7 +97,7 @@ export class GoalsComponent {
           weight,
           height,
           gender,
-          activityLevel: activityLevel
+          activityLevel
         })
 
         const missingInfo = !birthdate || !weight || !height || !gender || !activityLevel;

@@ -1,4 +1,7 @@
-<div class="profile-container">
+<div
+     class="profile-container"
+     data-testid="profile-page"
+>
   <form
     class="m-0"
     [formGroup]="profileForm"
@@ -19,6 +22,7 @@
           [imageUrl]="profileForm.get('picture')?.value"
           [editable]="true"
           (imageChange)="changePicture($event)"
+          data-testid="profile-image"
         />
       </div>
       <br />
@@ -32,6 +36,7 @@
         [inputStyles]="{
           'background-color': 'var(--bg-bege)',
         }"
+        data-testid="name-input"
       />
       <small
         *ngIf="
@@ -52,6 +57,7 @@
         [inputStyles]="{
           'background-color': 'var(--bg-bege)',
         }"
+        data-testid="email-input"
       />
       <small
         *ngIf="
@@ -71,6 +77,7 @@
         [inputStyles]="{
           'background-color': 'var(--bg-bege)',
         }"
+        data-testid="birthday-input"
       />
       <div
         *ngIf="
@@ -101,6 +108,7 @@
         [inputStyles]="{
           'background-color': 'var(--bg-bege)',
         }"
+        data-testid="height-input"
       />
       <div
         *ngIf="
@@ -139,6 +147,7 @@
         [inputStyles]="{
           'background-color': 'var(--bg-bege)',
         }"
+        data-testid="weight-input"
       ></custom-input>
       <small
         *ngIf="
@@ -153,7 +162,7 @@
       <!-- Profile Genders -->
       <div class="genders-container">
         <label for="genero">Genero: </label>
-        <select name="genero" id="genero" formControlName="gender">
+        <select name="genero" id="genero" formControlName="gender" data-testid="gender-input">
           <option value="" disabled selected>-- selecione uma opção --</option>
           <option *ngFor="let gender of genders" [value]="gender.value">
             {{ gender.label }}
@@ -168,6 +177,7 @@
           name="activityLevel"
           id="activityLevel"
           formControlName="activityLevel"
+          data-testid="activity-input"
         >
           <option value="" disabled selected>-- selecione uma opção --</option>
           <option *ngFor="let ac of activityLevels" [value]="ac.value">
@@ -182,6 +192,7 @@
         (checkedChange)="changeNotifications($event)"
         label="Notificações:"
         id="notifications"
+        data-testid="notifications-input"
       />
     </container>
 
@@ -195,6 +206,7 @@
         [selectedItems]="preferences"
         (addItem)="addPreference($event)"
         (removeItem)="removePreference($event)"
+        data-testid="preferences-input"
       />
     </container>
 
@@ -208,11 +220,12 @@
         [selectedItems]="restrictions"
         (addItem)="addRestriction($event)"
         (removeItem)="removeRestriction($event)"
+                         data-testid="restrictions-input"
       />
     </container>
 
     <div class="buttons">
-      <button class="submit-btn" type="submit" [disabled]="profileForm.invalid">
+      <button class="submit-btn" type="submit" [disabled]="profileForm.invalid" data-testid="submit-input">
         Salvar
       </button>
       <button class="change-password" type="button" (click)="changePassword()">
