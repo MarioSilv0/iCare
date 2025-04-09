@@ -7,12 +7,20 @@ using Xunit;
 
 namespace backendtest
 {
+    /// <summary>
+    /// The <c>UserLogServiceTests</c> class contains unit tests for the <see cref="UserLogService"/> class.
+    /// These tests ensure that user logs are correctly added to the database when calling the <see cref="UserLogService.LogAsync"/> method.
+    /// </summary>
     /// <author>Mário Silva - 202000500</author>
     public class UserLogServiceTests
     {
         private readonly UserLogService _userLogService;
         private readonly ICareServerContext _context;
 
+        /// <summary>
+        /// Initializes a new instance of the <c>UserLogServiceTests</c> class.
+        /// Sets up the in-memory database and mocks the <see cref="IHttpContextAccessor"/> for simulating HTTP context in the service.
+        /// </summary>
         public UserLogServiceTests()
         {
             var options = new DbContextOptionsBuilder<ICareServerContext>()
@@ -28,6 +36,14 @@ namespace backendtest
             _userLogService = new UserLogService(_context, mockHttpContextAccessor.Object);
         }
 
+        /// <summary>
+        /// Tests the <see cref="UserLogService.LogAsync"/> method to ensure that a log is successfully added to the database.
+        /// </summary>
+        /// <remarks>
+        /// This test verifies that when the <see cref="LogAsync"/> method is called with a user ID and a log message,
+        /// the log is correctly saved to the database and can be retrieved.
+        /// </remarks>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         [Fact]
         public async Task LogAsync_ShouldAddLogToDatabase()
         {

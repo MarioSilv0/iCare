@@ -216,6 +216,9 @@ namespace backendtest
             Assert.Equal("medida", ingredient.Measure);
         }
 
+        /// <summary>
+        /// Tests if the API returns a bad request when the recipes list is null.
+        /// </summary>
         [Fact]
         public async Task UpdateRecipes_WhenRecipesListIsNull_ReturnsBadRequest()
         {
@@ -224,6 +227,9 @@ namespace backendtest
             Assert.Equal("No recipes provided.", response.Value);
         }
 
+        /// <summary>
+        /// Tests if the API returns a bad request when the recipes list is empty.
+        /// </summary>
         [Fact]
         public async Task UpdateRecipes_WhenRecipesListIsEmpty_ReturnsBadRequest()
         {
@@ -232,6 +238,9 @@ namespace backendtest
             Assert.Equal("No recipes provided.", response.Value);
         }
 
+        /// <summary>
+        /// Tests if the API correctly adds a new recipe when provided with a valid recipe.
+        /// </summary>
         [Fact]
         public async Task UpdateRecipes_WhenNewRecipeIsAdded_AddsRecipeWithCalculatedValues()
         {
@@ -275,6 +284,9 @@ namespace backendtest
             Assert.Equal(2, insertedRecipe.RecipeIngredients.Count);
         }
 
+        /// <summary>
+        /// Tests if the API correctly updates an existing recipe's details.
+        /// </summary>
         [Fact]
         public async Task UpdateRecipes_WhenRecipeExists_UpdatesRecipeDetails()
         {
