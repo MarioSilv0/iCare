@@ -82,6 +82,9 @@ jobs:
         working-directory: icare.client
         run: npm ci
 
+      - name: Criar diretório para certificados HTTPS
+        run: mkdir -p ~/.aspnet/https
+
       - name: Start application
         working-directory: icare.client
         run: npm start &
@@ -95,3 +98,4 @@ jobs:
           start: npm start
           wait-on: 'http://localhost:4200'
           browser: chrome
+
